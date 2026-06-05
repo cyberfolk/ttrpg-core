@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction } from '../../src/model/schema.js';
-import { clampView, computeScore } from '../../src/model/reputation.js';
+import { clampView, computeScore, addCharacter, listActiveCharacters } from '../../src/model/reputation.js';
 
 test('BASE è 50 e SCHEMA_VERSION è 1', () => {
   assert.equal(BASE, 50);
@@ -71,4 +71,29 @@ test('computeScore clampa solo in vista, somma interna libera', () => {
     createTransaction(a.id, b.id, -20, 'giu'),
   );
   assert.equal(computeScore(state, a.id, b.id), 90);
+});
+
+test('addCharacter ritorna nuovo stato senza mutare il precedente', () => {
+  const s0 = createState();
+  const s1 = addCharacter(s0, 'Aragorn');
+  assert.equal(s0.characters.length, 0);
+  assert.equal(s1.characters.length, 1);
+  assert.equal(s1.characters[0].name, 'Aragorn');
+});
+
+test('nuovo personaggio nasce a 50 verso tutti gli esistenti e viceversa', () => {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s = addCharacter(s, 'B');
+  const [a, b] = s.characters;
+  assert.equal(computeScore(s, a.id, b.id), 50);
+  assert.equal(computeScore(s, b.id, a.id), 50);
+});
+
+test('listActiveCharacters esclude i soft-deleted', () => {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s.characters[0].deletedAt = 123;
+  const active = listActiveCharacters(s);
+  assert.equal(active.length, 0);
 });
