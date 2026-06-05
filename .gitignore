@@ -1,0 +1,16 @@
+.idea/
+.venv/
+.claude/
+outputs/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Superpowers brainstorming artifacts (spec + plan) â€” single-use, history = git
+#docs/superpowers/
