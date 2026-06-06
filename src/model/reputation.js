@@ -65,3 +65,41 @@ export function listTransactions(state, fromId, toId) {
     .sort((x, y) => x.createdAt - y.createdAt);
   return list;
 }
+
+export function softDeleteCharacter(state, id) {
+  const characters = state.characters.map((c) => {
+    if (c.id !== id) {
+      return c;
+    }
+    const updated = { ...c, deletedAt: Date.now() };
+    return updated;
+  });
+  const next = { ...state, characters };
+  return next;
+}
+
+export function restoreCharacter(state, id) {
+  const characters = state.characters.map((c) => {
+    if (c.id !== id) {
+      return c;
+    }
+    const updated = { ...c, deletedAt: null };
+    return updated;
+  });
+  const next = { ...state, characters };
+  return next;
+}
+
+export function hardDeleteCharacter(state, id) {
+  const characters = state.characters.filter((c) => c.id !== id);
+  const transactions = state.transactions.filter(
+    (tx) => tx.fromId !== id && tx.toId !== id,
+  );
+  const next = { ...state, characters, transactions };
+  return next;
+}
+
+export function listArchivedCharacters(state) {
+  const archived = state.characters.filter((c) => c.deletedAt !== null);
+  return archived;
+}

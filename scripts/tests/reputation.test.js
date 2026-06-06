@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction } from '../../src/model/schema.js';
-import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions } from '../../src/model/reputation.js';
+import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters } from '../../src/model/reputation.js';
 
 test('BASE è 50 e SCHEMA_VERSION è 1', () => {
   assert.equal(BASE, 50);
@@ -144,4 +144,32 @@ test('deleteTransaction rimuove la transazione e ricalcola', () => {
   s = deleteTransaction(s, tx.id);
   assert.equal(s.transactions.length, 0);
   assert.equal(computeScore(s, a.id, b.id), 50);
+});
+
+test('softDeleteCharacter imposta deletedAt e lo toglie dagli attivi', () => {
+  let s = twoChars();
+  const a = s.characters[0];
+  s = softDeleteCharacter(s, a.id);
+  assert.equal(typeof s.characters.find((c) => c.id === a.id).deletedAt, 'number');
+  assert.equal(listActiveCharacters(s).length, 1);
+  assert.equal(listArchivedCharacters(s).length, 1);
+});
+
+test('restoreCharacter riporta deletedAt a null', () => {
+  let s = twoChars();
+  const a = s.characters[0];
+  s = softDeleteCharacter(s, a.id);
+  s = restoreCharacter(s, a.id);
+  assert.equal(s.characters.find((c) => c.id === a.id).deletedAt, null);
+  assert.equal(listActiveCharacters(s).length, 2);
+});
+
+test('hardDeleteCharacter rimuove il char e le sue transazioni in entrambe le direzioni', () => {
+  let s = twoChars();
+  const [a, b] = s.characters;
+  s = addTransaction(s, a.id, b.id, 10, 'out');
+  s = addTransaction(s, b.id, a.id, -5, 'in');
+  s = hardDeleteCharacter(s, a.id);
+  assert.equal(s.characters.length, 1);
+  assert.equal(s.transactions.length, 0);
 });
