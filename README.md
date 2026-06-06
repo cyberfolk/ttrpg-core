@@ -1,5 +1,7 @@
 # TTRPG Core — Sistema di Reputazione
 
+**App live:** https://cyberfolk.github.io/ttrpg-core/
+
 Web app **locale** (gira nel browser, nessun server) per gestire tool da TTRPG.
 Prima feature: **sistema di reputazione tra personaggi** per Dungeons & Dragons.
 
