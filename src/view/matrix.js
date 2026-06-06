@@ -1,5 +1,5 @@
 import { el, clear } from './dom.js';
-import { listActiveCharacters, computeScore } from '../model/reputation.js';
+import { listActiveCharacters, listArchivedCharacters, computeScore } from '../model/reputation.js';
 
 function scoreColor(score) {
   // 1 = rosso (0deg), 100 = verde (120deg)
@@ -8,8 +8,8 @@ function scoreColor(score) {
   return color;
 }
 
-// onCellClick(fromId, toId)
-export function renderMatrix(container, state, onCellClick) {
+// onCellClick(fromId, toId), onSoftDelete(id)
+export function renderMatrix(container, state, onCellClick, onSoftDelete) {
   clear(container);
   const chars = listActiveCharacters(state);
 
@@ -26,7 +26,12 @@ export function renderMatrix(container, state, onCellClick) {
 
   const rows = [];
   for (const from of chars) {
-    const cells = [el('th', { text: from.name })];
+    const archiveBtn = el('button', {
+      text: '🗑',
+      title: 'Archivia',
+      onClick: () => onSoftDelete(from.id),
+    });
+    const cells = [el('th', {}, [from.name + ' ', archiveBtn])];
     for (const to of chars) {
       if (from.id === to.id) {
         cells.push(el('td', { class: 'diagonal', text: '—' }));
@@ -46,4 +51,27 @@ export function renderMatrix(container, state, onCellClick) {
   const tbody = el('tbody', {}, rows);
 
   container.appendChild(el('table', { class: 'matrix' }, [thead, tbody]));
+}
+
+// callbacks: { onRestore(id), onHardDelete(id) }
+export function renderArchived(container, state, callbacks) {
+  clear(container);
+  const archived = listArchivedCharacters(state);
+  if (archived.length === 0) {
+    return;
+  }
+  const items = archived.map((c) => {
+    const restoreBtn = el('button', { text: 'Ripristina', onClick: () => callbacks.onRestore(c.id) });
+    const hardBtn = el('button', {
+      text: 'Elimina definitivamente',
+      onClick: () => callbacks.onHardDelete(c.id),
+    });
+    const row = el('li', {}, [c.name + ' ', restoreBtn, hardBtn]);
+    return row;
+  });
+  const block = el('div', { class: 'archived' }, [
+    el('h3', { text: 'Personaggi archiviati' }),
+    el('ul', {}, items),
+  ]);
+  container.appendChild(block);
 }
