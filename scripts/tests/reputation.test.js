@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction } from '../../src/model/schema.js';
-import { clampView, computeScore, addCharacter, listActiveCharacters } from '../../src/model/reputation.js';
+import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions } from '../../src/model/reputation.js';
 
 test('BASE è 50 e SCHEMA_VERSION è 1', () => {
   assert.equal(BASE, 50);
@@ -96,4 +96,52 @@ test('listActiveCharacters esclude i soft-deleted', () => {
   s.characters[0].deletedAt = 123;
   const active = listActiveCharacters(s);
   assert.equal(active.length, 0);
+});
+
+function twoChars() {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s = addCharacter(s, 'B');
+  return s;
+}
+
+test('addTransaction modifica il punteggio e non muta lo stato originale', () => {
+  const s0 = twoChars();
+  const [a, b] = s0.characters;
+  const s1 = addTransaction(s0, a.id, b.id, 10, 'aiuto');
+  assert.equal(s0.transactions.length, 0);
+  assert.equal(computeScore(s1, a.id, b.id), 60);
+});
+
+test('listTransactions filtra per direzione e ordina per createdAt', () => {
+  let s = twoChars();
+  const [a, b] = s.characters;
+  s = addTransaction(s, a.id, b.id, 10, 'primo');
+  s = addTransaction(s, b.id, a.id, -5, 'opposto');
+  s = addTransaction(s, a.id, b.id, 3, 'secondo');
+  const list = listTransactions(s, a.id, b.id);
+  assert.equal(list.length, 2);
+  assert.equal(list[0].name, 'primo');
+  assert.equal(list[1].name, 'secondo');
+});
+
+test('editTransaction cambia delta e name e ricalcola il punteggio', () => {
+  let s = twoChars();
+  const [a, b] = s.characters;
+  s = addTransaction(s, a.id, b.id, 10, 'x');
+  const tx = s.transactions[0];
+  s = editTransaction(s, tx.id, { delta: 25, name: 'y' });
+  assert.equal(s.transactions[0].delta, 25);
+  assert.equal(s.transactions[0].name, 'y');
+  assert.equal(computeScore(s, a.id, b.id), 75);
+});
+
+test('deleteTransaction rimuove la transazione e ricalcola', () => {
+  let s = twoChars();
+  const [a, b] = s.characters;
+  s = addTransaction(s, a.id, b.id, 10, 'x');
+  const tx = s.transactions[0];
+  s = deleteTransaction(s, tx.id);
+  assert.equal(s.transactions.length, 0);
+  assert.equal(computeScore(s, a.id, b.id), 50);
 });
