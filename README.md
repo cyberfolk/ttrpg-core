@@ -57,10 +57,13 @@ Servono dei moduli ES, quindi è meglio servire la cartella via HTTP (con `file:
 alcuni browser bloccano i moduli per CORS).
 
 ```bash
-# dalla radice del progetto
+cd C:\Users\andre\cyberfolk\ttrpg-core
 py -m http.server 8000
 # poi apri http://localhost:8000
 ```
+
+Tieni la finestra del terminale aperta finché usi l'app (chiuderla ferma il server;
+`Ctrl+C` per fermarlo a mano).
 
 In alternativa apri direttamente `index.html` se il tuo browser consente i moduli da
 `file://`.
