@@ -24,13 +24,31 @@ export function validateState(data) {
   if (!Array.isArray(data.characters) || !Array.isArray(data.transactions)) {
     throw new Error('Stato non valido: characters/transactions mancanti');
   }
+  for (const c of data.characters) {
+    const validId = typeof c.id === 'string' && c.id.length > 0;
+    const validName = typeof c.name === 'string';
+    const validDeletedAt = c.deletedAt === null || typeof c.deletedAt === 'number';
+    if (!validId || !validName || !validDeletedAt) {
+      throw new Error(`Personaggio non valido: campi mancanti o errati (${JSON.stringify(c)})`);
+    }
+  }
   const ids = new Set(data.characters.map((c) => c.id));
   for (const tx of data.transactions) {
+    const validId = typeof tx.id === 'string' && tx.id.length > 0;
+    const validFrom = typeof tx.fromId === 'string';
+    const validTo = typeof tx.toId === 'string';
+    const validDelta = typeof tx.delta === 'number' && Number.isFinite(tx.delta);
+    const validTxName = typeof tx.name === 'string';
+    const validCreatedAt = typeof tx.createdAt === 'number';
+    if (!validId || !validFrom || !validTo || !validDelta || !validTxName || !validCreatedAt) {
+      throw new Error(`Transazione non valida: campi mancanti o errati (${tx.id})`);
+    }
     if (!ids.has(tx.fromId) || !ids.has(tx.toId)) {
       throw new Error(`Integrità referenziale rotta: transazione ${tx.id} punta a un personaggio inesistente`);
     }
   }
-  return true;
+  const valid = true;
+  return valid;
 }
 
 export function parseImport(json) {

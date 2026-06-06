@@ -36,3 +36,17 @@ test('migrate lascia invariato uno stato già alla versione corrente', () => {
   const migrated = migrate(s);
   assert.equal(migrated.version, s.version);
 });
+
+test('validateState rifiuta personaggio senza id', () => {
+  const s = { version: 1, characters: [{ name: 'A', deletedAt: null }], transactions: [] };
+  assert.throws(() => validateState(s), /personaggio|character|id/i);
+});
+
+test('validateState rifiuta transazione con delta non numerico', () => {
+  const s = {
+    version: 1,
+    characters: [{ id: 'c1', name: 'A', deletedAt: null }],
+    transactions: [{ id: 't1', fromId: 'c1', toId: 'c1', delta: 'x', name: 'n', createdAt: 1 }],
+  };
+  assert.throws(() => validateState(s), /transazione|transaction|delta/i);
+});
