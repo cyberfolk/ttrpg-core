@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Versione: 2.1 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-07 09:07
+Versione: 2.2 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-07 09:18
 
 @~/.claude/shared/timestamp-header.md
 @~/.claude/shared/project-layout.md
@@ -49,7 +49,7 @@ MODEL/STORE/IO coperti da `node:test` (TDD). La VIEW (DOM) si verifica a mano ne
 
 Mappa e tracker ID in `docs/README.md`. Workflow a 5 stadi:
 
-1. **Indagine** — generica → `llm-wiki/raw`; specifica del progetto → `docs/research/<slug>.md`.
+1. **Indagine** — ricerca/note → `docs/research/<slug>.md`.
 2. **Requisiti** — nuova feature → `docs/features/NNN-slug/requisiti.md` (bozza seed dell'utente).
 3. **Spec** — output brainstorm → `docs/features/NNN-slug/spec.md`.
 4. **Plan** — output writing-plans → `docs/features/NNN-slug/plan.md`.
