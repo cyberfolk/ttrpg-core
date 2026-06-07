@@ -1,20 +1,24 @@
 # Mappa docs
 
-Tracker prossimo ID feature: **003**
+Tracker prossimo ID feature: **004**
 Tracker prossimo ID ADR: **0003**
 
 ## Cosa sta dove
 
-| Cartella | Contenuto | Numerazione |
-|----------|-----------|-------------|
-| `features/NNN-slug/` | Ciclo di vita di una feature: `requisiti.md` (bozza seed) → `spec.md` (brainstorm) → `plan.md` (writing-plans) | `NNN` per feature, 3 cifre, mai riusato |
-| `adr/NNNN-slug.md` | Architecture Decision Record: una decisione architetturale, immutabile | `NNNN` 4 cifre, mai riusato |
-| `research/slug.md` | Indagini e note di ricerca (tecniche, valutazioni, approfondimenti) | per topic, niente numero |
+| Cartella             | Contenuto                                                                                                                                                            | Numerazione                             |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
+| `features/NNN-slug/` | Ciclo di vita di una feature: `requisiti.md` (bozza seed) → `spec.md` (brainstorm) → `plan.md` (writing-plans); + `research/` per la ricerca specifica della feature | `NNN` per feature, 3 cifre, mai riusato |
+| `adr/NNNN-slug.md`   | Architecture Decision Record: una decisione architetturale, immutabile                                                                                               | `NNNN` 4 cifre, mai riusato             |
+| `research/slug.md`   | Ricerca **trasversale** (vale per più feature / progetto in generale)                                                                                                | per topic, niente numero                |
+
+Ricerca **specifica di una feature** → `features/NNN-slug/research/<slug>.md`. Ricerca
+**trasversale** → `docs/research/<slug>.md`.
 
 ## Workflow (5 stadi)
 
 ```
-1. INDAGINE   ricerca/note → docs/research/<slug>.md
+1. INDAGINE   specifica feature → docs/features/NNN-slug/research/<slug>.md
+              trasversale      → docs/research/<slug>.md
 2. REQUISITI  nuova feature → docs/features/NNN-slug/requisiti.md
 3. SPEC       brainstorm → spec.md (stessa cartella)
 4. PLAN       writing-plans → plan.md (stessa cartella)

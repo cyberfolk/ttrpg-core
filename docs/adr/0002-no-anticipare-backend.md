@@ -2,6 +2,7 @@
 
 Data: 2026-06-07
 Stato: Accettato
+Ambito: backend/persistenza. Non si applica alla VIEW.
 
 ## Contesto
 
