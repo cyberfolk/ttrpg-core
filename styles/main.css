@@ -1,21 +1,54 @@
 :root { font-family: system-ui, sans-serif; }
-body { margin: 1rem; }
+body { margin: 0; }
 
-.toolbar { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
-.toolbar input[type=file] { display: none; }
-.toolbar .import { border: 1px solid #ccc; padding: 0.3rem 0.6rem; cursor: pointer; border-radius: 4px; }
+/* --- Feature 003: viste + profilo --- */
+.app-header { display:flex; justify-content:space-between; align-items:center; padding:.5rem 1rem; border-bottom:1px solid #ccc; }
+.app-header .logo { font-weight:bold; text-decoration:none; color:inherit; }
+.data-ops { display:flex; gap:.5rem; align-items:center; }
+.data-ops input[type=file] { display:none; }
+.data-ops .import { border:1px solid #ccc; padding:.3rem .6rem; cursor:pointer; border-radius:4px; }
+.app-main { padding:1rem; }
 
-.matrix { border-collapse: collapse; }
-.matrix th, .matrix td { border: 1px solid #ccc; padding: 0.4rem 0.6rem; text-align: center; }
-.matrix th { background: #f3f3f3; }
-.matrix .diagonal { background: #eee; color: #999; }
-.matrix .score-cell { cursor: pointer; font-weight: 600; }
+.controls { display:flex; flex-wrap:wrap; gap:.75rem; align-items:center; margin-bottom:1rem; }
+.view-switcher button.active, .tabs button.active, .sort-controls button.active { font-weight:bold; }
 
-.panel { margin-top: 1rem; border: 1px solid #ccc; padding: 1rem; border-radius: 6px; }
-.tx-list { list-style: none; padding: 0; }
-.tx-list li { display: flex; gap: 0.4rem; margin-bottom: 0.4rem; }
-.tx-add { display: flex; gap: 0.4rem; margin-top: 0.6rem; }
+.gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:.75rem; }
+.character-card { position:relative; border:1px solid #ddd; border-radius:8px; padding:.75rem; display:flex; flex-direction:column; gap:.5rem; }
+.character-card.archived { opacity:.6; }
+.card-name { font-weight:bold; text-decoration:none; color:inherit; }
+.card-score { text-align:center; border-radius:6px; padding:.25rem; font-variant-numeric:tabular-nums; }
+.ribbon { position:absolute; top:0; right:0; background:#b00; color:#fff; font-size:.7rem; padding:.1rem .4rem; border-bottom-left-radius:6px; }
 
-.archived { margin-top: 1rem; }
-.archived ul { list-style: none; padding: 0; }
-.archived li { margin-bottom: 0.4rem; }
+.list-view { border-collapse:collapse; width:100%; }
+.list-view th, .list-view td { border:1px solid #ddd; padding:.4rem .6rem; text-align:left; }
+.list-view tr.archived { opacity:.6; }
+.ribbon-inline { color:#b00; font-size:.8rem; margin-left:.3rem; }
+
+.matrix { border-collapse:collapse; }
+.matrix th, .matrix td { border:1px solid #ddd; padding:.4rem .6rem; text-align:center; }
+.matrix .score-cell { cursor:pointer; font-weight:600; }
+.matrix .diagonal { background:#f3f3f3; color:#999; }
+.row-head { background:#f3f3f3; }
+
+.profile-view { position:relative; }
+.breadcrumb { margin-bottom:.5rem; }
+.profile-header { display:flex; align-items:center; gap:.75rem; }
+.synthetic { padding:.25rem .5rem; border-radius:6px; font-variant-numeric:tabular-nums; }
+.tabs { display:flex; gap:.5rem; margin:.75rem 0; }
+
+.relation-list ul { list-style:none; padding:0; }
+.relation-sort { display:flex; gap:.5rem; margin-bottom:.5rem; }
+.relation-row { display:flex; justify-content:space-between; align-items:center; gap:.5rem; padding:.3rem 0; border-bottom:1px solid #eee; }
+.relation-name { text-decoration:none; color:inherit; }
+.relation-score { padding:.2rem .6rem; border-radius:6px; min-width:2.5rem; text-align:center; }
+
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; }
+.modal { background:#fff; border-radius:8px; padding:1rem; max-width:520px; width:90%; max-height:80vh; overflow:auto; }
+.modal-head { display:flex; justify-content:space-between; align-items:center; }
+.tx-list { list-style:none; padding:0; }
+.tx-list li { display:flex; gap:.4rem; margin:.3rem 0; }
+.tx-add { display:flex; gap:.4rem; margin-top:.6rem; }
+
+.empty { color:#888; font-style:italic; }
+.notfound { padding:2rem; text-align:center; }
+.back { margin-bottom:.5rem; }

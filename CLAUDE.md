@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Versione: 2.4 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-07 11:18
+Versione: 2.5 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-07 16:28
 
 @~/.claude/shared/timestamp-header.md
 @~/.claude/shared/project-layout.md
@@ -14,7 +14,7 @@ Versione: 2.4 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-07 11:18
 
 Web app **locale** (browser, no server) di tool per TTRPG. Prima feature: sistema di reputazione tra personaggi D&D. 
 - Prima implementazione: Stack: JS (ES modules) / HTML / CSS; 
-- Dalla feature 003 la VIEW usa un **framework frontend** (quale framework — con build o no-build — e se usare rotte vere si decidono nel brainstorm 003 e si sanciscono in una ADR). `MODEL`/`STORE`/`IO` restano framework-agnostici e invariati: il framework tocca **solo la VIEW**.
+- Dalla feature 003 la VIEW usa **Vue 3 + Vite + vue-router** (routing in history mode con `404.html` per GitHub Pages; vedi ADR 0003). `MODEL`/`STORE`/`IO` restano framework-agnostici e invariati: il framework tocca **solo la VIEW**.
 
 ## Architettura (vincolo forte)
 
@@ -40,9 +40,7 @@ La logica di reputazione vive **solo nel MODEL**: view e store non calcolano pun
 - Test: `npm test` (= `node --test`, auto-discovery di `scripts/tests/**/*.test.js`).
   **Non** usare `node --test scripts/tests/` (forma directory rotta su Windows): per un
   singolo file usa `node --test scripts/tests/<nome>.test.js`.
-- Avvio app: servire via HTTP — `py -m http.server 8000` (con `file://` i browser bloccano
-  gli ES module per CORS). Con un framework con build step il comando diventerà il dev server
-  del bundler.
+- Avvio app (dev): `npm run dev` (Vite dev server). Build di produzione: `npm run build` (genera `dist/` + `404.html` per il routing SPA su Pages); anteprima: `npm run preview`.
 
 ## Test
 

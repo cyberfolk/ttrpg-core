@@ -103,3 +103,23 @@ export function listArchivedCharacters(state) {
   const archived = state.characters.filter((c) => c.deletedAt !== null);
   return archived;
 }
+
+export function averageIncomingScore(state, charId, includeArchived) {
+  const pool = includeArchived
+    ? state.characters
+    : state.characters.filter((c) => c.deletedAt === null);
+  const others = pool.filter((c) => c.id !== charId);
+  const senders = others.filter((sender) => hasTransaction(state, sender.id, charId));
+  if (senders.length === 0) {
+    return null;
+  }
+  const total = senders.reduce((acc, sender) => acc + computeScore(state, sender.id, charId), 0);
+  // media arrotondata all'intero per coerenza con i punteggi mostrati
+  const average = Math.round(total / senders.length);
+  return average;
+}
+
+function hasTransaction(state, fromId, toId) {
+  const has = state.transactions.some((tx) => tx.fromId === fromId && tx.toId === toId);
+  return has;
+}
