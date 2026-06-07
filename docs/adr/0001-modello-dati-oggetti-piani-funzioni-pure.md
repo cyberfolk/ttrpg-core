@@ -11,7 +11,7 @@ reputazione. Andava scelto come rappresentarli: **classi JS** (istanze con metod
 oppure **oggetti dati piani + funzioni pure**.
 
 Vincoli rilevanti dal design (vedi
-`docs/superpowers/specs/2026-06-06-sistema-reputazione-design.md`):
+`docs/features/001-sistema-reputazione/spec.md`):
 
 - Il modello deve essere **traducibile 1:1 in Python** in una fase futura, a costo quasi
   nullo.

@@ -124,5 +124,5 @@ La logica di reputazione vive **solo** nel MODEL. Lo STORE orchestra
 
 Il campo `version` consente migrazioni di schema future (`migrate()` in `io.js`).
 
-Documentazione di design e piano implementativo: `docs/superpowers/`.
+Documentazione di design e piano implementativo: `docs/features/<NNN-slug>/` (vedi `docs/README.md`).
 ```
