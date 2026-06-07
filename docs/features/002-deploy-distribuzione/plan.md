@@ -1,5 +1,10 @@
 # Deploy GitHub Pages — Implementation Plan
 
+> **STATO: completato.** Deploy eseguito — app live su
+> https://cyberfolk.github.io/ttrpg-core/. Documento **storico** (foto del piano al momento
+> della stesura): checkbox e dettagli NON sono mantenuti aggiornati. Fonte di verità: il
+> repo e la `spec.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Pubblicare il prototipo statico su GitHub Pages, così gli amici lo usano da un semplice link.

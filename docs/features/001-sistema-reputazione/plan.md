@@ -1,5 +1,10 @@
 # Sistema di Reputazione V1 — Implementation Plan
 
+> **STATO: completato.** Piano eseguito — codice in `src/`, 30 test verdi. Documento
+> **storico** (foto del piano al momento della stesura): checkbox e dettagli NON sono
+> mantenuti aggiornati e possono divergere dal codice. Fonte di verità: il codice e la
+> `spec.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Web app locale (browser, no server) per tracciare la reputazione asimmetrica tra personaggi D&D, con punteggio derivato da transazioni e export/import JSON.
