@@ -52,5 +52,6 @@ function onImportFile(event) {
     }
   };
   reader.readAsText(file);
+  event.target.value = '';
 }
 </script>

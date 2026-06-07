@@ -22,6 +22,7 @@
     </div>
 
     <RelationList
+      :key="tab"
       :current-id="character.id"
       :direction="tab"
       @open-tx="openTx"

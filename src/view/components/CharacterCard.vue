@@ -28,7 +28,7 @@ import { softDeleteCharacter, restoreCharacter, hardDeleteCharacter } from '../.
 
 const props = defineProps({
   char: { type: Object, required: true },
-  score: { type: [Number, null], default: null },
+  score: { type: Number, default: null },
 });
 
 const { dispatch } = useStore();
