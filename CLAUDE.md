@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Versione: 2.0 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-06 02:36
+Versione: 2.1 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-07 09:07
 
 @~/.claude/shared/timestamp-header.md
 @~/.claude/shared/project-layout.md
@@ -47,4 +47,13 @@ MODEL/STORE/IO coperti da `node:test` (TDD). La VIEW (DOM) si verifica a mano ne
 
 ## Docs
 
-Design e piano implementativo in `docs/superpowers/` (specs/ e plans/).
+Mappa e tracker ID in `docs/README.md`. Workflow a 5 stadi:
+
+1. **Indagine** — generica → `llm-wiki/raw`; specifica del progetto → `docs/research/<slug>.md`.
+2. **Requisiti** — nuova feature → `docs/features/NNN-slug/requisiti.md` (bozza seed dell'utente).
+3. **Spec** — output brainstorm → `docs/features/NNN-slug/spec.md`.
+4. **Plan** — output writing-plans → `docs/features/NNN-slug/plan.md`.
+5. **Decisione** — scelta architetturale → `docs/adr/NNNN-slug.md`.
+
+Override dei path di default di superpowers: spec e plan vanno nella cartella della feature,
+non in `docs/superpowers/`. Tracker prossimi ID (feature, ADR) in `docs/README.md`, non qui.
