@@ -5,7 +5,8 @@
 La feature si fa su un **framework frontend** (non vanilla): lo scope multi-vista lo
 richiede. Quale framework (con build o no-build) e se usare rotte vere o stato UI in memoria
 si decidono nel brainstorm. Si tocca **solo la VIEW**: `MODEL`/`STORE`/`IO` restano invariati.
-Contesto: [[01-presentazione-dati]], [[02-domande-pre-brainstorm]].
+Contesto: [[01-presentazione-dati]], [[02-domande-pre-brainstorm]].  
+Useremo Vue 3 + Vite + vue-router.
 
 ## Obiettivo
 
