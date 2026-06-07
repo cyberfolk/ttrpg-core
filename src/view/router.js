@@ -1,7 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import CharactersView from './components/CharactersView.vue';
+import ProfileView from './components/ProfileView.vue';
+import NotFound from './components/NotFound.vue';
 
 const routes = [
-  { path: '/', component: { template: '<p>app viva</p>' } },
+  { path: '/', redirect: '/personaggi' },
+  { path: '/personaggi', name: 'characters', component: CharactersView },
+  { path: '/personaggio/:id', name: 'profile', component: ProfileView, props: true },
+  { path: '/:pathMatch(.*)*', name: 'notfound', component: NotFound },
 ];
 
 export const router = createRouter({
