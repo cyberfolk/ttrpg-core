@@ -8,7 +8,7 @@
 
 **Tech Stack:** GitHub Pages (hosting statico). Nessun build, nessun framework, nessuna CI.
 
-**Spec di riferimento:** `docs/superpowers/specs/2026-06-06-deploy-github-pages-design.md`
+**Spec di riferimento:** `docs/features/002-deploy-distribuzione/spec.md`
 
 > **Nota esecuzione:** `gh` CLI NON è installato. I Task 2 e 3 sono azioni nella UI web di GitHub (percorso click fornito), non scriptabili. I Task 1, 4, 5 sono eseguibili da terminale/codice.
 

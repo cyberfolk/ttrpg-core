@@ -8,7 +8,7 @@
 
 **Tech Stack:** JavaScript vanilla (ES modules), HTML, CSS. Test con `node:test` + `node:assert` (built-in Node 22, nessun framework). `crypto.randomUUID` per gli id.
 
-**Spec di riferimento:** `docs/superpowers/specs/2026-06-06-sistema-reputazione-design.md`
+**Spec di riferimento:** `docs/features/001-sistema-reputazione/spec.md`
 
 ---
 
