@@ -1,5 +1,7 @@
 # Feature 003 — Viste personaggi + profilo — Implementation Plan
 
+> **STATO: COMPLETATO (2026-06-08)** — tutti i 15 task implementati (subagent-driven, doppia review per task), 36/36 test verdi, build pulita, mergiato in `main` e deployato su GitHub Pages. Restyle estetico ("tema grimorio") applicato in un passaggio successivo con la skill `frontend-design`. Documento storico: le checkbox `- [ ]` non sono mantenute aggiornate.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Sostituire la VIEW vanilla con un'app Vue 3 che offre elenco personaggi (gallery/list/matrix), profilo per-personaggio con reputazione in entrata/uscita, ricerca, ordinamento e gestione archivio — senza toccare MODEL/STORE.

@@ -1,7 +1,7 @@
 # Spec — Feature 003: Viste personaggi + profilo
 
 Data: 2026-06-07
-Stato: spec (output brainstorm) — da convertire in plan con writing-plans
+Stato: COMPLETATA — implementata via `plan.md`, mergiata in `main`, live su GitHub Pages (2026-06-08). ADR 0003 sancisce lo stack.
 Riferimenti: `requisiti.md`, [[01-presentazione-dati]], [[02-domande-pre-brainstorm]],
 [[03-scelta-framework-frontend]], [[0002-no-anticipare-backend]]
 

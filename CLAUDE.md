@@ -4,8 +4,7 @@ Versione: 2.5 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-07 16:28
 
 @~/.claude/shared/timestamp-header.md
 @~/.claude/shared/project-layout.md
-@~/.claude/shared/git-rules.md
-@~/.claude/shared/git-commit-tags.md
+@~/.claude/shared/git-commit-tags-list.md
 @~/.claude/shared/todo-conventions.md
 
 ---
