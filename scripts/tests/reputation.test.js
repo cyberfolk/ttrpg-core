@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction } from '../../src/model/schema.js';
-import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters } from '../../src/model/reputation.js';
+import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore } from '../../src/model/reputation.js';
 
 test('BASE è 50 e SCHEMA_VERSION è 1', () => {
   assert.equal(BASE, 50);
@@ -172,4 +172,59 @@ test('hardDeleteCharacter rimuove il char e le sue transazioni in entrambe le di
   s = hardDeleteCharacter(s, a.id);
   assert.equal(s.characters.length, 1);
   assert.equal(s.transactions.length, 0);
+});
+
+function threeChars() {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s = addCharacter(s, 'B');
+  s = addCharacter(s, 'C');
+  return s;
+}
+
+test('averageIncomingScore è null se nessuno ha transazioni verso il pg', () => {
+  const s = threeChars();
+  const a = s.characters[0];
+  assert.equal(averageIncomingScore(s, a.id, false), null);
+});
+
+test('averageIncomingScore media solo i mittenti con almeno una transazione', () => {
+  let s = threeChars();
+  const [a, b, c] = s.characters;
+  s = addTransaction(s, b.id, a.id, 10, 'x');
+  assert.equal(averageIncomingScore(s, a.id, false), 60);
+});
+
+test('averageIncomingScore fa la media su più mittenti', () => {
+  let s = threeChars();
+  const [a, b, c] = s.characters;
+  s = addTransaction(s, b.id, a.id, 10, 'x'); // B->A = 60
+  s = addTransaction(s, c.id, a.id, -30, 'y'); // C->A = 20
+  assert.equal(averageIncomingScore(s, a.id, false), 40);
+});
+
+test('averageIncomingScore esclude mittenti archiviati quando includeArchived=false', () => {
+  let s = threeChars();
+  const [a, b, c] = s.characters;
+  s = addTransaction(s, b.id, a.id, 10, 'x'); // 60
+  s = addTransaction(s, c.id, a.id, -30, 'y'); // 20
+  s = softDeleteCharacter(s, c.id);
+  assert.equal(averageIncomingScore(s, a.id, false), 60);
+});
+
+test('averageIncomingScore include mittenti archiviati quando includeArchived=true', () => {
+  let s = threeChars();
+  const [a, b, c] = s.characters;
+  s = addTransaction(s, b.id, a.id, 10, 'x'); // 60
+  s = addTransaction(s, c.id, a.id, -30, 'y'); // 20
+  s = softDeleteCharacter(s, c.id);
+  assert.equal(averageIncomingScore(s, a.id, true), 40);
+});
+
+test('averageIncomingScore non considera il pg stesso come mittente', () => {
+  let s = threeChars();
+  const [a, b] = s.characters;
+  s = addTransaction(s, a.id, a.id, 40, 'auto');
+  s = addTransaction(s, b.id, a.id, 10, 'x'); // 60
+  assert.equal(averageIncomingScore(s, a.id, false), 60);
 });
