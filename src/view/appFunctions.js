@@ -6,6 +6,7 @@ export const APP_FUNCTIONS = [
 ];
 
 // Route che appartengono alla funzione Reputazione.
+// Sincronizzare con i `name` delle route in router.js se queste cambiano.
 const REPUTATION_ROUTES = ['characters', 'profile'];
 
 // Restituisce l'id della funzione attiva data la route corrente, o null.
