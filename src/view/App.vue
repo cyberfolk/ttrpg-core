@@ -1,6 +1,11 @@
 <template>
   <div id="app-root">
     <header class="rep-header">
+      <!-- Hamburger drawer -->
+      <button ref="menuBtn" class="rep-header__menu" @click="openDrawer" aria-label="Apri menu">
+        <Icon name="menu" />
+      </button>
+
       <!-- Logo -->
       <span class="ds-logo">
         <span class="ds-logo__mark">
@@ -45,14 +50,31 @@
     <main class="rep-main">
       <router-view />
     </main>
+
+    <AppDrawer :open="drawerOpen" @close="onDrawerClose" />
   </div>
 </template>
 
 <script setup>
+import { ref, nextTick } from 'vue';
 import { useStore } from './useStore.js';
 import { serializeState, parseImport } from '../store/io.js';
+import AppDrawer from './components/AppDrawer.vue';
+import Icon from './components/Icon.vue';
 
 const { getState, replaceState } = useStore();
+
+const drawerOpen = ref(false);
+const menuBtn = ref(null);
+
+function openDrawer() {
+  drawerOpen.value = true;
+}
+
+function onDrawerClose() {
+  drawerOpen.value = false;
+  nextTick(() => menuBtn.value?.focus());
+}
 
 function onExport() {
   const text = serializeState(getState());
