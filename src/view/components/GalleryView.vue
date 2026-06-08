@@ -1,6 +1,6 @@
 <template>
-  <div class="gallery">
-    <p v-if="items.length === 0" class="empty">Nessun personaggio.</p>
+  <div class="rep-gallery">
+    <p v-if="items.length === 0" class="rep-empty">Nessun personaggio.</p>
     <CharacterCard
       v-for="item in items"
       :key="item.char.id"

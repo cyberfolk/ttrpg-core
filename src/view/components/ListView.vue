@@ -1,30 +1,59 @@
 <template>
-  <table class="list-view">
+  <table class="rep-table">
     <thead>
       <tr>
         <th>Nome</th>
-        <th>Punteggio</th>
+        <th>
+          <span class="rep-th-help">
+            Punteggio sintetico
+            <HoverTip :text="SCORE_TIP" label="Aiuto" class-name="rep-tip--help">
+              <Icon name="help" />
+            </HoverTip>
+          </span>
+        </th>
         <th>Azioni</th>
       </tr>
     </thead>
     <tbody>
       <tr v-if="items.length === 0">
-        <td colspan="3" class="empty">Nessun personaggio.</td>
+        <td colspan="3" class="rep-empty">Nessun personaggio.</td>
       </tr>
-      <tr v-for="item in items" :key="item.char.id" :class="{ archived: item.char.deletedAt !== null }">
+      <tr v-for="item in items" :key="item.char.id"
+        :style="item.char.deletedAt !== null ? { opacity: 0.6 } : undefined"
+        :class="item.char.deletedAt === null ? 'rep-table__row--clickable' : undefined"
+        :role="item.char.deletedAt === null ? 'button' : undefined"
+        :tabindex="item.char.deletedAt === null ? 0 : undefined"
+        @click="item.char.deletedAt === null ? goToProfile(item.char.id) : undefined"
+        @keydown="item.char.deletedAt === null ? onKeyDown($event, item.char.id) : undefined">
+
         <td>
-          <router-link :to="{ name: 'profile', params: { id: item.char.id } }">
-            {{ item.char.name }} ↪
-          </router-link>
-          <span v-if="item.char.deletedAt !== null" class="ribbon-inline">(archiviato)</span>
+          <span class="rep-table__name" @click.stop="goToProfile(item.char.id)">
+            {{ item.char.name }}
+            <Icon name="goto" />
+          </span>
+          <span v-if="item.char.deletedAt !== null" class="ds-badge ds-badge--ember" style="margin-left:8px">
+            Archiviato
+          </span>
         </td>
-        <td :style="scoreStyle(item.score)">{{ item.score === null ? '–' : item.score }}</td>
         <td>
-          <button v-if="item.char.deletedAt === null" @click="onArchive(item.char.id)">Archivia</button>
-          <template v-else>
-            <button @click="onRestore(item.char.id)">Ripristina</button>
-            <button @click="onHardDelete(item.char.id)">Elimina definitivo</button>
-          </template>
+          <span class="ds-score" :class="item.score === null ? 'ds-score--empty' : ''"
+            :style="item.score !== null ? { background: scoreColor(item.score) } : undefined">
+            {{ item.score !== null ? item.score : '–' }}
+          </span>
+        </td>
+        <td @click.stop>
+          <div class="rep-table__actions">
+            <template v-if="item.char.deletedAt === null">
+              <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onArchive(item.char.id)">
+                <span class="ds-btn__icon"><Icon name="archive" /></span>
+                Archivia
+              </button>
+            </template>
+            <template v-else>
+              <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onRestore(item.char.id)">Ripristina</button>
+              <button class="ds-btn ds-btn--sm ds-btn--danger" @click="onHardDelete(item.char.id)">Elimina</button>
+            </template>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -32,22 +61,28 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { scoreColor } from '../scoreColor.js';
 import { softDeleteCharacter, restoreCharacter, hardDeleteCharacter } from '../../model/reputation.js';
+import Icon from './Icon.vue';
+import HoverTip from './HoverTip.vue';
+
+const SCORE_TIP = "Punteggio sintetico: media delle valutazioni che gli altri personaggi danno a questo (reputazione in ingresso). Va da 1 a 100: rosso = ostile, verde = alleato. Il trattino indica nessuna relazione registrata.";
 
 defineProps({
   items: { type: Array, required: true },
 });
 
 const { dispatch } = useStore();
+const router = useRouter();
 
-function scoreStyle(score) {
-  if (score === null) {
-    return 'background:#eee';
-  }
-  const style = `background:${scoreColor(score)}`;
-  return style;
+function goToProfile(id) {
+  router.push({ name: 'profile', params: { id } });
+}
+
+function onKeyDown(e, id) {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToProfile(id); }
 }
 
 function onArchive(id) {
