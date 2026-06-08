@@ -1,5 +1,9 @@
 # Design — Deploy prototipo su GitHub Pages
 
+> ⚠️ **Snapshot storico (feature 002).** I riferimenti a "nessun build / nessun framework"
+> fotografano il deploy di allora (app statica vanilla servita da root). Dalla feature 003
+> c'è build Vite (`dist/`) + routing SPA con `404.html` (ADR 0003).
+
 Data: 2026-06-06
 Stato: approvato (design), in attesa di piano implementativo
 Progetto: ttrpg-core — distribuzione del prototipo agli amici (non-tecnici)

@@ -1,5 +1,9 @@
 # Vue/React su GitHub Pages
 
+> ⚠️ **Nota storica — superata.** Ricerca del periodo vanilla: valutava *se* migrare a un
+> framework. La migrazione è avvenuta — dalla feature 003 la VIEW è **Vue 3 + Vite +
+> vue-router** (vedi ADR 0003). Le frasi al presente qui sotto fotografano lo stato di allora.
+
 L'app ttrpg-core ad'ora è vanilla JS, statica, dati in `localStorage`.   
 Ma Posso riscriverla in Vue/React, rimanendo sempre GitHub Pages!
 

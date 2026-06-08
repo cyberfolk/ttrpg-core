@@ -1,5 +1,9 @@
 # Design — Sistema di Reputazione tra Personaggi (V1)
 
+> ⚠️ **Snapshot storico (feature 001).** Lo stack VIEW descritto qui (vanilla JS, una
+> pagina, niente framework/rotte) era quello di V1. Dalla feature 003 la VIEW è **Vue 3 +
+> Vite + vue-router** (ADR 0003); MODEL/STORE/IO restano invariati.
+
 Data: 2026-06-06 Stato: approvato (design), in attesa di piano implementativo Progetto: ttrpg-core — web app locale per gestione TTRPG (prima feature: D&D, reputazione)
 
 ---

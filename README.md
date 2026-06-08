@@ -5,8 +5,9 @@
 Web app **locale** (gira nel browser, nessun server) per gestire tool da TTRPG.
 Prima feature: **sistema di reputazione tra personaggi** per Dungeons & Dragons.
 
-Niente framework: solo JavaScript (ES modules), HTML e CSS. I modelli dati sono
-funzioni pure, pensati per una futura migrazione a Python a costo quasi nullo.
+La VIEW usa **Vue 3 + Vite + vue-router** (dalla feature 003, vedi ADR 0003). I layer
+MODEL e STORE/IO restano **framework-agnostici**: dati puri e funzioni pure, pensati per
+una futura migrazione a Python a costo quasi nullo. Il framework tocca solo la VIEW.
 
 ---
 
@@ -55,20 +56,27 @@ punteggio(A→B) = clamp1-100( 50 + somma dei delta delle transazioni A→B )
 
 ## Avvio
 
-Servono dei moduli ES, quindi è meglio servire la cartella via HTTP (con `file://`
-alcuni browser bloccano i moduli per CORS).
+L'app è gestita da **Vite**. Prima volta (o dopo un clone) installa le dipendenze:
 
 ```bash
-cd C:\Users\andre\cyberfolk\ttrpg-core
-py -m http.server 8000
-# poi apri http://localhost:8000
+npm install
 ```
 
-Tieni la finestra del terminale aperta finché usi l'app (chiuderla ferma il server;
-`Ctrl+C` per fermarlo a mano).
+Dev server con hot-reload:
 
-In alternativa apri direttamente `index.html` se il tuo browser consente i moduli da
-`file://`.
+```bash
+npm run dev
+# poi apri l'URL stampato da Vite (es. http://localhost:5173)
+```
+
+Tieni la finestra del terminale aperta finché usi l'app (`Ctrl+C` per fermare il server).
+
+### Build di produzione
+
+```bash
+npm run build      # genera dist/ (+ copia 404.html per il routing SPA su GitHub Pages)
+npm run preview    # serve in locale la build di produzione, per verifica finale
+```
 
 ---
 
@@ -89,7 +97,7 @@ Coperti MODEL, STORE e IO. La VIEW (DOM) si verifica manualmente nel browser.
 Tre layer, dipendenze solo verso il basso:
 
 ```
-VIEW   (src/view/)   DOM, rendering, input — parla solo con lo STORE
+VIEW   (src/view/)   componenti Vue 3, rendering, input — parla solo con lo STORE
 STORE  (src/store/)  stato in memoria + persistenza — unico a toccare localStorage
 MODEL  (src/model/)  dati puri + funzioni pure — nessuna dipendenza dal browser
 ```
@@ -104,7 +112,11 @@ La logica di reputazione vive **solo** nel MODEL. Lo STORE orchestra
 | `src/store/storage.js` | Adattatori storage (localStorage / in-memory per i test) |
 | `src/store/io.js` | Serializzazione, validazione, migrazione, parsing import |
 | `src/store/store.js` | Stato, `dispatch`, `subscribe`, persistenza |
-| `src/view/*.js` | Toolbar, matrice, pannello transazioni, vista archiviati, bootstrap |
+| `src/view/main.js` | Bootstrap Vue: monta l'app e registra il router |
+| `src/view/router.js` | Definizione rotte (vue-router, history mode) |
+| `src/view/App.vue` | Layout radice e navigazione |
+| `src/view/components/*.vue` | Viste e componenti: matrice, galleria, lista, profilo, modale transazioni |
+| `src/view/use*.js` | Composables: accesso allo STORE, stato UI, personaggi visualizzati |
 
 ### Formato dati (export/import)
 

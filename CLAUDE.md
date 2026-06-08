@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Versione: 2.5 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-07 16:28
+Versione: 2.5 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-08 22:38
 
 @~/.claude/shared/timestamp-header.md
 @~/.claude/shared/project-layout.md
@@ -11,9 +11,9 @@ Versione: 2.5 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-07 16:28
 
 ## Progetto
 
-Web app **locale** (browser, no server) di tool per TTRPG. Prima feature: sistema di reputazione tra personaggi D&D. 
-- Prima implementazione: Stack: JS (ES modules) / HTML / CSS; 
-- Dalla feature 003 la VIEW usa **Vue 3 + Vite + vue-router** (routing in history mode con `404.html` per GitHub Pages; vedi ADR 0003). `MODEL`/`STORE`/`IO` restano framework-agnostici e invariati: il framework tocca **solo la VIEW**.
+Web app **locale** (browser, no server) di tool per TTRPG. Prima feature: sistema di reputazione tra personaggi D&D.
+
+Stack: VIEW in **Vue 3 + Vite + vue-router** (routing history mode con `404.html` per GitHub Pages; vedi ADR 0003). `MODEL`/`STORE`/`IO` sono framework-agnostici: il framework tocca **solo la VIEW**.
 
 ## Architettura (vincolo forte)
 
@@ -22,8 +22,8 @@ Tre layer, dipendenze solo verso il basso:
 - `src/model/` — dati puri + funzioni pure. **Nessuna dipendenza dal browser** (no
   `window`/`document`/`localStorage`): traducibile 1:1 in Python (migrazione futura).
 - `src/store/` — stato in memoria + persistenza. **Unico layer che tocca localStorage.**
-- `src/view/` — rendering UI (prima DOM vanilla; dalla 003 un framework frontend). Parla solo
-  con lo store. Layer isolato: cambiarlo non tocca MODEL/STORE/IO.
+- `src/view/` — rendering UI (componenti Vue 3). Parla solo con lo store. Layer isolato:
+  cambiarlo non tocca MODEL/STORE/IO.
 
 La logica di reputazione vive **solo nel MODEL**: view e store non calcolano punteggi.
 
@@ -43,7 +43,7 @@ La logica di reputazione vive **solo nel MODEL**: view e store non calcolano pun
 
 ## Test
 
-MODEL/STORE/IO coperti da `node:test` (TDD). La VIEW (DOM) si verifica a mano nel browser.
+MODEL/STORE/IO coperti da `node:test` (TDD). La VIEW si verifica a mano nel browser.
 
 ## Docs
 
