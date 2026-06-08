@@ -67,8 +67,7 @@ import { scoreColor } from '../scoreColor.js';
 import { softDeleteCharacter, restoreCharacter, hardDeleteCharacter } from '../../model/reputation.js';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
-
-const SCORE_TIP = "Punteggio sintetico: media delle valutazioni che gli altri personaggi danno a questo (reputazione in ingresso). Va da 1 a 100: rosso = ostile, verde = alleato. Il trattino indica nessuna relazione registrata.";
+import { SCORE_TIP } from '../uiCopy.js';
 
 defineProps({
   items: { type: Array, required: true },

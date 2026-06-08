@@ -82,8 +82,7 @@ import RelationList from './RelationList.vue';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
 import HoverTip from './HoverTip.vue';
-
-const SCORE_TIP = "Punteggio sintetico: media delle valutazioni che gli altri personaggi danno a questo (reputazione in ingresso). Va da 1 a 100: rosso = ostile, verde = alleato. Il trattino indica nessuna relazione registrata.";
+import { SCORE_TIP } from '../uiCopy.js';
 
 const props = defineProps({
   id: { type: String, required: true },
