@@ -41,10 +41,32 @@
         <p class="rep-drawer__doc">{{ reputationHelp }}</p>
       </div>
 
-      <!-- Impostazioni (placeholder) -->
+      <!-- Impostazioni generali (app-level) -->
+      <div class="rep-drawer__sec">
+        <div class="rep-drawer__label">Impostazioni generali</div>
+        <div class="rep-drawer__actions">
+          <button class="ds-btn ds-btn--secondary ds-btn--sm" @click="onExport">
+            <span class="ds-btn__icon"><Icon name="download" /></span>
+            Scarica dati
+          </button>
+          <label class="ds-btn ds-btn--secondary ds-btn--sm" style="cursor:pointer">
+            <span class="ds-btn__icon"><Icon name="upload" /></span>
+            Carica dati
+            <input type="file" accept="application/json" @change="onImportFile" style="display:none" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Impostazioni Reputazione -->
       <div class="rep-drawer__sec">
         <div class="rep-drawer__label">Impostazioni · Reputazione</div>
-        <div class="rep-drawer__placeholder">Nessuna impostazione disponibile (in arrivo)</div>
+        <label class="rep-drawer__toggle">
+          <span class="ds-switch">
+            <input type="checkbox" v-model="ui.showArchived" />
+            <span class="ds-switch__track"><span class="ds-switch__thumb"></span></span>
+          </span>
+          Mostra archiviati
+        </label>
       </div>
     </aside>
   </div>
@@ -55,6 +77,9 @@ import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { APP_FUNCTIONS, activeFunctionId } from '../appFunctions.js';
 import { REPUTATION_HELP } from '../uiCopy.js';
+import { useStore } from '../useStore.js';
+import { useUiState } from '../useUiState.js';
+import { serializeState, parseImport } from '../../store/io.js';
 import Icon from './Icon.vue';
 
 const props = defineProps({
@@ -64,6 +89,8 @@ const emit = defineEmits(['close']);
 
 const route = useRoute();
 const router = useRouter();
+const ui = useUiState();
+const { getState, replaceState } = useStore();
 
 const functions = APP_FUNCTIONS;
 const reputationHelp = REPUTATION_HELP;
@@ -86,6 +113,35 @@ function onKeydown(event) {
   if (event.key === 'Escape' && props.open) {
     emit('close');
   }
+}
+
+function onExport() {
+  const text = serializeState(getState());
+  const blob = new Blob([text], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '');
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `reputation-${stamp}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function onImportFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const state = parseImport(reader.result);
+      if (!window.confirm('Importare sovrascrive i dati correnti. Procedere?')) return;
+      replaceState(state);
+    } catch (err) {
+      window.alert(`Import fallito: ${err.message}`);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
 }
 
 watch(() => props.open, async (isOpen) => {
