@@ -48,14 +48,14 @@ attiva) e con costanti di copy della VIEW. Coerente col vincolo dei tre layer de
 
 ### Dati / configurazione
 
-- **Lista funzioni** — array statico di configurazione nella VIEW (in `AppDrawer.vue` o in un
-  piccolo modulo `src/view/appFunctions.js` se si preferisce isolarlo). Ogni voce:
+- **Lista funzioni** — modulo dedicato **`src/view/appFunctions.js`** che esporta l'array
+  statico di configurazione (isolato dal componente per essere testabile). Ogni voce:
   `{ id, label, routeName | null, status: 'active' | 'soon' }`.
   Contenuto iniziale:
   - `{ id: 'reputazione', label: 'Reputazione', routeName: 'characters', status: 'active' }`
   - `{ id: 'altro', label: 'Altro', routeName: null, status: 'soon' }`
-  La voce attiva si determina confrontando con la route corrente; la voce `soon` è
-  disabilitata (non cliccabile).
+  Il modulo espone anche una funzione pura per determinare la funzione attiva data la route
+  corrente (es. `activeFunctionId(routeName)`); la voce `soon` è disabilitata (non cliccabile).
 - **Testo "come funziona"** — nuova costante in `src/view/uiCopy.js` (stesso pattern di
   `SCORE_TIP`, estensibile). Es. `REPUTATION_HELP`, testo breve (2-4 frasi): opinione 1-100,
   base 50, asimmetria A→B / B→A, transazioni, punteggio sintetico = media voti ricevuti.
@@ -103,8 +103,8 @@ l'unico ambito con `node:test`). Checklist di verifica manuale:
 5. Su mobile (320/375/425px) il drawer non sfora e il contenuto sottostante resta usabile.
 6. Focus va nel drawer all'apertura e torna all'hamburger alla chiusura.
 
-Se la lista funzioni viene estratta in `appFunctions.js` come modulo puro, può avere un
-piccolo test su "qual è la funzione attiva data la route" — opzionale.
+`src/view/appFunctions.js` è un modulo puro (nessuna dipendenza da Vue/browser): la sua
+funzione `activeFunctionId(routeName)` va coperta con `node:test` come MODEL/STORE/IO.
 
 ## Estensibilità (note, non da implementare ora)
 
