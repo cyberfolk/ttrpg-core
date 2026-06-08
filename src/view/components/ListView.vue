@@ -1,4 +1,5 @@
 <template>
+  <div class="rep-table-wrap">
   <table class="rep-table">
     <thead>
       <tr>
@@ -58,6 +59,7 @@
       </tr>
     </tbody>
   </table>
+  </div>
 </template>
 
 <script setup>

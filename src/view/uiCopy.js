@@ -1,2 +1,2 @@
 // Testi UI condivisi (tooltip, label). Estendibile: aggiungi nuove chiavi qui.
-export const SCORE_TIP = "Punteggio sintetico: media delle valutazioni che gli altri personaggi danno a questo (reputazione in ingresso). Va da 1 a 100: rosso = ostile, verde = alleato. Il trattino indica nessuna relazione registrata.";
+export const SCORE_TIP = "Punteggio sintetico: media dei voti che gli altri danno a questo personaggio. Conta solo chi ha espresso un voto (almeno una transazione). Il trattino indica nessuna relazione.";

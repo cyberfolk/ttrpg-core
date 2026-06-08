@@ -36,13 +36,16 @@
 
       <!-- Show archived -->
       <label class="rep-toolbar__archived">
-        <input type="checkbox" v-model="ui.showArchived" />
+        <span class="ds-switch">
+          <input type="checkbox" v-model="ui.showArchived" />
+          <span class="ds-switch__track"><span class="ds-switch__thumb"></span></span>
+        </span>
         Mostra archiviati
       </label>
 
       <!-- Add character -->
       <div class="rep-toolbar__add">
-        <button class="ds-btn ds-btn--primary" @click="addOpen = true">
+        <button class="ds-btn ds-btn--primary" @click="openAdd">
           <span class="ds-btn__icon"><Icon name="plus" /></span>
           Aggiungi personaggio
         </button>
@@ -68,8 +71,8 @@
             <span class="ds-field ds-field--block">
               <label class="ds-field__label" for="add-char-name">Nome del personaggio</label>
               <span class="ds-field__wrap">
-                <input id="add-char-name" class="ds-input" type="text"
-                  placeholder="Es. Aragorn" v-model="newName" autofocus />
+                <input id="add-char-name" ref="nameInput" class="ds-input" type="text"
+                  placeholder="Es. Aragorn" v-model="newName" />
               </span>
             </span>
           </form>
@@ -86,7 +89,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useUiState } from '../useUiState.js';
 import { useStore } from '../useStore.js';
 import { useDisplayedCharacters } from '../useDisplayedCharacters.js';
@@ -101,6 +104,13 @@ const { dispatch } = useStore();
 const items = useDisplayedCharacters();
 const newName = ref('');
 const addOpen = ref(false);
+const nameInput = ref(null);
+
+async function openAdd() {
+  addOpen.value = true;
+  await nextTick();
+  nameInput.value?.focus();
+}
 
 function closeAdd() {
   addOpen.value = false;

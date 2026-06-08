@@ -52,7 +52,7 @@
           <span class="ds-field" style="width:5.5rem">
             <label class="ds-field__label" for="tx-delta">Delta</label>
             <span class="ds-field__wrap">
-              <input id="tx-delta" class="ds-input" type="number" placeholder="-5"
+              <input id="tx-delta" ref="deltaInput" class="ds-input" type="number" placeholder="-5"
                 v-model.number="newDelta" />
             </span>
           </span>
@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, nextTick } from 'vue';
 import { useStore } from '../useStore.js';
 import { computeScore, listTransactions, addTransaction, deleteTransaction } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
@@ -94,6 +94,12 @@ const emit = defineEmits(['close']);
 const { state, dispatch } = useStore();
 const newDelta  = ref(0);
 const newReason = ref('');
+const deltaInput = ref(null);
+
+onMounted(async () => {
+  await nextTick();
+  deltaInput.value?.select();
+});
 
 function charName(id) {
   const found = state.value.characters.find((c) => c.id === id);
