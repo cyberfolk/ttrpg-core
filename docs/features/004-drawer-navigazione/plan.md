@@ -1,5 +1,7 @@
 # Drawer di navigazione — Implementation Plan
 
+> **STATO: COMPLETATO (2026-06-09)** — tutti i 6 task implementati (parte inline, parte subagent-driven con spec + code-quality review), 41/41 test verdi, build pulita, mergiato in `main`. In coda alla feature le impostazioni del drawer sono state rese reali (sezione generale con export/import spostati dall'header; sezione Reputazione con "Mostra archiviati" spostato dalla toolbar). Documento storico: le checkbox `- [ ]` non sono mantenute aggiornate.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Aggiungere un drawer laterale a scomparsa che dà contesto all'app (TTRPG-Core = base, Reputazione = funzione attiva), spiega in breve la reputazione e ospita impostazioni placeholder.

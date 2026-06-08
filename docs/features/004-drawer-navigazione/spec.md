@@ -1,6 +1,7 @@
 # Spec — Feature 004: Drawer di navigazione e contesto app
 
-Stato: brainstorm completato | Data: 2026-06-09
+Data: 2026-06-09
+Stato: COMPLETATA — implementata via `plan.md` (subagent-driven), 41/41 test verdi, build pulita, mergiata in `main` (2026-06-09). Le impostazioni del drawer sono diventate reali (export/import + mostra archiviati) rispetto alla bozza iniziale a placeholder.
 
 ## Obiettivo
 
