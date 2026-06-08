@@ -18,22 +18,27 @@ generica "Altro · in arrivo" disabilitata.
 
 - Nuovo componente drawer a scomparsa da sinistra, sopra il contenuto (overlay + scrim).
 - Bottone hamburger nell'header esistente per aprirlo.
-- Quattro sezioni nel drawer: identità app, selettore funzioni, spiegazione Reputazione, impostazioni.
+- Cinque sezioni nel drawer: identità app, selettore funzioni, spiegazione Reputazione,
+  impostazioni generali (app-level), impostazioni Reputazione.
+- **Impostazioni generali:** Scarica/Carica dati (export/import dell'intero stato app),
+  spostati qui dall'header.
+- **Impostazioni Reputazione:** toggle "Mostra archiviati", spostato qui dalla toolbar.
 - Comportamento di apertura/chiusura, responsive, accessibilità di base.
 
 **Fuori (YAGNI):**
 
 - Nessuna seconda funzione reale (solo la voce segnaposto "Altro").
-- Nessuna impostazione funzionante (placeholder statico).
 - Nessuna pagina/route docs dedicata: la spiegazione è breve e inline.
 - Nessuna persistenza dello stato aperto/chiuso del drawer.
 - Nessuna modifica a MODEL / STORE / IO.
 
 ## Vincolo architetturale
 
-Lavoro **interamente nel layer VIEW**. Nessun tocco a `src/model/`, `src/store/`,
-`src/store/io.js`. Il drawer parla solo con il router (per navigare/evidenziare la funzione
-attiva) e con costanti di copy della VIEW. Coerente col vincolo dei tre layer del progetto.
+Lavoro **interamente nel layer VIEW**: nessuna modifica ai file di `src/model/`, `src/store/`
+(incluso `src/store/io.js`). Il drawer consuma le API pubbliche esistenti — router
+(navigazione/evidenziazione funzione attiva), store (`useStore`, `useUiState`) e
+`serializeState`/`parseImport` di `io.js` per export/import — esattamente come faceva prima
+l'header. Coerente col vincolo dei tre layer del progetto.
 
 ## Architettura
 

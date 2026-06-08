@@ -34,15 +34,6 @@
         </button>
       </div>
 
-      <!-- Show archived -->
-      <label class="rep-toolbar__archived">
-        <span class="ds-switch">
-          <input type="checkbox" v-model="ui.showArchived" />
-          <span class="ds-switch__track"><span class="ds-switch__thumb"></span></span>
-        </span>
-        Mostra archiviati
-      </label>
-
       <!-- Add character -->
       <div class="rep-toolbar__add">
         <button class="ds-btn ds-btn--primary" @click="openAdd">
