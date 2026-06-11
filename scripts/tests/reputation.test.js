@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction, createGroup } from '../../src/model/schema.js';
-import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction } from '../../src/model/reputation.js';
+import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction, addGroup, listActiveGroups, listArchivedGroups, softDeleteGroup, restoreGroup, hardDeleteGroup, addMember, removeMember } from '../../src/model/reputation.js';
 
 test('BASE è 50', () => {
   assert.equal(BASE, 50);
@@ -250,6 +250,74 @@ test('createGroup crea gruppo con campi attesi', () => {
 test('createGroup senza type usa stringa vuota', () => {
   const g = createGroup('Senza tipo');
   assert.equal(g.type, '');
+});
+
+test('addGroup aggiunge un gruppo attivo', () => {
+  let s = createState();
+  s = addGroup(s, 'Guardie', 'fazione');
+  assert.equal(s.groups.length, 1);
+  assert.equal(s.groups[0].name, 'Guardie');
+  assert.equal(s.groups[0].type, 'fazione');
+  assert.deepEqual(listActiveGroups(s).map((g) => g.name), ['Guardie']);
+});
+
+test('soft delete e restore gruppo', () => {
+  let s = createState();
+  s = addGroup(s, 'G', '');
+  const id = s.groups[0].id;
+  s = softDeleteGroup(s, id);
+  assert.equal(listActiveGroups(s).length, 0);
+  assert.equal(listArchivedGroups(s).length, 1);
+  s = restoreGroup(s, id);
+  assert.equal(listActiveGroups(s).length, 1);
+  assert.equal(listArchivedGroups(s).length, 0);
+});
+
+test('addMember è idempotente e non duplica', () => {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s = addGroup(s, 'G', '');
+  const charId = s.characters[0].id;
+  const groupId = s.groups[0].id;
+  s = addMember(s, groupId, charId);
+  s = addMember(s, groupId, charId);
+  assert.deepEqual(s.groups[0].memberIds, [charId]);
+});
+
+test('addMember ignora personaggio inesistente', () => {
+  let s = createState();
+  s = addGroup(s, 'G', '');
+  const groupId = s.groups[0].id;
+  s = addMember(s, groupId, 'id-fantasma');
+  assert.deepEqual(s.groups[0].memberIds, []);
+});
+
+test('removeMember toglie il membro ed è idempotente', () => {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s = addGroup(s, 'G', '');
+  const charId = s.characters[0].id;
+  const groupId = s.groups[0].id;
+  s = addMember(s, groupId, charId);
+  s = removeMember(s, groupId, charId);
+  assert.deepEqual(s.groups[0].memberIds, []);
+  s = removeMember(s, groupId, charId);
+  assert.deepEqual(s.groups[0].memberIds, []);
+});
+
+test('hardDeleteGroup rimuove gruppo e sue transazioni dirette, non i membri', () => {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s = addGroup(s, 'G', '');
+  const charId = s.characters[0].id;
+  const groupId = s.groups[0].id;
+  s = addMember(s, groupId, charId);
+  s = addTransaction(s, charId, groupId, 10, 'verso gruppo');
+  s = addTransaction(s, groupId, charId, -5, 'dal gruppo');
+  s = hardDeleteGroup(s, groupId);
+  assert.equal(s.groups.length, 0);
+  assert.equal(s.transactions.length, 0);
+  assert.equal(s.characters.length, 1);
 });
 
 test('hasTransaction è esportata e rileva una transazione', () => {

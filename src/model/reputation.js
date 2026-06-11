@@ -1,4 +1,4 @@
-import { BASE, createCharacter, createTransaction } from './schema.js';
+import { BASE, createCharacter, createTransaction, createGroup } from './schema.js';
 
 export function clampView(value) {
   const clamped = Math.max(1, Math.min(100, value));
@@ -122,4 +122,85 @@ export function averageIncomingScore(state, charId, includeArchived) {
 export function hasTransaction(state, fromId, toId) {
   const has = state.transactions.some((tx) => tx.fromId === fromId && tx.toId === toId);
   return has;
+}
+
+export function addGroup(state, name, type) {
+  const group = createGroup(name, type);
+  const next = { ...state, groups: [...state.groups, group] };
+  return next;
+}
+
+export function listActiveGroups(state) {
+  const active = state.groups.filter((g) => g.deletedAt === null);
+  return active;
+}
+
+export function listArchivedGroups(state) {
+  const archived = state.groups.filter((g) => g.deletedAt !== null);
+  return archived;
+}
+
+export function softDeleteGroup(state, id) {
+  const groups = state.groups.map((g) => {
+    if (g.id !== id) {
+      return g;
+    }
+    const updated = { ...g, deletedAt: Date.now() };
+    return updated;
+  });
+  const next = { ...state, groups };
+  return next;
+}
+
+export function restoreGroup(state, id) {
+  const groups = state.groups.map((g) => {
+    if (g.id !== id) {
+      return g;
+    }
+    const updated = { ...g, deletedAt: null };
+    return updated;
+  });
+  const next = { ...state, groups };
+  return next;
+}
+
+export function hardDeleteGroup(state, id) {
+  const groups = state.groups.filter((g) => g.id !== id);
+  const transactions = state.transactions.filter(
+    (tx) => tx.fromId !== id && tx.toId !== id,
+  );
+  const next = { ...state, groups, transactions };
+  return next;
+}
+
+export function addMember(state, groupId, charId) {
+  const charExists = state.characters.some((c) => c.id === charId);
+  if (!charExists) {
+    return state;
+  }
+  const groups = state.groups.map((g) => {
+    if (g.id !== groupId) {
+      return g;
+    }
+    if (g.memberIds.includes(charId)) {
+      return g;
+    }
+    const updated = { ...g, memberIds: [...g.memberIds, charId] };
+    return updated;
+  });
+  const next = { ...state, groups };
+  return next;
+}
+
+export function removeMember(state, groupId, charId) {
+  const groups = state.groups.map((g) => {
+    if (g.id !== groupId) {
+      return g;
+    }
+    const memberIds = g.memberIds.filter((mid) => mid !== charId);
+    const updated = { ...g, memberIds };
+    return updated;
+  });
+  const next = { ...state, groups };
+  return next;
 }
