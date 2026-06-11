@@ -1,5 +1,5 @@
 export const BASE = 50;
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export function newId() {
   const id = crypto.randomUUID();
@@ -11,8 +11,20 @@ export function createState() {
     version: SCHEMA_VERSION,
     characters: [],
     transactions: [],
+    groups: [],
   };
   return state;
+}
+
+export function createGroup(name, type = '') {
+  const group = {
+    id: newId(),
+    name,
+    type,
+    memberIds: [],
+    deletedAt: null,
+  };
+  return group;
 }
 
 export function createCharacter(name) {

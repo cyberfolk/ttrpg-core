@@ -1,18 +1,17 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction } from '../../src/model/schema.js';
+import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction, createGroup } from '../../src/model/schema.js';
 import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore } from '../../src/model/reputation.js';
 
-test('BASE è 50 e SCHEMA_VERSION è 1', () => {
+test('BASE è 50', () => {
   assert.equal(BASE, 50);
-  assert.equal(SCHEMA_VERSION, 1);
 });
 
 test('createState produce stato vuoto valido', () => {
   const s = createState();
   assert.deepEqual(s.characters, []);
   assert.deepEqual(s.transactions, []);
-  assert.equal(s.version, 1);
+  assert.equal(s.version, 2);
 });
 
 test('createCharacter genera id, name e deletedAt null', () => {
@@ -227,4 +226,28 @@ test('averageIncomingScore non considera il pg stesso come mittente', () => {
   s = addTransaction(s, a.id, a.id, 40, 'auto');
   s = addTransaction(s, b.id, a.id, 10, 'x'); // 60
   assert.equal(averageIncomingScore(s, a.id, false), 60);
+});
+
+test('SCHEMA_VERSION è 2', () => {
+  assert.equal(SCHEMA_VERSION, 2);
+});
+
+test('createState include groups vuoto', () => {
+  const state = createState();
+  assert.deepEqual(state.groups, []);
+  assert.equal(state.version, 2);
+});
+
+test('createGroup crea gruppo con campi attesi', () => {
+  const g = createGroup('Ladri', 'gilda');
+  assert.equal(typeof g.id, 'string');
+  assert.equal(g.name, 'Ladri');
+  assert.equal(g.type, 'gilda');
+  assert.deepEqual(g.memberIds, []);
+  assert.equal(g.deletedAt, null);
+});
+
+test('createGroup senza type usa stringa vuota', () => {
+  const g = createGroup('Senza tipo');
+  assert.equal(g.type, '');
 });
