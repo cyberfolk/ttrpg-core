@@ -103,7 +103,10 @@ onMounted(async () => {
 
 function charName(id) {
   const character = state.value.characters.find((c) => c.id === id);
-  if (character) return character.name;
+  if (character) {
+    const charName = character.name;
+    return charName;
+  }
   const group = state.value.groups.find((g) => g.id === id);
   const name = group ? group.name : '???';
   return name;
