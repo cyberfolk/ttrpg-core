@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction, createGroup } from '../../src/model/schema.js';
-import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction, addGroup, listActiveGroups, listArchivedGroups, softDeleteGroup, restoreGroup, hardDeleteGroup, addMember, removeMember } from '../../src/model/reputation.js';
+import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction, addGroup, listActiveGroups, listArchivedGroups, softDeleteGroup, restoreGroup, hardDeleteGroup, addMember, removeMember, resolveNode, groupDerivedIncoming, groupDerivedOutgoing } from '../../src/model/reputation.js';
 
 test('BASE è 50', () => {
   assert.equal(BASE, 50);
@@ -328,4 +328,69 @@ test('hasTransaction è esportata e rileva una transazione', () => {
   assert.equal(hasTransaction(s, a.id, b.id), false);
   s = addTransaction(s, a.id, b.id, 5, 't');
   assert.equal(hasTransaction(s, a.id, b.id), true);
+});
+
+test('resolveNode distingue personaggio, gruppo e id ignoto', () => {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s = addGroup(s, 'G', '');
+  const charId = s.characters[0].id;
+  const groupId = s.groups[0].id;
+  assert.equal(resolveNode(s, charId).kind, 'character');
+  assert.equal(resolveNode(s, groupId).kind, 'group');
+  assert.equal(resolveNode(s, 'ignoto'), null);
+});
+
+test('groupDerivedIncoming: media membri qualificati, neutri esclusi', () => {
+  let s = createState();
+  s = addCharacter(s, 'X');
+  s = addCharacter(s, 'M1');
+  s = addCharacter(s, 'M2');
+  s = addCharacter(s, 'M3');
+  s = addGroup(s, 'G', '');
+  const [x, m1, m2, m3] = s.characters;
+  const g = s.groups[0];
+  s = addMember(s, g.id, m1.id);
+  s = addMember(s, g.id, m2.id);
+  s = addMember(s, g.id, m3.id);
+  s = addTransaction(s, x.id, m1.id, 20, 't');
+  s = addTransaction(s, x.id, m2.id, -10, 't');
+  const expected = Math.round((computeScore(s, x.id, m1.id) + computeScore(s, x.id, m2.id)) / 2);
+  assert.equal(groupDerivedIncoming(s, x.id, g.id), expected);
+});
+
+test('groupDerivedIncoming è null se nessun membro qualificato', () => {
+  let s = createState();
+  s = addCharacter(s, 'X');
+  s = addCharacter(s, 'M1');
+  s = addGroup(s, 'G', '');
+  const [x, m1] = s.characters;
+  const g = s.groups[0];
+  s = addMember(s, g.id, m1.id);
+  assert.equal(groupDerivedIncoming(s, x.id, g.id), null);
+});
+
+test('groupDerivedOutgoing: media di come i membri considerano X', () => {
+  let s = createState();
+  s = addCharacter(s, 'X');
+  s = addCharacter(s, 'M1');
+  s = addCharacter(s, 'M2');
+  s = addGroup(s, 'G', '');
+  const [x, m1, m2] = s.characters;
+  const g = s.groups[0];
+  s = addMember(s, g.id, m1.id);
+  s = addMember(s, g.id, m2.id);
+  s = addTransaction(s, m1.id, x.id, 30, 't');
+  assert.equal(groupDerivedOutgoing(s, g.id, x.id), computeScore(s, m1.id, x.id));
+});
+
+test('groupDerivedOutgoing è null se nessun membro qualificato', () => {
+  let s = createState();
+  s = addCharacter(s, 'X');
+  s = addCharacter(s, 'M1');
+  s = addGroup(s, 'G', '');
+  const [x, m1] = s.characters;
+  const g = s.groups[0];
+  s = addMember(s, g.id, m1.id);
+  assert.equal(groupDerivedOutgoing(s, g.id, x.id), null);
 });

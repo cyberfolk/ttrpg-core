@@ -204,3 +204,56 @@ export function removeMember(state, groupId, charId) {
   const next = { ...state, groups };
   return next;
 }
+
+export function resolveNode(state, id) {
+  const character = state.characters.find((c) => c.id === id);
+  if (character) {
+    const node = { kind: 'character', entity: character };
+    return node;
+  }
+  const group = state.groups.find((g) => g.id === id);
+  if (group) {
+    const node = { kind: 'group', entity: group };
+    return node;
+  }
+  return null;
+}
+
+// Calcola la media arrotondata dei punteggi dei membri qualificati.
+// scoreFn.has(state, mid) → bool: il membro è qualificato (ha transazioni)
+// scoreFn.score(state, mid) → number: punteggio del membro
+function averageQualifiedScores(state, memberIds, scoreFn) {
+  const qualified = memberIds.filter((mid) => scoreFn.has(state, mid));
+  if (qualified.length === 0) {
+    return null;
+  }
+  const total = qualified.reduce((acc, mid) => acc + scoreFn.score(state, mid), 0);
+  const average = Math.round(total / qualified.length);
+  return average;
+}
+
+// Punteggio derivato: come sourceId considera il gruppo (media verso i membri qualificati).
+export function groupDerivedIncoming(state, sourceId, groupId) {
+  const group = state.groups.find((g) => g.id === groupId);
+  if (!group) {
+    return null;
+  }
+  const average = averageQualifiedScores(state, group.memberIds, {
+    has: (s, mid) => hasTransaction(s, sourceId, mid),
+    score: (s, mid) => computeScore(s, sourceId, mid),
+  });
+  return average;
+}
+
+// Punteggio derivato: come il gruppo considera targetId (media dei membri qualificati verso target).
+export function groupDerivedOutgoing(state, groupId, targetId) {
+  const group = state.groups.find((g) => g.id === groupId);
+  if (!group) {
+    return null;
+  }
+  const average = averageQualifiedScores(state, group.memberIds, {
+    has: (s, mid) => hasTransaction(s, mid, targetId),
+    score: (s, mid) => computeScore(s, mid, targetId),
+  });
+  return average;
+}
