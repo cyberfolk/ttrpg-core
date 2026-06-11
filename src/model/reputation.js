@@ -132,6 +132,30 @@ export function hasTransaction(state, fromId, toId) {
   return has;
 }
 
+export function renameGroup(state, id, name) {
+  const groups = state.groups.map((g) => {
+    if (g.id !== id) {
+      return g;
+    }
+    const updated = { ...g, name };
+    return updated;
+  });
+  const next = { ...state, groups };
+  return next;
+}
+
+export function setGroupType(state, id, type) {
+  const groups = state.groups.map((g) => {
+    if (g.id !== id) {
+      return g;
+    }
+    const updated = { ...g, type };
+    return updated;
+  });
+  const next = { ...state, groups };
+  return next;
+}
+
 export function addGroup(state, name, type) {
   const group = createGroup(name, type);
   const next = { ...state, groups: [...state.groups, group] };

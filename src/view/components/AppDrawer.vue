@@ -35,6 +35,21 @@
         </template>
       </div>
 
+      <!-- Navigazione Reputazione -->
+      <div class="rep-drawer__sec">
+        <div class="rep-drawer__label">Reputazione · sezioni</div>
+        <button class="rep-drawer__fn" :class="{ 'is-active': route.name === 'characters' || route.name === 'profile' }"
+          @click="goTo('characters')">
+          <span class="rep-drawer__fn-ic" aria-hidden="true"></span>
+          Personaggi
+        </button>
+        <button class="rep-drawer__fn" :class="{ 'is-active': route.name === 'groups' || route.name === 'groupProfile' }"
+          @click="goTo('groups')">
+          <span class="rep-drawer__fn-ic" aria-hidden="true"></span>
+          Gruppi
+        </button>
+      </div>
+
       <!-- Come funziona la reputazione -->
       <div class="rep-drawer__sec">
         <div class="rep-drawer__label">Reputazione · come funziona</div>
@@ -105,6 +120,13 @@ const closeBtn = ref(null);
 function onSelect(fn) {
   if (fn.routeName && route.name !== fn.routeName) {
     router.push({ name: fn.routeName });
+  }
+  emit('close');
+}
+
+function goTo(routeName) {
+  if (route.name !== routeName) {
+    router.push({ name: routeName });
   }
   emit('close');
 }

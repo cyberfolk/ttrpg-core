@@ -102,8 +102,11 @@ onMounted(async () => {
 });
 
 function charName(id) {
-  const found = state.value.characters.find((c) => c.id === id);
-  return found ? found.name : '???';
+  const character = state.value.characters.find((c) => c.id === id);
+  if (character) return character.name;
+  const group = state.value.groups.find((g) => g.id === id);
+  const name = group ? group.name : '???';
+  return name;
 }
 
 const fromName    = computed(() => charName(props.fromId));

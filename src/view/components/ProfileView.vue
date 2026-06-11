@@ -60,6 +60,21 @@
       </div>
     </div>
 
+    <!-- Gruppi del personaggio -->
+    <div v-if="memberGroups.length > 0" class="ds-card ds-card--filament" style="padding:1.25rem 1.75rem;margin-top:1rem">
+      <div class="rep-drawer__label" style="margin-bottom:0.5rem">Membro di</div>
+      <div v-for="group in memberGroups" :key="group.id" class="rep-relation"
+        role="button" tabindex="0"
+        @click="goToGroup(group.id)"
+        @keydown="(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToGroup(group.id); } }">
+        <span class="rep-relation__name">
+          {{ group.name }}
+          <span v-if="group.type" class="ds-badge" style="margin-left:0.35rem">{{ group.type }}</span>
+          <Icon name="goto" />
+        </span>
+      </div>
+    </div>
+
     <TransactionModal
       v-if="tx"
       :from-id="tx.fromId"
@@ -76,12 +91,13 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
-import { averageIncomingScore } from '../../model/reputation.js';
+import { averageIncomingScore, listActiveGroups } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
 import RelationList from './RelationList.vue';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
 import HoverTip from './HoverTip.vue';
+import Icon from './Icon.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const props = defineProps({
@@ -101,8 +117,19 @@ const synthetic = computed(() => {
   return averageIncomingScore(state.value, character.value.id, ui.showArchived);
 });
 
+const memberGroups = computed(() => {
+  if (character.value === null) return [];
+  const charId = character.value.id;
+  const groups = listActiveGroups(state.value).filter((g) => g.memberIds.includes(charId));
+  return groups;
+});
+
 function goBack() {
   router.push('/personaggi');
+}
+
+function goToGroup(id) {
+  router.push({ name: 'groupProfile', params: { id } });
 }
 
 function openTx(pair) {
