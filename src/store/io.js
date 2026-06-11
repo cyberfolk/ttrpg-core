@@ -6,14 +6,15 @@ export function serializeState(state) {
     exportedAt: Date.now(),
     characters: state.characters,
     transactions: state.transactions,
+    groups: state.groups,
   };
   const json = JSON.stringify(payload, null, 2);
   return json;
 }
 
 export function migrate(data) {
-  // V1: nessuna migrazione. Hook per versioni future: if (data.version < 2) {...}
-  const migrated = { ...data, version: SCHEMA_VERSION };
+  const groups = Array.isArray(data.groups) ? data.groups : [];
+  const migrated = { ...data, groups, version: SCHEMA_VERSION };
   return migrated;
 }
 
@@ -24,6 +25,9 @@ export function validateState(data) {
   if (!Array.isArray(data.characters) || !Array.isArray(data.transactions)) {
     throw new Error('Stato non valido: characters/transactions mancanti');
   }
+  if (!Array.isArray(data.groups)) {
+    throw new Error('Stato non valido: groups mancante');
+  }
   for (const c of data.characters) {
     const validId = typeof c.id === 'string' && c.id.length > 0;
     const validName = typeof c.name === 'string';
@@ -32,7 +36,18 @@ export function validateState(data) {
       throw new Error(`Personaggio non valido: campi mancanti o errati (${JSON.stringify(c)})`);
     }
   }
-  const ids = new Set(data.characters.map((c) => c.id));
+  const charIds = new Set(data.characters.map((c) => c.id));
+  for (const g of data.groups) {
+    const validId = typeof g.id === 'string' && g.id.length > 0;
+    const validName = typeof g.name === 'string';
+    const validType = typeof g.type === 'string';
+    const validMembers = Array.isArray(g.memberIds) && g.memberIds.every((mid) => charIds.has(mid));
+    const validDeletedAt = g.deletedAt === null || typeof g.deletedAt === 'number';
+    if (!validId || !validName || !validType || !validMembers || !validDeletedAt) {
+      throw new Error(`Gruppo non valido: campi mancanti o errati (${JSON.stringify(g)})`);
+    }
+  }
+  const nodeIds = new Set([...charIds, ...data.groups.map((g) => g.id)]);
   for (const tx of data.transactions) {
     const validId = typeof tx.id === 'string' && tx.id.length > 0;
     const validFrom = typeof tx.fromId === 'string';
@@ -43,8 +58,8 @@ export function validateState(data) {
     if (!validId || !validFrom || !validTo || !validDelta || !validTxName || !validCreatedAt) {
       throw new Error(`Transazione non valida: campi mancanti o errati (${tx.id})`);
     }
-    if (!ids.has(tx.fromId) || !ids.has(tx.toId)) {
-      throw new Error(`Integrità referenziale rotta: transazione ${tx.id} punta a un personaggio inesistente`);
+    if (!nodeIds.has(tx.fromId) || !nodeIds.has(tx.toId)) {
+      throw new Error(`Integrità referenziale rotta: transazione ${tx.id} punta a un nodo inesistente`);
     }
   }
   const valid = true;
@@ -64,6 +79,7 @@ export function parseImport(json) {
     version: migrated.version,
     characters: migrated.characters,
     transactions: migrated.transactions,
+    groups: migrated.groups,
   };
   return state;
 }
