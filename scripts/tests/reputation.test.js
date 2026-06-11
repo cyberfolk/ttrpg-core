@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction, createGroup } from '../../src/model/schema.js';
-import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction, addGroup, listActiveGroups, listArchivedGroups, softDeleteGroup, restoreGroup, hardDeleteGroup, addMember, removeMember, resolveNode, groupDerivedIncoming, groupDerivedOutgoing } from '../../src/model/reputation.js';
+import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction, addGroup, listActiveGroups, listArchivedGroups, softDeleteGroup, restoreGroup, hardDeleteGroup, addMember, removeMember, resolveNode, groupDerivedIncoming, groupDerivedOutgoing, renameGroup, setGroupType } from '../../src/model/reputation.js';
 
 test('BASE è 50', () => {
   assert.equal(BASE, 50);
@@ -407,4 +407,40 @@ test('hardDeleteCharacter ripulisce memberIds dei gruppi', () => {
   s = hardDeleteCharacter(s, a.id);
   assert.deepEqual(s.groups[0].memberIds, [b.id]);
   assert.equal(s.characters.length, 1);
+});
+
+test('renameGroup cambia solo il nome del gruppo target', () => {
+  let s = createState();
+  s = addGroup(s, 'Vecchio nome', 'fazione');
+  const id = s.groups[0].id;
+  s = renameGroup(s, id, 'Nuovo nome');
+  assert.equal(s.groups[0].name, 'Nuovo nome');
+  assert.equal(s.groups[0].type, 'fazione');
+});
+
+test('renameGroup non muta altri gruppi', () => {
+  let s = createState();
+  s = addGroup(s, 'A', '');
+  s = addGroup(s, 'B', '');
+  const idA = s.groups[0].id;
+  s = renameGroup(s, idA, 'A2');
+  assert.equal(s.groups[1].name, 'B');
+});
+
+test('setGroupType imposta il tipo, name invariato', () => {
+  let s = createState();
+  s = addGroup(s, 'G', '');
+  const id = s.groups[0].id;
+  s = setGroupType(s, id, 'casata');
+  assert.equal(s.groups[0].type, 'casata');
+  assert.equal(s.groups[0].name, 'G');
+});
+
+test('setGroupType non muta altri gruppi', () => {
+  let s = createState();
+  s = addGroup(s, 'A', 'x');
+  s = addGroup(s, 'B', 'y');
+  const idA = s.groups[0].id;
+  s = setGroupType(s, idA, 'z');
+  assert.equal(s.groups[1].type, 'y');
 });
