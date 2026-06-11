@@ -95,7 +95,15 @@ export function hardDeleteCharacter(state, id) {
   const transactions = state.transactions.filter(
     (tx) => tx.fromId !== id && tx.toId !== id,
   );
-  const next = { ...state, characters, transactions };
+  const groups = state.groups.map((g) => {
+    if (!g.memberIds.includes(id)) {
+      return g;
+    }
+    const memberIds = g.memberIds.filter((mid) => mid !== id);
+    const updated = { ...g, memberIds };
+    return updated;
+  });
+  const next = { ...state, characters, transactions, groups };
   return next;
 }
 

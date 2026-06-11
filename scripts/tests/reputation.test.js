@@ -394,3 +394,17 @@ test('groupDerivedOutgoing è null se nessun membro qualificato', () => {
   s = addMember(s, g.id, m1.id);
   assert.equal(groupDerivedOutgoing(s, g.id, x.id), null);
 });
+
+test('hardDeleteCharacter ripulisce memberIds dei gruppi', () => {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s = addCharacter(s, 'B');
+  s = addGroup(s, 'G', '');
+  const [a, b] = s.characters;
+  const g = s.groups[0];
+  s = addMember(s, g.id, a.id);
+  s = addMember(s, g.id, b.id);
+  s = hardDeleteCharacter(s, a.id);
+  assert.deepEqual(s.groups[0].memberIds, [b.id]);
+  assert.equal(s.characters.length, 1);
+});
