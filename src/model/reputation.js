@@ -119,7 +119,7 @@ export function averageIncomingScore(state, charId, includeArchived) {
   return average;
 }
 
-function hasTransaction(state, fromId, toId) {
+export function hasTransaction(state, fromId, toId) {
   const has = state.transactions.some((tx) => tx.fromId === fromId && tx.toId === toId);
   return has;
 }

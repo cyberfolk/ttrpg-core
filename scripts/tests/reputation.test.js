@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction, createGroup } from '../../src/model/schema.js';
-import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore } from '../../src/model/reputation.js';
+import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction } from '../../src/model/reputation.js';
 
 test('BASE è 50', () => {
   assert.equal(BASE, 50);
@@ -250,4 +250,14 @@ test('createGroup crea gruppo con campi attesi', () => {
 test('createGroup senza type usa stringa vuota', () => {
   const g = createGroup('Senza tipo');
   assert.equal(g.type, '');
+});
+
+test('hasTransaction è esportata e rileva una transazione', () => {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s = addCharacter(s, 'B');
+  const [a, b] = s.characters;
+  assert.equal(hasTransaction(s, a.id, b.id), false);
+  s = addTransaction(s, a.id, b.id, 5, 't');
+  assert.equal(hasTransaction(s, a.id, b.id), true);
 });
