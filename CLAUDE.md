@@ -1,9 +1,5 @@
 # CLAUDE.md
 
-Versione: 2.5 | Inizializzato: 2026-06-06 00:46 | Aggiornato: 2026-06-08 22:38
-
-@~/.claude/shared/timestamp-header.md
-@~/.claude/shared/project-layout.md
 @~/.claude/shared/git-commit-tags-list.md
 @~/.claude/shared/todo-conventions.md
 
