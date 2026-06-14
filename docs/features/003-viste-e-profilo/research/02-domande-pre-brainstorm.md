@@ -88,7 +88,6 @@ Motivi:
   inquina l'albero logico e complica la build.
 - L'app è statica servita da Pages con **path relativi**: gli asset in `assets/` vengono
   serviti così come sono, referenziati con URL relativo da `index.html` / CSS / JS.
-- È già la convenzione del progetto (`assets/` = immagini, vedi project-layout).
 
 Indicazioni:
 
