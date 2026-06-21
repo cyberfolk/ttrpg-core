@@ -557,6 +557,18 @@ a:hover { color: var(--gold-600); }
 .rep-table__actions { display: flex; gap: var(--space-2); }
 .rep-th-help { display: inline-flex; align-items: center; gap: .4rem; }
 
+/* Tabella full-bleed: sfonda il padding orizzontale della card profilo (1.75rem)
+   e tocca i bordi. La card ha overflow:hidden+radius, quindi gli angoli restano
+   arrotondati. Niente cornice propria: la tabella diventa una sezione della card. */
+.rep-table--flush { width: auto; margin-left: -1.75rem; margin-right: -1.75rem; }
+.rep-table--flush .rep-table {
+  border: none; border-radius: 0; box-shadow: none; background: transparent;
+}
+.rep-table--flush .rep-table th:first-child,
+.rep-table--flush .rep-table td:first-child { padding-left: 1.75rem; }
+.rep-table--flush .rep-table th:last-child,
+.rep-table--flush .rep-table td:last-child { padding-right: 1.75rem; }
+
 /* === Matrix ================================================ */
 .rep-matrix-wrap {
   overflow-x: auto;

@@ -51,14 +51,13 @@
       <!-- Gruppi del personaggio -->
       <template v-else>
         <p v-if="memberGroups.length === 0" class="rep-empty">Non è membro di alcun gruppo.</p>
-        <div v-else class="rep-table-wrap">
+        <div v-else class="rep-table-wrap rep-table--flush">
           <table class="rep-table">
             <thead>
               <tr>
                 <th class="rep-table__num">#</th>
                 <th>Nome</th>
                 <th>Tipo</th>
-                <th>Azioni</th>
               </tr>
             </thead>
             <tbody>
@@ -77,16 +76,6 @@
                 <td>
                   <span v-if="group.type" class="ds-badge">{{ group.type }}</span>
                   <span v-else>–</span>
-                </td>
-                <td @click.stop>
-                  <div class="rep-table__actions">
-                    <HoverTip text="Apri gruppo" label="Apri gruppo" :tab-index="-1">
-                      <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
-                        @click="goToGroup(group.id)" aria-label="Apri gruppo">
-                        <Icon name="goto" />
-                      </button>
-                    </HoverTip>
-                  </div>
                 </td>
               </tr>
             </tbody>

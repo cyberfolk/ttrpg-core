@@ -5,7 +5,7 @@
       <Pager :page="page" :page-size="PAGE_SIZE" :total="total"
         @update:page="page = $event" />
 
-      <div class="rep-table-wrap">
+      <div class="rep-table-wrap rep-table--flush">
         <table class="rep-table">
           <thead>
             <tr>
@@ -22,7 +22,6 @@
                 Punteggio
                 <Icon v-if="sort.key === 'score'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
               </th>
-              <th>Azioni</th>
             </tr>
           </thead>
           <tbody>
@@ -45,16 +44,6 @@
                   {{ row.score }}
                 </span>
               </td>
-              <td @click.stop>
-                <div class="rep-table__actions">
-                  <HoverTip text="Modifica valutazione" label="Modifica valutazione" :tab-index="-1">
-                    <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
-                      @click="emitTx(row.other.id)" aria-label="Modifica valutazione">
-                      <Icon name="edit" />
-                    </button>
-                  </HoverTip>
-                </div>
-              </td>
             </tr>
           </tbody>
         </table>
@@ -71,7 +60,6 @@ import { useUiState } from '../useUiState.js';
 import { listActiveCharacters, computeScore } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
 import Icon from './Icon.vue';
-import HoverTip from './HoverTip.vue';
 import Pager from './Pager.vue';
 
 const PAGE_SIZE = 10;
