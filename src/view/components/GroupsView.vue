@@ -14,6 +14,25 @@
         </span>
       </div>
 
+      <!-- Segmented view switcher -->
+      <div class="ds-seg">
+        <button class="ds-seg__btn" :class="{ active: viewMode === 'gallery' }"
+          disabled aria-disabled="true" title="Non ancora disponibile">
+          <span class="ds-seg__icon"><Icon name="gallery" /></span>
+          Gallery
+        </button>
+        <button class="ds-seg__btn" :class="{ active: viewMode === 'list' }"
+          @click="viewMode = 'list'">
+          <span class="ds-seg__icon"><Icon name="list" /></span>
+          Lista
+        </button>
+        <button class="ds-seg__btn" :class="{ active: viewMode === 'matrix' }"
+          disabled aria-disabled="true" title="Non ancora disponibile">
+          <span class="ds-seg__icon"><Icon name="matrix" /></span>
+          Matrice
+        </button>
+      </div>
+
       <div class="rep-toolbar__add">
         <button class="ds-btn ds-btn--primary" @click="openAdd">
           <span class="ds-btn__icon"><Icon name="plus" /></span>
@@ -30,50 +49,79 @@
       Nessun gruppo corrisponde alla ricerca.
     </div>
 
-    <div v-else class="rep-char-list" style="margin-top:1rem">
-      <div v-for="group in filteredActive" :key="group.id" class="ds-card ds-card--filament rep-group-row">
-        <div class="rep-group-row__main">
-          <!-- Nome e tipo -->
-          <span v-if="editingId !== group.id" class="rep-group-row__name"
-            role="button" tabindex="0"
-            @click="goToProfile(group.id)"
-            @keydown="(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToProfile(group.id); } }">
-            {{ group.name }}
-            <span v-if="group.type" class="ds-badge" style="margin-left:0.35rem">{{ group.type }}</span>
-            <Icon name="goto" />
-          </span>
+    <div v-else class="rep-table-wrap" style="margin-top:1rem">
+      <table class="rep-table">
+        <thead>
+          <tr>
+            <th class="rep-table__num">#</th>
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Membri</th>
+            <th>Azioni</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(group, i) in filteredActive" :key="group.id"
+            :class="editingId === group.id ? undefined : 'rep-table__row--clickable'"
+            :role="editingId === group.id ? undefined : 'button'"
+            :tabindex="editingId === group.id ? undefined : 0"
+            @click="editingId === group.id ? undefined : goToProfile(group.id)"
+            @keydown="editingId === group.id ? undefined : onKeyDown($event, group.id)">
 
-          <!-- Inline edit nome/tipo -->
-          <span v-else class="rep-group-row__edit">
-            <input class="ds-input" type="text" v-model="editName" style="width:10rem"
-              @keydown.enter="saveEdit(group.id)" @keydown.escape="cancelEdit" />
-            <input class="ds-input" type="text" v-model="editType" placeholder="Tipo (es. fazione)"
-              style="width:9rem;margin-left:0.4rem"
-              @keydown.enter="saveEdit(group.id)" @keydown.escape="cancelEdit" />
-            <button class="ds-btn ds-btn--primary ds-btn--sm" style="margin-left:0.4rem"
-              @click="saveEdit(group.id)">Salva</button>
-            <button class="ds-btn ds-btn--ghost ds-btn--sm" style="margin-left:0.25rem"
-              @click="cancelEdit">Annulla</button>
-          </span>
-        </div>
+            <td class="rep-table__num">{{ i + 1 }}</td>
 
-        <div class="rep-group-row__meta">
-          <span class="rep-group-row__members">
-            {{ group.memberIds.length }} {{ group.memberIds.length === 1 ? 'membro' : 'membri' }}
-          </span>
-        </div>
+            <!-- Nome -->
+            <td>
+              <span v-if="editingId !== group.id" class="rep-table__name" @click.stop="goToProfile(group.id)">
+                {{ group.name }}
+                <Icon name="goto" />
+              </span>
+              <input v-else class="ds-input" type="text" v-model="editName" style="width:10rem"
+                @keydown.enter="saveEdit(group.id)" @keydown.escape="cancelEdit" />
+            </td>
 
-        <div class="rep-group-row__actions">
-          <button class="ds-btn ds-btn--ghost ds-btn--sm" @click="startEdit(group)"
-            aria-label="Rinomina gruppo">
-            Rinomina
-          </button>
-          <button class="ds-btn ds-btn--ghost ds-btn--sm" @click="onArchive(group.id)"
-            aria-label="Archivia gruppo">
-            <Icon name="archive" />
-          </button>
-        </div>
-      </div>
+            <!-- Tipo -->
+            <td @click.stop>
+              <span v-if="editingId !== group.id">
+                <span v-if="group.type" class="ds-badge">{{ group.type }}</span>
+                <span v-else class="rep-empty">–</span>
+              </span>
+              <input v-else class="ds-input" type="text" v-model="editType" placeholder="Tipo (es. fazione)"
+                style="width:9rem"
+                @keydown.enter="saveEdit(group.id)" @keydown.escape="cancelEdit" />
+            </td>
+
+            <!-- Membri -->
+            <td>
+              {{ group.memberIds.length }} {{ group.memberIds.length === 1 ? 'membro' : 'membri' }}
+            </td>
+
+            <!-- Azioni -->
+            <td @click.stop>
+              <div class="rep-table__actions">
+                <template v-if="editingId === group.id">
+                  <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit(group.id)">Salva</button>
+                  <button class="ds-btn ds-btn--sm ds-btn--ghost" @click="cancelEdit">Annulla</button>
+                </template>
+                <template v-else>
+                  <HoverTip text="Rinomina" label="Rinomina gruppo" :tab-index="-1">
+                    <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon" @click="startEdit(group)"
+                      aria-label="Rinomina gruppo">
+                      <Icon name="edit" />
+                    </button>
+                  </HoverTip>
+                  <HoverTip text="Archivia" label="Archivia gruppo" :tab-index="-1">
+                    <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon" @click="onArchive(group.id)"
+                      aria-label="Archivia gruppo">
+                      <Icon name="archive" />
+                    </button>
+                  </HoverTip>
+                </template>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Gruppi archiviati -->
@@ -151,11 +199,13 @@ import {
   setGroupType,
 } from '../../model/reputation.js';
 import Icon from './Icon.vue';
+import HoverTip from './HoverTip.vue';
 
 const { state, dispatch } = useStore();
 const ui = useUiState();
 const router = useRouter();
 
+const viewMode = ref('list');
 const search = ref('');
 const addOpen = ref(false);
 const newName = ref('');
@@ -201,6 +251,13 @@ function onAdd() {
 
 function goToProfile(id) {
   router.push({ name: 'groupProfile', params: { id } });
+}
+
+function onKeyDown(e, id) {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    goToProfile(id);
+  }
 }
 
 function startEdit(group) {

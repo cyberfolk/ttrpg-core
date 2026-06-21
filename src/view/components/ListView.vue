@@ -3,6 +3,7 @@
   <table class="rep-table">
     <thead>
       <tr>
+        <th class="rep-table__num">#</th>
         <th>Nome</th>
         <th>
           <span class="rep-th-help">
@@ -17,9 +18,9 @@
     </thead>
     <tbody>
       <tr v-if="items.length === 0">
-        <td colspan="3" class="rep-empty">Nessun personaggio.</td>
+        <td colspan="4" class="rep-empty">Nessun personaggio.</td>
       </tr>
-      <tr v-for="item in items" :key="item.char.id"
+      <tr v-for="(item, i) in items" :key="item.char.id"
         :style="item.char.deletedAt !== null ? { opacity: 0.6 } : undefined"
         :class="item.char.deletedAt === null ? 'rep-table__row--clickable' : undefined"
         :role="item.char.deletedAt === null ? 'button' : undefined"
@@ -27,6 +28,7 @@
         @click="item.char.deletedAt === null ? goToProfile(item.char.id) : undefined"
         @keydown="item.char.deletedAt === null ? onKeyDown($event, item.char.id) : undefined">
 
+        <td class="rep-table__num">{{ i + 1 }}</td>
         <td>
           <span class="rep-table__name" @click.stop="goToProfile(item.char.id)">
             {{ item.char.name }}
@@ -45,10 +47,12 @@
         <td @click.stop>
           <div class="rep-table__actions">
             <template v-if="item.char.deletedAt === null">
-              <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onArchive(item.char.id)">
-                <span class="ds-btn__icon"><Icon name="archive" /></span>
-                Archivia
-              </button>
+              <HoverTip text="Archivia" label="Archivia personaggio" :tab-index="-1">
+                <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
+                  @click="onArchive(item.char.id)" aria-label="Archivia personaggio">
+                  <Icon name="archive" />
+                </button>
+              </HoverTip>
             </template>
             <template v-else>
               <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onRestore(item.char.id)">Ripristina</button>
