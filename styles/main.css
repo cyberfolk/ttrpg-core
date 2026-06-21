@@ -350,7 +350,7 @@ a:hover { color: var(--gold-600); }
   position: fixed; inset: 0; z-index: 1000;
   display: flex; align-items: center; justify-content: center;
   padding: var(--space-4);
-  background: rgba(40,33,22,.34);
+  background: rgba(40,33,22,.18);
   backdrop-filter: blur(3px);
 }
 .ds-dialog {
@@ -496,14 +496,22 @@ a:hover { color: var(--gold-600); }
   display: flex; flex-direction: column; gap: .7rem;
   animation: rep-rise .45s var(--ease-out) both;
 }
+/* Riga nome: altezza fissa (2 righe) -> il bollino punteggio resta sempre alla
+   stessa quota, a prescindere dalla lunghezza del nome. */
+.rep-cc__namerow {
+  display: flex; align-items: flex-start; gap: .3rem; cursor: pointer;
+  min-height: 3.75em;
+}
 .rep-cc__name {
   font-family: var(--font-display); font-size: var(--fs-h3); font-weight: var(--fw-semibold);
-  color: var(--text-strong); display: inline-flex; align-items: center; gap: .3rem; cursor: pointer;
-  flex-wrap: wrap; min-width: 0; max-width: 100%;
+  color: var(--text-strong);
+  flex: 1; min-width: 0;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+  overflow: hidden; line-height: 1.25;
   overflow-wrap: anywhere; word-break: break-word;
 }
-.rep-cc__name:hover { color: var(--gold-700); }
-.rep-cc__name svg { width: .9em; height: .9em; color: var(--gold-500); }
+.rep-cc__namerow:hover .rep-cc__name { color: var(--gold-700); }
+.rep-cc__goto { width: .9em; height: .9em; color: var(--gold-500); flex: none; margin-top: .15em; }
 .rep-cc__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: auto; padding-top: .45rem; }
 
 /* card/row action buttons: lighter + quieter */
@@ -663,21 +671,41 @@ a:hover { color: var(--gold-600); }
 .rep-relation__name svg { width: .85em; height: .85em; color: var(--gold-500); }
 
 /* === Transaction modal ===================================== */
-.rep-tx {
-  display: flex; align-items: center; gap: var(--space-2);
-  padding: .55rem 0; border-bottom: 1px solid var(--border-hairline);
+/* Tabella transazioni full-bleed: tocca i bordi del dialog (padding body = space-5) */
+.rep-tx-bleed {
+  width: auto;
+  margin: 0 calc(-1 * var(--space-5)) calc(-1 * var(--space-5));
 }
-.rep-tx:last-of-type { border-bottom: none; }
-.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; width: 2.6rem; text-align: right; flex: none; }
+.rep-tx-bleed .rep-table {
+  border: none; border-radius: 0; box-shadow: none; background: transparent;
+}
+.rep-tx-bleed .rep-table th:first-child,
+.rep-tx-bleed .rep-table td:first-child { padding-left: var(--space-5); }
+.rep-tx-bleed .rep-table th:last-child,
+.rep-tx-bleed .rep-table td:last-child { padding-right: var(--space-5); }
+
+.rep-tx__delta-col { width: 4.5rem; }
+.rep-tx__when-col { width: 5rem; }
+.rep-tx-table .rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; }
 .rep-tx__delta.pos { color: #2f7d48; }
 .rep-tx__delta.neg { color: var(--danger); }
-.rep-tx__reason { flex: 1; color: var(--text-body); font-size: var(--fs-sm); }
+.rep-tx__reason { color: var(--text-body); font-size: var(--fs-sm); }
 .rep-tx__when { color: var(--text-faint); font-size: var(--fs-xs); white-space: nowrap; }
-.rep-tx-add {
-  display: flex; gap: var(--space-2); align-items: flex-end;
-  margin-top: var(--space-4); padding-top: var(--space-4);
-  border-top: 1px solid var(--border-hairline);
-}
+
+.rep-tx-table td.rep-empty { text-align: center; padding: var(--space-5); }
+
+/* Input nelle righe (modifica + aggiunta): larghezza piena, niente frecce spinner */
+.rep-tx-table .ds-input { width: 100%; }
+.rep-tx-table input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+.rep-tx-table input[type=number]::-webkit-outer-spin-button,
+.rep-tx-table input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text-align: center; }
+
+/* Riga di aggiunta inline nel tfoot */
+.rep-tx-addrow td { background: var(--paper-50); border-top: 1px solid var(--line-gold); border-bottom: none; }
+/* bottone "+" largo quanto la colonna azioni (= i due bottoni delle righe sopra) */
+.rep-tx-addrow td:last-child .rep-tip { display: block; }
+.rep-tx-addrow td:last-child .ds-btn { width: 100%; justify-content: center; }
 /* delete-tx button: quiet red */
 .ds-btn--danger.rep-tx__del {
   flex: none;
@@ -688,9 +716,39 @@ a:hover { color: var(--gold-600); }
 .ds-btn--danger.rep-tx__del:hover:not([disabled]) {
   background: var(--danger-tint); border-color: var(--danger); color: var(--ember-700);
 }
-/* relation arrow in dialog title */
-.rep-tx-title { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 10px; min-width: 0; max-width: 100%; }
-.rep-tx-title__name { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
+/* titolo dialog transazioni: 2 righe, ognuna freccia (con label sopra) + nome */
+.rep-tx-title { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; max-width: 100%; }
+.rep-tx-row { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.rep-tx-row .rep-rel-arrow { width: 4.5rem; min-width: 4.5rem; margin-inline: 0; flex: none; }
+.rep-tx-title__name { min-width: 0; line-height: 1.1; overflow-wrap: anywhere; word-break: break-word; }
+
+/* bollino punteggio in head: micro-label "Totale" sopra, allineato alla X */
+.rep-tx-headscore { margin-left: auto; align-self: center; flex: none; }
+
+/* X come triangolo nell'angolo in alto a destra: affordance "clicca qui per chiudere" */
+.ds-dialog__head:has(.ds-dialog__close--corner) { padding-right: 2.25rem; }
+.ds-dialog__close--corner {
+  position: absolute; top: 0; right: 0;
+  width: 3rem; height: 3rem;
+  border: none; border-radius: 0 var(--radius-lg) 0 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  background: var(--gold-200); color: var(--gold-700);
+  display: flex; align-items: flex-start; justify-content: flex-end;
+  padding: .3rem .35rem 0 0;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+.ds-dialog__close--corner:hover { background: var(--gold-400); color: var(--text-strong); }
+.rep-tx-headscore__inner { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; }
+.rep-tx-headscore__label {
+  font-family: var(--font-display); font-size: var(--fs-label);
+  letter-spacing: var(--ls-caps); text-transform: uppercase;
+  color: var(--text-faint); line-height: 1;
+}
+
+/* rifinitura righe tabella transazioni */
+.rep-tx-table tbody tr:hover { background: var(--paper-50); }
+.rep-tx-table .rep-tx__delta { font-size: var(--fs-sm); font-weight: 800; }
+.rep-tx-table .rep-tx__when { text-align: left; }
 .rep-rel-arrow { display: inline-flex; flex-direction: column; align-items: stretch; line-height: 1; min-width: 4rem; margin-inline: 6px; flex: none; }
 .rep-rel-arrow__label {
   font-family: var(--font-sans); font-style: italic; font-weight: 400;

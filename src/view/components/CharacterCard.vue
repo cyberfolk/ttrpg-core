@@ -10,10 +10,10 @@
     <span v-if="isArchived" class="ds-ribbon">Archiviato</span>
 
     <!-- Name -->
-    <span class="rep-cc__name" @click.stop="goToProfile">
-      {{ char.name }}
-      <Icon name="goto" />
-    </span>
+    <div class="rep-cc__namerow" @click.stop="goToProfile" :title="char.name">
+      <span class="rep-cc__name">{{ char.name }}</span>
+      <Icon name="goto" class="rep-cc__goto" />
+    </div>
 
     <!-- Score chip with tooltip -->
     <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
