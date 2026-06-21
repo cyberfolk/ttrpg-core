@@ -572,6 +572,13 @@ a:hover { color: var(--gold-600); }
 .rep-table th:last-child, .rep-table td:last-child { text-align: right; }
 .rep-table td:last-child .rep-table__actions { justify-content: flex-end; }
 
+/* messaggio "vuoto" su colspan: centrato (annulla l'allineamento a destra) */
+.rep-table td.rep-empty { text-align: center; }
+
+/* riga di aggiunta inline in fondo a una tabella lista */
+.rep-addrow td { background: var(--paper-50); border-top: 1px solid var(--line-gold); border-bottom: none; }
+.rep-addrow .ds-input { width: 100%; }
+
 /* Tabella full-bleed: sfonda il padding orizzontale della card profilo (1.75rem)
    e tocca i bordi. La card ha overflow:hidden+radius, quindi gli angoli restano
    arrotondati. Niente cornice propria: la tabella diventa una sezione della card. */

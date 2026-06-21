@@ -53,17 +53,20 @@
 
       <!-- Gruppi del personaggio -->
       <template v-else>
-        <p v-if="memberGroups.length === 0" class="rep-empty">Non è membro di alcun gruppo.</p>
-        <div v-else class="rep-table-wrap rep-table--flush">
+        <div class="rep-table-wrap rep-table--flush">
           <table class="rep-table">
             <thead>
               <tr>
                 <th class="rep-table__num">#</th>
                 <th>Nome</th>
                 <th>Tipo</th>
+                <th>Azioni</th>
               </tr>
             </thead>
             <tbody>
+              <tr v-if="memberGroups.length === 0">
+                <td colspan="4" class="rep-empty">Non è membro di alcun gruppo.</td>
+              </tr>
               <tr v-for="(group, i) in memberGroups" :key="group.id"
                 class="rep-table__row--clickable" role="button" tabindex="0"
                 @click="goToGroup(group.id)"
@@ -80,8 +83,38 @@
                   <span v-if="group.type" class="ds-badge">{{ group.type }}</span>
                   <span v-else>–</span>
                 </td>
+                <td @click.stop>
+                  <div class="rep-table__actions">
+                    <HoverTip text="Sgancia" label="Sgancia dal gruppo" :tab-index="-1">
+                      <button class="ds-btn ds-btn--sm ds-btn--danger ds-btn--icon"
+                        type="button" aria-label="Sgancia dal gruppo" @click="onUnlink(group.id)">
+                        <Icon name="unlink" />
+                      </button>
+                    </HoverTip>
+                  </div>
+                </td>
               </tr>
             </tbody>
+            <tfoot>
+              <tr class="rep-addrow">
+                <td></td>
+                <td colspan="2">
+                  <select class="ds-input" v-model="newGroupId" aria-label="Gruppo da aggiungere">
+                    <option value="" disabled>Scegli un gruppo…</option>
+                    <option v-for="g in availableGroups" :key="g.id" :value="g.id">{{ g.name }}</option>
+                  </select>
+                </td>
+                <td>
+                  <HoverTip text="Aggiungi al gruppo" label="Aggiungi al gruppo" :tab-index="-1">
+                    <button class="ds-btn ds-btn--primary ds-btn--sm ds-btn--icon"
+                      type="button" :disabled="!newGroupId" aria-label="Aggiungi al gruppo"
+                      @click="onAddGroup">
+                      <Icon name="plus" />
+                    </button>
+                  </HoverTip>
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </template>
@@ -118,7 +151,7 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
-import { averageIncomingScore, listActiveGroups } from '../../model/reputation.js';
+import { averageIncomingScore, listActiveGroups, addMember, removeMember } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
 import RelationList from './RelationList.vue';
 import TransactionModal from './TransactionModal.vue';
@@ -131,11 +164,12 @@ const props = defineProps({
   id: { type: String, required: true },
 });
 
-const { state } = useStore();
+const { state, dispatch } = useStore();
 const ui = useUiState();
 const router = useRouter();
 const tab = ref('in');
 const tx = ref(null);
+const newGroupId = ref('');
 
 const character = computed(() => state.value.characters.find((c) => c.id === props.id) || null);
 const isArchived = computed(() => character.value !== null && character.value.deletedAt !== null);
@@ -150,6 +184,27 @@ const memberGroups = computed(() => {
   const groups = listActiveGroups(state.value).filter((g) => g.memberIds.includes(charId));
   return groups;
 });
+
+// Gruppi attivi a cui il personaggio non appartiene ancora (assegnabili).
+const availableGroups = computed(() => {
+  if (character.value === null) return [];
+  const charId = character.value.id;
+  const groups = listActiveGroups(state.value).filter((g) => !g.memberIds.includes(charId));
+  return groups;
+});
+
+function onUnlink(groupId) {
+  const charId = character.value.id;
+  dispatch((s) => removeMember(s, groupId, charId));
+}
+
+function onAddGroup() {
+  if (!newGroupId.value) return;
+  const charId = character.value.id;
+  const groupId = newGroupId.value;
+  dispatch((s) => addMember(s, groupId, charId));
+  newGroupId.value = '';
+}
 
 function goBack() {
   router.push('/personaggi');
