@@ -619,6 +619,13 @@ a:hover { color: var(--gold-600); }
 }
 .rep-profile__head h2 { font-family: var(--font-display); font-size: var(--fs-h1); color: var(--text-strong); }
 .rep-profile__synthetic { margin-left: auto; }
+.rep-profile__synthetic-inner { display: inline-flex; align-items: center; gap: .6rem; }
+.rep-profile__synthetic-label {
+  font-family: var(--font-display); font-size: var(--fs-label);
+  letter-spacing: var(--ls-caps); text-transform: uppercase;
+  color: var(--text-muted); text-align: right; line-height: 1.15;
+  position: relative; top: 4px;
+}
 .rep-relation {
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
   padding: .65rem .4rem;

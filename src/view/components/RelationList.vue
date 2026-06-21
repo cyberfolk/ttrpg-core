@@ -16,7 +16,7 @@
                 Nome
                 <Icon v-if="sort.key === 'name'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
               </th>
-              <th class="rep-table__sortable" role="button" tabindex="0"
+              <th class="rep-table__sortable rep-col--right" role="button" tabindex="0"
                 @click="toggleSort('score')"
                 @keydown="(e) => onSortKey(e, 'score')">
                 Punteggio
@@ -37,7 +37,7 @@
                   <Icon name="goto" />
                 </span>
               </td>
-              <td>
+              <td class="rep-col--right">
                 <span class="ds-score ds-score--interactive"
                   :style="{ background: scoreColor(row.score) }"
                   @click.stop="emitTx(row.other.id)">
@@ -148,4 +148,5 @@ function goToProfile(id) {
   user-select: none;
   white-space: nowrap;
 }
+.rep-col--right { text-align: right; }
 </style>

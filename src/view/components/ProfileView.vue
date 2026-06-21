@@ -15,10 +15,13 @@
         <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
         <span class="rep-profile__synthetic">
           <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
-            <span class="ds-score ds-score--lg"
-              :class="synthetic === null ? 'ds-score--empty' : ''"
-              :style="synthetic !== null ? { background: scoreColor(synthetic) } : undefined">
-              {{ synthetic !== null ? synthetic : '–' }}
+            <span class="rep-profile__synthetic-inner">
+              <span class="rep-profile__synthetic-label">Reputazione<br>Complessiva</span>
+              <span class="ds-score ds-score--lg"
+                :class="synthetic === null ? 'ds-score--empty' : ''"
+                :style="synthetic !== null ? { background: scoreColor(synthetic) } : undefined">
+                {{ synthetic !== null ? synthetic : '–' }}
+              </span>
             </span>
           </HoverTip>
         </span>
