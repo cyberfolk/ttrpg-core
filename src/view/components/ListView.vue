@@ -6,12 +6,9 @@
         <th class="rep-table__num">#</th>
         <th>Nome</th>
         <th>
-          <span class="rep-th-help">
-            Punteggio sintetico
-            <HoverTip :text="SCORE_TIP" label="Aiuto" class-name="rep-tip--help">
-              <Icon name="help" />
-            </HoverTip>
-          </span>
+          <HoverTip :text="SCORE_TIP" label="Reputazione complessiva" class-name="rep-tip--help">
+            Reputazione complessiva
+          </HoverTip>
         </th>
         <th>Azioni</th>
       </tr>

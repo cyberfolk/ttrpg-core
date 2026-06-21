@@ -3,13 +3,13 @@
     <div class="ds-dialog">
       <div class="ds-dialog__head">
         <h3 class="ds-dialog__title">
-          <span style="display:inline-flex;align-items:center;gap:10px">
-            {{ fromName }}
+          <span class="rep-tx-title">
+            <span class="rep-tx-title__name">{{ fromName }}</span>
             <span class="rep-rel-arrow">
               <span class="rep-rel-arrow__label">Pensa di</span>
-              <span class="rep-rel-arrow__glyph">→</span>
+              <span class="rep-rel-arrow__glyph" aria-hidden="true"></span>
             </span>
-            {{ toName }}
+            <span class="rep-tx-title__name">{{ toName }}</span>
             <span class="ds-score ds-score--sm"
               :class="{ 'ds-score--empty': score === null }"
               :style="score !== null ? { background: scoreColor(score) } : undefined">
