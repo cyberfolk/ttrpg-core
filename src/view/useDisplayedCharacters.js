@@ -41,5 +41,5 @@ export function useDisplayedCharacters() {
     return page;
   });
 
-  return { items, total };
+  return { items, total, all };
 }

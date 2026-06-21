@@ -8,6 +8,9 @@
       ← Indietro
     </button>
 
+    <RecordPager v-if="recordIndex >= 0" :index="recordIndex" :total="recordIds.length"
+      @update:index="goToIndex" />
+
     <div class="ds-card ds-card--filament" style="padding:1.5rem 1.75rem 1.75rem">
       <!-- Profile header -->
       <div class="rep-profile__head">
@@ -151,8 +154,10 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
+import { useDisplayedCharacters } from '../useDisplayedCharacters.js';
 import { averageIncomingScore, listActiveGroups, addMember, removeMember } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
+import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
@@ -170,6 +175,16 @@ const router = useRouter();
 const tab = ref('in');
 const tx = ref(null);
 const newGroupId = ref('');
+
+// Lista ordinata dei personaggi (stesso ordine della vista lista) per il pager prev/next.
+const { all: displayedCharacters } = useDisplayedCharacters();
+const recordIds = computed(() => displayedCharacters.value.map((it) => it.char.id));
+const recordIndex = computed(() => recordIds.value.indexOf(props.id));
+
+function goToIndex(index) {
+  const id = recordIds.value[index];
+  if (id) router.push({ name: 'profile', params: { id } });
+}
 
 const character = computed(() => state.value.characters.find((c) => c.id === props.id) || null);
 const isArchived = computed(() => character.value !== null && character.value.deletedAt !== null);
