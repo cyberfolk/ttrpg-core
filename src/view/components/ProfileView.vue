@@ -33,16 +33,66 @@
           <button class="ds-seg__btn" :class="{ active: tab === 'out' }" @click="tab = 'out'">
             Lui pensa
           </button>
+          <button class="ds-seg__btn" :class="{ active: tab === 'groups' }" @click="tab = 'groups'">
+            Membro di
+          </button>
         </div>
       </div>
 
       <!-- Relations -->
       <RelationList
+        v-if="tab !== 'groups'"
         :key="tab"
         :current-id="character.id"
         :direction="tab"
         @open-tx="openTx"
       />
+
+      <!-- Gruppi del personaggio -->
+      <template v-else>
+        <p v-if="memberGroups.length === 0" class="rep-empty">Non è membro di alcun gruppo.</p>
+        <div v-else class="rep-table-wrap">
+          <table class="rep-table">
+            <thead>
+              <tr>
+                <th class="rep-table__num">#</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(group, i) in memberGroups" :key="group.id"
+                class="rep-table__row--clickable" role="button" tabindex="0"
+                @click="goToGroup(group.id)"
+                @keydown="(e) => onGroupKey(e, group.id)">
+
+                <td class="rep-table__num">{{ i + 1 }}</td>
+                <td>
+                  <span class="rep-table__name" @click.stop="goToGroup(group.id)">
+                    {{ group.name }}
+                    <Icon name="goto" />
+                  </span>
+                </td>
+                <td>
+                  <span v-if="group.type" class="ds-badge">{{ group.type }}</span>
+                  <span v-else>–</span>
+                </td>
+                <td @click.stop>
+                  <div class="rep-table__actions">
+                    <HoverTip text="Apri gruppo" label="Apri gruppo" :tab-index="-1">
+                      <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
+                        @click="goToGroup(group.id)" aria-label="Apri gruppo">
+                        <Icon name="goto" />
+                      </button>
+                    </HoverTip>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </template>
 
       <!-- Ornament -->
       <div style="margin-top:22px">
@@ -57,21 +107,6 @@
           </span>
           <span class="ds-orn__line ds-orn__line--r"></span>
         </div>
-      </div>
-    </div>
-
-    <!-- Gruppi del personaggio -->
-    <div v-if="memberGroups.length > 0" class="ds-card ds-card--filament" style="padding:1.25rem 1.75rem;margin-top:1rem">
-      <div class="rep-drawer__label" style="margin-bottom:0.5rem">Membro di</div>
-      <div v-for="group in memberGroups" :key="group.id" class="rep-relation"
-        role="button" tabindex="0"
-        @click="goToGroup(group.id)"
-        @keydown="(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToGroup(group.id); } }">
-        <span class="rep-relation__name">
-          {{ group.name }}
-          <span v-if="group.type" class="ds-badge" style="margin-left:0.35rem">{{ group.type }}</span>
-          <Icon name="goto" />
-        </span>
       </div>
     </div>
 
@@ -130,6 +165,10 @@ function goBack() {
 
 function goToGroup(id) {
   router.push({ name: 'groupProfile', params: { id } });
+}
+
+function onGroupKey(e, id) {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToGroup(id); }
 }
 
 function openTx(pair) {

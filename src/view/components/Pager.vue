@@ -1,12 +1,12 @@
 <template>
   <nav v-if="totalPages > 1" class="rep-pager" aria-label="Paginazione">
-    <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon" :disabled="page === 0"
-      @click="$emit('update:page', page - 1)" aria-label="Pagina precedente">
+    <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
+      @click="goPrev" aria-label="Pagina precedente">
       <Icon name="prev" />
     </button>
     <span class="rep-pager__counter">{{ from }}–{{ to }} / {{ total }}</span>
-    <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon" :disabled="page >= totalPages - 1"
-      @click="$emit('update:page', page + 1)" aria-label="Pagina successiva">
+    <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
+      @click="goNext" aria-label="Pagina successiva">
       <Icon name="next" />
     </button>
   </nav>
@@ -22,12 +22,23 @@ const props = defineProps({
   total: { type: Number, required: true },
 });
 
-defineEmits(['update:page']);
+const emit = defineEmits(['update:page']);
 
 const totalPages = computed(() => {
   const pages = Math.max(1, Math.ceil(props.total / props.pageSize));
   return pages;
 });
+
+// Looping: oltre l'ultima pagina torna alla prima e viceversa.
+function goPrev() {
+  const target = (props.page - 1 + totalPages.value) % totalPages.value;
+  emit('update:page', target);
+}
+
+function goNext() {
+  const target = (props.page + 1) % totalPages.value;
+  emit('update:page', target);
+}
 
 const from = computed(() => {
   const value = props.total === 0 ? 0 : props.page * props.pageSize + 1;
