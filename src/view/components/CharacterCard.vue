@@ -23,23 +23,29 @@
       </span>
     </HoverTip>
 
-    <!-- Actions -->
+    <!-- Actions: solo icone, titolo azione nel tooltip al hover -->
     <div class="rep-cc__actions" @click.stop>
       <template v-if="isArchived">
-        <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onRestore">
-          <span class="ds-btn__icon"><Icon name="restore" /></span>
-          Ripristina
-        </button>
-        <button class="ds-btn ds-btn--sm ds-btn--danger" @click="onHardDelete">
-          <span class="ds-btn__icon"><Icon name="trash" /></span>
-          Elimina
-        </button>
+        <HoverTip text="Ripristina" label="Ripristina personaggio" :tab-index="-1">
+          <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
+            @click="onRestore" aria-label="Ripristina personaggio">
+            <Icon name="restore" />
+          </button>
+        </HoverTip>
+        <HoverTip text="Elimina" label="Elimina personaggio" :tab-index="-1">
+          <button class="ds-btn ds-btn--sm ds-btn--danger ds-btn--icon"
+            @click="onHardDelete" aria-label="Elimina personaggio">
+            <Icon name="trash" />
+          </button>
+        </HoverTip>
       </template>
       <template v-else>
-        <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onArchive">
-          <span class="ds-btn__icon"><Icon name="archive" /></span>
-          Archivia
-        </button>
+        <HoverTip text="Archivia" label="Archivia personaggio" :tab-index="-1">
+          <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
+            @click="onArchive" aria-label="Archivia personaggio">
+            <Icon name="archive" />
+          </button>
+        </HoverTip>
       </template>
     </div>
   </div>

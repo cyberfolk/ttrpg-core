@@ -7,9 +7,11 @@ export function useDisplayedCharacters() {
   const { state } = useStore();
   const ui = useUiState();
 
-  const items = computed(() => {
-    const all = state.value.characters;
-    const base = ui.showArchived ? all : listActiveCharacters(state.value);
+  // Insieme completo filtrato + ordinato (l'equivalente del web_search_read di Odoo
+  // PRIMA della paginazione): è la sorgente del totale.
+  const all = computed(() => {
+    const allChars = state.value.characters;
+    const base = ui.showArchived ? allChars : listActiveCharacters(state.value);
     const needle = ui.search.trim().toLowerCase();
     const filtered = needle.length === 0
       ? base
@@ -29,5 +31,15 @@ export function useDisplayedCharacters() {
     });
   });
 
-  return items;
+  const total = computed(() => all.value.length);
+
+  // Pagina corrente. Matrix non consuma items, quindi paginare sempre copre
+  // lista + gallery senza condizioni sull'activeView.
+  const items = computed(() => {
+    const start = ui.page * ui.pageSize;
+    const page = all.value.slice(start, start + ui.pageSize);
+    return page;
+  });
+
+  return { items, total };
 }

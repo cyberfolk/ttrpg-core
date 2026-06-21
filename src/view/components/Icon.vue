@@ -29,6 +29,8 @@ const ICONS = {
   close:   ['M18 6 6 18', 'm6 6 12 12'],
   menu:    ['M3 6h18', 'M3 12h18', 'M3 18h18'],
   edit:    ['M12 20h9', 'M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z'],
+  prev:    ['m15 18-6-6 6-6'],
+  next:    ['m9 18 6-6-6-6'],
 };
 
 const props = defineProps({

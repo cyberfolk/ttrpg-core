@@ -28,7 +28,7 @@
         @click="item.char.deletedAt === null ? goToProfile(item.char.id) : undefined"
         @keydown="item.char.deletedAt === null ? onKeyDown($event, item.char.id) : undefined">
 
-        <td class="rep-table__num">{{ i + 1 }}</td>
+        <td class="rep-table__num">{{ offset + i + 1 }}</td>
         <td>
           <span class="rep-table__name" @click.stop="goToProfile(item.char.id)">
             {{ item.char.name }}
@@ -77,6 +77,7 @@ import { SCORE_TIP } from '../uiCopy.js';
 
 defineProps({
   items: { type: Array, required: true },
+  offset: { type: Number, default: 0 },
 });
 
 const { dispatch } = useStore();
