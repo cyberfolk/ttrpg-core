@@ -35,37 +35,70 @@
 
       <!-- Tab: Membri -->
       <div v-if="tab === 'membri'">
-        <p v-if="members.length === 0" class="rep-empty">Nessun membro nel gruppo.</p>
-        <div v-for="char in members" :key="char.id" class="rep-relation">
-          <span class="rep-relation__name"
-            role="button" tabindex="0"
-            @click="goToChar(char.id)"
-            @keydown="(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToChar(char.id); } }">
-            {{ char.name }}
-            <Icon name="goto" />
-          </span>
-          <button class="ds-btn ds-btn--sm ds-btn--danger" @click="onRemoveMember(char.id)"
-            aria-label="Rimuovi membro">
-            Rimuovi
-          </button>
+        <Pager :page="membersPage" :page-size="MEMBERS_PAGE_SIZE" :total="membersTotal"
+          @update:page="membersPage = $event" />
+        <div class="rep-table-wrap rep-table--flush">
+          <table class="rep-table">
+            <thead>
+              <tr>
+                <th class="rep-table__num">#</th>
+                <th>Nome</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="membersTotal === 0">
+                <td colspan="3" class="rep-empty">Nessun membro nel gruppo.</td>
+              </tr>
+              <tr v-for="(char, i) in pagedMembers" :key="char.id"
+                class="rep-table__row--clickable" role="button" tabindex="0"
+                @click="goToChar(char.id)"
+                @keydown="(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToChar(char.id); } }">
+                <td class="rep-table__num">{{ membersPage * MEMBERS_PAGE_SIZE + i + 1 }}</td>
+                <td>
+                  <span class="rep-table__name" @click.stop="goToChar(char.id)">
+                    {{ char.name }}
+                    <Icon name="goto" />
+                  </span>
+                </td>
+                <td @click.stop>
+                  <div class="rep-table__actions">
+                    <HoverTip text="Sgancia" label="Sgancia membro" :tab-index="-1">
+                      <button class="ds-btn ds-btn--sm ds-btn--danger ds-btn--icon"
+                        type="button" @click="onRemoveMember(char.id)" aria-label="Sgancia membro">
+                        <Icon name="unlink" />
+                      </button>
+                    </HoverTip>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot v-if="addableCandidates.length > 0">
+              <tr class="rep-addrow">
+                <td></td>
+                <td>
+                  <select class="ds-input" v-model="selectedCandidateId" aria-label="Personaggio da aggiungere">
+                    <option value="">Scegli un personaggio…</option>
+                    <option v-for="c in addableCandidates" :key="c.id" :value="c.id">{{ c.name }}</option>
+                  </select>
+                </td>
+                <td>
+                  <HoverTip text="Aggiungi membro" label="Aggiungi membro" :tab-index="-1">
+                    <button class="ds-btn ds-btn--primary ds-btn--sm ds-btn--icon"
+                      type="button" :disabled="!selectedCandidateId" aria-label="Aggiungi membro"
+                      @click="onAddMember">
+                      <Icon name="plus" />
+                    </button>
+                  </HoverTip>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
-
-        <!-- Aggiungi membro -->
-        <div v-if="addableCandidates.length > 0" style="margin-top:1rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
-          <select class="ds-input" v-model="selectedCandidateId" style="flex:1;min-width:10rem">
-            <option value="">— Scegli personaggio —</option>
-            <option v-for="c in addableCandidates" :key="c.id" :value="c.id">{{ c.name }}</option>
-          </select>
-          <button class="ds-btn ds-btn--primary ds-btn--sm" :disabled="!selectedCandidateId"
-            @click="onAddMember">
-            <span class="ds-btn__icon"><Icon name="plus" /></span>
-            Aggiungi membro
-          </button>
-        </div>
-        <p v-else-if="activeCharacters.length > 0" class="rep-empty" style="margin-top:0.75rem">
+        <p v-if="addableCandidates.length === 0 && activeCharacters.length > 0" class="rep-empty" style="margin-top:0.75rem">
           Tutti i personaggi attivi sono già membri.
         </p>
-        <p v-else class="rep-empty" style="margin-top:0.75rem">
+        <p v-else-if="addableCandidates.length === 0" class="rep-empty" style="margin-top:0.75rem">
           Nessun personaggio disponibile da aggiungere.
         </p>
       </div>
@@ -183,7 +216,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import {
@@ -200,6 +233,10 @@ import { scoreColor } from '../scoreColor.js';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
 import Icon from './Icon.vue';
+import HoverTip from './HoverTip.vue';
+import Pager from './Pager.vue';
+
+const MEMBERS_PAGE_SIZE = 10;
 
 const props = defineProps({
   id: { type: String, required: true },
@@ -232,6 +269,20 @@ const members = computed(() => {
     .map((mid) => state.value.characters.find((c) => c.id === mid))
     .filter(Boolean);
   return memberList;
+});
+
+const membersPage = ref(0);
+const membersTotal = computed(() => members.value.length);
+const pagedMembers = computed(() => {
+  const start = membersPage.value * MEMBERS_PAGE_SIZE;
+  const slice = members.value.slice(start, start + MEMBERS_PAGE_SIZE);
+  return slice;
+});
+
+// Clamp pagina quando il totale cala (sgancio di un membro).
+watch(membersTotal, (n) => {
+  const lastPage = Math.max(0, Math.ceil(n / MEMBERS_PAGE_SIZE) - 1);
+  if (membersPage.value > lastPage) membersPage.value = lastPage;
 });
 
 const addableCandidates = computed(() => {

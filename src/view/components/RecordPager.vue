@@ -1,5 +1,6 @@
 <template>
   <nav v-if="total > 1" class="rep-recpager" aria-label="Navigazione record">
+    <span class="rep-recpager__label">Scheda</span>
     <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
       type="button" @click="goPrev" aria-label="Record precedente">
       <Icon name="prev" />
@@ -85,4 +86,9 @@ function onCommit(e) {
 .rep-recpager__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .rep-recpager__input { -moz-appearance: textfield; appearance: textfield; }
 .rep-recpager__sep { color: var(--text-muted); }
+.rep-recpager__label {
+  font-family: var(--font-display); font-size: var(--fs-label);
+  letter-spacing: var(--ls-caps); text-transform: uppercase;
+  color: var(--text-faint); margin-right: 2px;
+}
 </style>

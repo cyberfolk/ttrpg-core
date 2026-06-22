@@ -30,6 +30,12 @@
         </span>
       </div>
 
+      <!-- Toggle: nascondi personaggi senza interazioni (solo tab relazioni) -->
+      <label v-if="tab !== 'groups'" class="rep-toggle">
+        <input type="checkbox" v-model="hideEmpty" />
+        <span>Nascondi personaggi senza interazioni</span>
+      </label>
+
       <!-- Tab switcher -->
       <div style="margin:1.1rem 0 1rem">
         <div class="ds-seg ds-seg--underline">
@@ -51,6 +57,7 @@
         :key="tab"
         :current-id="character.id"
         :direction="tab"
+        :hide-empty="hideEmpty"
         @open-tx="openTx"
       />
 
@@ -175,6 +182,7 @@ const router = useRouter();
 const tab = ref('in');
 const tx = ref(null);
 const newGroupId = ref('');
+const hideEmpty = ref(false);
 
 // Lista ordinata dei personaggi (stesso ordine della vista lista) per il pager prev/next.
 const { all: displayedCharacters } = useDisplayedCharacters();

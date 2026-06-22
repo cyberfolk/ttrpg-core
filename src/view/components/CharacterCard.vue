@@ -9,10 +9,15 @@
     <!-- Archived ribbon -->
     <span v-if="isArchived" class="ds-ribbon">Archiviato</span>
 
+    <!-- Apri scheda: freccia nell'angolo in alto a destra -->
+    <button v-if="!isArchived" class="rep-cc__corner" type="button"
+      @click.stop="goToProfile" aria-label="Apri scheda">
+      <Icon name="goto" />
+    </button>
+
     <!-- Name -->
     <div class="rep-cc__namerow" @click.stop="goToProfile" :title="char.name">
       <span class="rep-cc__name">{{ char.name }}</span>
-      <Icon name="goto" class="rep-cc__goto" />
     </div>
 
     <!-- Score chip with tooltip -->

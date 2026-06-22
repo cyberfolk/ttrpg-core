@@ -53,11 +53,11 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
-import { listActiveCharacters, computeScore } from '../../model/reputation.js';
+import { listActiveCharacters, computeScore, hasTransaction } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
 import Icon from './Icon.vue';
 import Pager from './Pager.vue';
@@ -67,6 +67,7 @@ const PAGE_SIZE = 10;
 const props = defineProps({
   currentId: { type: String, required: true },
   direction: { type: String, required: true },
+  hideEmpty: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['open-tx']);
@@ -78,9 +79,21 @@ const router = useRouter();
 const page = ref(0);
 const sort = ref({ key: 'score', dir: 'desc' }); // key: 'name' | 'score'
 
+// Esiste una transazione registrata in questa direzione tra currentId e l'altro?
+function hasInteraction(otherId) {
+  const exists = props.direction === 'in'
+    ? hasTransaction(state.value, otherId, props.currentId)
+    : hasTransaction(state.value, props.currentId, otherId);
+  return exists;
+}
+
 const others = computed(() => {
   const pool = ui.showArchived ? state.value.characters : listActiveCharacters(state.value);
-  const filtered = pool.filter((c) => c.id !== props.currentId);
+  const filtered = pool.filter((c) => {
+    if (c.id === props.currentId) return false;
+    if (props.hideEmpty && !hasInteraction(c.id)) return false;
+    return true;
+  });
   return filtered;
 });
 
@@ -102,6 +115,12 @@ const sortedRows = computed(() => {
 });
 
 const total = computed(() => sortedRows.value.length);
+
+// Clamp pagina quando il totale cala (es. attivando "nascondi senza interazioni").
+watch(total, (n) => {
+  const lastPage = Math.max(0, Math.ceil(n / PAGE_SIZE) - 1);
+  if (page.value > lastPage) page.value = lastPage;
+});
 
 const offset = computed(() => page.value * PAGE_SIZE);
 
