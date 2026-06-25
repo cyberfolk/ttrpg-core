@@ -479,8 +479,13 @@ a:hover { color: var(--gold-600); }
   /* Tabella lista: rispetta larghezza container invece di crescere su min-content */
   .rep-table { table-layout: fixed; }
   .rep-table th, .rep-table td { padding: .55rem .6rem; }
-  .rep-table th:nth-child(3), .rep-table td:nth-child(3) { width: 4.5rem; }
-  .rep-table th:nth-child(4), .rep-table td:nth-child(4) { width: 6.5rem; }
+  /* Larghezze fisse solo per la tabella lista (4 col); le tabelle flush (relazioni, 3 col) restano auto */
+  .rep-table-wrap:not(.rep-table--flush) .rep-table th:nth-child(3),
+  .rep-table-wrap:not(.rep-table--flush) .rep-table td:nth-child(3) { width: 4.5rem; }
+  .rep-table-wrap:not(.rep-table--flush) .rep-table th:nth-child(4),
+  .rep-table-wrap:not(.rep-table--flush) .rep-table td:nth-child(4) { width: 6.5rem; }
+  /* Header colonna punteggio nelle tabelle relazioni: non spezzare/troncare */
+  .rep-table--flush .rep-table th.rep-col--right { white-space: nowrap; }
   .rep-table__name { white-space: normal; overflow-wrap: anywhere; }
   .rep-table__actions { flex-wrap: wrap; }
   .rep-table__actions .ds-btn { flex: 1 1 auto; justify-content: center; }
