@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-26T00:00:00Z",
+  "title": "Design System: TTRPG Core — Atlante",
+  "extensions": {
+    "colorMeta": {
+      "gold-500": { "role": "primary", "displayName": "Oro Antico", "canonical": "#b8893a", "tonalRamp": ["#3a2c0f", "#5a4517", "#7a5c1f", "#9a7628", "#b8893a", "#c9a24b", "#e0c074", "#f3e9cf"] },
+      "ember-600": { "role": "secondary", "displayName": "Ember", "canonical": "#b4471f", "tonalRamp": ["#4a1908", "#6b240e", "#8f3315", "#b4471f", "#d9663a", "#e88a63", "#f2b39a", "#f7e3d7"] },
+      "paper-50": { "role": "neutral", "displayName": "Avorio", "canonical": "#faf7f1", "tonalRamp": ["#221d16", "#3c3429", "#6c6253", "#b6ab98", "#e3dac8", "#ece5d6", "#f4efe5", "#faf7f1"] },
+      "ink-900": { "role": "neutral", "displayName": "Inchiostro", "canonical": "#221d16", "tonalRamp": ["#221d16", "#3c3429", "#574d3f", "#6c6253", "#8c8273", "#b6ab98", "#d4ccbd", "#ece5d6"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Titoli di vista e frontespizio (Cinzel)." },
+      "headline": { "displayName": "Headline", "purpose": "Titolo del profilo personaggio (h1)." },
+      "title": { "displayName": "Title", "purpose": "Titoli di dialog e nomi card (h3)." },
+      "body": { "displayName": "Body", "purpose": "Testo corrente e dati tabellari (Source Sans 3)." },
+      "label": { "displayName": "Label", "purpose": "Micro-etichette maiuscole ricorrenti (Cinzel)." }
+    },
+    "shadows": [
+      { "name": "xs", "value": "0 1px 2px rgba(33,28,21,.06)", "purpose": "Stacco minimo; bottoni primari a riposo." },
+      { "name": "sm", "value": "0 1px 3px rgba(33,28,21,.08), 0 1px 2px rgba(33,28,21,.04)", "purpose": "Card e tabelle." },
+      { "name": "md", "value": "0 6px 16px rgba(33,28,21,.08), 0 1px 3px rgba(33,28,21,.05)", "purpose": "Superfici di medio rilievo." },
+      { "name": "lg", "value": "0 16px 36px rgba(33,28,21,.13), 0 2px 6px rgba(33,28,21,.06)", "purpose": "Dialog e hover delle card interattive." },
+      { "name": "focus", "value": "0 0 0 3px rgba(184,137,58,.38)", "purpose": "Anello di focus oro su ogni interattivo." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(.2,.6,.2,1)", "purpose": "Easing di default per entrate ed elevazione." },
+      { "name": "ease-inout", "value": "cubic-bezier(.4,0,.2,1)", "purpose": "Transizioni simmetriche." },
+      { "name": "dur-fast", "value": "0.15s", "purpose": "Hover, focus, micro-feedback." },
+      { "name": "dur", "value": "0.22s", "purpose": "Transizioni standard, entrata dialog." },
+      { "name": "dur-slow", "value": "0.4s", "purpose": "Entrata profilo, rise delle card." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "480px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Azione principale: gradiente oro lume su testo bruno.",
+      "html": "<button class=\"ds-btn-primary\">Salva</button>",
+      "css": ".ds-btn-primary { font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 0.875rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.45em; border: 1px solid #b8893a; border-radius: 10px; padding: 0.6rem 0.95rem; color: #2c220e; background: linear-gradient(180deg, #d6b157, #c39845); box-shadow: 0 1px 2px rgba(33,28,21,.06); cursor: pointer; transition: background .15s, box-shadow .15s, transform .15s; } .ds-btn-primary:hover { background: linear-gradient(180deg, #e0c074, #d6b157); box-shadow: 0 1px 3px rgba(33,28,21,.08); } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(184,137,58,.38); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Azione secondaria: pannello pergamena, hover oro.",
+      "html": "<button class=\"ds-btn-secondary\">Annulla</button>",
+      "css": ".ds-btn-secondary { font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 0.875rem; line-height: 1; display: inline-flex; align-items: center; gap: 0.45em; border: 1px solid #e8e1d4; border-radius: 10px; padding: 0.6rem 0.95rem; color: #6c6253; background: #f4efe5; cursor: pointer; transition: background .15s, border-color .15s, color .15s; } .ds-btn-secondary:hover { border-color: #b8893a; color: #221d16; background: #f3e9cf; }"
+    },
+    {
+      "name": "Score Chip",
+      "kind": "custom",
+      "refersTo": "score-chip",
+      "description": "Bollino punteggio a numeri tabellari; il fondo deriva dal punteggio.",
+      "html": "<span class=\"ds-score-chip\">72</span>",
+      "css": ".ds-score-chip { display: inline-flex; align-items: center; justify-content: center; min-width: 2.6rem; padding: 0.28rem 0.66rem; border-radius: 999px; font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums; font-size: 1rem; color: #2a2114; background: #c9d8b0; box-shadow: inset 0 0 0 1px rgba(33,28,21,.12); transition: transform .15s, box-shadow .15s; } .ds-score-chip:hover { transform: scale(1.06); box-shadow: 0 0 0 2px #c9a24b, inset 0 0 0 1px rgba(33,28,21,.12); }"
+    },
+    {
+      "name": "Gold Badge",
+      "kind": "chip",
+      "refersTo": "badge-gold",
+      "description": "Etichetta Cinzel maiuscola, velina d'oro.",
+      "html": "<span class=\"ds-badge-gold\">Alleato</span>",
+      "css": ".ds-badge-gold { display: inline-flex; align-items: center; gap: 0.35em; font-family: Cinzel, Georgia, serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.22rem 0.55rem; border-radius: 999px; line-height: 1.1; background: #f3e9cf; color: #7a5c1f; border: 1px solid rgba(184,137,58,.30); }"
+    },
+    {
+      "name": "Card (Filament)",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Contenitore carta pura con filetto oro in testa; piatto a riposo.",
+      "html": "<div class=\"ds-card-filament\"><h3 class=\"ds-card-title\">Aldric il Mercante</h3><p class=\"ds-card-text\">Reputazione complessiva tra i membri del gruppo.</p></div>",
+      "css": ".ds-card-filament { position: relative; overflow: hidden; background: #ffffff; border: 1px solid #e8e1d4; border-radius: 14px; box-shadow: 0 1px 3px rgba(33,28,21,.08), 0 1px 2px rgba(33,28,21,.04); padding: 1.25rem; transition: transform .22s, border-color .22s, box-shadow .22s; } .ds-card-filament::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #c9a24b, transparent); opacity: .7; } .ds-card-filament:hover { transform: translateY(-3px); border-color: #c9a24b; box-shadow: 0 16px 36px rgba(33,28,21,.13), 0 2px 6px rgba(33,28,21,.06); } .ds-card-title { margin: 0 0 .35rem; font-family: Cinzel, Georgia, serif; font-size: 1.25rem; font-weight: 600; color: #221d16; } .ds-card-text { margin: 0; font-family: 'Source Sans 3', sans-serif; font-size: 1rem; line-height: 1.5; color: #3c3429; }"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo testo carta pura; focus a bordo oro + anello.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Cerca personaggio…\" />",
+      "css": ".ds-input { font-family: 'Source Sans 3', sans-serif; font-size: 1rem; color: #221d16; background: #ffffff; border: 1px solid #ddd3c2; border-radius: 10px; padding: 0.55rem 0.75rem; width: 100%; transition: border-color .15s, box-shadow .15s; } .ds-input::placeholder { color: #8c8273; } .ds-input:hover { border-color: #b8893a; } .ds-input:focus { outline: none; border-color: #b8893a; box-shadow: 0 0 0 3px rgba(184,137,58,.38); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Il Registro dell'Archivista",
+    "overview": "Atlante è un tomo di consultazione, non un'insegna. La superficie è avorio caldo come carta di pregio, l'inchiostro è bruno scuro, e l'oro antico compare come segnatura dell'archivista — un filetto in testa a una card, il bordo di un badge — mai come riempimento decorativo. Cinzel dà autorità da frontespizio; Source Sans 3 porta dati e testo con chiarezza tabellare. Pulito, preciso, funzionale: il calore viene da tavolozza e tipografia, la leggibilità del dato vince sempre. L'uso è bimodale: DM denso da desktop, giocatori in lookup veloce da mobile; entrambi seri e densi.",
+    "keyCharacteristics": [
+      "Avorio + inchiostro bruno come base; oro antico solo come segnatura.",
+      "Doppio carattere: Cinzel (display) + Source Sans 3 (corpo, dati).",
+      "Piatto di default, elevazione solo su stato.",
+      "Direzione della relazione (A→B) sempre esplicita: frecce e orientamento.",
+      "Densità informativa prima dell'ornamento, su desktop e mobile."
+    ],
+    "rules": [
+      { "name": "La Regola della Segnatura", "body": "L'oro è una firma, non un colore di riempimento: occupa ≤15% di qualunque schermata. Se inizia a coprire superfici, è diventato tema — e Atlante non è drenched.", "section": "colors" },
+      { "name": "La Regola dell'Inchiostro Pieno", "body": "Il testo di corpo sta su ink-700 (#3c3429) o più scuro. Nessun grigio slavato su avorio 'per eleganza'.", "section": "colors" },
+      { "name": "La Regola della Maiuscola Incisa", "body": "Le micro-etichette sono Cinzel maiuscolo con tracking 0.08em. È la voce ricorrente del catalogo.", "section": "typography" },
+      { "name": "La Regola Piatta-di-Default", "body": "Le superfici sono piatte a riposo. L'ombra appare solo come risposta a uno stato (hover, focus, dialog).", "section": "elevation" }
+    ],
+    "dos": [
+      "Do tenere il testo di corpo su ink-700 (#3c3429) o più scuro; placeholder a ink-400.",
+      "Do usare l'oro come segnatura (filetto, bordo, intestazione): ≤15% di schermata.",
+      "Do rendere sempre esplicita la direzione A→B con frecce/etichette.",
+      "Do lasciare le superfici piatte a riposo; ombra solo su hover/focus/dialog.",
+      "Do trattare il mobile come prima classe: tabelle e matrice scrollano, non si mutilano.",
+      "Do usare Cinzel maiuscolo con tracking 0.08em per le micro-etichette ricorrenti."
+    ],
+    "donts": [
+      "Don't scadere nella dashboard SaaS generica: niente grigi piatti, griglie di card identiche, hero-metric template.",
+      "Don't virare al videogioco fantasy chiassoso: niente texture pergamena finte, gotici illeggibili, glow gratuiti.",
+      "Don't scadere nell'app consumer giocosa: niente bubbly, emoji, gradienti pop.",
+      "Don't usare grigi slavati su avorio 'per eleganza'.",
+      "Don't far diventare l'oro un tema drenched.",
+      "Don't usare border-left/border-right colorato >1px come striscia d'accento."
+    ]
+  }
+}
