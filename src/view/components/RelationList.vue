@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div class="rep-toolbar">
+    <div class="rep-relbar">
+      <div class="rep-searchbar">
       <div class="rep-search">
-        <Icon name="search" />
-        <input class="ds-input" type="search" v-model="query"
+        <Icon name="search" class="rep-search__icon" />
+        <input class="ds-input ds-input--with-icon" type="search" v-model="query"
           placeholder="Cerca per nome…" aria-label="Cerca per nome" />
       </div>
       <div class="rep-filters" ref="filtersWrap" @mouseleave="onFiltersLeave">
@@ -27,12 +28,13 @@
           </label>
         </div>
       </div>
+      </div>
+      <Pager v-if="total > 0" class="rep-relbar__pager"
+        :page="page" :page-size="PAGE_SIZE" :total="total"
+        @update:page="page = $event" />
     </div>
     <p v-if="total === 0" class="rep-empty">{{ query.trim() ? 'Nessun risultato.' : 'Nessuna relazione.' }}</p>
     <template v-else>
-      <Pager :page="page" :page-size="PAGE_SIZE" :total="total"
-        @update:page="page = $event" />
-
       <div class="rep-table-wrap rep-table--flush">
         <table class="rep-table">
           <thead>
@@ -286,21 +288,38 @@ function goToProfile(node) {
 .rep-col--right { text-align: right; }
 
 /* toolbar: ricerca + dropdown filtri righe */
-.rep-toolbar {
+.rep-relbar {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
   margin-bottom: 0.75rem;
 }
-.rep-search {
+/* gruppo ricerca + filtri (nessun contenitore: l'input ha già il suo bordo) */
+.rep-searchbar {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex: 1 1 16rem;
+}
+.rep-search {
+  position: relative;
   flex: 1;
+  min-width: 0;
   color: var(--text-muted);
 }
-.rep-search .ds-input { flex: 1; }
+.rep-search .ds-input { width: 100%; }
+.rep-search__icon {
+  position: absolute;
+  left: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-faint);
+}
 .rep-filters { position: relative; flex: none; }
+.rep-relbar__pager { flex: none; }
+.rep-relbar :deep(.rep-pager) { margin-block: 0; }
 
 /* colonna dropdown "colonne opzionali" stile Odoo */
 .rep-col-opts {
