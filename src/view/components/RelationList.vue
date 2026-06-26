@@ -338,14 +338,14 @@ function goToProfile(node) {
   font-size: 1.2rem;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   color: var(--text-muted);
   cursor: pointer;
   line-height: 1;
-  transition: color 0.12s, background 0.12s, border-color 0.12s;
+  transition: color var(--dur-fast), background var(--dur-fast), border-color var(--dur-fast);
 }
 .rep-col-opts__btn:hover {
-  background: #0000000f;
+  background: var(--surface-panel);
   border-color: transparent;
   color: var(--text-strong);
 }
@@ -357,22 +357,22 @@ function goToProfile(node) {
   margin-top: 0;
   padding: 0.35rem;
   min-width: 9rem;
-  background: var(--paper-0, #fff);
-  border: 1px solid var(--line-gold, rgba(0,0,0,0.15));
-  border-radius: 0.4rem;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  background: var(--paper-0);
+  border: 1px solid var(--line-gold);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 }
 .rep-col-opts__item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.3rem 0.4rem;
-  border-radius: 0.3rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 400;
   white-space: nowrap;
 }
-.rep-col-opts__item:hover { background: var(--paper-50, rgba(0,0,0,0.05)); }
+.rep-col-opts__item:hover { background: var(--paper-50); }
 .rep-col-opts__item input { cursor: pointer; margin: 0; }
 
 /* tap target adeguato su touch/stylus (44px raccomandati) */
