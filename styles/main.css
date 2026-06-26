@@ -805,7 +805,6 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 
 /* Spaziature profilo: dalla scala --space-*, niente valori inline arbitrari */
 .rep-profile__card { padding: var(--space-6) var(--space-7) var(--space-7); }
-.rep-profile__back { margin-bottom: var(--space-4); }
 .rep-profile__tabs { margin: var(--space-5) 0 var(--space-4); }
 .rep-profile__orn  { margin-top: var(--space-6); }
 

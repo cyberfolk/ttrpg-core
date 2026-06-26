@@ -4,9 +4,6 @@
       <router-link to="/personaggi">Personaggi</router-link>
       <span> / {{ character.name }}</span>
     </nav>
-    <button class="ds-btn ds-btn--ghost ds-btn--sm rep-profile__back" @click="goBack">
-      ← Indietro
-    </button>
 
     <RecordPager v-if="recordIndex >= 0" :index="recordIndex" :total="recordIds.length"
       @update:index="goToIndex" />
@@ -240,10 +237,6 @@ function onAddGroup() {
   const groupId = newGroupId.value;
   dispatch((s) => addMember(s, groupId, charId));
   newGroupId.value = '';
-}
-
-function goBack() {
-  router.push('/personaggi');
 }
 
 function goToGroup(id) {

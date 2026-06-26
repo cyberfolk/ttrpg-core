@@ -7,26 +7,29 @@
         <input class="ds-input ds-input--with-icon" type="search" v-model="query"
           placeholder="Cerca per nome…" aria-label="Cerca per nome" />
       </div>
-      <div class="rep-filters" ref="filtersWrap" @mouseleave="onFiltersLeave">
-        <button class="rep-col-opts__btn" type="button"
+      <div class="rep-filters">
+        <button ref="filtersBtn" class="rep-col-opts__btn" type="button"
           aria-label="Filtri righe" title="Filtri righe" :aria-expanded="filtersOpen"
-          @click.stop="filtersOpen = !filtersOpen">
+          @click.stop="toggleFilters">
           <Icon name="filter" />
         </button>
-        <div v-if="filtersOpen" class="rep-col-opts__menu" @click.stop>
-          <label class="rep-col-opts__item">
-            <input type="checkbox" v-model="hideEmpty" />
-            <span>Nascondi righe senza interazioni</span>
-          </label>
-          <label class="rep-col-opts__item">
-            <input type="checkbox" v-model="hideCharacters" />
-            <span>Nascondi personaggi</span>
-          </label>
-          <label class="rep-col-opts__item">
-            <input type="checkbox" v-model="hideGroups" />
-            <span>Nascondi gruppi</span>
-          </label>
-        </div>
+        <Teleport to="body">
+          <div v-if="filtersOpen" class="rep-col-opts__menu rep-col-opts__menu--float"
+            :style="filtersStyle" @click.stop>
+            <label class="rep-col-opts__item">
+              <input type="checkbox" v-model="hideEmpty" />
+              <span>Nascondi righe senza interazioni</span>
+            </label>
+            <label class="rep-col-opts__item">
+              <input type="checkbox" v-model="hideCharacters" />
+              <span>Nascondi personaggi</span>
+            </label>
+            <label class="rep-col-opts__item">
+              <input type="checkbox" v-model="hideGroups" />
+              <span>Nascondi gruppi</span>
+            </label>
+          </div>
+        </Teleport>
       </div>
       </div>
       <Pager v-if="total > 0" class="rep-relbar__pager"
@@ -58,18 +61,21 @@
                 Punteggio
                 <Icon v-if="sort.key === 'score'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
               </th>
-              <th class="rep-col-opts" ref="optsWrap" @mouseleave="onWrapLeave">
-                <button class="rep-col-opts__btn" type="button"
+              <th class="rep-col-opts">
+                <button ref="optsBtn" class="rep-col-opts__btn" type="button"
                   aria-label="Colonne opzionali" title="Colonne" :aria-expanded="optsOpen"
-                  @click.stop="optsOpen = !optsOpen">
+                  @click.stop="toggleOpts">
                   <Icon name="columns" />
                 </button>
-                <div v-if="optsOpen" class="rep-col-opts__menu" @click.stop>
-                  <label class="rep-col-opts__item">
-                    <input type="checkbox" v-model="showType" />
-                    <span>Tipo</span>
-                  </label>
-                </div>
+                <Teleport to="body">
+                  <div v-if="optsOpen" class="rep-col-opts__menu rep-col-opts__menu--float"
+                    :style="optsStyle" @click.stop>
+                    <label class="rep-col-opts__item">
+                      <input type="checkbox" v-model="showType" />
+                      <span>Tipo</span>
+                    </label>
+                  </div>
+                </Teleport>
               </th>
             </tr>
           </thead>
@@ -139,41 +145,60 @@ const hideEmpty = ref(false);
 const hideCharacters = ref(false);
 const hideGroups = ref(false);
 const filtersOpen = ref(false);
-const filtersWrap = ref(null);
+const filtersBtn = ref(null);
+const filtersStyle = ref(null);
 
 // Colonne opzionali (stile Odoo): toggle nel dropdown in coda all'header.
 const showType = ref(true);
 const optsOpen = ref(false);
-const optsWrap = ref(null);
+const optsBtn = ref(null);
+const optsStyle = ref(null);
 
-// Chiude una tendina se il click è fuori dal suo wrapper.
-function closeIfOutside(wrap, openRef, target) {
-  if (wrap.value && !wrap.value.contains(target)) {
-    openRef.value = false;
-  }
-}
-
-function onDocClick(e) {
-  closeIfOutside(optsWrap, optsOpen, e.target);
-  closeIfOutside(filtersWrap, filtersOpen, e.target);
-}
-
-// Chiude la tendina quando il puntatore esce da icona+menu.
-function leaveCloser(wrap, openRef) {
-  return (e) => {
-    const to = e.relatedTarget;
-    if (to instanceof Node && wrap.value && wrap.value.contains(to)) {
-      return;
-    }
-    openRef.value = false;
+// I menu sono in Teleport su <body> (la card profilo ha overflow:hidden e la
+// tabella overflow-x:auto: in posizione assoluta verrebbero clippati). Posizione
+// fixed calcolata dal rettangolo del bottone, allineata al suo bordo destro.
+function floatStyle(btnEl) {
+  const r = btnEl.getBoundingClientRect();
+  const style = {
+    position: 'fixed',
+    top: `${r.bottom + 4}px`,
+    right: `${window.innerWidth - r.right}px`,
   };
+  return style;
 }
 
-const onWrapLeave = leaveCloser(optsWrap, optsOpen);
-const onFiltersLeave = leaveCloser(filtersWrap, filtersOpen);
+function toggleFilters() {
+  if (filtersOpen.value) { filtersOpen.value = false; return; }
+  optsOpen.value = false;
+  filtersStyle.value = floatStyle(filtersBtn.value);
+  filtersOpen.value = true;
+}
 
-onMounted(() => document.addEventListener('click', onDocClick));
-onUnmounted(() => document.removeEventListener('click', onDocClick));
+function toggleOpts() {
+  if (optsOpen.value) { optsOpen.value = false; return; }
+  filtersOpen.value = false;
+  optsStyle.value = floatStyle(optsBtn.value);
+  optsOpen.value = true;
+}
+
+function closeMenus() {
+  filtersOpen.value = false;
+  optsOpen.value = false;
+}
+
+// Click sul menu o sui bottoni: @click.stop non raggiunge il document, quindi
+// qui chiudiamo solo su click realmente esterni. Scroll/resize: la posizione
+// fixed si scollegherebbe dal bottone → chiudi.
+onMounted(() => {
+  document.addEventListener('click', closeMenus);
+  window.addEventListener('scroll', closeMenus, true);
+  window.addEventListener('resize', closeMenus);
+});
+onUnmounted(() => {
+  document.removeEventListener('click', closeMenus);
+  window.removeEventListener('scroll', closeMenus, true);
+  window.removeEventListener('resize', closeMenus);
+});
 
 // Esiste una transazione registrata in questa direzione tra currentId e l'altro?
 function hasInteraction(otherId) {
