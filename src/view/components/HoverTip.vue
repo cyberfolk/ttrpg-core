@@ -1,7 +1,8 @@
 <template>
   <span class="rep-tip" :class="className" ref="anchorRef"
     :tabindex="tabIndex" role="note" :aria-label="label"
-    @mouseenter="show" @mouseleave="hide" @focus="show" @blur="hide">
+    @mouseenter="show" @mouseleave="hide" @focus="show" @blur="hide"
+    @click="show">
     <slot />
     <Teleport to="body" v-if="open && anchor">
       <span ref="bubbleRef" class="rep-hint__bubble" role="tooltip"

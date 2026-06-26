@@ -92,6 +92,7 @@
   --space-4: 1rem;
   --space-5: 1.25rem;
   --space-6: 1.5rem;
+  --space-7: 1.75rem;
   --space-8: 2rem;
   --space-10: 2.5rem;
   --space-12: 3rem;
@@ -610,14 +611,14 @@ a:hover { color: var(--gold-600); }
 /* Tabella full-bleed: sfonda il padding orizzontale della card profilo (1.75rem)
    e tocca i bordi. La card ha overflow:hidden+radius, quindi gli angoli restano
    arrotondati. Niente cornice propria: la tabella diventa una sezione della card. */
-.rep-table--flush { width: auto; margin-left: -1.75rem; margin-right: -1.75rem; }
+.rep-table--flush { width: auto; margin-left: calc(-1 * var(--space-7)); margin-right: calc(-1 * var(--space-7)); }
 .rep-table--flush .rep-table {
   border: none; border-radius: 0; box-shadow: none; background: transparent;
 }
 .rep-table--flush .rep-table th:first-child,
-.rep-table--flush .rep-table td:first-child { padding-left: 1.75rem; }
+.rep-table--flush .rep-table td:first-child { padding-left: var(--space-7); }
 .rep-table--flush .rep-table th:last-child,
-.rep-table--flush .rep-table td:last-child { padding-right: 1.75rem; }
+.rep-table--flush .rep-table td:last-child { padding-right: var(--space-7); }
 
 /* === Matrix ================================================ */
 .rep-matrix-wrap {
@@ -800,6 +801,27 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
   width: 7px; height: 7px;
   border-top: 2px solid var(--gold-500); border-right: 2px solid var(--gold-500);
   transform: translate(1px, -50%) rotate(45deg);
+}
+
+/* Spaziature profilo: dalla scala --space-*, niente valori inline arbitrari */
+.rep-profile__card { padding: var(--space-6) var(--space-7) var(--space-7); }
+.rep-profile__back { margin-bottom: var(--space-4); }
+.rep-profile__tabs { margin: var(--space-5) 0 var(--space-4); }
+.rep-profile__orn  { margin-top: var(--space-6); }
+
+/* Caption direzionale sopra la lista relazioni: rende esplicito chi giudica chi */
+.rep-dir-caption {
+  display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2);
+  margin: 0 var(--space-1) var(--space-3);
+  font-family: var(--font-sans); font-size: var(--fs-sm);
+}
+.rep-dir-caption__node {
+  font-weight: var(--fw-semibold); color: var(--text-body);
+  overflow-wrap: anywhere; word-break: break-word; min-width: 0;
+}
+.rep-dir-caption__arrow { min-width: 2.2rem; width: 2.2rem; margin-inline: 0; }
+.rep-dir-caption__hint {
+  color: var(--text-faint); font-style: italic;
 }
 
 /* === Tooltip =============================================== */

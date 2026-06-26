@@ -4,14 +4,14 @@
       <router-link to="/personaggi">Personaggi</router-link>
       <span> / {{ character.name }}</span>
     </nav>
-    <button class="ds-btn ds-btn--ghost ds-btn--sm" @click="goBack" style="margin-bottom:1rem">
+    <button class="ds-btn ds-btn--ghost ds-btn--sm rep-profile__back" @click="goBack">
       ← Indietro
     </button>
 
     <RecordPager v-if="recordIndex >= 0" :index="recordIndex" :total="recordIds.length"
       @update:index="goToIndex" />
 
-    <div class="ds-card ds-card--filament" style="padding:1.5rem 1.75rem 1.75rem">
+    <div class="ds-card ds-card--filament rep-profile__card">
       <!-- Profile header -->
       <div class="rep-profile__head">
         <h2>{{ character.name }}</h2>
@@ -31,7 +31,7 @@
       </div>
 
       <!-- Tab switcher -->
-      <div style="margin:1.1rem 0 1rem">
+      <div class="rep-profile__tabs">
         <div class="ds-seg ds-seg--underline">
           <button class="ds-seg__btn" :class="{ active: tab === 'in' }" @click="tab = 'in'">
             Di lui pensano
@@ -44,6 +44,16 @@
           </button>
         </div>
       </div>
+
+      <!-- Direzione della relazione: esplicita e persistente (giudicante → giudicato) -->
+      <p v-if="tab !== 'groups'" class="rep-dir-caption">
+        <span class="rep-dir-caption__node">{{ tab === 'in' ? 'Gli altri' : character.name }}</span>
+        <span class="rep-rel-arrow rep-dir-caption__arrow" aria-hidden="true">
+          <span class="rep-rel-arrow__glyph"></span>
+        </span>
+        <span class="rep-dir-caption__node">{{ tab === 'in' ? character.name : 'gli altri' }}</span>
+        <span class="rep-dir-caption__hint">· {{ tab === 'in' ? 'giudizio ricevuto' : 'giudizio dato' }}</span>
+      </p>
 
       <!-- Relations -->
       <RelationList
@@ -88,9 +98,15 @@
                 </td>
                 <td @click.stop>
                   <div class="rep-table__actions">
-                    <HoverTip text="Sgancia" label="Sgancia dal gruppo" :tab-index="-1">
+                    <template v-if="confirmUnlinkId === group.id">
+                      <button class="ds-btn ds-btn--sm ds-btn--danger"
+                        type="button" @click="confirmUnlink(group.id)">Sgancia</button>
+                      <button class="ds-btn ds-btn--sm ds-btn--ghost"
+                        type="button" @click="confirmUnlinkId = null">Annulla</button>
+                    </template>
+                    <HoverTip v-else text="Sgancia dal gruppo" label="Sgancia dal gruppo" :tab-index="-1">
                       <button class="ds-btn ds-btn--sm ds-btn--danger ds-btn--icon"
-                        type="button" aria-label="Sgancia dal gruppo" @click="onUnlink(group.id)">
+                        type="button" aria-label="Sgancia dal gruppo" @click="confirmUnlinkId = group.id">
                         <Icon name="unlink" />
                       </button>
                     </HoverTip>
@@ -123,7 +139,7 @@
       </template>
 
       <!-- Ornament -->
-      <div style="margin-top:22px">
+      <div class="rep-profile__orn">
         <div class="ds-orn" role="separator">
           <span class="ds-orn__line"></span>
           <span class="ds-orn__motif">
@@ -150,7 +166,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
@@ -175,6 +191,10 @@ const router = useRouter();
 const tab = ref('in');
 const tx = ref(null);
 const newGroupId = ref('');
+// Sgancio gruppo: conferma inline a due passi (niente delete silenzioso).
+const confirmUnlinkId = ref(null);
+// Cambio tab azzera una conferma di sgancio in sospeso.
+watch(tab, () => { confirmUnlinkId.value = null; });
 
 // Lista ordinata dei personaggi (stesso ordine della vista lista) per il pager prev/next.
 const { all: displayedCharacters } = useDisplayedCharacters();
@@ -208,9 +228,10 @@ const availableGroups = computed(() => {
   return groups;
 });
 
-function onUnlink(groupId) {
+function confirmUnlink(groupId) {
   const charId = character.value.id;
   dispatch((s) => removeMember(s, groupId, charId));
+  confirmUnlinkId.value = null;
 }
 
 function onAddGroup() {

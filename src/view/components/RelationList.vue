@@ -9,9 +9,9 @@
       </div>
       <div class="rep-filters" ref="filtersWrap" @mouseleave="onFiltersLeave">
         <button class="rep-col-opts__btn" type="button"
-          aria-label="Filtri righe" :aria-expanded="filtersOpen"
+          aria-label="Filtri righe" title="Filtri righe" :aria-expanded="filtersOpen"
           @click.stop="filtersOpen = !filtersOpen">
-          <Icon name="sliders" />
+          <Icon name="filter" />
         </button>
         <div v-if="filtersOpen" class="rep-col-opts__menu" @click.stop>
           <label class="rep-col-opts__item">
@@ -60,9 +60,9 @@
               </th>
               <th class="rep-col-opts" ref="optsWrap" @mouseleave="onWrapLeave">
                 <button class="rep-col-opts__btn" type="button"
-                  aria-label="Colonne opzionali" :aria-expanded="optsOpen"
+                  aria-label="Colonne opzionali" title="Colonne" :aria-expanded="optsOpen"
                   @click.stop="optsOpen = !optsOpen">
-                  <Icon name="sliders" />
+                  <Icon name="columns" />
                 </button>
                 <div v-if="optsOpen" class="rep-col-opts__menu" @click.stop>
                   <label class="rep-col-opts__item">
@@ -374,6 +374,11 @@ function goToProfile(node) {
 }
 .rep-col-opts__item:hover { background: var(--paper-50, rgba(0,0,0,0.05)); }
 .rep-col-opts__item input { cursor: pointer; margin: 0; }
+
+/* tap target adeguato su touch/stylus (44px raccomandati) */
+@media (pointer: coarse) {
+  .rep-col-opts__btn { min-width: 44px; min-height: 44px; }
+}
 
 /* mobile: solo Nome + Punteggio; via colonna Tipo e dropdown colonne */
 @media (max-width: 480px) {
