@@ -8,11 +8,14 @@
           placeholder="Cerca per nome…" aria-label="Cerca per nome" />
       </div>
       <div class="rep-filters">
-        <button ref="filtersBtn" class="rep-col-opts__btn" type="button"
-          aria-label="Filtri righe" title="Filtri righe"
+        <button ref="filtersBtn" type="button"
+          class="rep-col-opts__btn" :class="{ 'rep-col-opts__btn--active': filtersActive }"
+          :aria-label="filtersActive ? 'Filtri righe (attivi)' : 'Filtri righe'"
+          :title="filtersActive ? 'Filtri righe (attivi)' : 'Filtri righe'"
           aria-controls="rep-filters-menu" :aria-expanded="filtersOpen"
           @click.stop="toggleFilters">
           <Icon name="filter" />
+          <span v-if="filtersActive" class="rep-col-opts__dot" aria-hidden="true"></span>
         </button>
         <Teleport to="body">
           <div v-if="filtersOpen" id="rep-filters-menu" ref="filtersMenu"
@@ -68,11 +71,14 @@
                 <Icon v-if="sort.key === 'score'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
               </th>
               <th class="rep-col-opts">
-                <button ref="optsBtn" class="rep-col-opts__btn" type="button"
-                  aria-label="Colonne opzionali" title="Colonne"
+                <button ref="optsBtn" type="button"
+                  class="rep-col-opts__btn" :class="{ 'rep-col-opts__btn--active': colsActive }"
+                  :aria-label="colsActive ? 'Colonne opzionali (Tipo nascosto)' : 'Colonne opzionali'"
+                  :title="colsActive ? 'Colonne (Tipo nascosto)' : 'Colonne'"
                   aria-controls="rep-cols-menu" :aria-expanded="optsOpen"
                   @click.stop="toggleOpts">
                   <Icon name="columns" />
+                  <span v-if="colsActive" class="rep-col-opts__dot" aria-hidden="true"></span>
                 </button>
                 <Teleport to="body">
                   <div v-if="optsOpen" id="rep-cols-menu" ref="optsMenu"
@@ -166,6 +172,11 @@ const optsOpen = ref(false);
 const optsBtn = ref(null);
 const optsMenu = ref(null);
 const optsStyle = ref(null);
+
+// Stato non-default dei due menu: serve a marcare visivamente le icone (un dot)
+// così l'utente sa che righe/colonne sono filtrate anche a tendina chiusa.
+const filtersActive = computed(() => hideEmpty.value || hideCharacters.value || hideGroups.value);
+const colsActive = computed(() => !showType.value);
 
 // I menu sono in Teleport su <body> (la card profilo ha overflow:hidden e la
 // tabella overflow-x:auto: in posizione assoluta verrebbero clippati). Posizione
@@ -452,6 +463,7 @@ button.ds-score {
   text-align: right;
 }
 .rep-col-opts__btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -471,6 +483,18 @@ button.ds-score {
   background: var(--surface-panel);
   border-color: transparent;
   color: var(--text-strong);
+}
+/* filtri/colonne in stato non-default: icona oro + dot, niente solo-colore */
+.rep-col-opts__btn--active { color: var(--accent-text); }
+.rep-col-opts__dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  box-shadow: 0 0 0 2px var(--surface-card);
 }
 .rep-col-opts__menu {
   position: absolute;

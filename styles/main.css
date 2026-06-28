@@ -298,9 +298,14 @@ a:hover { color: var(--gold-600); }
   transition: border-color .15s, box-shadow .15s;
 }
 .ds-input--with-icon { padding-left: 2.2rem; }
-.ds-input::placeholder { color: var(--text-faint); }
+/* placeholder a contrasto AA (text-muted ~5.5:1, non text-faint ~3.6:1) */
+.ds-input::placeholder { color: var(--text-muted); opacity: 1; }
 .ds-input:hover { border-color: var(--gold-500); }
 .ds-input:focus { outline: none; border-color: var(--gold-500); box-shadow: var(--shadow-focus); }
+/* touch: input ad almeno 44px d'altezza su puntatore grossolano */
+@media (pointer: coarse) {
+  .ds-input { min-height: 44px; }
+}
 
 /* === DS: Segmented control ================================= */
 .ds-seg {
@@ -548,7 +553,7 @@ a:hover { color: var(--gold-600); }
 
 /* === Table ================================================= */
 .rep-table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.rep-table__num { width: 2.5rem; text-align: right; color: var(--text-faint); font-variant-numeric: tabular-nums; }
+.rep-table__num { width: 2.5rem; text-align: right; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 .rep-table {
   width: 100%; border-collapse: separate; border-spacing: 0;
   background: var(--surface-card);
