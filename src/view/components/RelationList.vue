@@ -42,7 +42,7 @@
     <p v-if="total === 0" class="rep-empty">{{ query.trim() ? 'Nessun risultato.' : 'Nessuna relazione.' }}</p>
     <template v-else>
       <div class="rep-table-wrap rep-table--flush">
-        <table class="rep-table">
+        <table class="rep-table" :class="{ 'rep-has-type': showType }">
           <thead>
             <tr>
               <th class="rep-table__num">#</th>
@@ -95,15 +95,19 @@
 
               <td class="rep-table__num">{{ offset + i + 1 }}</td>
               <td>
-                <router-link class="rep-table__name" :to="profileTo(row.node)" @click.stop>
-                  {{ row.node.entity.name }}
-                  <Icon name="goto" />
-                </router-link>
+                <span class="rep-name-cell">
+                  <span class="rep-kind-ico" role="img" :aria-label="kindLabel(row.node)"
+                    :title="kindLabel(row.node)">
+                    <Icon :name="row.node.kind === 'group' ? 'users' : 'user'" />
+                  </span>
+                  <router-link class="rep-table__name" :to="profileTo(row.node)" @click.stop>
+                    {{ row.node.entity.name }}
+                    <Icon name="goto" />
+                  </router-link>
+                </span>
               </td>
               <td v-if="showType" class="rep-col-type">
-                <span class="ds-badge">
-                  {{ row.node.kind === 'group' ? 'Gruppo' : 'Personaggio' }}
-                </span>
+                <span class="ds-badge">{{ kindLabel(row.node) }}</span>
               </td>
               <td class="rep-col--right">
                 <button type="button" class="ds-score ds-score--interactive"
@@ -351,6 +355,12 @@ function emitTx(otherId) {
   emit('open-tx', pair);
 }
 
+// Etichetta del tipo nodo (badge colonna Tipo + nome accessibile del glifo kind).
+function kindLabel(node) {
+  const label = node.kind === 'group' ? 'Gruppo' : 'Personaggio';
+  return label;
+}
+
 // Destinazione del link al profilo: gruppo o personaggio.
 function profileTo(node) {
   const routeName = node.kind === 'group' ? 'groupProfile' : 'profile';
@@ -366,6 +376,20 @@ function profileTo(node) {
   white-space: nowrap;
 }
 .rep-col--right { text-align: right; }
+
+/* Cella nome: glifo kind + link. Il glifo compare solo quando la colonna
+   Tipo NON è visibile, così il dato personaggio/gruppo non si perde mai
+   (toggle colonna off su desktop, oppure colonna nascosta su mobile). */
+.rep-name-cell { display: inline-flex; align-items: center; gap: 0.4rem; min-width: 0; }
+.rep-kind-ico {
+  display: none;
+  flex: none;
+  align-items: center;
+  color: var(--text-muted);
+}
+.rep-kind-ico :deep(svg) { width: 1em; height: 1em; }
+/* colonna Tipo nascosta dal toggle → mostra il glifo */
+.rep-table:not(.rep-has-type) .rep-kind-ico { display: inline-flex; }
 
 /* Nome = link reale al profilo: niente stile <a> nativo, focus visibile. */
 .rep-table__name { color: inherit; text-decoration: none; }
@@ -479,9 +503,11 @@ button.ds-score {
   .rep-col-opts__btn { min-width: 44px; min-height: 44px; }
 }
 
-/* mobile: solo Nome + Punteggio; via colonna Tipo e dropdown colonne */
+/* mobile: via colonna Tipo e dropdown colonne; il tipo resta come glifo
+   inline sul nome (il dato si sposta, non si perde) */
 @media (max-width: 480px) {
   .rep-col-type,
   .rep-col-opts { display: none; }
+  .rep-table .rep-kind-ico { display: inline-flex; }
 }
 </style>
