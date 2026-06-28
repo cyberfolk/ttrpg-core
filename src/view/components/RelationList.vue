@@ -9,13 +9,16 @@
       </div>
       <div class="rep-filters">
         <button ref="filtersBtn" class="rep-col-opts__btn" type="button"
-          aria-label="Filtri righe" title="Filtri righe" :aria-expanded="filtersOpen"
+          aria-label="Filtri righe" title="Filtri righe"
+          aria-controls="rep-filters-menu" :aria-expanded="filtersOpen"
           @click.stop="toggleFilters">
           <Icon name="filter" />
         </button>
         <Teleport to="body">
-          <div v-if="filtersOpen" class="rep-col-opts__menu rep-col-opts__menu--float"
-            :style="filtersStyle" @click.stop>
+          <div v-if="filtersOpen" id="rep-filters-menu" ref="filtersMenu"
+            class="rep-col-opts__menu rep-col-opts__menu--float" role="group"
+            aria-label="Filtri righe" :style="filtersStyle"
+            @click.stop @focusout="onFiltersFocusout">
             <label class="rep-col-opts__item">
               <input type="checkbox" v-model="hideEmpty" />
               <span>Nascondi righe senza interazioni</span>
@@ -43,19 +46,22 @@
           <thead>
             <tr>
               <th class="rep-table__num">#</th>
-              <th class="rep-table__sortable" role="button" tabindex="0"
+              <th class="rep-table__sortable" :aria-sort="ariaSort('name')"
+                role="button" tabindex="0"
                 @click="toggleSort('name')"
                 @keydown="(e) => onSortKey(e, 'name')">
                 Nome
                 <Icon v-if="sort.key === 'name'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
               </th>
-              <th v-if="showType" class="rep-table__sortable rep-col-type" role="button" tabindex="0"
+              <th v-if="showType" class="rep-table__sortable rep-col-type" :aria-sort="ariaSort('kind')"
+                role="button" tabindex="0"
                 @click="toggleSort('kind')"
                 @keydown="(e) => onSortKey(e, 'kind')">
                 Tipo
                 <Icon v-if="sort.key === 'kind'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
               </th>
-              <th class="rep-table__sortable rep-col--right" role="button" tabindex="0"
+              <th class="rep-table__sortable rep-col--right" :aria-sort="ariaSort('score')"
+                role="button" tabindex="0"
                 @click="toggleSort('score')"
                 @keydown="(e) => onSortKey(e, 'score')">
                 Punteggio
@@ -63,13 +69,16 @@
               </th>
               <th class="rep-col-opts">
                 <button ref="optsBtn" class="rep-col-opts__btn" type="button"
-                  aria-label="Colonne opzionali" title="Colonne" :aria-expanded="optsOpen"
+                  aria-label="Colonne opzionali" title="Colonne"
+                  aria-controls="rep-cols-menu" :aria-expanded="optsOpen"
                   @click.stop="toggleOpts">
                   <Icon name="columns" />
                 </button>
                 <Teleport to="body">
-                  <div v-if="optsOpen" class="rep-col-opts__menu rep-col-opts__menu--float"
-                    :style="optsStyle" @click.stop>
+                  <div v-if="optsOpen" id="rep-cols-menu" ref="optsMenu"
+                    class="rep-col-opts__menu rep-col-opts__menu--float" role="group"
+                    aria-label="Colonne opzionali" :style="optsStyle"
+                    @click.stop @focusout="onOptsFocusout">
                     <label class="rep-col-opts__item">
                       <input type="checkbox" v-model="showType" />
                       <span>Tipo</span>
@@ -81,16 +90,15 @@
           </thead>
           <tbody>
             <tr v-for="(row, i) in pageRows" :key="row.node.kind + '-' + row.node.entity.id"
-              class="rep-table__row--clickable" role="button" tabindex="0"
-              @click="emitTx(row.node.entity.id)"
-              @keydown="(e) => onRowKey(e, row.node.entity.id)">
+              class="rep-table__row--clickable"
+              @click="emitTx(row.node.entity.id)">
 
               <td class="rep-table__num">{{ offset + i + 1 }}</td>
               <td>
-                <span class="rep-table__name" @click.stop="goToProfile(row.node)">
+                <router-link class="rep-table__name" :to="profileTo(row.node)" @click.stop>
                   {{ row.node.entity.name }}
                   <Icon name="goto" />
-                </span>
+                </router-link>
               </td>
               <td v-if="showType" class="rep-col-type">
                 <span class="ds-badge">
@@ -98,11 +106,12 @@
                 </span>
               </td>
               <td class="rep-col--right">
-                <span class="ds-score ds-score--interactive"
+                <button type="button" class="ds-score ds-score--interactive"
                   :style="{ background: scoreColor(row.score) }"
+                  :aria-label="`Registra transazione con ${row.node.entity.name}`"
                   @click.stop="emitTx(row.node.entity.id)">
                   {{ row.score }}
-                </span>
+                </button>
               </td>
               <td class="rep-col-opts"></td>
             </tr>
@@ -114,8 +123,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
 import { listActiveCharacters, listActiveGroups, computeScore, hasTransaction } from '../../model/reputation.js';
@@ -134,7 +142,6 @@ const emit = defineEmits(['open-tx']);
 
 const { state } = useStore();
 const ui = useUiState();
-const router = useRouter();
 
 const page = ref(0);
 const query = ref('');
@@ -146,12 +153,14 @@ const hideCharacters = ref(false);
 const hideGroups = ref(false);
 const filtersOpen = ref(false);
 const filtersBtn = ref(null);
+const filtersMenu = ref(null);
 const filtersStyle = ref(null);
 
 // Colonne opzionali (stile Odoo): toggle nel dropdown in coda all'header.
 const showType = ref(true);
 const optsOpen = ref(false);
 const optsBtn = ref(null);
+const optsMenu = ref(null);
 const optsStyle = ref(null);
 
 // I menu sono in Teleport su <body> (la card profilo ha overflow:hidden e la
@@ -167,23 +176,62 @@ function floatStyle(btnEl) {
   return style;
 }
 
-function toggleFilters() {
-  if (filtersOpen.value) { filtersOpen.value = false; return; }
+// Porta il focus sul primo input del menu appena aperto (accessibilità tastiera).
+function focusFirst(menuRef) {
+  const first = menuRef.value?.querySelector('input');
+  if (first) first.focus();
+}
+
+async function toggleFilters() {
+  if (filtersOpen.value) { closeFilters(); return; }
   optsOpen.value = false;
   filtersStyle.value = floatStyle(filtersBtn.value);
   filtersOpen.value = true;
+  await nextTick();
+  focusFirst(filtersMenu);
 }
 
-function toggleOpts() {
-  if (optsOpen.value) { optsOpen.value = false; return; }
+async function toggleOpts() {
+  if (optsOpen.value) { closeOpts(); return; }
   filtersOpen.value = false;
   optsStyle.value = floatStyle(optsBtn.value);
   optsOpen.value = true;
+  await nextTick();
+  focusFirst(optsMenu);
 }
 
+// Chiusura "intenzionale" (toggle, Esc): riporta il focus al bottone di apertura.
+function closeFilters() {
+  filtersOpen.value = false;
+  filtersBtn.value?.focus();
+}
+function closeOpts() {
+  optsOpen.value = false;
+  optsBtn.value?.focus();
+}
+
+// Chiusura "passiva" (click esterno, scroll, resize): non rubare il focus.
 function closeMenus() {
   filtersOpen.value = false;
   optsOpen.value = false;
+}
+
+// Tab fuori dal menu (es. oltre l'ultimo checkbox) → chiudi senza spostare il focus.
+function makeFocusout(menuRef, openRef) {
+  return (e) => {
+    const to = e.relatedTarget;
+    if (to instanceof Node && menuRef.value && menuRef.value.contains(to)) return;
+    openRef.value = false;
+  };
+}
+const onFiltersFocusout = makeFocusout(filtersMenu, filtersOpen);
+const onOptsFocusout = makeFocusout(optsMenu, optsOpen);
+
+// Esc chiude il menu aperto e riporta il focus al suo trigger.
+function onKeydown(e) {
+  if (e.key !== 'Escape') return;
+  if (filtersOpen.value) closeFilters();
+  else if (optsOpen.value) closeOpts();
 }
 
 // Click sul menu o sui bottoni: @click.stop non raggiunge il document, quindi
@@ -191,11 +239,13 @@ function closeMenus() {
 // fixed si scollegherebbe dal bottone → chiudi.
 onMounted(() => {
   document.addEventListener('click', closeMenus);
+  document.addEventListener('keydown', onKeydown);
   window.addEventListener('scroll', closeMenus, true);
   window.addEventListener('resize', closeMenus);
 });
 onUnmounted(() => {
   document.removeEventListener('click', closeMenus);
+  document.removeEventListener('keydown', onKeydown);
   window.removeEventListener('scroll', closeMenus, true);
   window.removeEventListener('resize', closeMenus);
 });
@@ -287,8 +337,11 @@ function onSortKey(e, key) {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSort(key); }
 }
 
-function onRowKey(e, otherId) {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); emitTx(otherId); }
+// Stato di ordinamento per gli screen reader (aria-sort sull'header attivo).
+function ariaSort(key) {
+  if (sort.value.key !== key) return 'none';
+  const direction = sort.value.dir === 'asc' ? 'ascending' : 'descending';
+  return direction;
 }
 
 function emitTx(otherId) {
@@ -298,9 +351,11 @@ function emitTx(otherId) {
   emit('open-tx', pair);
 }
 
-function goToProfile(node) {
+// Destinazione del link al profilo: gruppo o personaggio.
+function profileTo(node) {
   const routeName = node.kind === 'group' ? 'groupProfile' : 'profile';
-  router.push({ name: routeName, params: { id: node.entity.id } });
+  const location = { name: routeName, params: { id: node.entity.id } };
+  return location;
 }
 </script>
 
@@ -311,6 +366,25 @@ function goToProfile(node) {
   white-space: nowrap;
 }
 .rep-col--right { text-align: right; }
+
+/* Nome = link reale al profilo: niente stile <a> nativo, focus visibile. */
+.rep-table__name { color: inherit; text-decoration: none; }
+.rep-table__name:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 2px;
+}
+
+/* Punteggio = <button> reale (apre la transazione): azzera il chrome nativo. */
+button.ds-score {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  cursor: pointer;
+}
+.ds-score:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 2px;
+}
 
 /* toolbar: ricerca + dropdown filtri righe */
 .rep-relbar {
