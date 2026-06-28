@@ -232,10 +232,15 @@ function closeMenus() {
 }
 
 // Tab fuori dal menu (es. oltre l'ultimo checkbox) → chiudi senza spostare il focus.
+// NB: chiudiamo solo quando il focus va su un elemento reale fuori dal menu. Un blur
+// senza relatedTarget (click sul testo della label, che non è focusabile) NON deve
+// chiudere, altrimenti il toggle via stringa si annulla; al click davvero esterno
+// pensa il listener su document.
 function makeFocusout(menuRef, openRef) {
   return (e) => {
     const to = e.relatedTarget;
-    if (to instanceof Node && menuRef.value && menuRef.value.contains(to)) return;
+    if (!(to instanceof Node)) return;
+    if (menuRef.value && menuRef.value.contains(to)) return;
     openRef.value = false;
   };
 }
