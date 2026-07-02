@@ -54,12 +54,13 @@ const to = computed(() => {
 </script>
 
 <style scoped>
+/* Meta-strip: agganciato sopra l'header di tabella, non una riga isolata. */
 .rep-pager {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  margin-block: 12px;
+  margin-block: 0 .45rem;
 }
 .rep-pager__counter {
   font-variant-numeric: tabular-nums;

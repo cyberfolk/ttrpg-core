@@ -53,7 +53,7 @@
       Nessun gruppo corrisponde alla ricerca.
     </div>
 
-    <div v-else class="rep-table-wrap" style="margin-top:1rem">
+    <div v-else class="rep-table-wrap">
       <table class="rep-table rep-table--stable">
         <colgroup>
           <col style="width:3rem" />
