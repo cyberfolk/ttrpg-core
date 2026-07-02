@@ -2104,6 +2104,23 @@
       "type": "circolo",
       "memberIds": [],
       "deletedAt": null
+    },
+    {
+      "id": "4f642ea0-919d-4060-93d9-949c6db4c004",
+      "name": "Venerabile e Antichissima Corporazione dei Fabbri, Ramai, Stagnini, Calderai e Battitori di Metalli Nobili e Vili della Citta Libera di Auros e di Tutte le Contee Soggette al Suo Antico Sigillo",
+      "type": "gilda",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000004",
+        "d0dec0de-0000-4000-8000-00000000000b"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "b7211adf-94f6-4806-88b0-f37614e274fe",
+      "name": "Ordine Militare, Ospedaliero e Contemplativo dei Cavalieri del Crepuscolo Eterno, Guardiani del Valico Innevato, Custodi delle Reliquie Perdute e Difensori degli Ultimi Pellegrini della Vecchia Fede",
+      "type": "ordine",
+      "memberIds": [],
+      "deletedAt": null
     }
   ]
 }

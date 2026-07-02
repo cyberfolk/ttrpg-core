@@ -16,8 +16,10 @@
           <Icon v-if="ui.sort.key === 'name'" :name="ui.sort.dir === 'asc' ? 'up' : 'down'" />
         </th>
         <th class="rep-table__sortable" :aria-sort="ariaSort('score')" role="button" tabindex="0"
-          :title="SCORE_TIP" @click="toggleSort('score')" @keydown="(e) => onSortKey(e, 'score')">
-          Reputazione complessiva
+          @click="toggleSort('score')" @keydown="(e) => onSortKey(e, 'score')">
+          <HoverTip :text="SCORE_TIP" :tab-index="-1" label="Reputazione complessiva">
+            Reputazione
+          </HoverTip>
           <Icon v-if="ui.sort.key === 'score'" :name="ui.sort.dir === 'asc' ? 'up' : 'down'" />
         </th>
         <th>Azioni</th>
