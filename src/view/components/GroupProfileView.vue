@@ -16,6 +16,18 @@
           <span v-if="group.type" class="ds-badge" style="margin-left:0.5rem">{{ group.type }}</span>
         </h2>
         <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
+        <span class="rep-profile__synthetic">
+          <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
+            <span class="rep-profile__synthetic-inner">
+              <span class="rep-profile__synthetic-label">Reputazione<br>Complessiva</span>
+              <span class="ds-score ds-score--lg"
+                :class="synthetic === null ? 'ds-score--empty' : ''"
+                :style="synthetic !== null ? { background: scoreColor(synthetic) } : undefined">
+                {{ synthetic !== null ? synthetic : '–' }}
+              </span>
+            </span>
+          </HoverTip>
+        </span>
       </div>
 
       <!-- Sezioni con tab switcher -->
@@ -212,6 +224,7 @@
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
+import { useUiState } from '../useUiState.js';
 import {
   listActiveCharacters,
   listActiveGroups,
@@ -219,10 +232,12 @@ import {
   removeMember,
   computeScore,
   hasTransaction,
+  averageIncomingScore,
   groupDerivedIncoming,
   groupDerivedOutgoing,
 } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
+import { SCORE_TIP } from '../uiCopy.js';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
 import Icon from './Icon.vue';
@@ -237,6 +252,7 @@ const props = defineProps({
 });
 
 const { state, dispatch } = useStore();
+const ui = useUiState();
 const router = useRouter();
 
 const tab = ref('membri');
@@ -261,6 +277,14 @@ const group = computed(() => {
 const isArchived = computed(() => {
   const archived = group.value !== null && group.value.deletedAt !== null;
   return archived;
+});
+
+// Reputazione complessiva del gruppo-come-entita': media dei giudizi diretti
+// ricevuti (stessa metrica del profilo personaggio).
+const synthetic = computed(() => {
+  if (group.value === null) return null;
+  const score = averageIncomingScore(state.value, group.value.id, ui.showArchived);
+  return score;
 });
 
 const activeCharacters = computed(() => listActiveCharacters(state.value));
