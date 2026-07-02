@@ -10,11 +10,15 @@
     <thead>
       <tr>
         <th class="rep-table__num">#</th>
-        <th>Nome</th>
-        <th>
-          <HoverTip :text="SCORE_TIP" label="Reputazione complessiva" class-name="rep-tip--help">
-            Reputazione complessiva
-          </HoverTip>
+        <th class="rep-table__sortable" :aria-sort="ariaSort('name')" role="button" tabindex="0"
+          @click="toggleSort('name')" @keydown="(e) => onSortKey(e, 'name')">
+          Nome
+          <Icon v-if="ui.sort.key === 'name'" :name="ui.sort.dir === 'asc' ? 'up' : 'down'" />
+        </th>
+        <th class="rep-table__sortable" :aria-sort="ariaSort('score')" role="button" tabindex="0"
+          :title="SCORE_TIP" @click="toggleSort('score')" @keydown="(e) => onSortKey(e, 'score')">
+          Reputazione complessiva
+          <Icon v-if="ui.sort.key === 'score'" :name="ui.sort.dir === 'asc' ? 'up' : 'down'" />
         </th>
         <th>Azioni</th>
       </tr>
@@ -107,6 +111,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
+import { useUiState } from '../useUiState.js';
 import { scoreColor } from '../scoreColor.js';
 import { softDeleteCharacter, restoreCharacter, hardDeleteCharacter, renameCharacter } from '../../model/reputation.js';
 import Icon from './Icon.vue';
@@ -119,10 +124,30 @@ defineProps({
 });
 
 const { dispatch } = useStore();
+const ui = useUiState();
 const router = useRouter();
 
 const editingId = ref(null);
 const editName = ref('');
+
+// Ordinamento colonne (stato globale ui.sort: la lista si riordina nel composable).
+function toggleSort(key) {
+  if (ui.sort.key === key) {
+    ui.sort = { key, dir: ui.sort.dir === 'asc' ? 'desc' : 'asc' };
+  } else {
+    ui.sort = { key, dir: key === 'score' ? 'desc' : 'asc' };
+  }
+}
+
+function ariaSort(key) {
+  if (ui.sort.key !== key) return 'none';
+  const dir = ui.sort.dir === 'asc' ? 'ascending' : 'descending';
+  return dir;
+}
+
+function onSortKey(e, key) {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSort(key); }
+}
 
 // Una riga e' navigabile (click apre scheda) solo se attiva e non in modifica.
 function isRowInteractive(char) {

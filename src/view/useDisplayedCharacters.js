@@ -20,15 +20,28 @@ export function useDisplayedCharacters() {
       const score = averageIncomingScore(state.value, c.id, ui.showArchived);
       return { char: c, score };
     });
-    return [...withScore].sort((a, b) => {
+    const { key, dir } = ui.sort;
+    const mul = dir === 'asc' ? 1 : -1;
+    const sorted = [...withScore].sort((a, b) => {
+      // Archiviati sempre in fondo, a prescindere dall'ordinamento scelto.
       const aArchived = a.char.deletedAt !== null;
       const bArchived = b.char.deletedAt !== null;
-      if (aArchived !== bArchived) return aArchived ? 1 : -1;
+      if (aArchived !== bArchived) {
+        const arch = aArchived ? 1 : -1;
+        return arch;
+      }
+      if (key === 'name') {
+        const cmp = a.char.name.localeCompare(b.char.name) * mul;
+        return cmp;
+      }
+      // key === 'score': i "senza punteggio" (null) restano sempre in coda.
       if (a.score === null && b.score === null) return 0;
       if (a.score === null) return 1;
       if (b.score === null) return -1;
-      return b.score - a.score;
+      const cmp = (a.score - b.score) * mul;
+      return cmp;
     });
+    return sorted;
   });
 
   const total = computed(() => all.value.length);

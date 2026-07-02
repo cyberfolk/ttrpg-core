@@ -58,16 +58,34 @@
         <colgroup>
           <col style="width:3rem" />
           <col />
-          <col style="width:10rem" />
+          <col style="width:9rem" />
+          <col style="width:6rem" />
           <col style="width:7rem" />
           <col style="width:6.5rem" />
         </colgroup>
         <thead>
           <tr>
             <th class="rep-table__num">#</th>
-            <th>Nome</th>
-            <th>Tipo</th>
-            <th>Membri</th>
+            <th class="rep-table__sortable" :aria-sort="ariaSort('name')" role="button" tabindex="0"
+              @click="toggleSort('name')" @keydown="(e) => onSortKey(e, 'name')">
+              Nome
+              <Icon v-if="sort.key === 'name'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
+            </th>
+            <th class="rep-table__sortable" :aria-sort="ariaSort('type')" role="button" tabindex="0"
+              @click="toggleSort('type')" @keydown="(e) => onSortKey(e, 'type')">
+              Tipo
+              <Icon v-if="sort.key === 'type'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
+            </th>
+            <th class="rep-table__sortable rep-col--right" :aria-sort="ariaSort('members')" role="button" tabindex="0"
+              @click="toggleSort('members')" @keydown="(e) => onSortKey(e, 'members')">
+              # Membri
+              <Icon v-if="sort.key === 'members'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
+            </th>
+            <th class="rep-table__sortable rep-col--right" :aria-sort="ariaSort('score')" role="button" tabindex="0"
+              @click="toggleSort('score')" @keydown="(e) => onSortKey(e, 'score')">
+              Reputazione
+              <Icon v-if="sort.key === 'score'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
+            </th>
             <th>Azioni</th>
           </tr>
         </thead>
@@ -101,9 +119,17 @@
                 @keydown.enter="saveEdit(group.id)" @keydown.escape="cancelEdit" />
             </td>
 
-            <!-- Membri -->
-            <td>
-              {{ group.memberIds.length }} {{ group.memberIds.length === 1 ? 'membro' : 'membri' }}
+            <!-- # Membri (solo numero, ordinabile come int) -->
+            <td class="rep-col--right" style="font-variant-numeric:tabular-nums">
+              {{ group.memberIds.length }}
+            </td>
+
+            <!-- Reputazione complessiva -->
+            <td class="rep-col--right" @click.stop>
+              <span class="ds-score ds-score--sm" :class="scoreOf(group.id) === null ? 'ds-score--empty' : ''"
+                :style="scoreOf(group.id) !== null ? { background: scoreColor(scoreOf(group.id)) } : undefined">
+                {{ scoreOf(group.id) !== null ? scoreOf(group.id) : '–' }}
+              </span>
             </td>
 
             <!-- Azioni -->
@@ -217,7 +243,9 @@ import {
   hardDeleteGroup,
   renameGroup,
   setGroupType,
+  averageIncomingScore,
 } from '../../model/reputation.js';
+import { scoreColor } from '../scoreColor.js';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import Pager from './Pager.vue';
@@ -250,18 +278,80 @@ const filteredActive = computed(() => {
   return filtered;
 });
 
+// Reputazione complessiva per gruppo (stessa metrica del profilo): mappa
+// id -> punteggio, calcolata una volta per gli attivi.
+const scoreMap = computed(() => {
+  const map = new Map();
+  for (const g of activeGroups.value) {
+    map.set(g.id, averageIncomingScore(state.value, g.id, ui.showArchived));
+  }
+  return map;
+});
+function scoreOf(id) {
+  const score = scoreMap.value.get(id) ?? null;
+  return score;
+}
+
+// Ordinamento colonne (stato locale della vista).
+const sort = ref({ key: 'name', dir: 'asc' });
+
+function toggleSort(key) {
+  if (sort.value.key === key) {
+    sort.value = { key, dir: sort.value.dir === 'asc' ? 'desc' : 'asc' };
+  } else {
+    // nome/tipo partono asc; numeri (membri/punteggio) partono desc.
+    sort.value = { key, dir: key === 'name' || key === 'type' ? 'asc' : 'desc' };
+  }
+}
+function ariaSort(key) {
+  if (sort.value.key !== key) return 'none';
+  const dir = sort.value.dir === 'asc' ? 'ascending' : 'descending';
+  return dir;
+}
+function onSortKey(e, key) {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSort(key); }
+}
+
+const sortedActive = computed(() => {
+  const { key, dir } = sort.value;
+  const mul = dir === 'asc' ? 1 : -1;
+  const rows = [...filteredActive.value].sort((a, b) => {
+    if (key === 'name') {
+      const cmp = a.name.localeCompare(b.name) * mul;
+      return cmp;
+    }
+    if (key === 'type') {
+      const cmp = (a.type || '').localeCompare(b.type || '') * mul;
+      return cmp;
+    }
+    if (key === 'members') {
+      const cmp = (a.memberIds.length - b.memberIds.length) * mul;
+      return cmp;
+    }
+    // key === 'score': i gruppi senza punteggio (null) restano sempre in coda.
+    const sa = scoreMap.value.get(a.id) ?? null;
+    const sb = scoreMap.value.get(b.id) ?? null;
+    if (sa === null && sb === null) return 0;
+    if (sa === null) return 1;
+    if (sb === null) return -1;
+    const cmp = (sa - sb) * mul;
+    return cmp;
+  });
+  return rows;
+});
+
 // Paginazione locale (come nei personaggi). Stato locale: la search dei gruppi
 // e' propria della vista, non quella globale di ui.
 const page = ref(0);
 
 const pagedActive = computed(() => {
   const start = page.value * ui.pageSize;
-  const slice = filteredActive.value.slice(start, start + ui.pageSize);
+  const slice = sortedActive.value.slice(start, start + ui.pageSize);
   return slice;
 });
 
-// La ricerca riduce il totale: torna a pagina 0.
-watch(search, () => {
+// La ricerca o il cambio ordinamento riportano a pagina 0.
+watch([search, sort], () => {
   page.value = 0;
 });
 
