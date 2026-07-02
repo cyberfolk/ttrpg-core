@@ -201,6 +201,26 @@
       "id": "d0dec0de-0000-4000-8000-000000000028",
       "name": "ZzzoÉ̷̢̛͈̳͇̬͛̈́̀͝ n̶̡̠̈́̆̕ (glitch combinanti)",
       "deletedAt": null
+    },
+    {
+      "id": "04e2e98e-7b7b-4223-a6af-abb6532cdae8",
+      "name": "Galla Ventisera",
+      "deletedAt": null
+    },
+    {
+      "id": "b6a7ea16-7b51-42eb-9849-0477e6e1e85b",
+      "name": "Roran Piedelesto",
+      "deletedAt": null
+    },
+    {
+      "id": "83a2a38b-6961-4347-9995-af13e57ffbd1",
+      "name": "Sibilla Nottescura",
+      "deletedAt": null
+    },
+    {
+      "id": "85fc5896-8488-446d-904c-2ef16b7bbcdc",
+      "name": "Tancredi il Rosso",
+      "deletedAt": null
     }
   ],
   "transactions": [
@@ -1894,6 +1914,195 @@
         "d0dec0de-0000-4000-8000-00000000000b",
         "d0dec0de-0000-4000-8000-00000000000e"
       ],
+      "deletedAt": null
+    },
+    {
+      "id": "0c2ad0be-275b-46e2-b1a5-604770059a82",
+      "name": "Gruppo minore 01",
+      "type": "fazione",
+      "memberIds": [],
+      "deletedAt": null
+    },
+    {
+      "id": "a1bd7ddf-6837-45ca-b746-01e584f144a8",
+      "name": "Gruppo minore 02",
+      "type": "gilda",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000002"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "572c3f9d-9c12-4122-a788-9b39c6d18258",
+      "name": "Gruppo minore 03",
+      "type": "clan",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000003",
+        "d0dec0de-0000-4000-8000-00000000000a"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "75d5d558-1292-4973-bd34-0d00c70d13d1",
+      "name": "Gruppo minore 04",
+      "type": "culto",
+      "memberIds": [],
+      "deletedAt": null
+    },
+    {
+      "id": "622d65af-9466-4aa6-b032-3625541c0211",
+      "name": "Gruppo minore 05",
+      "type": "casata",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000005"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "9e80e4a4-4acb-41b7-a944-fc698e8ef7df",
+      "name": "Gruppo minore 06",
+      "type": "compagnia",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000006",
+        "d0dec0de-0000-4000-8000-00000000000d"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "157c2a99-761a-4809-994b-cd0822e8c80e",
+      "name": "Gruppo minore 07",
+      "type": "ordine",
+      "memberIds": [],
+      "deletedAt": null
+    },
+    {
+      "id": "f59099a5-1428-465a-b926-0b1df66207e4",
+      "name": "Gruppo minore 08",
+      "type": "setta",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000008"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "31e2f3a8-ee7a-4171-8a62-3eb93a1d21ae",
+      "name": "Gruppo minore 09",
+      "type": "circolo",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000009",
+        "d0dec0de-0000-4000-8000-000000000010"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "adba42b5-ebdf-412c-bafe-c9a65a53d6b4",
+      "name": "Gruppo minore 10",
+      "type": "villaggio",
+      "memberIds": [],
+      "deletedAt": null
+    },
+    {
+      "id": "7f2aa890-88f1-48c1-b47a-366f3612f686",
+      "name": "Gruppo minore 11",
+      "type": "corporazione",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-00000000000b"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "fd6d50f7-517d-4607-87b2-ab52000452d5",
+      "name": "Gruppo minore 12",
+      "type": "",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-00000000000c",
+        "d0dec0de-0000-4000-8000-000000000013"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "2489caba-06d6-40a1-a008-6fa17af96a0d",
+      "name": "Gruppo minore 13",
+      "type": "",
+      "memberIds": [],
+      "deletedAt": null
+    },
+    {
+      "id": "76abd0d8-82c9-425d-9995-203ab8c81682",
+      "name": "Gruppo minore 14",
+      "type": "fazione",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-00000000000e"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "49e55ded-551f-4965-94aa-a0aa4fc9f4cb",
+      "name": "Gruppo minore 15",
+      "type": "gilda",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-00000000000f",
+        "d0dec0de-0000-4000-8000-000000000016"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "8a746c1a-82d1-47f1-98d1-9e5427203f95",
+      "name": "Gruppo minore 16",
+      "type": "clan",
+      "memberIds": [],
+      "deletedAt": null
+    },
+    {
+      "id": "292e1614-041b-46e3-be2e-181a60083f98",
+      "name": "Gruppo minore 17",
+      "type": "culto",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000011"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "3604ff7b-ea96-4bd8-bc7b-08be63a990a5",
+      "name": "Gruppo minore 18",
+      "type": "casata",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000012",
+        "d0dec0de-0000-4000-8000-000000000019"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "475936b5-18f0-4111-95c6-dacfc798b853",
+      "name": "Gruppo minore 19",
+      "type": "compagnia",
+      "memberIds": [],
+      "deletedAt": null
+    },
+    {
+      "id": "f8f21703-5d30-4d21-a037-000a97b7ba34",
+      "name": "Gruppo minore 20",
+      "type": "ordine",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000014"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "3cd994d0-d586-4877-bfa6-79f77a645b0b",
+      "name": "Gruppo minore 21",
+      "type": "setta",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000015",
+        "d0dec0de-0000-4000-8000-00000000001c"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "ace6c1d6-a187-48e6-872b-02106359cbbe",
+      "name": "Gruppo minore 22",
+      "type": "circolo",
+      "memberIds": [],
       "deletedAt": null
     }
   ]
