@@ -37,7 +37,7 @@
               <span class="fv-verso__score"
                 :style="{ background: scoreColor(v.score) }"
                 :aria-label="`${v.fromName} verso ${v.toName}: reputazione ${v.score} su 100`">
-                {{ v.score }}
+                <CountUp :value="v.score" />
               </span>
 
               <Icon name="next" class="fv-verso__arrow fv-verso__arrow--2" aria-hidden="true" />
@@ -116,6 +116,7 @@ import { scoreColor } from '../scoreColor.js';
 import Icon from './Icon.vue';
 import EntityPicker from './EntityPicker.vue';
 import TransactionModal from './TransactionModal.vue';
+import CountUp from './CountUp.vue';
 
 const { state } = useStore();
 
@@ -411,9 +412,11 @@ function fmtDay(ts) {
 }
 .fv__hint-text { max-width: 44ch; margin: 0; }
 
-/* Ingresso del pannello relazione */
-.fv-rise-enter-active { transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-out); }
-.fv-rise-enter-from { opacity: 0; transform: translateY(8px); }
+/* Ingresso del pannello relazione: reveal deciso (ease-out-expo). */
+.fv-rise-enter-active {
+  transition: opacity 340ms cubic-bezier(0.16, 1, 0.3, 1), transform 340ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fv-rise-enter-from { opacity: 0; transform: translateY(10px); }
 
 @media (max-width: 640px) {
   .fv__pickers { grid-template-columns: 1fr; }

@@ -208,6 +208,12 @@ watch(query, () => { activeIndex.value = 0; });
   border: 1px solid var(--line-gold);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
+  transform-origin: top center;
+  animation: ep-pop 150ms var(--ease-out);
+}
+@keyframes ep-pop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
 }
 .ep__none {
   padding: var(--space-3);
@@ -221,6 +227,7 @@ watch(query, () => { activeIndex.value = 0; });
   padding: 0.5rem 0.6rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: background var(--dur-fast);
 }
 .ep__opt--active { background: var(--accent-tint); }
 .ep__opt-name {
@@ -256,6 +263,11 @@ watch(query, () => { activeIndex.value = 0; });
   border: 1px solid var(--line-gold);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-xs);
+  animation: ep-fade 150ms var(--ease-out);
+}
+@keyframes ep-fade {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: none; }
 }
 .ep--filled .ep__token { border-color: var(--accent); }
 .ep__token .ep__glyph { color: var(--accent-text); }
@@ -292,5 +304,9 @@ watch(query, () => { activeIndex.value = 0; });
 
 @media (pointer: coarse) {
   .ep__clear { width: 40px; height: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ep__list, .ep__token { animation: none; }
 }
 </style>
