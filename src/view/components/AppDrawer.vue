@@ -49,6 +49,10 @@
             <input type="file" accept="application/json" @change="onImportFile" style="display:none" />
           </label>
         </div>
+        <button class="ds-btn ds-btn--danger ds-btn--sm" style="margin-top:0.5rem;width:100%" @click="openWipe">
+          <span class="ds-btn__icon"><Icon name="trash" /></span>
+          Pulisci dati
+        </button>
       </div>
 
       <!-- Impostazioni -->
@@ -72,16 +76,44 @@
         <p class="rep-drawer__doc">{{ reputationHelp }}</p>
       </details>
     </aside>
+
+    <!-- Conferma pulizia dati: azione distruttiva e irreversibile. -->
+    <div v-if="wipeOpen" class="ds-overlay" @click.self="closeWipe">
+      <div class="ds-dialog" style="max-width:420px" role="alertdialog" aria-modal="true"
+        aria-labelledby="wipe-title" aria-describedby="wipe-desc">
+        <div class="ds-dialog__head">
+          <h3 class="ds-dialog__title" id="wipe-title">Pulisci tutti i dati</h3>
+          <button class="ds-dialog__close" @click="closeWipe" aria-label="Chiudi">
+            <Icon name="close" />
+          </button>
+        </div>
+        <div class="ds-dialog__body">
+          <p id="wipe-desc" style="margin:0">
+            Elimina <strong>tutti</strong> i personaggi, i gruppi e le transazioni.
+            L'operazione è <strong>irreversibile</strong>: scarica prima i dati se vuoi conservarli.
+          </p>
+        </div>
+        <div class="ds-dialog__foot">
+          <button ref="wipeCancelBtn" class="ds-btn ds-btn--ghost" @click="closeWipe">Annulla</button>
+          <button class="ds-btn ds-btn--danger" @click="confirmWipe">
+            <span class="ds-btn__icon"><Icon name="trash" /></span>
+            Elimina tutto
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { APP_FUNCTIONS } from '../appFunctions.js';
 import { REPUTATION_HELP } from '../uiCopy.js';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
+import { useDialog } from '../useDialog.js';
+import { createState } from '../../model/schema.js';
 import { serializeState, parseImport } from '../../store/io.js';
 import Icon from './Icon.vue';
 
@@ -118,17 +150,29 @@ const soonFunctions = computed(() => {
 
 const closeBtn = ref(null);
 
+// Pulizia dati: conferma esplicita perché è distruttiva e irreversibile.
+const wipeOpen = ref(false);
+const wipeCancelBtn = ref(null);
+
+function openWipe() {
+  wipeOpen.value = true;
+}
+
+function closeWipe() {
+  wipeOpen.value = false;
+}
+
+function confirmWipe() {
+  replaceState(createState());
+  closeWipe();
+  emit('close'); // torni a zero: chiudi anche il drawer
+}
+
 function goTo(routeName) {
   if (route.name !== routeName) {
     router.push({ name: routeName });
   }
   emit('close');
-}
-
-function onKeydown(event) {
-  if (event.key === 'Escape' && props.open) {
-    emit('close');
-  }
 }
 
 function onExport() {
@@ -160,13 +204,21 @@ function onImportFile(event) {
   event.target.value = '';
 }
 
-watch(() => props.open, async (isOpen) => {
-  if (isOpen) {
-    await nextTick();
-    closeBtn.value?.focus();
-  }
+// Drawer persistente pilotato dalla prop `open`: Escape chiude, apertura porta
+// il focus sul bottone di chiusura. Mentre la conferma di pulizia è aperta il
+// drawer si considera "non aperto" ai fini di Escape/focus, così Escape chiude
+// solo la conferma (dialog annidato) e non anche il drawer.
+useDialog({
+  isOpen: () => props.open && !wipeOpen.value,
+  onClose: () => emit('close'),
+  onOpen: () => closeBtn.value?.focus(),
 });
 
-onMounted(() => window.addEventListener('keydown', onKeydown));
-onUnmounted(() => window.removeEventListener('keydown', onKeydown));
+// Conferma pulizia: Escape annulla, apertura mette a fuoco "Annulla" (mai
+// l'azione distruttiva, per non cancellare con un Invio involontario).
+useDialog({
+  isOpen: () => wipeOpen.value,
+  onClose: closeWipe,
+  onOpen: () => wipeCancelBtn.value?.focus(),
+});
 </script>

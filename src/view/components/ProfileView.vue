@@ -79,8 +79,7 @@
               </tr>
               <tr v-for="(group, i) in memberGroups" :key="group.id"
                 class="rep-table__row--clickable" role="button" tabindex="0"
-                @click="goToGroup(group.id)"
-                @keydown="(e) => onGroupKey(e, group.id)">
+                @click="goToGroup(group.id)" v-activate>
 
                 <td class="rep-table__num">{{ i + 1 }}</td>
                 <td>
@@ -241,10 +240,6 @@ function onAddGroup() {
 
 function goToGroup(id) {
   router.push({ name: 'groupProfile', params: { id } });
-}
-
-function onGroupKey(e, id) {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToGroup(id); }
 }
 
 function openTx(pair) {

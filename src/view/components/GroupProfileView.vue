@@ -88,8 +88,7 @@
               </tr>
               <tr v-for="(char, i) in pagedMembers" :key="char.id"
                 class="rep-table__row--clickable" role="button" tabindex="0"
-                @click="goToChar(char.id)"
-                @keydown="(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToChar(char.id); } }">
+                @click="goToChar(char.id)" v-activate>
                 <td class="rep-table__num">{{ membersPage * MEMBERS_PAGE_SIZE + i + 1 }}</td>
                 <td>
                   <span class="rep-table__name" @click.stop="goToChar(char.id)">
@@ -147,8 +146,7 @@
         <div v-for="char in relevantChars" :key="char.id" class="rep-group-scores">
           <div class="rep-group-scores__head"
             role="button" tabindex="0"
-            @click="goToChar(char.id)"
-            @keydown="(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToChar(char.id); } }">
+            @click="goToChar(char.id)" v-activate>
             {{ char.name }}
             <Icon name="goto" />
           </div>
@@ -221,7 +219,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
@@ -237,6 +235,7 @@ import {
   groupDerivedOutgoing,
 } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
+import { usePagedList } from '../usePagedList.js';
 import { SCORE_TIP } from '../uiCopy.js';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
@@ -297,19 +296,10 @@ const members = computed(() => {
   return memberList;
 });
 
-const membersPage = ref(0);
 const membersTotal = computed(() => members.value.length);
-const pagedMembers = computed(() => {
-  const start = membersPage.value * MEMBERS_PAGE_SIZE;
-  const slice = members.value.slice(start, start + MEMBERS_PAGE_SIZE);
-  return slice;
-});
-
-// Clamp pagina quando il totale cala (sgancio di un membro).
-watch(membersTotal, (n) => {
-  const lastPage = Math.max(0, Math.ceil(n / MEMBERS_PAGE_SIZE) - 1);
-  if (membersPage.value > lastPage) membersPage.value = lastPage;
-});
+// Paginazione membri: clamp su totale che cala (sgancio membro) nel composable.
+const { page: membersPage, paginate: paginateMembers } = usePagedList(membersTotal, MEMBERS_PAGE_SIZE);
+const pagedMembers = computed(() => paginateMembers(members.value));
 
 const addableCandidates = computed(() => {
   if (!group.value) return [];

@@ -17,7 +17,7 @@
       <!-- Segmented view switcher -->
       <div class="ds-seg">
         <button class="ds-seg__btn" :class="{ active: viewMode === 'gallery' }"
-          disabled aria-disabled="true" title="Non ancora disponibile">
+          @click="viewMode = 'gallery'">
           <span class="ds-seg__icon"><Icon name="gallery" /></span>
           Gallery
         </button>
@@ -53,6 +53,9 @@
       Nessun gruppo corrisponde alla ricerca.
     </div>
 
+    <!-- Vista card -->
+    <GroupGalleryView v-else-if="viewMode === 'gallery'" :groups="pagedActive" />
+
     <div v-else class="rep-table-wrap">
       <table class="rep-table rep-table--stable">
         <colgroup>
@@ -66,26 +69,10 @@
         <thead>
           <tr>
             <th class="rep-table__num">#</th>
-            <th class="rep-table__sortable" :aria-sort="ariaSort('name')" role="button" tabindex="0"
-              @click="toggleSort('name')" @keydown="(e) => onSortKey(e, 'name')">
-              Nome
-              <Icon v-if="sort.key === 'name'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
-            </th>
-            <th class="rep-table__sortable" :aria-sort="ariaSort('type')" role="button" tabindex="0"
-              @click="toggleSort('type')" @keydown="(e) => onSortKey(e, 'type')">
-              Tipo
-              <Icon v-if="sort.key === 'type'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
-            </th>
-            <th class="rep-table__sortable rep-col--right" :aria-sort="ariaSort('members')" role="button" tabindex="0"
-              @click="toggleSort('members')" @keydown="(e) => onSortKey(e, 'members')">
-              # Membri
-              <Icon v-if="sort.key === 'members'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
-            </th>
-            <th class="rep-table__sortable rep-col--right" :aria-sort="ariaSort('score')" role="button" tabindex="0"
-              @click="toggleSort('score')" @keydown="(e) => onSortKey(e, 'score')">
-              Reputazione
-              <Icon v-if="sort.key === 'score'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
-            </th>
+            <SortableTh col="name" :sort="sort" @sort="toggleSort">Nome</SortableTh>
+            <SortableTh col="type" :sort="sort" @sort="toggleSort">Tipo</SortableTh>
+            <SortableTh col="members" class="rep-col--right" :sort="sort" @sort="toggleSort"># Membri</SortableTh>
+            <SortableTh col="score" class="rep-col--right" :sort="sort" @sort="toggleSort">Reputazione</SortableTh>
             <th>Azioni</th>
           </tr>
         </thead>
@@ -95,7 +82,7 @@
             :role="editingId === group.id ? undefined : 'button'"
             :tabindex="editingId === group.id ? undefined : 0"
             @click="editingId === group.id ? undefined : goToProfile(group.id)"
-            @keydown="editingId === group.id ? undefined : onKeyDown($event, group.id)">
+            v-activate>
 
             <td class="rep-table__num">{{ page * ui.pageSize + i + 1 }}</td>
 
@@ -230,7 +217,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
@@ -246,15 +233,20 @@ import {
   averageIncomingScore,
 } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
+import { useSortable } from '../useSortable.js';
+import { usePagedList } from '../usePagedList.js';
+import { useDialog } from '../useDialog.js';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import Pager from './Pager.vue';
+import SortableTh from './SortableTh.vue';
+import GroupGalleryView from './GroupGalleryView.vue';
 
 const { state, dispatch } = useStore();
 const ui = useUiState();
 const router = useRouter();
 
-const viewMode = ref('list');
+const viewMode = ref('gallery');
 const search = ref('');
 const addOpen = ref(false);
 const newName = ref('');
@@ -292,25 +284,12 @@ function scoreOf(id) {
   return score;
 }
 
-// Ordinamento colonne (stato locale della vista).
-const sort = ref({ key: 'name', dir: 'asc' });
-
-function toggleSort(key) {
-  if (sort.value.key === key) {
-    sort.value = { key, dir: sort.value.dir === 'asc' ? 'desc' : 'asc' };
-  } else {
-    // nome/tipo partono asc; numeri (membri/punteggio) partono desc.
-    sort.value = { key, dir: key === 'name' || key === 'type' ? 'asc' : 'desc' };
-  }
-}
-function ariaSort(key) {
-  if (sort.value.key !== key) return 'none';
-  const dir = sort.value.dir === 'asc' ? 'ascending' : 'descending';
-  return dir;
-}
-function onSortKey(e, key) {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSort(key); }
-}
+// Ordinamento colonne (stato locale della vista). nome/tipo partono asc;
+// numeri (membri/punteggio) partono desc. Il reset di pagina è nel watch sotto.
+const { sort, toggleSort } = useSortable({
+  initial: { key: 'name', dir: 'asc' },
+  descKeys: ['members', 'score'],
+});
 
 const sortedActive = computed(() => {
   const { key, dir } = sort.value;
@@ -341,33 +320,14 @@ const sortedActive = computed(() => {
 });
 
 // Paginazione locale (come nei personaggi). Stato locale: la search dei gruppi
-// e' propria della vista, non quella globale di ui.
-const page = ref(0);
+// e' propria della vista, non quella globale di ui. Il clamp su totale che cala
+// è dentro usePagedList; qui resta solo il reset a pagina 0 su ricerca/ordine.
+const { page, reset: resetPage, paginate } = usePagedList(() => filteredActive.value.length, () => ui.pageSize);
+const pagedActive = computed(() => paginate(sortedActive.value));
+watch([search, sort], resetPage);
 
-const pagedActive = computed(() => {
-  const start = page.value * ui.pageSize;
-  const slice = sortedActive.value.slice(start, start + ui.pageSize);
-  return slice;
-});
-
-// La ricerca o il cambio ordinamento riportano a pagina 0.
-watch([search, sort], () => {
-  page.value = 0;
-});
-
-// Se il totale cala (archiviazione/eliminazione) e la pagina resta oltre i dati,
-// riporta la pagina all'ultima valida.
-watch(() => filteredActive.value.length, (len) => {
-  const maxPage = Math.max(0, Math.ceil(len / ui.pageSize) - 1);
-  if (page.value > maxPage) {
-    page.value = maxPage;
-  }
-});
-
-async function openAdd() {
+function openAdd() {
   addOpen.value = true;
-  await nextTick();
-  nameInput.value?.focus();
 }
 
 function closeAdd() {
@@ -375,6 +335,13 @@ function closeAdd() {
   newName.value = '';
   newType.value = '';
 }
+
+// Dialog "aggiungi gruppo": Escape chiude, apertura mette a fuoco il nome.
+useDialog({
+  isOpen: () => addOpen.value,
+  onClose: closeAdd,
+  onOpen: () => nameInput.value?.focus(),
+});
 
 function onAdd() {
   const name = newName.value.trim();
@@ -386,13 +353,6 @@ function onAdd() {
 
 function goToProfile(id) {
   router.push({ name: 'groupProfile', params: { id } });
-}
-
-function onKeyDown(e, id) {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    goToProfile(id);
-  }
 }
 
 function startEdit(group) {

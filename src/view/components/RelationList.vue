@@ -49,27 +49,9 @@
           <thead>
             <tr>
               <th class="rep-table__num">#</th>
-              <th class="rep-table__sortable" :aria-sort="ariaSort('name')"
-                role="button" tabindex="0"
-                @click="toggleSort('name')"
-                @keydown="(e) => onSortKey(e, 'name')">
-                Nome
-                <Icon v-if="sort.key === 'name'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
-              </th>
-              <th v-if="showType" class="rep-table__sortable rep-col-type" :aria-sort="ariaSort('kind')"
-                role="button" tabindex="0"
-                @click="toggleSort('kind')"
-                @keydown="(e) => onSortKey(e, 'kind')">
-                Tipo
-                <Icon v-if="sort.key === 'kind'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
-              </th>
-              <th class="rep-table__sortable rep-col--right" :aria-sort="ariaSort('score')"
-                role="button" tabindex="0"
-                @click="toggleSort('score')"
-                @keydown="(e) => onSortKey(e, 'score')">
-                Punteggio
-                <Icon v-if="sort.key === 'score'" :name="sort.dir === 'asc' ? 'up' : 'down'" />
-              </th>
+              <SortableTh col="name" :sort="sort" @sort="toggleSort">Nome</SortableTh>
+              <SortableTh v-if="showType" col="kind" class="rep-col-type" :sort="sort" @sort="toggleSort">Tipo</SortableTh>
+              <SortableTh col="score" class="rep-col--right" :sort="sort" @sort="toggleSort">Punteggio</SortableTh>
               <th class="rep-col-opts">
                 <button ref="optsBtn" type="button"
                   class="rep-col-opts__btn" :class="{ 'rep-col-opts__btn--active': colsActive }"
@@ -138,8 +120,11 @@ import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
 import { listActiveCharacters, listActiveGroups, computeScore, hasTransaction } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
+import { useSortable } from '../useSortable.js';
+import { usePagedList } from '../usePagedList.js';
 import Icon from './Icon.vue';
 import Pager from './Pager.vue';
+import SortableTh from './SortableTh.vue';
 
 const PAGE_SIZE = 10;
 
@@ -153,9 +138,15 @@ const emit = defineEmits(['open-tx']);
 const { state } = useStore();
 const ui = useUiState();
 
-const page = ref(0);
 const query = ref('');
-const sort = ref({ key: 'score', dir: 'desc' }); // key: 'name' | 'kind' | 'score'
+
+// Ordinamento colonne (stato locale). name/kind partono asc, score parte desc.
+// Il reset a pagina 0 su ricerca/ordinamento è nel watch più in basso, dopo che
+// la paginazione è stata creata. key: 'name' | 'kind' | 'score'.
+const { sort, toggleSort } = useSortable({
+  initial: { key: 'score', dir: 'desc' },
+  descKeys: ['score'],
+});
 
 // Filtri righe (dropdown stile Odoo accanto alla ricerca).
 const hideEmpty = ref(false);
@@ -325,44 +316,12 @@ const sortedRows = computed(() => {
 
 const total = computed(() => sortedRows.value.length);
 
-// Torna alla prima pagina quando cambia il filtro di ricerca.
-watch(query, () => { page.value = 0; });
+// Paginazione locale: clamp su totale che cala dentro il composable; qui resta
+// il reset a pagina 0 quando cambiano ricerca o ordinamento.
+const { page, offset, reset: resetPage, paginate } = usePagedList(total, PAGE_SIZE);
+watch([query, sort], resetPage);
 
-// Clamp pagina quando il totale cala (es. attivando "nascondi senza interazioni").
-watch(total, (n) => {
-  const lastPage = Math.max(0, Math.ceil(n / PAGE_SIZE) - 1);
-  if (page.value > lastPage) page.value = lastPage;
-});
-
-const offset = computed(() => page.value * PAGE_SIZE);
-
-const pageRows = computed(() => {
-  const start = offset.value;
-  const slice = sortedRows.value.slice(start, start + PAGE_SIZE);
-  return slice;
-});
-
-function toggleSort(key) {
-  if (sort.value.key === key) {
-    const nextDir = sort.value.dir === 'asc' ? 'desc' : 'asc';
-    sort.value = { key, dir: nextDir };
-  } else {
-    // nuovo campo: nome/tipo partono asc (A→Z), punteggio parte desc (alto→basso)
-    sort.value = { key, dir: key === 'score' ? 'desc' : 'asc' };
-  }
-  page.value = 0;
-}
-
-function onSortKey(e, key) {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSort(key); }
-}
-
-// Stato di ordinamento per gli screen reader (aria-sort sull'header attivo).
-function ariaSort(key) {
-  if (sort.value.key !== key) return 'none';
-  const direction = sort.value.dir === 'asc' ? 'ascending' : 'descending';
-  return direction;
-}
+const pageRows = computed(() => paginate(sortedRows.value));
 
 function emitTx(otherId) {
   const pair = props.direction === 'in'
@@ -386,13 +345,6 @@ function profileTo(node) {
 </script>
 
 <style scoped>
-.rep-table__sortable {
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
-}
-.rep-col--right { text-align: right; }
-
 /* Cella nome: glifo kind + link. Il glifo compare solo quando la colonna
    Tipo NON è visibile, così il dato personaggio/gruppo non si perde mai
    (toggle colonna off su desktop, oppure colonna nascosta su mobile). */

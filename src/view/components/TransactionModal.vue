@@ -140,10 +140,12 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from '../useStore.js';
 import { computeScore, listTransactions, addTransaction, editTransaction, deleteTransaction } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
+import { usePagedList } from '../usePagedList.js';
+import { useDialog } from '../useDialog.js';
 import HoverTip from './HoverTip.vue';
 import Pager from './Pager.vue';
 
@@ -162,21 +164,11 @@ const newReason = ref('');
 const deltaInput = ref(null);
 const editingId = ref(null);
 
-const page = ref(0);
-
-onMounted(async () => {
-  window.addEventListener('keydown', onKey);
-  await nextTick();
-  deltaInput.value?.select();
+// Modale montata solo da aperta: Escape chiude, apertura seleziona il delta.
+useDialog({
+  onClose: () => emit('close'),
+  onOpen: () => deltaInput.value?.select(),
 });
-
-onUnmounted(() => {
-  window.removeEventListener('keydown', onKey);
-});
-
-function onKey(e) {
-  if (e.key === 'Escape') emit('close');
-}
 
 function charName(id) {
   const character = state.value.characters.find((c) => c.id === id);
@@ -194,17 +186,9 @@ const toName      = computed(() => charName(props.toId));
 const score       = computed(() => computeScore(state.value, props.fromId, props.toId));
 const transactions = computed(() => listTransactions(state.value, props.fromId, props.toId));
 const total = computed(() => transactions.value.length);
-const pagedTransactions = computed(() => {
-  const start = page.value * PAGE_SIZE;
-  const slice = transactions.value.slice(start, start + PAGE_SIZE);
-  return slice;
-});
-
-// Clamp della pagina quando il totale cala (es. dopo una cancellazione).
-watch(total, (n) => {
-  const lastPage = Math.max(0, Math.ceil(n / PAGE_SIZE) - 1);
-  if (page.value > lastPage) page.value = lastPage;
-});
+// Paginazione: clamp su totale che cala (dopo una cancellazione) nel composable.
+const { page, lastPage, paginate } = usePagedList(total, PAGE_SIZE);
+const pagedTransactions = computed(() => paginate(transactions.value));
 
 const fmtDay = (ts) => new Date(ts).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
 
@@ -240,6 +224,6 @@ function onAdd() {
   newDelta.value = 0;
   newReason.value = '';
   // mostra la riga appena aggiunta (in coda all'ultima pagina)
-  page.value = Math.max(0, Math.ceil(transactions.value.length / PAGE_SIZE) - 1);
+  page.value = lastPage.value;
 }
 </script>
