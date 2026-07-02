@@ -19,19 +19,43 @@
       </div>
 
       <!-- Sezioni con tab switcher -->
-      <div style="margin:1.1rem 0 1rem">
+      <div class="rep-gp-tabs">
         <div class="ds-seg ds-seg--underline">
+          <button class="ds-seg__btn" :class="{ active: tab === 'in' }" @click="tab = 'in'">
+            Di lui pensano
+          </button>
+          <button class="ds-seg__btn" :class="{ active: tab === 'out' }" @click="tab = 'out'">
+            Lui pensa
+          </button>
           <button class="ds-seg__btn" :class="{ active: tab === 'membri' }" @click="tab = 'membri'">
             Membri
           </button>
-          <button class="ds-seg__btn" :class="{ active: tab === 'punteggi' }" @click="tab = 'punteggi'">
+          <button v-if="showAdvanced" class="ds-seg__btn" :class="{ active: tab === 'punteggi' }"
+            @click="tab = 'punteggi'">
             Punteggi
           </button>
-          <button class="ds-seg__btn" :class="{ active: tab === 'transazioni' }" @click="tab = 'transazioni'">
-            Transazioni dirette
-          </button>
         </div>
+        <button class="ds-btn ds-btn--ghost ds-btn--sm rep-gp-tabs__adv"
+          :class="{ 'is-on': showAdvanced }" :aria-pressed="showAdvanced ? 'true' : 'false'"
+          @click="toggleAdvanced">
+          <span class="ds-btn__icon"><Icon name="sliders" /></span>
+          Avanzate
+        </button>
       </div>
+
+      <!-- Direzione (giudicante → giudicato), come nel form personaggi -->
+      <p v-if="tab === 'in' || tab === 'out'" class="rep-dir-caption">
+        <span class="rep-dir-caption__node">{{ tab === 'in' ? 'Gli altri' : group.name }}</span>
+        <span class="rep-rel-arrow rep-dir-caption__arrow" aria-hidden="true">
+          <span class="rep-rel-arrow__glyph"></span>
+        </span>
+        <span class="rep-dir-caption__node">{{ tab === 'in' ? group.name : 'gli altri' }}</span>
+        <span class="rep-dir-caption__hint">· {{ tab === 'in' ? 'giudizio ricevuto' : 'giudizio dato' }}</span>
+      </p>
+
+      <!-- Relazioni dirette gruppo↔nodo (stesso componente dei personaggi) -->
+      <RelationList v-if="tab === 'in' || tab === 'out'" :key="tab"
+        :current-id="group.id" :direction="tab" @open-tx="openTxFromList" />
 
       <!-- Tab: Membri -->
       <div v-if="tab === 'membri'">
@@ -157,37 +181,6 @@
         </div>
       </div>
 
-      <!-- Tab: Transazioni dirette sul gruppo -->
-      <div v-if="tab === 'transazioni'">
-        <p style="font-size:0.85rem;opacity:0.7;margin-bottom:1rem">
-          Transazioni tra personaggi e il gruppo come entità (non attraverso i membri).
-        </p>
-
-        <!-- Apri modale transazione -->
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem">
-          <div style="flex:1;min-width:10rem">
-            <label class="ds-field__label" style="display:block;margin-bottom:0.25rem">Personaggio</label>
-            <select class="ds-input" v-model="txCharId">
-              <option value="">— Scegli personaggio —</option>
-              <option v-for="c in activeCharacters" :key="c.id" :value="c.id">{{ c.name }}</option>
-            </select>
-          </div>
-          <div style="flex:1;min-width:10rem">
-            <label class="ds-field__label" style="display:block;margin-bottom:0.25rem">Direzione</label>
-            <select class="ds-input" v-model="txDirection">
-              <option value="to">Personaggio → Gruppo</option>
-              <option value="from">Gruppo → Personaggio</option>
-            </select>
-          </div>
-          <div style="align-self:flex-end">
-            <button class="ds-btn ds-btn--primary ds-btn--sm" :disabled="!txCharId"
-              @click="openTx">
-              Apri transazioni
-            </button>
-          </div>
-        </div>
-      </div>
-
       <!-- Ornamento -->
       <div style="margin-top:22px">
         <div class="ds-orn" role="separator">
@@ -235,6 +228,7 @@ import NotFound from './NotFound.vue';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import Pager from './Pager.vue';
+import RelationList from './RelationList.vue';
 
 const MEMBERS_PAGE_SIZE = 10;
 
@@ -247,9 +241,17 @@ const router = useRouter();
 
 const tab = ref('membri');
 const selectedCandidateId = ref('');
-const txCharId = ref('');
-const txDirection = ref('to');
 const activeTx = ref(null);
+
+// Viste avanzate (Punteggi) nascoste di default, rivelate dal toggle.
+const showAdvanced = ref(false);
+function toggleAdvanced() {
+  showAdvanced.value = !showAdvanced.value;
+  // Se nascondo le avanzate mentre sono su Punteggi, torno a Membri.
+  if (!showAdvanced.value && tab.value === 'punteggi') {
+    tab.value = 'membri';
+  }
+}
 
 const group = computed(() => {
   const found = state.value.groups.find((g) => g.id === props.id) || null;
@@ -357,18 +359,22 @@ function goToChar(id) {
   router.push({ name: 'profile', params: { id } });
 }
 
-function openTx() {
-  const charId = txCharId.value;
-  if (!charId) return;
-  const groupId = props.id;
-  const pair = txDirection.value === 'to'
-    ? { fromId: charId, toId: groupId }
-    : { fromId: groupId, toId: charId };
+// Apertura modale dal click su una riga di RelationList (emette gia' la coppia).
+function openTxFromList(pair) {
   activeTx.value = pair;
 }
 </script>
 
 <style scoped>
+.rep-gp-tabs {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 0.75rem; flex-wrap: wrap; margin: 1.1rem 0 1rem;
+}
+.rep-gp-tabs__adv { flex: none; }
+.rep-gp-tabs__adv.is-on {
+  background: var(--accent-tint); color: var(--gold-700); border-color: var(--line-gold);
+}
+
 .rep-group-scores {
   border-bottom: 1px solid var(--ds-border, rgba(255,255,255,0.08));
   padding: 0.75rem 0;
