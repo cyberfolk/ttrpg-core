@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction, createGroup } from '../../src/model/schema.js';
-import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction, addGroup, listActiveGroups, listArchivedGroups, softDeleteGroup, restoreGroup, hardDeleteGroup, addMember, removeMember, resolveNode, groupDerivedIncoming, groupDerivedOutgoing, renameGroup, setGroupType } from '../../src/model/reputation.js';
+import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction, addGroup, listActiveGroups, listArchivedGroups, softDeleteGroup, restoreGroup, hardDeleteGroup, addMember, removeMember, resolveNode, groupDerivedIncoming, groupDerivedOutgoing, renameGroup, setGroupType, renameCharacter } from '../../src/model/reputation.js';
 
 test('BASE è 50', () => {
   assert.equal(BASE, 50);
@@ -407,6 +407,23 @@ test('hardDeleteCharacter ripulisce memberIds dei gruppi', () => {
   s = hardDeleteCharacter(s, a.id);
   assert.deepEqual(s.groups[0].memberIds, [b.id]);
   assert.equal(s.characters.length, 1);
+});
+
+test('renameCharacter cambia solo il nome del personaggio target', () => {
+  let s = createState();
+  s = addCharacter(s, 'Vecchio nome');
+  const id = s.characters[0].id;
+  s = renameCharacter(s, id, 'Nuovo nome');
+  assert.equal(s.characters[0].name, 'Nuovo nome');
+});
+
+test('renameCharacter non muta altri personaggi', () => {
+  let s = createState();
+  s = addCharacter(s, 'A');
+  s = addCharacter(s, 'B');
+  const idA = s.characters[0].id;
+  s = renameCharacter(s, idA, 'A2');
+  assert.equal(s.characters[1].name, 'B');
 });
 
 test('renameGroup cambia solo il nome del gruppo target', () => {

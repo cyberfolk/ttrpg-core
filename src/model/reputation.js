@@ -32,6 +32,18 @@ export function listActiveCharacters(state) {
   return active;
 }
 
+export function renameCharacter(state, id, name) {
+  const characters = state.characters.map((c) => {
+    if (c.id !== id) {
+      return c;
+    }
+    const updated = { ...c, name };
+    return updated;
+  });
+  const next = { ...state, characters };
+  return next;
+}
+
 export function addTransaction(state, fromId, toId, delta, name) {
   const transaction = createTransaction(fromId, toId, delta, name);
   const next = {
