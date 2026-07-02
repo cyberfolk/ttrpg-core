@@ -886,15 +886,34 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 .rep-gallery .rep-cc:nth-child(6) { animation-delay: .22s; }
 
 /* === Drawer di navigazione ================================= */
-.rep-header__menu {
+.rep-header__menu, .rep-header__more {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 2.2rem; height: 2.2rem; margin-right: .6rem; flex: none;
+  height: 2.2rem; flex: none;
   background: transparent; border: 1px solid var(--border-hairline);
   border-radius: var(--radius-sm); color: var(--text-strong); cursor: pointer;
   transition: background var(--dur-fast), border-color var(--dur-fast);
 }
-.rep-header__menu:hover { background: var(--surface-card); border-color: var(--line-gold); }
-.rep-header__menu:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--gold-400); }
+.rep-header__menu { width: 2.2rem; margin-right: .6rem; }
+.rep-header__more {
+  margin-left: auto; gap: .45rem; padding: 0 .8rem;
+  background: var(--surface-panel); box-shadow: var(--shadow-xs);
+}
+.rep-header__more-label {
+  font-family: var(--font-display); font-size: var(--fs-label);
+  font-weight: var(--fw-semibold); letter-spacing: var(--ls-caps); text-transform: uppercase;
+}
+.rep-header__menu:hover, .rep-header__more:hover { background: var(--surface-card); border-color: var(--line-gold); }
+.rep-header__menu:focus-visible, .rep-header__more:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--gold-400); }
+
+/* Nav primaria persistente nell'header. Mobile-first: nascosta, la mostra il drawer.
+   Da 720px in su compare come segmented control e il drawer si sgonfia a menu. */
+.rep-header__nav { display: none; margin-left: .35rem; }
+.rep-header__more { display: none; }
+@media (min-width: 720px) {
+  .rep-header__menu--mobile { display: none; }
+  .rep-header__nav { display: inline-flex; }
+  .rep-header__more { display: inline-flex; }
+}
 
 .rep-drawer-scrim {
   position: fixed; inset: 0; z-index: 1500;
@@ -920,21 +939,20 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 .rep-drawer__sec { padding: .9rem 1rem; border-bottom: 1px solid var(--border-hairline); }
 .rep-drawer__sec:last-child { border-bottom: none; }
 
-.rep-drawer__brand { display: flex; align-items: center; gap: .6rem; }
-.rep-drawer__mark {
-  width: 1.9rem; height: 1.9rem; flex: none; border-radius: var(--radius-sm);
-  background: var(--gold-400); color: #2c220e;
-  display: inline-flex; align-items: center; justify-content: center; font-weight: 800;
+.rep-drawer__head {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .9rem 1rem; border-bottom: 1px solid var(--border-hairline);
 }
-.rep-drawer__brandtext { display: flex; flex-direction: column; line-height: 1.15; }
-.rep-drawer__brandtext b {
-  font-family: var(--font-display); color: var(--text-strong); letter-spacing: .04em;
+.rep-drawer__title {
+  font-family: var(--font-display); font-size: var(--fs-label);
+  text-transform: uppercase; letter-spacing: var(--ls-caps);
+  color: var(--text-muted);
 }
-.rep-drawer__brandtext span { font-size: var(--fs-xs); color: var(--text-muted); }
 .rep-drawer__close {
   margin-left: auto; background: transparent; border: none; cursor: pointer;
   color: var(--text-muted); display: inline-flex; padding: .25rem; border-radius: var(--radius-sm);
 }
+.rep-drawer__close:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--gold-400); }
 .rep-drawer__close:hover { color: var(--text-strong); background: var(--surface-card); }
 
 .rep-drawer__label {
@@ -957,12 +975,13 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
     color-mix(in oklab, var(--gold-500), var(--gold-400) 38%));
   border-color: var(--gold-500); color: #2c220e; font-weight: var(--fw-semibold);
 }
+.rep-drawer__fn:focus-visible { outline: none; border-color: var(--gold-500); box-shadow: 0 0 0 2px var(--gold-400); }
 .rep-drawer__fn--soon { color: var(--text-faint); cursor: default; }
 .rep-drawer__fn-ic {
-  width: 1rem; height: 1rem; flex: none; border-radius: 3px;
-  background: rgba(120, 100, 50, .25);
+  width: 1.05rem; height: 1.05rem; flex: none;
+  display: inline-flex; align-items: center; justify-content: center; color: currentColor;
 }
-.rep-drawer__fn.is-active .rep-drawer__fn-ic { background: #2c220e; }
+.rep-drawer__fn-ic svg { width: 100%; height: 100%; }
 .rep-drawer__badge {
   margin-left: auto; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .06em;
   background: var(--gold-100); color: var(--gold-700);
@@ -974,6 +993,37 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 .rep-drawer__toggle {
   display: inline-flex; align-items: center; gap: .5rem; cursor: pointer;
   font-size: var(--fs-sm); color: var(--text-strong); user-select: none;
+}
+
+/* Come funziona: disclosure collassato, tiene il menu magro */
+.rep-drawer__help { padding-top: .7rem; padding-bottom: .7rem; }
+.rep-drawer__help[open] { padding-bottom: 1rem; }
+.rep-drawer__help-summary {
+  display: flex; align-items: center; gap: .5rem; cursor: pointer; list-style: none;
+  font-family: var(--font-display); font-size: var(--fs-label);
+  text-transform: uppercase; letter-spacing: var(--ls-caps); color: var(--gold-700);
+}
+.rep-drawer__help-summary::-webkit-details-marker { display: none; }
+.rep-drawer__help-summary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--gold-400); border-radius: var(--radius-sm); }
+.rep-drawer__help-summary svg { width: 1em; height: 1em; color: var(--gold-600); }
+.rep-drawer__help[open] .rep-drawer__doc { margin-top: .55rem; }
+
+/* Desktop (>=720px): il drawer diventa un popover ancorato a destra sotto l'header;
+   la nav vive nell'header, quindi la sezione nav del drawer sparisce. */
+@media (min-width: 720px) {
+  .rep-drawer__nav { display: none; }
+  .rep-drawer-scrim { background: transparent; }
+  .rep-drawer {
+    top: 3.9rem; right: var(--gutter); left: auto; bottom: auto;
+    width: min(320px, calc(100vw - var(--gutter) * 2));
+    max-height: calc(100vh - 5.5rem);
+    border: 1px solid var(--line-gold); border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    transform-origin: top right;
+    transform: translateY(-8px) scale(.97); opacity: 0; pointer-events: none;
+    transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+  }
+  .rep-drawer.is-open { transform: none; opacity: 1; pointer-events: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

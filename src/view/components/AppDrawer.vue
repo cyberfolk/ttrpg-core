@@ -4,61 +4,40 @@
       @click="emit('close')" aria-hidden="true"></div>
 
     <aside class="rep-drawer" :class="{ 'is-open': open }"
-      role="dialog" aria-modal="true" aria-label="Menu TTRPG-Core">
+      role="dialog" aria-modal="true" aria-label="Menu e impostazioni">
 
-      <!-- Identità app -->
-      <div class="rep-drawer__sec rep-drawer__brand">
-        <span class="rep-drawer__mark" aria-hidden="true">◆</span>
-        <span class="rep-drawer__brandtext">
-          <b>TTRPG-Core</b>
-          <span>Toolset per le tue campagne</span>
-        </span>
+      <!-- Intestazione menu (niente brand duplicato: il logo e' gia nell'header) -->
+      <div class="rep-drawer__head">
+        <span class="rep-drawer__title">Menu</span>
         <button ref="closeBtn" class="rep-drawer__close" @click="emit('close')" aria-label="Chiudi menu">
           <Icon name="close" />
         </button>
       </div>
 
-      <!-- Selettore funzioni -->
-      <div class="rep-drawer__sec">
-        <div class="rep-drawer__label">Funzioni</div>
-        <template v-for="fn in functions" :key="fn.id">
-          <button v-if="fn.status === 'active'" class="rep-drawer__fn"
-            :class="{ 'is-active': fn.id === activeId }" @click="onSelect(fn)">
-            <span class="rep-drawer__fn-ic" aria-hidden="true"></span>
-            {{ fn.label }}
-          </button>
-          <span v-else class="rep-drawer__fn rep-drawer__fn--soon">
-            <span class="rep-drawer__fn-ic" aria-hidden="true"></span>
-            {{ fn.label }}
-            <span class="rep-drawer__badge">in arrivo</span>
-          </span>
-        </template>
-      </div>
-
-      <!-- Navigazione Reputazione -->
-      <div class="rep-drawer__sec">
-        <div class="rep-drawer__label">Reputazione · sezioni</div>
-        <button class="rep-drawer__fn" :class="{ 'is-active': route.name === 'characters' || route.name === 'profile' }"
-          @click="goTo('characters')">
-          <span class="rep-drawer__fn-ic" aria-hidden="true"></span>
-          Personaggi
+      <!-- Navigazione primaria: mostrata solo su mobile (su desktop vive nell'header) -->
+      <nav class="rep-drawer__sec rep-drawer__nav" aria-label="Sezioni Reputazione">
+        <div class="rep-drawer__label">Reputazione</div>
+        <button v-for="item in navItems" :key="item.routeName" class="rep-drawer__fn"
+          :class="{ 'is-active': item.isActive }" :aria-current="item.isActive ? 'page' : undefined"
+          @click="goTo(item.routeName)">
+          <span class="rep-drawer__fn-ic" aria-hidden="true"><Icon :name="item.icon" /></span>
+          {{ item.label }}
         </button>
-        <button class="rep-drawer__fn" :class="{ 'is-active': route.name === 'groups' || route.name === 'groupProfile' }"
-          @click="goTo('groups')">
+      </nav>
+
+      <!-- Funzioni future (hint, non navigabili) -->
+      <div class="rep-drawer__sec" v-if="soonFunctions.length">
+        <div class="rep-drawer__label">Altre funzioni</div>
+        <span v-for="fn in soonFunctions" :key="fn.id" class="rep-drawer__fn rep-drawer__fn--soon">
           <span class="rep-drawer__fn-ic" aria-hidden="true"></span>
-          Gruppi
-        </button>
+          {{ fn.label }}
+          <span class="rep-drawer__badge">in arrivo</span>
+        </span>
       </div>
 
-      <!-- Come funziona la reputazione -->
+      <!-- Dati -->
       <div class="rep-drawer__sec">
-        <div class="rep-drawer__label">Reputazione · come funziona</div>
-        <p class="rep-drawer__doc">{{ reputationHelp }}</p>
-      </div>
-
-      <!-- Impostazioni generali (app-level) -->
-      <div class="rep-drawer__sec">
-        <div class="rep-drawer__label">Impostazioni generali</div>
+        <div class="rep-drawer__label">Dati</div>
         <div class="rep-drawer__actions">
           <button class="ds-btn ds-btn--secondary ds-btn--sm" @click="onExport">
             <span class="ds-btn__icon"><Icon name="download" /></span>
@@ -72,9 +51,9 @@
         </div>
       </div>
 
-      <!-- Impostazioni Reputazione -->
+      <!-- Impostazioni -->
       <div class="rep-drawer__sec">
-        <div class="rep-drawer__label">Impostazioni · Reputazione</div>
+        <div class="rep-drawer__label">Impostazioni</div>
         <label class="rep-drawer__toggle">
           <span class="ds-switch">
             <input type="checkbox" v-model="ui.showArchived" />
@@ -83,6 +62,15 @@
           Mostra archiviati
         </label>
       </div>
+
+      <!-- Come funziona: collassato, il menu resta magro -->
+      <details class="rep-drawer__sec rep-drawer__help">
+        <summary class="rep-drawer__help-summary">
+          <Icon name="help" />
+          Come funziona la reputazione
+        </summary>
+        <p class="rep-drawer__doc">{{ reputationHelp }}</p>
+      </details>
     </aside>
   </div>
 </template>
@@ -90,7 +78,7 @@
 <script setup>
 import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { APP_FUNCTIONS, activeFunctionId } from '../appFunctions.js';
+import { APP_FUNCTIONS } from '../appFunctions.js';
 import { REPUTATION_HELP } from '../uiCopy.js';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
@@ -107,22 +95,28 @@ const router = useRouter();
 const ui = useUiState();
 const { getState, replaceState } = useStore();
 
-const functions = APP_FUNCTIONS;
 const reputationHelp = REPUTATION_HELP;
 
-const activeId = computed(() => {
-  const id = activeFunctionId(route.name);
-  return id;
+// Sezioni navigabili della funzione Reputazione (mobile: la nav vive nel drawer).
+const NAV_SECTIONS = [
+  { routeName: 'characters', label: 'Personaggi', icon: 'user', match: ['characters', 'profile'] },
+  { routeName: 'groups', label: 'Gruppi', icon: 'users', match: ['groups', 'groupProfile'] },
+];
+
+const navItems = computed(() => {
+  const items = NAV_SECTIONS.map((s) => {
+    const isActive = s.match.includes(route.name);
+    return { ...s, isActive };
+  });
+  return items;
+});
+
+const soonFunctions = computed(() => {
+  const soon = APP_FUNCTIONS.filter((fn) => fn.status === 'soon');
+  return soon;
 });
 
 const closeBtn = ref(null);
-
-function onSelect(fn) {
-  if (fn.routeName && route.name !== fn.routeName) {
-    router.push({ name: fn.routeName });
-  }
-  emit('close');
-}
 
 function goTo(routeName) {
   if (route.name !== routeName) {
