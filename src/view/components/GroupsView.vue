@@ -41,6 +41,10 @@
       </div>
     </div>
 
+    <!-- Paginazione (come nei personaggi): si nasconde con una sola pagina -->
+    <Pager :page="page" :page-size="ui.pageSize" :total="filteredActive.length"
+      @update:page="page = $event" />
+
     <!-- Lista gruppi attivi -->
     <div v-if="filteredActive.length === 0 && !search" class="rep-empty" style="margin-top:2rem">
       Nessun gruppo. Aggiungine uno!
@@ -68,14 +72,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(group, i) in filteredActive" :key="group.id"
+          <tr v-for="(group, i) in pagedActive" :key="group.id"
             :class="editingId === group.id ? 'rep-table__row--editing' : 'rep-table__row--clickable'"
             :role="editingId === group.id ? undefined : 'button'"
             :tabindex="editingId === group.id ? undefined : 0"
             @click="editingId === group.id ? undefined : goToProfile(group.id)"
             @keydown="editingId === group.id ? undefined : onKeyDown($event, group.id)">
 
-            <td class="rep-table__num">{{ i + 1 }}</td>
+            <td class="rep-table__num">{{ page * ui.pageSize + i + 1 }}</td>
 
             <!-- Nome -->
             <td>
@@ -200,7 +204,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
@@ -216,6 +220,7 @@ import {
 } from '../../model/reputation.js';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
+import Pager from './Pager.vue';
 
 const { state, dispatch } = useStore();
 const ui = useUiState();
@@ -243,6 +248,30 @@ const filteredActive = computed(() => {
   }
   const filtered = activeGroups.value.filter((g) => g.name.toLowerCase().includes(q));
   return filtered;
+});
+
+// Paginazione locale (come nei personaggi). Stato locale: la search dei gruppi
+// e' propria della vista, non quella globale di ui.
+const page = ref(0);
+
+const pagedActive = computed(() => {
+  const start = page.value * ui.pageSize;
+  const slice = filteredActive.value.slice(start, start + ui.pageSize);
+  return slice;
+});
+
+// La ricerca riduce il totale: torna a pagina 0.
+watch(search, () => {
+  page.value = 0;
+});
+
+// Se il totale cala (archiviazione/eliminazione) e la pagina resta oltre i dati,
+// riporta la pagina all'ultima valida.
+watch(() => filteredActive.value.length, (len) => {
+  const maxPage = Math.max(0, Math.ceil(len / ui.pageSize) - 1);
+  if (page.value > maxPage) {
+    page.value = maxPage;
+  }
 });
 
 async function openAdd() {
