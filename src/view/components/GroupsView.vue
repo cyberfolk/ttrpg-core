@@ -50,7 +50,14 @@
     </div>
 
     <div v-else class="rep-table-wrap" style="margin-top:1rem">
-      <table class="rep-table">
+      <table class="rep-table rep-table--stable">
+        <colgroup>
+          <col style="width:3rem" />
+          <col />
+          <col style="width:10rem" />
+          <col style="width:7rem" />
+          <col style="width:6.5rem" />
+        </colgroup>
         <thead>
           <tr>
             <th class="rep-table__num">#</th>
@@ -62,7 +69,7 @@
         </thead>
         <tbody>
           <tr v-for="(group, i) in filteredActive" :key="group.id"
-            :class="editingId === group.id ? undefined : 'rep-table__row--clickable'"
+            :class="editingId === group.id ? 'rep-table__row--editing' : 'rep-table__row--clickable'"
             :role="editingId === group.id ? undefined : 'button'"
             :tabindex="editingId === group.id ? undefined : 0"
             @click="editingId === group.id ? undefined : goToProfile(group.id)"
@@ -76,7 +83,7 @@
                 {{ group.name }}
                 <Icon name="goto" />
               </span>
-              <input v-else class="ds-input" type="text" v-model="editName" style="width:10rem"
+              <input v-else class="ds-input rep-table__edit" type="text" v-model="editName"
                 @keydown.enter="saveEdit(group.id)" @keydown.escape="cancelEdit" />
             </td>
 
@@ -86,8 +93,7 @@
                 <span v-if="group.type" class="ds-badge">{{ group.type }}</span>
                 <span v-else class="rep-empty">–</span>
               </span>
-              <input v-else class="ds-input" type="text" v-model="editType" placeholder="Tipo (es. fazione)"
-                style="width:9rem"
+              <input v-else class="ds-input rep-table__edit" type="text" v-model="editType" placeholder="Tipo (es. fazione)"
                 @keydown.enter="saveEdit(group.id)" @keydown.escape="cancelEdit" />
             </td>
 
@@ -100,8 +106,18 @@
             <td @click.stop>
               <div class="rep-table__actions">
                 <template v-if="editingId === group.id">
-                  <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit(group.id)">Salva</button>
-                  <button class="ds-btn ds-btn--sm ds-btn--ghost" @click="cancelEdit">Annulla</button>
+                  <HoverTip text="Salva" label="Salva modifiche" :tab-index="-1">
+                    <button class="ds-btn ds-btn--sm ds-btn--primary ds-btn--icon" @click="saveEdit(group.id)"
+                      aria-label="Salva modifiche">
+                      <Icon name="check" />
+                    </button>
+                  </HoverTip>
+                  <HoverTip text="Annulla" label="Annulla modifiche" :tab-index="-1">
+                    <button class="ds-btn ds-btn--sm ds-btn--ghost ds-btn--icon" @click="cancelEdit"
+                      aria-label="Annulla modifiche">
+                      <Icon name="close" />
+                    </button>
+                  </HoverTip>
                 </template>
                 <template v-else>
                   <HoverTip text="Rinomina" label="Rinomina gruppo" :tab-index="-1">
@@ -340,5 +356,33 @@ function onHardDelete(id) {
   display: flex;
   gap: 0.4rem;
   align-items: center;
+}
+
+/* Larghezze colonna fisse (colgroup): la geometria non cambia passando
+   da lettura a modifica, quindi le colonne non si spostano. */
+.rep-table--stable {
+  table-layout: fixed;
+  width: 100%;
+}
+.rep-table--stable :deep(.rep-table__name) {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Inline edit: input compatti + padding riga ridotto per non alterare
+   l'altezza della riga passando da lettura a modifica. */
+.rep-table__row--editing :deep(td) {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.ds-input.rep-table__edit {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  min-height: 0;
+  line-height: 1.4;
+}
+@media (pointer: coarse) {
+  .ds-input.rep-table__edit { min-height: 34px; }
 }
 </style>

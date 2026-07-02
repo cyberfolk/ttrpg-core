@@ -400,7 +400,14 @@ a:hover { color: var(--gold-600); }
 }
 
 /* === DS: Logo ============================================== */
-.ds-logo { display: inline-flex; align-items: center; gap: .6rem; line-height: 1; }
+.ds-logo {
+  display: inline-flex; align-items: center; gap: .6rem; line-height: 1;
+  text-decoration: none; color: inherit; cursor: pointer;
+  padding: .2rem .3rem; margin: -.2rem -.3rem; border-radius: var(--radius-sm);
+  transition: background var(--dur-fast);
+}
+.ds-logo:hover { background: var(--surface-panel); }
+.ds-logo:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--gold-400); }
 .ds-logo__mark { flex: none; display: inline-flex; color: var(--gold-500); }
 .ds-logo__mark svg { display: block; }
 .ds-logo__words { display: flex; flex-direction: column; gap: .12em; }
