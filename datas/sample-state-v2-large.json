@@ -1,0 +1,1900 @@
+{
+  "version": 2,
+  "exportedAt": 1781189644285,
+  "characters": [
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000001",
+      "name": "Aldric il Giusto",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000002",
+      "name": "Brina Lamacorta",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000003",
+      "name": "Corvo",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000004",
+      "name": "Delia Vento",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000005",
+      "name": "Eldon Barbagrigia",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000006",
+      "name": "Faina",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000007",
+      "name": "Gorm Pugnodiferro",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000008",
+      "name": "Helga la Saggia",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000009",
+      "name": "Ivar Lupodargento",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000000a",
+      "name": "Jasmin Velluto",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000000b",
+      "name": "Kael Ombralunga",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000000c",
+      "name": "Lyra Cantastorie",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000000d",
+      "name": "Morwen",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000000e",
+      "name": "Nestor il Mercante",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000000f",
+      "name": "Orla Fiammascura",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000010",
+      "name": "Pelle di Cuoio",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000011",
+      "name": "Quinto Asso",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000012",
+      "name": "Rina Spinarossa",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000013",
+      "name": "Sven Martelletto",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000014",
+      "name": "Thalia Lunargenta",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000015",
+      "name": "Ulf Zannafredda",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000016",
+      "name": "Vesna",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000017",
+      "name": "Wulfric",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000018",
+      "name": "Xandra la Nera",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000019",
+      "name": "Ysolde",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000001a",
+      "name": "Zeno il Pavido",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000001b",
+      "name": "Bran Corvonero",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000001c",
+      "name": "Cilla",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000001d",
+      "name": "Doran Scudobianco",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000001e",
+      "name": "Enya",
+      "deletedAt": 1749900000000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000001f",
+      "name": "Aelthrindavel Ombraluminescente della Torre di Cristallo del Crepuscolo Eterno, Signore dei Sette Venti Gelidi, Custode del Sigillo Infranto e Ultimo Erede della Casata Dimenticata di Valcupa",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000020",
+      "name": "Supercalifragilisticexpialidocioustantissimamentesenzaspazidisorta",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000021",
+      "name": "Ц",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000022",
+      "name": "<script>alert('rep')</script> & \"virgolette\" 'apici' <b>grassetto</b>",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000023",
+      "name": "   ",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000024",
+      "name": "",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000025",
+      "name": "Corvo",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000026",
+      "name": "Riga1\nRiga2\tTab",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000027",
+      "name": "𝕽𝖆𝖌𝖓𝖆𝖗 🗡️🛡️🐉 مرحبا שלום 🔥",
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000028",
+      "name": "ZzzoÉ̷̢̛͈̳͇̬͛̈́̀͝ n̶̡̠̈́̆̕ (glitch combinanti)",
+      "deletedAt": null
+    }
+  ],
+  "transactions": [
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000003f",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000a",
+      "toId": "d0dec0de-0000-4000-8000-000000000017",
+      "delta": 28,
+      "name": "Debito d'onore",
+      "createdAt": 1749100000000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000040",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000d",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": 30,
+      "name": "Riparato il tetto",
+      "createdAt": 1749100060000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000041",
+      "fromId": "d0dec0de-0000-4000-8000-000000000017",
+      "toId": "d0dec0de-0000-4000-8000-000000000011",
+      "delta": -5,
+      "name": "Tradimento sospettato",
+      "createdAt": 1749100120000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000042",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000d",
+      "toId": "d0dec0de-0000-4000-8000-00000000001d",
+      "delta": 10,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749100180000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000043",
+      "fromId": "d0dec0de-0000-4000-8000-000000000016",
+      "toId": "d0dec0de-0000-4000-8000-000000000015",
+      "delta": -21,
+      "name": "Promessa infranta",
+      "createdAt": 1749100240000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000044",
+      "fromId": "d0dec0de-0000-4000-8000-000000000012",
+      "toId": "d0dec0de-0000-4000-8000-000000000006",
+      "delta": -2,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749100300000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000045",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001a",
+      "toId": "d0dec0de-0000-4000-8000-000000000018",
+      "delta": 21,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749100360000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000046",
+      "fromId": "d0dec0de-0000-4000-8000-000000000017",
+      "toId": "d0dec0de-0000-4000-8000-000000000004",
+      "delta": 2,
+      "name": "Dono generoso",
+      "createdAt": 1749100420000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000047",
+      "fromId": "d0dec0de-0000-4000-8000-000000000006",
+      "toId": "d0dec0de-0000-4000-8000-000000000010",
+      "delta": -25,
+      "name": "Lite per il bottino",
+      "createdAt": 1749100480000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000048",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001e",
+      "toId": "d0dec0de-0000-4000-8000-00000000000c",
+      "delta": 21,
+      "name": "Dono generoso",
+      "createdAt": 1749100540000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000049",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001b",
+      "toId": "d0dec0de-0000-4000-8000-00000000000f",
+      "delta": -7,
+      "name": "Debito non pagato",
+      "createdAt": 1749100600000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000004a",
+      "fromId": "d0dec0de-0000-4000-8000-000000000015",
+      "toId": "d0dec0de-0000-4000-8000-000000000011",
+      "delta": -8,
+      "name": "Furto al mercato",
+      "createdAt": 1749100660000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000004b",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000b",
+      "toId": "d0dec0de-0000-4000-8000-000000000017",
+      "delta": 24,
+      "name": "Affare concluso",
+      "createdAt": 1749100720000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000004c",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-000000000009",
+      "delta": -16,
+      "name": "Lite per il bottino",
+      "createdAt": 1749100780000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000004d",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001a",
+      "toId": "d0dec0de-0000-4000-8000-000000000019",
+      "delta": 18,
+      "name": "Affare concluso",
+      "createdAt": 1749100840000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000004e",
+      "fromId": "d0dec0de-0000-4000-8000-000000000007",
+      "toId": "d0dec0de-0000-4000-8000-00000000001e",
+      "delta": 12,
+      "name": "Affare concluso",
+      "createdAt": 1749100900000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000004f",
+      "fromId": "d0dec0de-0000-4000-8000-000000000002",
+      "toId": "d0dec0de-0000-4000-8000-000000000004",
+      "delta": 20,
+      "name": "Affare concluso",
+      "createdAt": 1749100960000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000050",
+      "fromId": "d0dec0de-0000-4000-8000-000000000017",
+      "toId": "d0dec0de-0000-4000-8000-00000000000a",
+      "delta": 16,
+      "name": "Affare concluso",
+      "createdAt": 1749101020000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000051",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000c",
+      "toId": "d0dec0de-0000-4000-8000-000000000011",
+      "delta": 5,
+      "name": "Riparato il tetto",
+      "createdAt": 1749101080000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000052",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000e",
+      "toId": "d0dec0de-0000-4000-8000-000000000002",
+      "delta": 18,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749101140000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000053",
+      "fromId": "d0dec0de-0000-4000-8000-000000000016",
+      "toId": "d0dec0de-0000-4000-8000-000000000014",
+      "delta": 9,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749101200000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000054",
+      "fromId": "d0dec0de-0000-4000-8000-000000000018",
+      "toId": "d0dec0de-0000-4000-8000-000000000019",
+      "delta": 25,
+      "name": "Debito d'onore",
+      "createdAt": 1749101260000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000055",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001b",
+      "toId": "d0dec0de-0000-4000-8000-000000000018",
+      "delta": 19,
+      "name": "Dono generoso",
+      "createdAt": 1749101320000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000056",
+      "fromId": "d0dec0de-0000-4000-8000-000000000014",
+      "toId": "d0dec0de-0000-4000-8000-000000000006",
+      "delta": -6,
+      "name": "Furto al mercato",
+      "createdAt": 1749101380000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000057",
+      "fromId": "d0dec0de-0000-4000-8000-000000000006",
+      "toId": "d0dec0de-0000-4000-8000-000000000009",
+      "delta": 5,
+      "name": "Debito d'onore",
+      "createdAt": 1749101440000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000058",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001c",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": -22,
+      "name": "Lite per il bottino",
+      "createdAt": 1749101500000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000059",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000d",
+      "toId": "d0dec0de-0000-4000-8000-000000000004",
+      "delta": 14,
+      "name": "Dono generoso",
+      "createdAt": 1749101560000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000005a",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001c",
+      "toId": "d0dec0de-0000-4000-8000-000000000014",
+      "delta": -3,
+      "name": "Furto al mercato",
+      "createdAt": 1749101620000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000005b",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001d",
+      "toId": "d0dec0de-0000-4000-8000-00000000001a",
+      "delta": 30,
+      "name": "Patto siglato",
+      "createdAt": 1749101680000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000005c",
+      "fromId": "d0dec0de-0000-4000-8000-000000000018",
+      "toId": "d0dec0de-0000-4000-8000-000000000007",
+      "delta": 11,
+      "name": "Affare concluso",
+      "createdAt": 1749101740000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000005d",
+      "fromId": "d0dec0de-0000-4000-8000-000000000010",
+      "toId": "d0dec0de-0000-4000-8000-00000000001c",
+      "delta": 5,
+      "name": "Debito d'onore",
+      "createdAt": 1749101800000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000005e",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001b",
+      "toId": "d0dec0de-0000-4000-8000-000000000009",
+      "delta": -20,
+      "name": "Debito non pagato",
+      "createdAt": 1749101860000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000005f",
+      "fromId": "d0dec0de-0000-4000-8000-000000000012",
+      "toId": "d0dec0de-0000-4000-8000-00000000000a",
+      "delta": 4,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749101920000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000060",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001e",
+      "toId": "d0dec0de-0000-4000-8000-00000000000b",
+      "delta": -21,
+      "name": "Furto al mercato",
+      "createdAt": 1749101980000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000061",
+      "fromId": "d0dec0de-0000-4000-8000-000000000013",
+      "toId": "d0dec0de-0000-4000-8000-00000000000f",
+      "delta": 3,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749102040000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000062",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001a",
+      "toId": "d0dec0de-0000-4000-8000-000000000016",
+      "delta": 21,
+      "name": "Patto siglato",
+      "createdAt": 1749102100000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000063",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-00000000001a",
+      "delta": 24,
+      "name": "Riparato il tetto",
+      "createdAt": 1749102160000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000064",
+      "fromId": "d0dec0de-0000-4000-8000-000000000003",
+      "toId": "d0dec0de-0000-4000-8000-000000000018",
+      "delta": -18,
+      "name": "Furto al mercato",
+      "createdAt": 1749102220000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000065",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-000000000014",
+      "delta": -20,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749102280000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000066",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001d",
+      "toId": "d0dec0de-0000-4000-8000-00000000000c",
+      "delta": 14,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749102340000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000067",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000e",
+      "toId": "d0dec0de-0000-4000-8000-000000000029",
+      "delta": -16,
+      "name": "Furto al mercato",
+      "createdAt": 1749102400000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000068",
+      "fromId": "d0dec0de-0000-4000-8000-000000000019",
+      "toId": "d0dec0de-0000-4000-8000-000000000029",
+      "delta": -12,
+      "name": "Debito non pagato",
+      "createdAt": 1749102460000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000069",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000d",
+      "toId": "d0dec0de-0000-4000-8000-00000000002e",
+      "delta": 5,
+      "name": "Patto siglato",
+      "createdAt": 1749102520000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000006a",
+      "fromId": "d0dec0de-0000-4000-8000-000000000005",
+      "toId": "d0dec0de-0000-4000-8000-000000000029",
+      "delta": 30,
+      "name": "Riparato il tetto",
+      "createdAt": 1749102580000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000006b",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000c",
+      "toId": "d0dec0de-0000-4000-8000-00000000002c",
+      "delta": 17,
+      "name": "Riparato il tetto",
+      "createdAt": 1749102640000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000006c",
+      "fromId": "d0dec0de-0000-4000-8000-000000000008",
+      "toId": "d0dec0de-0000-4000-8000-00000000002c",
+      "delta": 2,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749102700000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000006d",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001e",
+      "toId": "d0dec0de-0000-4000-8000-000000000030",
+      "delta": -17,
+      "name": "Debito non pagato",
+      "createdAt": 1749102760000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000006e",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000d",
+      "toId": "d0dec0de-0000-4000-8000-00000000002b",
+      "delta": -13,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749102820000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000006f",
+      "fromId": "d0dec0de-0000-4000-8000-000000000007",
+      "toId": "d0dec0de-0000-4000-8000-00000000002f",
+      "delta": 24,
+      "name": "Dono generoso",
+      "createdAt": 1749102880000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000070",
+      "fromId": "d0dec0de-0000-4000-8000-000000000011",
+      "toId": "d0dec0de-0000-4000-8000-000000000029",
+      "delta": 7,
+      "name": "Patto siglato",
+      "createdAt": 1749102940000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000071",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000f",
+      "toId": "d0dec0de-0000-4000-8000-000000000031",
+      "delta": -20,
+      "name": "Furto al mercato",
+      "createdAt": 1749103000000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000072",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000a",
+      "toId": "d0dec0de-0000-4000-8000-000000000030",
+      "delta": -23,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749103060000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000073",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001e",
+      "toId": "d0dec0de-0000-4000-8000-000000000031",
+      "delta": 5,
+      "name": "Affare concluso",
+      "createdAt": 1749103120000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000074",
+      "fromId": "d0dec0de-0000-4000-8000-000000000016",
+      "toId": "d0dec0de-0000-4000-8000-00000000002d",
+      "delta": 22,
+      "name": "Debito d'onore",
+      "createdAt": 1749103180000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000075",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001d",
+      "toId": "d0dec0de-0000-4000-8000-00000000002a",
+      "delta": 19,
+      "name": "Dono generoso",
+      "createdAt": 1749103240000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000076",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001a",
+      "toId": "d0dec0de-0000-4000-8000-00000000002e",
+      "delta": 27,
+      "name": "Affare concluso",
+      "createdAt": 1749103300000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000077",
+      "fromId": "d0dec0de-0000-4000-8000-000000000006",
+      "toId": "d0dec0de-0000-4000-8000-00000000002d",
+      "delta": -22,
+      "name": "Debito non pagato",
+      "createdAt": 1749103360000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000078",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000c",
+      "toId": "d0dec0de-0000-4000-8000-00000000002d",
+      "delta": -19,
+      "name": "Tradimento sospettato",
+      "createdAt": 1749103420000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000079",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000c",
+      "toId": "d0dec0de-0000-4000-8000-000000000029",
+      "delta": 2,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749103480000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000007a",
+      "fromId": "d0dec0de-0000-4000-8000-000000000010",
+      "toId": "d0dec0de-0000-4000-8000-00000000002a",
+      "delta": -20,
+      "name": "Promessa infranta",
+      "createdAt": 1749103540000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000007b",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002d",
+      "toId": "d0dec0de-0000-4000-8000-00000000000d",
+      "delta": -25,
+      "name": "Promessa infranta",
+      "createdAt": 1749103600000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000007c",
+      "fromId": "d0dec0de-0000-4000-8000-000000000032",
+      "toId": "d0dec0de-0000-4000-8000-000000000017",
+      "delta": -21,
+      "name": "Lite per il bottino",
+      "createdAt": 1749103660000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000007d",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002c",
+      "toId": "d0dec0de-0000-4000-8000-000000000015",
+      "delta": -14,
+      "name": "Lite per il bottino",
+      "createdAt": 1749103720000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000007e",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002b",
+      "toId": "d0dec0de-0000-4000-8000-00000000001c",
+      "delta": -8,
+      "name": "Tradimento sospettato",
+      "createdAt": 1749103780000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000007f",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002c",
+      "toId": "d0dec0de-0000-4000-8000-00000000000a",
+      "delta": -18,
+      "name": "Furto al mercato",
+      "createdAt": 1749103840000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000080",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002b",
+      "toId": "d0dec0de-0000-4000-8000-000000000011",
+      "delta": 17,
+      "name": "Affare concluso",
+      "createdAt": 1749103900000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000081",
+      "fromId": "d0dec0de-0000-4000-8000-000000000029",
+      "toId": "d0dec0de-0000-4000-8000-000000000008",
+      "delta": -16,
+      "name": "Tradimento sospettato",
+      "createdAt": 1749103960000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000082",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002c",
+      "toId": "d0dec0de-0000-4000-8000-000000000006",
+      "delta": -12,
+      "name": "Furto al mercato",
+      "createdAt": 1749104020000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000083",
+      "fromId": "d0dec0de-0000-4000-8000-000000000030",
+      "toId": "d0dec0de-0000-4000-8000-000000000012",
+      "delta": -7,
+      "name": "Lite per il bottino",
+      "createdAt": 1749104080000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000084",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002f",
+      "toId": "d0dec0de-0000-4000-8000-00000000000d",
+      "delta": 5,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749104140000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000085",
+      "fromId": "d0dec0de-0000-4000-8000-000000000029",
+      "toId": "d0dec0de-0000-4000-8000-000000000016",
+      "delta": 26,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749104200000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000086",
+      "fromId": "d0dec0de-0000-4000-8000-000000000030",
+      "toId": "d0dec0de-0000-4000-8000-00000000001d",
+      "delta": 8,
+      "name": "Patto siglato",
+      "createdAt": 1749104260000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000087",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002c",
+      "toId": "d0dec0de-0000-4000-8000-00000000001c",
+      "delta": 19,
+      "name": "Riparato il tetto",
+      "createdAt": 1749104320000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000088",
+      "fromId": "d0dec0de-0000-4000-8000-000000000030",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": 16,
+      "name": "Patto siglato",
+      "createdAt": 1749104380000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000089",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002b",
+      "toId": "d0dec0de-0000-4000-8000-000000000015",
+      "delta": -5,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749104440000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000008a",
+      "fromId": "d0dec0de-0000-4000-8000-000000000032",
+      "toId": "d0dec0de-0000-4000-8000-00000000000f",
+      "delta": 4,
+      "name": "Patto siglato",
+      "createdAt": 1749104500000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000008b",
+      "fromId": "d0dec0de-0000-4000-8000-000000000030",
+      "toId": "d0dec0de-0000-4000-8000-000000000001",
+      "delta": -8,
+      "name": "Promessa infranta",
+      "createdAt": 1749104560000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000008c",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002d",
+      "toId": "d0dec0de-0000-4000-8000-00000000000e",
+      "delta": -1,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749104620000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000008d",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002e",
+      "toId": "d0dec0de-0000-4000-8000-000000000007",
+      "delta": -1,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749104680000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000008e",
+      "fromId": "d0dec0de-0000-4000-8000-000000000032",
+      "toId": "d0dec0de-0000-4000-8000-000000000017",
+      "delta": -7,
+      "name": "Debito non pagato",
+      "createdAt": 1749104740000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000008f",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-000000000002",
+      "delta": 7,
+      "name": "Riparato il tetto",
+      "createdAt": 1749104800000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000090",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": -15,
+      "name": "Lite per il bottino",
+      "createdAt": 1749104860000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000091",
+      "fromId": "d0dec0de-0000-4000-8000-000000000011",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": -1,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749104920000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000092",
+      "fromId": "d0dec0de-0000-4000-8000-000000000011",
+      "toId": "d0dec0de-0000-4000-8000-000000000002",
+      "delta": -17,
+      "name": "Furto al mercato",
+      "createdAt": 1749104980000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000093",
+      "fromId": "d0dec0de-0000-4000-8000-000000000011",
+      "toId": "d0dec0de-0000-4000-8000-000000000015",
+      "delta": -8,
+      "name": "Promessa infranta",
+      "createdAt": 1749105040000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000094",
+      "fromId": "d0dec0de-0000-4000-8000-000000000002",
+      "toId": "d0dec0de-0000-4000-8000-000000000010",
+      "delta": -12,
+      "name": "Tradimento sospettato",
+      "createdAt": 1749105100000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000095",
+      "fromId": "d0dec0de-0000-4000-8000-000000000013",
+      "toId": "d0dec0de-0000-4000-8000-00000000001c",
+      "delta": 8,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749105160000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000096",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000c",
+      "toId": "d0dec0de-0000-4000-8000-000000000007",
+      "delta": -8,
+      "name": "Lite per il bottino",
+      "createdAt": 1749105220000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000097",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000c",
+      "toId": "d0dec0de-0000-4000-8000-000000000003",
+      "delta": -12,
+      "name": "Debito non pagato",
+      "createdAt": 1749105280000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000098",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000a",
+      "toId": "d0dec0de-0000-4000-8000-000000000003",
+      "delta": 19,
+      "name": "Patto siglato",
+      "createdAt": 1749105340000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000099",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000a",
+      "toId": "d0dec0de-0000-4000-8000-000000000011",
+      "delta": 24,
+      "name": "Affare concluso",
+      "createdAt": 1749105400000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000009a",
+      "fromId": "d0dec0de-0000-4000-8000-000000000002",
+      "toId": "d0dec0de-0000-4000-8000-000000000003",
+      "delta": 21,
+      "name": "Debito d'onore",
+      "createdAt": 1749105460000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000009b",
+      "fromId": "d0dec0de-0000-4000-8000-000000000002",
+      "toId": "d0dec0de-0000-4000-8000-000000000011",
+      "delta": 5,
+      "name": "Riparato il tetto",
+      "createdAt": 1749105520000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000009c",
+      "fromId": "d0dec0de-0000-4000-8000-000000000002",
+      "toId": "d0dec0de-0000-4000-8000-000000000007",
+      "delta": -1,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749105580000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000009d",
+      "fromId": "d0dec0de-0000-4000-8000-000000000011",
+      "toId": "d0dec0de-0000-4000-8000-000000000008",
+      "delta": 15,
+      "name": "Affare concluso",
+      "createdAt": 1749105640000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000009e",
+      "fromId": "d0dec0de-0000-4000-8000-000000000007",
+      "toId": "d0dec0de-0000-4000-8000-00000000000f",
+      "delta": -18,
+      "name": "Promessa infranta",
+      "createdAt": 1749105700000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000009f",
+      "fromId": "d0dec0de-0000-4000-8000-000000000006",
+      "toId": "d0dec0de-0000-4000-8000-00000000000f",
+      "delta": -14,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749105760000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000a0",
+      "fromId": "d0dec0de-0000-4000-8000-000000000006",
+      "toId": "d0dec0de-0000-4000-8000-000000000019",
+      "delta": -9,
+      "name": "Furto al mercato",
+      "createdAt": 1749105820000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000a1",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001d",
+      "toId": "d0dec0de-0000-4000-8000-00000000001b",
+      "delta": -4,
+      "name": "Debito non pagato",
+      "createdAt": 1749105880000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000a2",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001d",
+      "toId": "d0dec0de-0000-4000-8000-00000000000b",
+      "delta": -11,
+      "name": "Lite per il bottino",
+      "createdAt": 1749105940000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000a3",
+      "fromId": "d0dec0de-0000-4000-8000-000000000006",
+      "toId": "d0dec0de-0000-4000-8000-000000000016",
+      "delta": 20,
+      "name": "Patto siglato",
+      "createdAt": 1749106000000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000a4",
+      "fromId": "d0dec0de-0000-4000-8000-000000000006",
+      "toId": "d0dec0de-0000-4000-8000-00000000001b",
+      "delta": -12,
+      "name": "Lite per il bottino",
+      "createdAt": 1749106060000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000a5",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001b",
+      "toId": "d0dec0de-0000-4000-8000-00000000001e",
+      "delta": 23,
+      "name": "Dono generoso",
+      "createdAt": 1749106120000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000a6",
+      "fromId": "d0dec0de-0000-4000-8000-000000000016",
+      "toId": "d0dec0de-0000-4000-8000-00000000001c",
+      "delta": 23,
+      "name": "Affare concluso",
+      "createdAt": 1749106180000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000a7",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000f",
+      "toId": "d0dec0de-0000-4000-8000-000000000018",
+      "delta": 22,
+      "name": "Riparato il tetto",
+      "createdAt": 1749106240000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000a8",
+      "fromId": "d0dec0de-0000-4000-8000-000000000003",
+      "toId": "d0dec0de-0000-4000-8000-000000000008",
+      "delta": -22,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749106300000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000a9",
+      "fromId": "d0dec0de-0000-4000-8000-000000000015",
+      "toId": "d0dec0de-0000-4000-8000-000000000011",
+      "delta": -7,
+      "name": "Tradimento sospettato",
+      "createdAt": 1749106360000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000aa",
+      "fromId": "d0dec0de-0000-4000-8000-000000000015",
+      "toId": "d0dec0de-0000-4000-8000-00000000001b",
+      "delta": -11,
+      "name": "Promessa infranta",
+      "createdAt": 1749106420000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ab",
+      "fromId": "d0dec0de-0000-4000-8000-000000000015",
+      "toId": "d0dec0de-0000-4000-8000-000000000008",
+      "delta": 1,
+      "name": "Patto siglato",
+      "createdAt": 1749106480000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ac",
+      "fromId": "d0dec0de-0000-4000-8000-000000000013",
+      "toId": "d0dec0de-0000-4000-8000-000000000008",
+      "delta": 20,
+      "name": "Patto siglato",
+      "createdAt": 1749106540000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ad",
+      "fromId": "d0dec0de-0000-4000-8000-000000000013",
+      "toId": "d0dec0de-0000-4000-8000-000000000011",
+      "delta": 5,
+      "name": "Affare concluso",
+      "createdAt": 1749106600000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ae",
+      "fromId": "d0dec0de-0000-4000-8000-000000000013",
+      "toId": "d0dec0de-0000-4000-8000-00000000001b",
+      "delta": -23,
+      "name": "Tradimento sospettato",
+      "createdAt": 1749106660000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000af",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001b",
+      "toId": "d0dec0de-0000-4000-8000-000000000008",
+      "delta": 16,
+      "name": "Riparato il tetto",
+      "createdAt": 1749106720000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000b0",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001b",
+      "toId": "d0dec0de-0000-4000-8000-00000000001c",
+      "delta": -20,
+      "name": "Promessa infranta",
+      "createdAt": 1749106780000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000b1",
+      "fromId": "d0dec0de-0000-4000-8000-000000000015",
+      "toId": "d0dec0de-0000-4000-8000-000000000008",
+      "delta": 13,
+      "name": "Patto siglato",
+      "createdAt": 1749106840000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000b2",
+      "fromId": "d0dec0de-0000-4000-8000-000000000015",
+      "toId": "d0dec0de-0000-4000-8000-000000000003",
+      "delta": 30,
+      "name": "Riparato il tetto",
+      "createdAt": 1749106900000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000b3",
+      "fromId": "d0dec0de-0000-4000-8000-000000000001",
+      "toId": "d0dec0de-0000-4000-8000-000000000002",
+      "delta": 4,
+      "name": "Debito d'onore",
+      "createdAt": 1749106960000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000b4",
+      "fromId": "d0dec0de-0000-4000-8000-000000000001",
+      "toId": "d0dec0de-0000-4000-8000-000000000003",
+      "delta": 21,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749107020000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000b5",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000d",
+      "toId": "d0dec0de-0000-4000-8000-00000000000a",
+      "delta": 26,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749107080000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000b6",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000d",
+      "toId": "d0dec0de-0000-4000-8000-00000000000e",
+      "delta": -5,
+      "name": "Furto al mercato",
+      "createdAt": 1749107140000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000b7",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-000000000009",
+      "delta": 20,
+      "name": "Debito d'onore",
+      "createdAt": 1749107200000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000b8",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-000000000019",
+      "delta": -3,
+      "name": "Furto al mercato",
+      "createdAt": 1749107260000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000b9",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-00000000000a",
+      "delta": 26,
+      "name": "Dono generoso",
+      "createdAt": 1749107320000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ba",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001d",
+      "toId": "d0dec0de-0000-4000-8000-000000000019",
+      "delta": -8,
+      "name": "Debito non pagato",
+      "createdAt": 1749107380000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000bb",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001d",
+      "toId": "d0dec0de-0000-4000-8000-000000000017",
+      "delta": 12,
+      "name": "Debito d'onore",
+      "createdAt": 1749107440000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000bc",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001d",
+      "toId": "d0dec0de-0000-4000-8000-00000000000b",
+      "delta": -25,
+      "name": "Furto al mercato",
+      "createdAt": 1749107500000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000bd",
+      "fromId": "d0dec0de-0000-4000-8000-000000000019",
+      "toId": "d0dec0de-0000-4000-8000-000000000007",
+      "delta": 25,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749107560000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000be",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000a",
+      "toId": "d0dec0de-0000-4000-8000-000000000005",
+      "delta": -21,
+      "name": "Furto al mercato",
+      "createdAt": 1749107620000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000bf",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000b",
+      "toId": "d0dec0de-0000-4000-8000-000000000015",
+      "delta": -2,
+      "name": "Furto al mercato",
+      "createdAt": 1749107680000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000c0",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000a",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": -19,
+      "name": "Promessa infranta",
+      "createdAt": 1749107740000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000c1",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000a",
+      "toId": "d0dec0de-0000-4000-8000-000000000006",
+      "delta": 3,
+      "name": "Affare concluso",
+      "createdAt": 1749107800000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000c2",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000a",
+      "toId": "d0dec0de-0000-4000-8000-000000000017",
+      "delta": 27,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749107860000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000c3",
+      "fromId": "d0dec0de-0000-4000-8000-000000000007",
+      "toId": "d0dec0de-0000-4000-8000-000000000017",
+      "delta": 8,
+      "name": "Dono generoso",
+      "createdAt": 1749107920000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000c4",
+      "fromId": "d0dec0de-0000-4000-8000-000000000007",
+      "toId": "d0dec0de-0000-4000-8000-000000000006",
+      "delta": 3,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749107980000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000c5",
+      "fromId": "d0dec0de-0000-4000-8000-000000000007",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": 19,
+      "name": "Dono generoso",
+      "createdAt": 1749108040000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000c6",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000f",
+      "toId": "d0dec0de-0000-4000-8000-000000000017",
+      "delta": 11,
+      "name": "Debito d'onore",
+      "createdAt": 1749108100000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000c7",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000f",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": 10,
+      "name": "Riparato il tetto",
+      "createdAt": 1749108160000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000c8",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000f",
+      "toId": "d0dec0de-0000-4000-8000-000000000006",
+      "delta": 5,
+      "name": "Riparato il tetto",
+      "createdAt": 1749108220000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000c9",
+      "fromId": "d0dec0de-0000-4000-8000-000000000017",
+      "toId": "d0dec0de-0000-4000-8000-00000000000a",
+      "delta": 5,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749108280000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ca",
+      "fromId": "d0dec0de-0000-4000-8000-000000000013",
+      "toId": "d0dec0de-0000-4000-8000-000000000003",
+      "delta": 21,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749108340000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000cb",
+      "fromId": "d0dec0de-0000-4000-8000-000000000003",
+      "toId": "d0dec0de-0000-4000-8000-00000000000e",
+      "delta": 20,
+      "name": "Riparato il tetto",
+      "createdAt": 1749108400000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000cc",
+      "fromId": "d0dec0de-0000-4000-8000-000000000003",
+      "toId": "d0dec0de-0000-4000-8000-000000000005",
+      "delta": -17,
+      "name": "Insulto in pubblico",
+      "createdAt": 1749108460000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000cd",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001e",
+      "toId": "d0dec0de-0000-4000-8000-000000000005",
+      "delta": -9,
+      "name": "Furto al mercato",
+      "createdAt": 1749108520000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ce",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001e",
+      "toId": "d0dec0de-0000-4000-8000-000000000019",
+      "delta": -6,
+      "name": "Debito non pagato",
+      "createdAt": 1749108580000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000cf",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001e",
+      "toId": "d0dec0de-0000-4000-8000-000000000007",
+      "delta": 11,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749108640000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000d0",
+      "fromId": "d0dec0de-0000-4000-8000-000000000007",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": 3,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749108700000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000d1",
+      "fromId": "d0dec0de-0000-4000-8000-000000000019",
+      "toId": "d0dec0de-0000-4000-8000-000000000016",
+      "delta": 25,
+      "name": "Affare concluso",
+      "createdAt": 1749108760000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000d2",
+      "fromId": "d0dec0de-0000-4000-8000-000000000005",
+      "toId": "d0dec0de-0000-4000-8000-000000000006",
+      "delta": 28,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749108820000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000d3",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-00000000001e",
+      "delta": 25,
+      "name": "Difeso il villaggio",
+      "createdAt": 1749108880000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000d4",
+      "fromId": "d0dec0de-0000-4000-8000-000000000012",
+      "toId": "d0dec0de-0000-4000-8000-000000000005",
+      "delta": -16,
+      "name": "Debito non pagato",
+      "createdAt": 1749108940000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000d5",
+      "fromId": "d0dec0de-0000-4000-8000-000000000012",
+      "toId": "d0dec0de-0000-4000-8000-000000000006",
+      "delta": 12,
+      "name": "Riparato il tetto",
+      "createdAt": 1749109000000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000d6",
+      "fromId": "d0dec0de-0000-4000-8000-000000000008",
+      "toId": "d0dec0de-0000-4000-8000-000000000005",
+      "delta": 4,
+      "name": "Affare concluso",
+      "createdAt": 1749109060000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000d7",
+      "fromId": "d0dec0de-0000-4000-8000-000000000008",
+      "toId": "d0dec0de-0000-4000-8000-00000000001a",
+      "delta": 16,
+      "name": "Affare concluso",
+      "createdAt": 1749109120000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000d8",
+      "fromId": "d0dec0de-0000-4000-8000-000000000005",
+      "toId": "d0dec0de-0000-4000-8000-00000000000b",
+      "delta": 2,
+      "name": "Dono generoso",
+      "createdAt": 1749109180000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000d9",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000f",
+      "toId": "d0dec0de-0000-4000-8000-00000000000d",
+      "delta": 13,
+      "name": "Riparato il tetto",
+      "createdAt": 1749109240000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000da",
+      "fromId": "d0dec0de-0000-4000-8000-000000000006",
+      "toId": "d0dec0de-0000-4000-8000-000000000003",
+      "delta": 30,
+      "name": "Debito d'onore",
+      "createdAt": 1749109300000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000db",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-000000000008",
+      "delta": 5,
+      "name": "Dono generoso",
+      "createdAt": 1749109360000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000dc",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-000000000017",
+      "delta": -22,
+      "name": "Furto al mercato",
+      "createdAt": 1749109420000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000dd",
+      "fromId": "d0dec0de-0000-4000-8000-000000000004",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": -12,
+      "name": "Furto al mercato",
+      "createdAt": 1749109480000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000de",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000b",
+      "toId": "d0dec0de-0000-4000-8000-000000000017",
+      "delta": -2,
+      "name": "Tradimento sospettato",
+      "createdAt": 1749109540000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000df",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000b",
+      "toId": "d0dec0de-0000-4000-8000-000000000008",
+      "delta": 18,
+      "name": "Riparato il tetto",
+      "createdAt": 1749109600000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000e0",
+      "fromId": "d0dec0de-0000-4000-8000-00000000000b",
+      "toId": "d0dec0de-0000-4000-8000-000000000013",
+      "delta": -19,
+      "name": "Tradimento sospettato",
+      "createdAt": 1749109660000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000e1",
+      "fromId": "d0dec0de-0000-4000-8000-000000000013",
+      "toId": "d0dec0de-0000-4000-8000-00000000000d",
+      "delta": 27,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749109720000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000e2",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001e",
+      "toId": "d0dec0de-0000-4000-8000-000000000016",
+      "delta": 7,
+      "name": "Salvato in battaglia",
+      "createdAt": 1749109780000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000e3",
+      "fromId": "d0dec0de-0000-4000-8000-000000000017",
+      "toId": "d0dec0de-0000-4000-8000-000000000010",
+      "delta": 9,
+      "name": "Debito d'onore",
+      "createdAt": 1749109840000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000e4",
+      "fromId": "d0dec0de-0000-4000-8000-000000000009",
+      "toId": "d0dec0de-0000-4000-8000-000000000016",
+      "delta": 23,
+      "name": "Dono generoso",
+      "createdAt": 1749109900000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000e5",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002a",
+      "toId": "d0dec0de-0000-4000-8000-000000000029",
+      "delta": 6,
+      "name": "Affare concluso",
+      "createdAt": 1749109960000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000e6",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002d",
+      "toId": "d0dec0de-0000-4000-8000-000000000032",
+      "delta": 5,
+      "name": "Riparato il tetto",
+      "createdAt": 1749110020000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000e7",
+      "fromId": "d0dec0de-0000-4000-8000-000000000032",
+      "toId": "d0dec0de-0000-4000-8000-000000000029",
+      "delta": 13,
+      "name": "Riparato il tetto",
+      "createdAt": 1749110080000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000e8",
+      "fromId": "d0dec0de-0000-4000-8000-000000000032",
+      "toId": "d0dec0de-0000-4000-8000-000000000031",
+      "delta": -22,
+      "name": "Debito non pagato",
+      "createdAt": 1749110140000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000e9",
+      "fromId": "d0dec0de-0000-4000-8000-00000000002a",
+      "toId": "d0dec0de-0000-4000-8000-00000000002b",
+      "delta": 14,
+      "name": "Debito d'onore",
+      "createdAt": 1749110200000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ea",
+      "fromId": "d0dec0de-0000-4000-8000-00000000001f",
+      "toId": "d0dec0de-0000-4000-8000-000000000020",
+      "delta": 9999,
+      "name": "Delta estremo positivo",
+      "createdAt": 1749110260000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000eb",
+      "fromId": "d0dec0de-0000-4000-8000-000000000021",
+      "toId": "d0dec0de-0000-4000-8000-000000000022",
+      "delta": -9999,
+      "name": "Delta estremo negativo",
+      "createdAt": 1749110320000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ec",
+      "fromId": "d0dec0de-0000-4000-8000-000000000001",
+      "toId": "d0dec0de-0000-4000-8000-000000000038",
+      "delta": 5,
+      "name": "",
+      "createdAt": 1749110380000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ed",
+      "fromId": "d0dec0de-0000-4000-8000-000000000038",
+      "toId": "d0dec0de-0000-4000-8000-000000000025",
+      "delta": 12,
+      "name": "Voce di corridoio",
+      "createdAt": 1749110440000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-0000000000ee",
+      "fromId": "d0dec0de-0000-4000-8000-000000000027",
+      "toId": "d0dec0de-0000-4000-8000-000000000028",
+      "delta": -3,
+      "name": "Screzio linguistico",
+      "createdAt": 1749110500000
+    }
+  ],
+  "groups": [
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000029",
+      "name": "Guardie di Vallalta",
+      "type": "fazione",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000002",
+        "d0dec0de-0000-4000-8000-000000000013",
+        "d0dec0de-0000-4000-8000-000000000015"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000002a",
+      "name": "Borgo di Pietrarossa",
+      "type": "villaggio",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000003",
+        "d0dec0de-0000-4000-8000-000000000011",
+        "d0dec0de-0000-4000-8000-000000000007"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000002b",
+      "name": "Gilda dei Mercanti",
+      "type": "gilda",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-00000000000b",
+        "d0dec0de-0000-4000-8000-00000000001b",
+        "d0dec0de-0000-4000-8000-000000000016",
+        "d0dec0de-0000-4000-8000-00000000000f",
+        "d0dec0de-0000-4000-8000-000000000019",
+        "d0dec0de-0000-4000-8000-000000000003"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000002c",
+      "name": "Culto della Fiamma",
+      "type": "culto",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000011",
+        "d0dec0de-0000-4000-8000-000000000008",
+        "d0dec0de-0000-4000-8000-00000000001b"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000002d",
+      "name": "Megalopoli di Auros",
+      "type": "città",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000008",
+        "d0dec0de-0000-4000-8000-000000000002",
+        "d0dec0de-0000-4000-8000-000000000010",
+        "d0dec0de-0000-4000-8000-00000000001c",
+        "d0dec0de-0000-4000-8000-000000000003"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000002e",
+      "name": "Clan Zannafredda",
+      "type": "clan",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000019",
+        "d0dec0de-0000-4000-8000-00000000000a",
+        "d0dec0de-0000-4000-8000-00000000001c",
+        "d0dec0de-0000-4000-8000-000000000017",
+        "d0dec0de-0000-4000-8000-00000000000e",
+        "d0dec0de-0000-4000-8000-00000000000b",
+        "d0dec0de-0000-4000-8000-000000000009"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000002f",
+      "name": "Compagnia della Strada",
+      "type": "compagnia",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000017",
+        "d0dec0de-0000-4000-8000-000000000006",
+        "d0dec0de-0000-4000-8000-000000000013"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000030",
+      "name": "Senato di Auros",
+      "type": "fazione",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000007",
+        "d0dec0de-0000-4000-8000-000000000019",
+        "d0dec0de-0000-4000-8000-000000000005",
+        "d0dec0de-0000-4000-8000-00000000000e",
+        "d0dec0de-0000-4000-8000-000000000004"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000031",
+      "name": "Casata Lunargenta",
+      "type": "casata",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000005",
+        "d0dec0de-0000-4000-8000-00000000000f",
+        "d0dec0de-0000-4000-8000-00000000001a",
+        "d0dec0de-0000-4000-8000-000000000006"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000032",
+      "name": "Banditi del Passo",
+      "type": "fazione",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000013",
+        "d0dec0de-0000-4000-8000-00000000001e",
+        "d0dec0de-0000-4000-8000-000000000017",
+        "d0dec0de-0000-4000-8000-000000000009",
+        "d0dec0de-0000-4000-8000-000000000008",
+        "d0dec0de-0000-4000-8000-00000000001c"
+      ],
+      "deletedAt": 1749900000000
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000033",
+      "name": "Confraternita Arcana degli Astri Nascosti e Custodi del Grimorio Proibito delle Ere Perdute, Ramo Occidentale di Vallalta e Territori Limitrofi del Passo Innevato",
+      "type": "ordine cavalleresco-monastico-mercantile transregionale",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000001",
+        "d0dec0de-0000-4000-8000-000000000002"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000034",
+      "name": "Gruppo Vuoto",
+      "type": "fazione",
+      "memberIds": [],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000035",
+      "name": "Gruppo Solitario",
+      "type": "",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000003"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000036",
+      "name": "Membri Duplicati",
+      "type": "clan",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000003",
+        "d0dec0de-0000-4000-8000-000000000003",
+        "d0dec0de-0000-4000-8000-00000000001e"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000037",
+      "name": "🏰 Fortezza <Ombre> & \"Nebbie\" 𝔊𝔬𝔱𝔦𝔠𝔞",
+      "type": "🗡️ militare",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000022",
+        "d0dec0de-0000-4000-8000-000000000024"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000038",
+      "name": "Orda Sterminata",
+      "type": "orda",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000001",
+        "d0dec0de-0000-4000-8000-000000000002",
+        "d0dec0de-0000-4000-8000-000000000003",
+        "d0dec0de-0000-4000-8000-000000000004",
+        "d0dec0de-0000-4000-8000-000000000005",
+        "d0dec0de-0000-4000-8000-000000000006",
+        "d0dec0de-0000-4000-8000-000000000007",
+        "d0dec0de-0000-4000-8000-000000000008",
+        "d0dec0de-0000-4000-8000-000000000009",
+        "d0dec0de-0000-4000-8000-00000000000a",
+        "d0dec0de-0000-4000-8000-00000000000b",
+        "d0dec0de-0000-4000-8000-00000000000c",
+        "d0dec0de-0000-4000-8000-00000000000d",
+        "d0dec0de-0000-4000-8000-00000000000e",
+        "d0dec0de-0000-4000-8000-00000000000f",
+        "d0dec0de-0000-4000-8000-000000000010",
+        "d0dec0de-0000-4000-8000-000000000011",
+        "d0dec0de-0000-4000-8000-000000000012",
+        "d0dec0de-0000-4000-8000-000000000013",
+        "d0dec0de-0000-4000-8000-000000000014",
+        "d0dec0de-0000-4000-8000-000000000015",
+        "d0dec0de-0000-4000-8000-000000000016",
+        "d0dec0de-0000-4000-8000-000000000017",
+        "d0dec0de-0000-4000-8000-000000000018",
+        "d0dec0de-0000-4000-8000-000000000019",
+        "d0dec0de-0000-4000-8000-00000000001a",
+        "d0dec0de-0000-4000-8000-00000000001b",
+        "d0dec0de-0000-4000-8000-00000000001c",
+        "d0dec0de-0000-4000-8000-00000000001d"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-000000000039",
+      "name": "Corporazione dei Mercanti",
+      "type": "gilda",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000003",
+        "d0dec0de-0000-4000-8000-000000000006",
+        "d0dec0de-0000-4000-8000-000000000009",
+        "d0dec0de-0000-4000-8000-00000000000c"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000003a",
+      "name": "Ordine del Sole Nascente",
+      "type": "ordine",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000006",
+        "d0dec0de-0000-4000-8000-000000000009",
+        "d0dec0de-0000-4000-8000-00000000000c",
+        "d0dec0de-0000-4000-8000-00000000000f",
+        "d0dec0de-0000-4000-8000-000000000012"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000003b",
+      "name": "Casata Valombra",
+      "type": "casata",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-00000000000a",
+        "d0dec0de-0000-4000-8000-00000000000d",
+        "d0dec0de-0000-4000-8000-000000000010"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000003c",
+      "name": "Setta del Velo Cinereo",
+      "type": "setta",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-00000000000e",
+        "d0dec0de-0000-4000-8000-000000000011",
+        "d0dec0de-0000-4000-8000-000000000014",
+        "d0dec0de-0000-4000-8000-000000000017"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000003d",
+      "name": "Compagnia della Lama Spezzata",
+      "type": "compagnia",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000002",
+        "d0dec0de-0000-4000-8000-000000000005",
+        "d0dec0de-0000-4000-8000-000000000008",
+        "d0dec0de-0000-4000-8000-00000000000b",
+        "d0dec0de-0000-4000-8000-00000000000e",
+        "d0dec0de-0000-4000-8000-000000000011"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "d0dec0de-0000-4000-8000-00000000003e",
+      "name": "Circolo dei Druidi di Selvanera",
+      "type": "circolo",
+      "memberIds": [
+        "d0dec0de-0000-4000-8000-000000000008",
+        "d0dec0de-0000-4000-8000-00000000000b",
+        "d0dec0de-0000-4000-8000-00000000000e"
+      ],
+      "deletedAt": null
+    }
+  ]
+}
