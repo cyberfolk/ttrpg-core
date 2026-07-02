@@ -8,7 +8,7 @@
       </button>
 
       <!-- Logo: torna alla schermata principale -->
-      <RouterLink :to="{ name: 'characters' }" class="ds-logo" aria-label="Vai alla schermata principale">
+      <RouterLink :to="{ name: 'facing' }" class="ds-logo" aria-label="Vai alla schermata principale">
         <span class="ds-logo__mark">
           <svg :width="30" :height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true">
             <rect x="16" y="2.2" width="19.5" height="19.5" rx="3" transform="rotate(45 16 2.2)"
@@ -66,6 +66,7 @@ const moreBtn = ref(null);
 // Sezioni della funzione Reputazione. Ogni voce raggruppa le route che le appartengono
 // (una sezione e' attiva anche dalle sue sotto-pagine di dettaglio).
 const NAV_SECTIONS = [
+  { routeName: 'facing', label: 'Faccia a faccia', icon: 'facing', match: ['facing'] },
   { routeName: 'characters', label: 'Personaggi', icon: 'user', match: ['characters', 'profile'] },
   { routeName: 'groups', label: 'Gruppi', icon: 'users', match: ['groups', 'groupProfile'] },
 ];

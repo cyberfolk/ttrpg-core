@@ -48,11 +48,15 @@
             Carica dati
             <input type="file" accept="application/json" @change="onImportFile" style="display:none" />
           </label>
+          <button class="ds-btn ds-btn--secondary ds-btn--sm" @click="onLoadSample">
+            <span class="ds-btn__icon"><Icon name="upload" /></span>
+            Carica dati d'esempio
+          </button>
+          <button class="ds-btn ds-btn--danger ds-btn--sm" @click="openWipe">
+            <span class="ds-btn__icon"><Icon name="trash" /></span>
+            Pulisci dati
+          </button>
         </div>
-        <button class="ds-btn ds-btn--danger ds-btn--sm" style="margin-top:0.5rem;width:100%" @click="openWipe">
-          <span class="ds-btn__icon"><Icon name="trash" /></span>
-          Pulisci dati
-        </button>
       </div>
 
       <!-- Impostazioni -->
@@ -115,6 +119,7 @@ import { useUiState } from '../useUiState.js';
 import { useDialog } from '../useDialog.js';
 import { createState } from '../../model/schema.js';
 import { serializeState, parseImport } from '../../store/io.js';
+import sampleStoryJson from '../../../datas/sample-story.json?raw';
 import Icon from './Icon.vue';
 
 const props = defineProps({
@@ -131,6 +136,7 @@ const reputationHelp = REPUTATION_HELP;
 
 // Sezioni navigabili della funzione Reputazione (mobile: la nav vive nel drawer).
 const NAV_SECTIONS = [
+  { routeName: 'facing', label: 'Faccia a faccia', icon: 'facing', match: ['facing'] },
   { routeName: 'characters', label: 'Personaggi', icon: 'user', match: ['characters', 'profile'] },
   { routeName: 'groups', label: 'Gruppi', icon: 'users', match: ['groups', 'groupProfile'] },
 ];
@@ -185,6 +191,17 @@ function onExport() {
   a.download = `reputation-${stamp}.json`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+function onLoadSample() {
+  try {
+    const state = parseImport(sampleStoryJson);
+    if (!window.confirm('Caricare i dati d\'esempio sovrascrive i dati correnti. Procedere?')) return;
+    replaceState(state);
+    emit('close');
+  } catch (err) {
+    window.alert(`Caricamento esempio fallito: ${err.message}`);
+  }
 }
 
 function onImportFile(event) {

@@ -1,0 +1,136 @@
+{
+  "version": 2,
+  "exportedAt": 1780099200000,
+  "characters": [
+    { "id": "5107a1e0-0000-4000-8000-000000000001", "name": "Aldric il Giusto", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-000000000002", "name": "Mirena Volpe", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-000000000003", "name": "Bram Martelletto", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-000000000004", "name": "Sera Ombravento", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-000000000005", "name": "Padre Anselmo", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-000000000006", "name": "Ysolde Cantalba", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-000000000007", "name": "Gareth Sprone", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-000000000008", "name": "Vittore Nesler", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-000000000009", "name": "Kessa la Rossa", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-00000000000a", "name": "Toran Barbagrigia", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-00000000000b", "name": "Nyra Fiordighiaccio", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-00000000000c", "name": "Doran Piedelesto", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-00000000000d", "name": "Selene Voceflebile", "deletedAt": null },
+    { "id": "5107a1e0-0000-4000-8000-00000000000e", "name": "Grimwald il Muto", "deletedAt": null }
+  ],
+  "groups": [
+    {
+      "id": "6a0d0000-0000-4000-8000-000000000001",
+      "name": "La Guardia Cittadina",
+      "type": "Militare",
+      "memberIds": [
+        "5107a1e0-0000-4000-8000-000000000001",
+        "5107a1e0-0000-4000-8000-00000000000a",
+        "5107a1e0-0000-4000-8000-00000000000c"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "6a0d0000-0000-4000-8000-000000000002",
+      "name": "Gilda dei Mercanti",
+      "type": "Commercio",
+      "memberIds": [
+        "5107a1e0-0000-4000-8000-000000000008",
+        "5107a1e0-0000-4000-8000-000000000003"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "6a0d0000-0000-4000-8000-000000000003",
+      "name": "I Corvi Neri",
+      "type": "Criminale",
+      "memberIds": [
+        "5107a1e0-0000-4000-8000-000000000009",
+        "5107a1e0-0000-4000-8000-000000000004",
+        "5107a1e0-0000-4000-8000-000000000002"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "6a0d0000-0000-4000-8000-000000000004",
+      "name": "Ordine della Luce",
+      "type": "Religioso",
+      "memberIds": [
+        "5107a1e0-0000-4000-8000-000000000005",
+        "5107a1e0-0000-4000-8000-00000000000d"
+      ],
+      "deletedAt": null
+    },
+    {
+      "id": "6a0d0000-0000-4000-8000-000000000005",
+      "name": "Casa Sprone",
+      "type": "Nobiltà",
+      "memberIds": [
+        "5107a1e0-0000-4000-8000-000000000007",
+        "5107a1e0-0000-4000-8000-000000000006"
+      ],
+      "deletedAt": null
+    }
+  ],
+  "transactions": [
+    { "id": "77000000-0000-4000-8000-000000000001", "fromId": "5107a1e0-0000-4000-8000-000000000008", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": 15, "name": "La Guardia ha scortato il mio convoglio fino ai moli", "createdAt": 1780012800000 },
+    { "id": "77000000-0000-4000-8000-000000000002", "fromId": "5107a1e0-0000-4000-8000-000000000001", "toId": "5107a1e0-0000-4000-8000-000000000008", "delta": 10, "name": "Vittore paga le tasse senza mai lamentarsi", "createdAt": 1780016400000 },
+    { "id": "77000000-0000-4000-8000-000000000003", "fromId": "5107a1e0-0000-4000-8000-000000000003", "toId": "5107a1e0-0000-4000-8000-000000000008", "delta": 12, "name": "Vittore compra tutte le mie lame a prezzo onesto", "createdAt": 1780020000000 },
+    { "id": "77000000-0000-4000-8000-000000000004", "fromId": "5107a1e0-0000-4000-8000-000000000005", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": 18, "name": "Aldric difende i deboli, come predica la Luce", "createdAt": 1780023600000 },
+    { "id": "77000000-0000-4000-8000-000000000005", "fromId": "5107a1e0-0000-4000-8000-000000000001", "toId": "5107a1e0-0000-4000-8000-000000000005", "delta": 15, "name": "Padre Anselmo cura i miei feriti senza chiedere nulla", "createdAt": 1780027200000 },
+    { "id": "77000000-0000-4000-8000-000000000006", "fromId": "5107a1e0-0000-4000-8000-000000000007", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": 8, "name": "La Guardia serve con lealtà Casa Sprone", "createdAt": 1780030800000 },
+    { "id": "77000000-0000-4000-8000-000000000007", "fromId": "5107a1e0-0000-4000-8000-000000000002", "toId": "5107a1e0-0000-4000-8000-000000000009", "delta": 20, "name": "Kessa mi ha accolta tra i Corvi quando non avevo nulla", "createdAt": 1780034400000 },
+    { "id": "77000000-0000-4000-8000-000000000008", "fromId": "5107a1e0-0000-4000-8000-000000000009", "toId": "5107a1e0-0000-4000-8000-000000000002", "delta": 25, "name": "Mirena è la mia spia più abile, mi fido di lei", "createdAt": 1780038000000 },
+    { "id": "77000000-0000-4000-8000-000000000009", "fromId": "5107a1e0-0000-4000-8000-000000000001", "toId": "5107a1e0-0000-4000-8000-000000000009", "delta": -30, "name": "Kessa ha svaligiato la carovana della città", "createdAt": 1780041600000 },
+    { "id": "77000000-0000-4000-8000-00000000000a", "fromId": "5107a1e0-0000-4000-8000-000000000009", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": -20, "name": "Aldric mi ha messo una taglia sulla testa", "createdAt": 1780045200000 },
+    { "id": "77000000-0000-4000-8000-00000000000b", "fromId": "5107a1e0-0000-4000-8000-000000000002", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": 15, "name": "Aldric mi paga in segreto per spiare i Corvi", "createdAt": 1780048800000 },
+    { "id": "77000000-0000-4000-8000-00000000000c", "fromId": "5107a1e0-0000-4000-8000-000000000001", "toId": "5107a1e0-0000-4000-8000-000000000002", "delta": 20, "name": "Mirena mi passa informazioni che salvano vite", "createdAt": 1780052400000 },
+    { "id": "77000000-0000-4000-8000-00000000000d", "fromId": "5107a1e0-0000-4000-8000-000000000009", "toId": "5107a1e0-0000-4000-8000-000000000008", "delta": -15, "name": "Vittore ha rifiutato di pagare il pizzo ai Corvi", "createdAt": 1780056000000 },
+    { "id": "77000000-0000-4000-8000-00000000000e", "fromId": "5107a1e0-0000-4000-8000-000000000008", "toId": "5107a1e0-0000-4000-8000-000000000009", "delta": -25, "name": "I Corvi hanno dato alle fiamme il mio magazzino", "createdAt": 1780059600000 },
+    { "id": "77000000-0000-4000-8000-00000000000f", "fromId": "5107a1e0-0000-4000-8000-000000000008", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": 12, "name": "Solo la Guardia è accorsa a spegnere l'incendio", "createdAt": 1780063200000 },
+    { "id": "77000000-0000-4000-8000-000000000010", "fromId": "5107a1e0-0000-4000-8000-000000000009", "toId": "5107a1e0-0000-4000-8000-000000000004", "delta": 15, "name": "Sera esegue ogni mio ordine senza fare domande", "createdAt": 1780066800000 },
+    { "id": "77000000-0000-4000-8000-000000000011", "fromId": "5107a1e0-0000-4000-8000-000000000009", "toId": "5107a1e0-0000-4000-8000-000000000002", "delta": -50, "name": "Ho scoperto che Mirena mi tradiva per la Guardia", "createdAt": 1780070400000 },
+    { "id": "77000000-0000-4000-8000-000000000012", "fromId": "5107a1e0-0000-4000-8000-000000000004", "toId": "5107a1e0-0000-4000-8000-000000000002", "delta": -40, "name": "Kessa mi ha ordinato di uccidere la traditrice", "createdAt": 1780074000000 },
+    { "id": "77000000-0000-4000-8000-000000000013", "fromId": "5107a1e0-0000-4000-8000-000000000002", "toId": "5107a1e0-0000-4000-8000-000000000004", "delta": -30, "name": "Sera ha tentato di sgozzarmi in un vicolo", "createdAt": 1780077600000 },
+    { "id": "77000000-0000-4000-8000-000000000014", "fromId": "5107a1e0-0000-4000-8000-000000000002", "toId": "5107a1e0-0000-4000-8000-000000000009", "delta": -35, "name": "Kessa ha ucciso i Corvi che mi erano amici", "createdAt": 1780081200000 },
+    { "id": "77000000-0000-4000-8000-000000000015", "fromId": "5107a1e0-0000-4000-8000-000000000002", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": 25, "name": "Aldric mi ha dato rifugio quando i Corvi mi braccavano", "createdAt": 1780084800000 },
+    { "id": "77000000-0000-4000-8000-000000000016", "fromId": "5107a1e0-0000-4000-8000-000000000001", "toId": "5107a1e0-0000-4000-8000-000000000002", "delta": 25, "name": "Mirena ha rischiato la vita per la città", "createdAt": 1780088400000 },
+    { "id": "77000000-0000-4000-8000-000000000017", "fromId": "5107a1e0-0000-4000-8000-000000000005", "toId": "5107a1e0-0000-4000-8000-000000000002", "delta": 20, "name": "La Luce perdona chi si redime: benvenuta, Mirena", "createdAt": 1780092000000 },
+    { "id": "77000000-0000-4000-8000-000000000018", "fromId": "5107a1e0-0000-4000-8000-000000000001", "toId": "5107a1e0-0000-4000-8000-000000000009", "delta": -25, "name": "Ho catturato Kessa grazie alle mappe di Mirena", "createdAt": 1780095600000 },
+    { "id": "77000000-0000-4000-8000-000000000019", "fromId": "5107a1e0-0000-4000-8000-000000000007", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": 20, "name": "Aldric ha salvato Casa Sprone dai Corvi", "createdAt": 1780099200000 },
+    { "id": "77000000-0000-4000-8000-00000000001a", "fromId": "5107a1e0-0000-4000-8000-000000000006", "toId": "5107a1e0-0000-4000-8000-000000000002", "delta": 15, "name": "Canto in ogni taverna le gesta di Mirena l'eroina", "createdAt": 1780102800000 },
+    { "id": "77000000-0000-4000-8000-00000000001b", "fromId": "5107a1e0-0000-4000-8000-000000000006", "toId": "5107a1e0-0000-4000-8000-000000000009", "delta": -20, "name": "Le mie ballate infamano il nome di Kessa la Rossa", "createdAt": 1780106400000 },
+    { "id": "77000000-0000-4000-8000-00000000001c", "fromId": "5107a1e0-0000-4000-8000-00000000000a", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": 12, "name": "Aldric beve alla mia locanda e paga sempre il conto", "createdAt": 1780110000000 },
+    { "id": "77000000-0000-4000-8000-00000000001d", "fromId": "5107a1e0-0000-4000-8000-00000000000a", "toId": "5107a1e0-0000-4000-8000-000000000009", "delta": -15, "name": "I Corvi mangiano e bevono senza mai saldare", "createdAt": 1780113600000 },
+    { "id": "77000000-0000-4000-8000-00000000001e", "fromId": "6a0d0000-0000-4000-8000-000000000001", "toId": "6a0d0000-0000-4000-8000-000000000003", "delta": -40, "name": "Guerra aperta: la Guardia dà la caccia ai Corvi", "createdAt": 1780117200000 },
+    { "id": "77000000-0000-4000-8000-00000000001f", "fromId": "6a0d0000-0000-4000-8000-000000000003", "toId": "6a0d0000-0000-4000-8000-000000000001", "delta": -35, "name": "La Guardia ha impiccato tre dei nostri", "createdAt": 1780120800000 },
+    { "id": "77000000-0000-4000-8000-000000000020", "fromId": "6a0d0000-0000-4000-8000-000000000002", "toId": "6a0d0000-0000-4000-8000-000000000001", "delta": 25, "name": "La Guardia protegge i nostri commerci: la Gilda ringrazia", "createdAt": 1780124400000 },
+    { "id": "77000000-0000-4000-8000-000000000021", "fromId": "6a0d0000-0000-4000-8000-000000000002", "toId": "6a0d0000-0000-4000-8000-000000000003", "delta": -30, "name": "I Corvi taglieggiano ogni mercante alle porte", "createdAt": 1780128000000 },
+    { "id": "77000000-0000-4000-8000-000000000022", "fromId": "6a0d0000-0000-4000-8000-000000000005", "toId": "6a0d0000-0000-4000-8000-000000000001", "delta": 18, "name": "Casa Sprone conta sulla Guardia per la sua sicurezza", "createdAt": 1780131600000 },
+    { "id": "77000000-0000-4000-8000-000000000023", "fromId": "6a0d0000-0000-4000-8000-000000000003", "toId": "5107a1e0-0000-4000-8000-000000000002", "delta": -45, "name": "I Corvi mettono una taglia sulla testa di Mirena", "createdAt": 1780135200000 },
+    { "id": "77000000-0000-4000-8000-000000000024", "fromId": "5107a1e0-0000-4000-8000-000000000002", "toId": "6a0d0000-0000-4000-8000-000000000003", "delta": -30, "name": "Ho voltato le spalle ai Corvi per sempre", "createdAt": 1780138800000 },
+    { "id": "77000000-0000-4000-8000-000000000025", "fromId": "5107a1e0-0000-4000-8000-000000000008", "toId": "6a0d0000-0000-4000-8000-000000000001", "delta": 20, "name": "Pago la Guardia perché pattugli i miei magazzini", "createdAt": 1780142400000 },
+    { "id": "77000000-0000-4000-8000-000000000026", "fromId": "6a0d0000-0000-4000-8000-000000000001", "toId": "5107a1e0-0000-4000-8000-000000000008", "delta": 12, "name": "Vittore finanzia le nostre ronde notturne", "createdAt": 1780146000000 },
+    { "id": "77000000-0000-4000-8000-000000000027", "fromId": "6a0d0000-0000-4000-8000-000000000004", "toId": "5107a1e0-0000-4000-8000-000000000002", "delta": 18, "name": "L'Ordine della Luce accoglie la redenta Mirena", "createdAt": 1780149600000 },
+    { "id": "77000000-0000-4000-8000-000000000028", "fromId": "6a0d0000-0000-4000-8000-000000000005", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": 15, "name": "Casa Sprone premia il capitano Aldric con una borsa d'oro", "createdAt": 1780153200000 },
+    { "id": "77000000-0000-4000-8000-000000000029", "fromId": "5107a1e0-0000-4000-8000-000000000009", "toId": "6a0d0000-0000-4000-8000-000000000001", "delta": -25, "name": "La Guardia ha smantellato i miei traffici", "createdAt": 1780156800000 },
+    { "id": "77000000-0000-4000-8000-00000000002a", "fromId": "6a0d0000-0000-4000-8000-000000000002", "toId": "5107a1e0-0000-4000-8000-000000000009", "delta": -20, "name": "La Gilda assolda cacciatori di taglie contro Kessa", "createdAt": 1780160400000 },
+    { "id": "77000000-0000-4000-8000-00000000002b", "fromId": "5107a1e0-0000-4000-8000-000000000001", "toId": "5107a1e0-0000-4000-8000-00000000000c", "delta": 12, "name": "Doran è la mia recluta più promettente", "createdAt": 1780164000000 },
+    { "id": "77000000-0000-4000-8000-00000000002c", "fromId": "5107a1e0-0000-4000-8000-00000000000c", "toId": "5107a1e0-0000-4000-8000-000000000001", "delta": 20, "name": "Il capitano Aldric è il modello che voglio seguire", "createdAt": 1780167600000 },
+    { "id": "77000000-0000-4000-8000-00000000002d", "fromId": "5107a1e0-0000-4000-8000-000000000005", "toId": "5107a1e0-0000-4000-8000-00000000000d", "delta": 15, "name": "Selene ha il dono raro della guarigione", "createdAt": 1780171200000 },
+    { "id": "77000000-0000-4000-8000-00000000002e", "fromId": "5107a1e0-0000-4000-8000-00000000000d", "toId": "5107a1e0-0000-4000-8000-000000000002", "delta": 10, "name": "Ho curato in segreto le ferite di Mirena in fuga", "createdAt": 1780174800000 },
+    { "id": "77000000-0000-4000-8000-00000000002f", "fromId": "5107a1e0-0000-4000-8000-00000000000b", "toId": "6a0d0000-0000-4000-8000-000000000001", "delta": 12, "name": "La Guardia mi ha dato asilo appena giunta in città", "createdAt": 1780178400000 },
+    { "id": "77000000-0000-4000-8000-000000000030", "fromId": "5107a1e0-0000-4000-8000-000000000008", "toId": "5107a1e0-0000-4000-8000-00000000000b", "delta": 8, "name": "Nyra incanta le mie merci contro i ladri", "createdAt": 1780182000000 },
+    { "id": "77000000-0000-4000-8000-000000000031", "fromId": "5107a1e0-0000-4000-8000-00000000000e", "toId": "5107a1e0-0000-4000-8000-000000000005", "delta": 15, "name": "Anche muto, l'eremita venera la Luce di Anselmo", "createdAt": 1780185600000 },
+    { "id": "77000000-0000-4000-8000-000000000032", "fromId": "5107a1e0-0000-4000-8000-000000000006", "toId": "5107a1e0-0000-4000-8000-00000000000e", "delta": 10, "name": "Grimwald mi dona erbe rare raccolte nel bosco", "createdAt": 1780189200000 },
+    { "id": "77000000-0000-4000-8000-000000000033", "fromId": "5107a1e0-0000-4000-8000-000000000008", "toId": "5107a1e0-0000-4000-8000-000000000003", "delta": 14, "name": "Bram forgia le lame migliori della città", "createdAt": 1780192800000 },
+    { "id": "77000000-0000-4000-8000-000000000034", "fromId": "5107a1e0-0000-4000-8000-000000000007", "toId": "5107a1e0-0000-4000-8000-000000000006", "delta": 18, "name": "Ysolde allieta la corte di Casa Sprone", "createdAt": 1780196400000 },
+    { "id": "77000000-0000-4000-8000-000000000035", "fromId": "5107a1e0-0000-4000-8000-000000000008", "toId": "5107a1e0-0000-4000-8000-000000000007", "delta": 10, "name": "Gareth Sprone salda sempre i suoi debiti", "createdAt": 1780200000000 },
+    { "id": "77000000-0000-4000-8000-000000000036", "fromId": "5107a1e0-0000-4000-8000-000000000001", "toId": "5107a1e0-0000-4000-8000-00000000000a", "delta": 12, "name": "Toran mi passa ogni voce che gira in locanda", "createdAt": 1780203600000 },
+    { "id": "77000000-0000-4000-8000-000000000037", "fromId": "6a0d0000-0000-4000-8000-000000000005", "toId": "6a0d0000-0000-4000-8000-000000000002", "delta": 15, "name": "Casa Sprone loda gli affari onesti della Gilda", "createdAt": 1780207200000 },
+    { "id": "77000000-0000-4000-8000-000000000038", "fromId": "6a0d0000-0000-4000-8000-000000000001", "toId": "6a0d0000-0000-4000-8000-000000000004", "delta": 18, "name": "La Guardia protegge l'Ordine della Luce", "createdAt": 1780210800000 },
+    { "id": "77000000-0000-4000-8000-000000000039", "fromId": "6a0d0000-0000-4000-8000-000000000002", "toId": "6a0d0000-0000-4000-8000-000000000005", "delta": 12, "name": "La Gilda prospera sotto il mecenatismo di Casa Sprone", "createdAt": 1780214400000 },
+    { "id": "77000000-0000-4000-8000-00000000003a", "fromId": "5107a1e0-0000-4000-8000-000000000001", "toId": "6a0d0000-0000-4000-8000-000000000005", "delta": 12, "name": "La mia Guardia veglia sui palazzi di Casa Sprone", "createdAt": 1780218000000 },
+    { "id": "77000000-0000-4000-8000-00000000003b", "fromId": "5107a1e0-0000-4000-8000-000000000001", "toId": "6a0d0000-0000-4000-8000-000000000002", "delta": 15, "name": "Onoro sempre gli accordi con la Gilda dei Mercanti", "createdAt": 1780221600000 },
+    { "id": "77000000-0000-4000-8000-00000000003c", "fromId": "5107a1e0-0000-4000-8000-000000000007", "toId": "6a0d0000-0000-4000-8000-000000000004", "delta": 16, "name": "Casa Sprone finanzia le opere dell'Ordine della Luce", "createdAt": 1780225200000 }
+  ]
+}

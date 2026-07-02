@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import FacingView from './components/FacingView.vue';
 import CharactersView from './components/CharactersView.vue';
 import ProfileView from './components/ProfileView.vue';
 import GroupsView from './components/GroupsView.vue';
@@ -6,7 +7,8 @@ import GroupProfileView from './components/GroupProfileView.vue';
 import NotFound from './components/NotFound.vue';
 
 const routes = [
-  { path: '/', redirect: '/personaggi' },
+  { path: '/', redirect: '/faccia-a-faccia' },
+  { path: '/faccia-a-faccia', name: 'facing', component: FacingView },
   { path: '/personaggi', name: 'characters', component: CharactersView },
   { path: '/personaggio/:id', name: 'profile', component: ProfileView, props: true },
   { path: '/gruppi', name: 'groups', component: GroupsView },

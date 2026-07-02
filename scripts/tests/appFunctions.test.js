@@ -5,7 +5,7 @@ import { APP_FUNCTIONS, activeFunctionId } from '../../src/view/appFunctions.js'
 test('APP_FUNCTIONS: prima voce è Reputazione attiva', () => {
   const first = APP_FUNCTIONS[0];
   assert.equal(first.id, 'reputazione');
-  assert.equal(first.routeName, 'characters');
+  assert.equal(first.routeName, 'facing');
   assert.equal(first.status, 'active');
 });
 
@@ -14,6 +14,11 @@ test('APP_FUNCTIONS: esiste una voce generica "Altro" in arrivo', () => {
   assert.ok(altro);
   assert.equal(altro.status, 'soon');
   assert.equal(altro.routeName, null);
+});
+
+test('activeFunctionId: route "facing" → reputazione', () => {
+  const id = activeFunctionId('facing');
+  assert.equal(id, 'reputazione');
 });
 
 test('activeFunctionId: route "characters" → reputazione', () => {
