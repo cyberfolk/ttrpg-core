@@ -544,6 +544,11 @@ a:hover { color: var(--gold-600); }
   overflow-wrap: anywhere; word-break: break-word;
 }
 .rep-cc__namerow:hover .rep-cc__name { color: var(--gold-700); }
+.rep-cc__nameinput {
+  width: 100%; cursor: text;
+  font-family: var(--font-display); font-size: var(--fs-h3); font-weight: var(--fw-semibold);
+  line-height: 1.25;
+}
 .rep-cc__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: auto; padding-top: .45rem; }
 
 /* card/row action buttons: lighter + quieter */
@@ -588,6 +593,10 @@ a:hover { color: var(--gold-600); }
   padding: .2rem .5rem; margin: -.2rem -.3rem;
   border-radius: var(--radius-pill);
   background: transparent;
+  /* Su nome multi-riga: ogni frammento di riga riceve padding e angoli tondi,
+     invece di un blocco squadrato pieno fino al bordo. */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
   transition: background var(--dur-fast), color var(--dur-fast), box-shadow var(--dur-fast);
   overflow-wrap: anywhere; word-break: break-word;
 }

@@ -396,11 +396,13 @@ function profileTo(node) {
 /* Cella nome: glifo kind + link. Il glifo compare solo quando la colonna
    Tipo NON è visibile, così il dato personaggio/gruppo non si perde mai
    (toggle colonna off su desktop, oppure colonna nascosta su mobile). */
-.rep-name-cell { display: inline-flex; align-items: center; gap: 0.4rem; min-width: 0; }
+/* inline (non flex): così il link nome resta un box inline e l'evidenziazione
+   su piu' righe segue il testo riga per riga (box-decoration-break: clone). */
+.rep-name-cell { display: inline; }
 .rep-kind-ico {
   display: none;
-  flex: none;
-  align-items: center;
+  vertical-align: -0.15em;
+  margin-right: 0.4rem;
   color: var(--text-muted);
 }
 .rep-kind-ico :deep(svg) { width: 1em; height: 1em; }
