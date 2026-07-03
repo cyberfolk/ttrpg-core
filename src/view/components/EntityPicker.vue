@@ -35,7 +35,7 @@
         autocomplete="off"
         :placeholder="placeholder"
         v-model="query"
-        @focus="open = true"
+        @focus="onFocus"
         @keydown="onKeydown" />
 
       <ul v-if="open" :id="listId" class="ep__list" role="listbox" :aria-label="label">
@@ -143,6 +143,17 @@ async function clear() {
   open.value = true;
 }
 
+// Al focus (specie mobile) la tastiera copre il fondo del viewport: porto
+// l'input verso l'alto così la lista sottostante resta visibile. Il ritardo
+// dà tempo alla tastiera di comparire e ridurre l'area utile.
+function onFocus() {
+  open.value = true;
+  const el = inputEl.value;
+  if (!el) return;
+  const scrollIntoView = () => el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  setTimeout(scrollIntoView, 300);
+}
+
 function onKeydown(e) {
   if (e.key === 'ArrowDown') {
     e.preventDefault();
@@ -205,7 +216,8 @@ watch(query, () => { activeIndex.value = 0; });
   color: var(--text-faint);
   z-index: 1;
 }
-.ep__input { width: 100%; }
+/* scroll-margin: riserva lo spazio dell'header sticky quando scrollIntoView porta su l'input. */
+.ep__input { width: 100%; scroll-margin-top: 5rem; }
 
 .ep__list {
   position: absolute;
