@@ -456,6 +456,58 @@ function fmtDay(ts) {
   .fv__vs { display: none; }
   .fv__versi { grid-template-columns: 1fr; }
   .fv-verso__cap { min-height: 0; }
+
+  /* Registro: la tabella a 4 colonne si accrocchia su telefono (la colonna
+     "Direzione" impacca due nomi in una riga nowrap). Diventa una lista di
+     record impilati: ogni transazione è un blocco leggibile come unità —
+     chi→chi in alto, delta + motivo al centro, data a chiudere. */
+  .fv-ledger,
+  .fv-ledger tbody,
+  .fv-ledger tr,
+  .fv-ledger td { display: block; }
+
+  /* Intestazioni tabellari fuori dal flusso visivo, ma presenti per screen reader */
+  .fv-ledger thead {
+    position: absolute;
+    width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); border: 0;
+  }
+
+  /* La cornice-card lascia la tabella: qui è trasparente, i record si separano
+     da soli con un hairline. */
+  .fv-ledger {
+    border: none; border-radius: 0; box-shadow: none; background: transparent;
+  }
+
+  .fv-ledger tr {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "dir    dir"
+      "delta  reason"
+      "date   date";
+    align-items: start;
+    column-gap: var(--space-3);
+    row-gap: var(--space-1);
+    padding: var(--space-4) var(--space-1);
+    border-bottom: 1px solid var(--border-hairline);
+  }
+  .fv-ledger tbody tr:last-child { border-bottom: none; }
+  .fv-ledger tbody tr:hover { background: transparent; }
+
+  .fv-ledger td { padding: 0; border: none; text-align: left; }
+  .fv-ledger td:nth-child(1) { grid-area: dir; }
+  .fv-ledger td:nth-child(2) { grid-area: delta; }
+  .fv-ledger td:nth-child(3) { grid-area: reason; }
+  .fv-ledger td:nth-child(4) { grid-area: date; }
+
+  /* Direzione: i nomi vanno a capo invece di sforare in una riga nowrap. */
+  .fv-ledger__dir { white-space: normal; flex-wrap: wrap; row-gap: 0.15rem; }
+  .fv-ledger__dir-name { max-width: none; }
+
+  .fv-ledger__delta { font-size: var(--fs-sm); }
+  .fv-ledger__reason { font-size: var(--fs-sm); }
+  .fv-ledger__when { font-size: var(--fs-xs); color: var(--text-faint); }
 }
 
 @media (prefers-reduced-motion: reduce) {

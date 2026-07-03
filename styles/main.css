@@ -492,11 +492,12 @@ a:hover { color: var(--gold-600); }
   /* Tabella lista: rispetta larghezza container invece di crescere su min-content */
   .rep-table { table-layout: fixed; }
   .rep-table th, .rep-table td { padding: .55rem .6rem; }
-  /* Larghezze fisse solo per la tabella lista (4 col); le tabelle flush (relazioni, 3 col) restano auto */
-  .rep-table-wrap:not(.rep-table--flush) .rep-table th:nth-child(3),
-  .rep-table-wrap:not(.rep-table--flush) .rep-table td:nth-child(3) { width: 4.5rem; }
-  .rep-table-wrap:not(.rep-table--flush) .rep-table th:nth-child(4),
-  .rep-table-wrap:not(.rep-table--flush) .rep-table td:nth-child(4) { width: 6.5rem; }
+  /* Larghezze fisse solo per la tabella lista (4 col); le tabelle flush (relazioni, 3 col)
+     e il registro Faccia a faccia (.fv-ledger, che su mobile diventa una lista) restano auto */
+  .rep-table-wrap:not(.rep-table--flush) .rep-table:not(.fv-ledger) th:nth-child(3),
+  .rep-table-wrap:not(.rep-table--flush) .rep-table:not(.fv-ledger) td:nth-child(3) { width: 4.5rem; }
+  .rep-table-wrap:not(.rep-table--flush) .rep-table:not(.fv-ledger) th:nth-child(4),
+  .rep-table-wrap:not(.rep-table--flush) .rep-table:not(.fv-ledger) td:nth-child(4) { width: 6.5rem; }
   /* Header colonna punteggio nelle tabelle relazioni: non spezzare/troncare */
   .rep-table--flush .rep-table th.rep-col--right { white-space: nowrap; }
   .rep-table__name { white-space: normal; overflow-wrap: anywhere; }
