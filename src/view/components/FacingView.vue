@@ -22,33 +22,33 @@
       <div v-if="nodeA && nodeB" class="fv__relation">
         <div class="fv__versi">
           <article v-for="v in versi" :key="v.key" class="fv-verso">
-            <div class="fv-verso__flow">
-              <span class="fv-verso__tag fv-verso__tag--come" aria-hidden="true">Come</span>
-              <span class="fv-verso__tag fv-verso__tag--vede" aria-hidden="true">Vede</span>
-
-              <RouterLink class="fv-verso__party fv-verso__party--from"
-                :to="linkTo(v.fromKind, v.fromId)" :title="v.fromName">
-                <span class="fv-verso__glyph" aria-hidden="true"><Icon :name="v.fromIcon" /></span>
-                <span class="fv-verso__pname">{{ v.fromName }}</span>
-                <span v-if="v.fromSuffix" class="fv-verso__psuffix">#{{ v.fromSuffix }}</span>
+            <div class="fv-verso__body">
+              <!-- Possessore della reputazione = l'osservato (chi riceve il giudizio):
+                   soggetto in alto, identità della card. -->
+              <RouterLink class="fv-verso__owner"
+                :to="linkTo(v.toKind, v.toId)" :title="v.toName">
+                <span class="fv-verso__owner-glyph" aria-hidden="true"><Icon :name="v.toIcon" /></span>
+                <span class="fv-verso__owner-name">{{ v.toName }}<span v-if="v.toSuffix" class="fv-verso__suffix">#{{ v.toSuffix }}</span></span>
               </RouterLink>
-
-              <Icon name="next" class="fv-verso__arrow fv-verso__arrow--1" aria-hidden="true" />
 
               <span class="fv-verso__score"
                 :style="{ background: scoreColor(v.score) }"
-                :aria-label="`${v.fromName} verso ${v.toName}: reputazione ${v.score} su 100`">
+                :aria-label="`Reputazione di ${v.toName}: ${v.score} su 100, secondo ${v.fromName}`">
                 <CountUp :value="v.score" />
               </span>
 
-              <Icon name="next" class="fv-verso__arrow fv-verso__arrow--2" aria-hidden="true" />
-
-              <RouterLink class="fv-verso__party fv-verso__party--to"
-                :to="linkTo(v.toKind, v.toId)" :title="v.toName">
-                <span class="fv-verso__glyph" aria-hidden="true"><Icon :name="v.toIcon" /></span>
-                <span class="fv-verso__pname">{{ v.toName }}</span>
-                <span v-if="v.toSuffix" class="fv-verso__psuffix">#{{ v.toSuffix }}</span>
-              </RouterLink>
+              <!-- Attribuzione: di chi è questo giudizio (l'osservatore = la fonte). -->
+              <p class="fv-verso__attrib">
+                <span class="fv-verso__attrib-label">Reputazione</span>
+                <span class="fv-verso__attrib-by">
+                  <span>secondo</span>
+                  <RouterLink class="fv-verso__source"
+                    :to="linkTo(v.fromKind, v.fromId)" :title="v.fromName">
+                    <span class="fv-verso__source-glyph" aria-hidden="true"><Icon :name="v.fromIcon" /></span>
+                    <span class="fv-verso__source-name">{{ v.fromName }}<span v-if="v.fromSuffix" class="fv-verso__suffix">#{{ v.fromSuffix }}</span></span>
+                  </RouterLink>
+                </span>
+              </p>
             </div>
             <button type="button" class="ds-btn ds-btn--ghost ds-btn--sm fv-verso__add"
               @click="registra(v.fromId, v.toId)">
@@ -175,6 +175,9 @@ const versi = computed(() => {
       score: computeScore(state.value, b.entity.id, a.entity.id),
     },
   ];
+  // Card sinistra = il Primo (idA) come possessore della reputazione; il Secondo
+  // a destra. L'ordine dei possessori segue quello dei selettori Primo/Secondo.
+  list.reverse();
   return list;
 });
 
@@ -291,62 +294,47 @@ function fmtDay(ts) {
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: linear-gradient(90deg, transparent, var(--gold-400), transparent);
 }
-/* Flusso "Come [entità] Vede [punteggio] [entità]": due righe incolonnate —
-   micro-etichette sopra, flusso allineato sotto. */
-.fv-verso__flow {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto 1fr;
-  grid-template-areas:
-    "l-tag .  s-tag .  ."
-    "from  a1 score a2 to";
-  align-items: center;
-  justify-items: center;
-  column-gap: var(--space-3);
-  row-gap: var(--space-2);
-  width: 100%;
-}
-
-/* Micro-etichette Cinzel maiuscole (voce da catalogo Atlante), de-enfatizzate. */
-.fv-verso__tag {
-  font-family: var(--font-display);
-  font-size: var(--fs-label);
-  font-weight: var(--fw-semibold);
-  letter-spacing: var(--ls-caps);
-  text-transform: uppercase;
-  color: var(--text-faint);
-}
-.fv-verso__tag--come { grid-area: l-tag; }
-.fv-verso__tag--vede { grid-area: s-tag; }
-
-/* Parte in gioco = link alla scheda: glifo con nome sotto. */
-.fv-verso__party {
-  min-width: 0;
-  justify-self: stretch; /* riempie la colonna 1fr → il nome lungo si tronca */
+/* Corpo della card: gerarchia ribaltata. Il POSSESSORE della reputazione
+   (l'osservato) è il soggetto in alto; il suo punteggio sotto; l'attribuzione
+   "secondo [osservatore]" chiude dichiarando la fonte del giudizio. Così il
+   numero non "galleggia tra i due volti": si legge di chi è. */
+.fv-verso__body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+/* Possessore = identità eroe della card: glifo + nome display (link scheda). */
+.fv-verso__owner {
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
   gap: var(--space-2);
-  padding: var(--space-1);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
   text-decoration: none;
   color: inherit;
   transition: color var(--dur-fast);
 }
-.fv-verso__party--from { grid-area: from; }
-.fv-verso__party--to { grid-area: to; }
-.fv-verso__party:hover .fv-verso__glyph,
-.fv-verso__party:hover .fv-verso__pname { color: var(--accent-text); }
-.fv-verso__party:hover .fv-verso__pname { text-decoration: underline; }
-.fv-verso__party:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
-
-.fv-verso__glyph {
+.fv-verso__owner-glyph {
+  flex: none;
   display: inline-flex;
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   color: var(--text-muted);
+  transition: color var(--dur-fast);
 }
-.fv-verso__pname {
-  max-width: 100%;
-  /* Nome intero fin dove è ragionevole: fino a 2 righe, poi ellipsis. */
+.fv-verso__owner-name {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+  color: var(--text-strong);
+  text-wrap: balance;
+  /* nome intero fino a 2 righe, poi ellissi */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -354,25 +342,88 @@ function fmtDay(ts) {
   overflow: hidden;
   overflow-wrap: anywhere;
   word-break: break-word;
-  text-align: center;
-  font-weight: var(--fw-medium);
-  font-size: var(--fs-sm);
-  color: var(--text-body);
 }
-/* Coda-id per omonimi: de-enfatizzata, sotto il nome. */
-.fv-verso__psuffix {
+.fv-verso__owner:hover .fv-verso__owner-glyph { color: var(--accent-text); }
+.fv-verso__owner:hover .fv-verso__owner-name {
+  color: var(--accent-text);
+  text-decoration: underline;
+}
+.fv-verso__owner:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+
+/* Attribuzione: micro-etichetta "REPUTAZIONE" + "secondo [osservatore]". */
+.fv-verso__attrib {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+}
+.fv-verso__attrib-label {
+  font-family: var(--font-display);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  /* Parola-chiave che contestualizza il numero: leggibile, non slavata. */
+  color: var(--text-muted);
+}
+.fv-verso__attrib-by {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.fv-verso__source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.1rem 0.3rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: var(--text-body);
+  transition: color var(--dur-fast);
+}
+.fv-verso__source-glyph {
+  flex: none;
+  display: inline-flex;
+  font-size: 1rem;
+  color: var(--text-faint);
+  transition: color var(--dur-fast);
+}
+.fv-verso__source-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--fw-medium);
+}
+.fv-verso__source:hover .fv-verso__source-name { color: var(--accent-text); text-decoration: underline; }
+.fv-verso__source:hover .fv-verso__source-glyph { color: var(--accent-text); }
+.fv-verso__source:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+
+/* Su touch (uso al tavolo dal telefono) i due link della card devono avere un
+   bersaglio comodo: garantisco l'altezza minima consigliata. */
+@media (pointer: coarse) {
+  .fv-verso__owner { min-height: 44px; }
+  .fv-verso__source { min-height: 44px; padding-inline: var(--space-2); }
+}
+
+/* Coda-id per omonimi: de-enfatizzata, in linea col nome. */
+.fv-verso__suffix {
+  margin-left: 0.25rem;
   font-size: var(--fs-xs);
   color: var(--text-faint);
   font-variant-numeric: tabular-nums;
 }
-.fv-verso__arrow { color: var(--gold-500); }
-.fv-verso__arrow--1 { grid-area: a1; }
-.fv-verso__arrow--2 { grid-area: a2; }
 
-/* Il punteggio è l'eroe: grande numerale Cinzel su pillola tinta scoreColor,
-   stessa forma dei chip punteggio delle altre schermate. */
+/* Il punteggio è l'eroe visivo: grande numerale Cinzel su pillola tinta
+   scoreColor, stessa forma dei chip punteggio delle altre schermate. */
 .fv-verso__score {
-  grid-area: score;
   display: grid;
   place-items: center;
   min-width: 4.75rem;
@@ -467,14 +518,11 @@ function fmtDay(ts) {
   .fv__pickers { grid-template-columns: 1fr; }
   .fv__vs { display: none; }
   .fv__versi { grid-template-columns: 1fr; }
-  .fv-verso__cap { min-height: 0; }
 
-  /* Card più stretta: dai spazio ai nomi (gap e punteggio più compatti) e
-     concedi fino a 3 righe così nomi tipo "Sera Ombravento" non si croppano,
-     mantenendo la card in equilibrio. */
-  .fv-verso__flow { column-gap: var(--space-2); }
-  .fv-verso__score { min-width: 3.75rem; padding: 0.4rem 0.8rem; }
-  .fv-verso__pname { -webkit-line-clamp: 3; line-clamp: 3; }
+  /* Card più stretta: punteggio più compatto e nome possessore fino a 3 righe,
+     così nomi tipo "Sera Ombravento" non si croppano. */
+  .fv-verso__score { min-width: 3.75rem; padding: 0.4rem 0.9rem; }
+  .fv-verso__owner-name { -webkit-line-clamp: 3; line-clamp: 3; }
 
   /* Registro: la tabella a 4 colonne si accrocchia su telefono (la colonna
      "Direzione" impacca due nomi in una riga nowrap). Diventa una lista di
