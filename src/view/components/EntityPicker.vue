@@ -355,4 +355,10 @@ watch(query, () => { activeIndex.value = 0; });
 @media (prefers-reduced-motion: reduce) {
   .ep__list, .ep__token { animation: none; }
 }
+
+/* Mobile: via il badge tipo nel gettone (il glifo già indica personaggio/gruppo),
+   così il nome selezionato ha spazio e non si tronca. */
+@media (max-width: 640px) {
+  .ep__token-kind { display: none; }
+}
 </style>

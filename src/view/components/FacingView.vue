@@ -469,6 +469,13 @@ function fmtDay(ts) {
   .fv__versi { grid-template-columns: 1fr; }
   .fv-verso__cap { min-height: 0; }
 
+  /* Card più stretta: dai spazio ai nomi (gap e punteggio più compatti) e
+     concedi fino a 3 righe così nomi tipo "Sera Ombravento" non si croppano,
+     mantenendo la card in equilibrio. */
+  .fv-verso__flow { column-gap: var(--space-2); }
+  .fv-verso__score { min-width: 3.75rem; padding: 0.4rem 0.8rem; }
+  .fv-verso__pname { -webkit-line-clamp: 3; line-clamp: 3; }
+
   /* Registro: la tabella a 4 colonne si accrocchia su telefono (la colonna
      "Direzione" impacca due nomi in una riga nowrap). Diventa una lista di
      record impilati: ogni transazione è un blocco leggibile come unità —
