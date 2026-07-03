@@ -78,11 +78,11 @@
                 <tr v-for="row in ledger" :key="row.t.id">
                   <td>
                     <span class="fv-ledger__dir">
-                      <span class="fv-ledger__dir-glyph" aria-hidden="true"><Icon :name="row.fromIcon" /></span>
-                      <span class="fv-ledger__dir-name">{{ row.fromName }}<span v-if="row.fromSuffix" class="fv-ledger__dir-suffix">#{{ row.fromSuffix }}</span></span>
+                      <span class="fv-ledger__dir-glyph fv-ledger__dir-glyph--from" aria-hidden="true"><Icon :name="row.fromIcon" /></span>
+                      <span class="fv-ledger__dir-name fv-ledger__dir-name--from">{{ row.fromName }}<span v-if="row.fromSuffix" class="fv-ledger__dir-suffix">#{{ row.fromSuffix }}</span></span>
                       <Icon name="next" class="fv-ledger__dir-arrow" aria-hidden="true" />
-                      <span class="fv-ledger__dir-glyph" aria-hidden="true"><Icon :name="row.toIcon" /></span>
-                      <span class="fv-ledger__dir-name">{{ row.toName }}<span v-if="row.toSuffix" class="fv-ledger__dir-suffix">#{{ row.toSuffix }}</span></span>
+                      <span class="fv-ledger__dir-glyph fv-ledger__dir-glyph--to" aria-hidden="true"><Icon :name="row.toIcon" /></span>
+                      <span class="fv-ledger__dir-name fv-ledger__dir-name--to">{{ row.toName }}<span v-if="row.toSuffix" class="fv-ledger__dir-suffix">#{{ row.toSuffix }}</span></span>
                     </span>
                   </td>
                   <td class="rep-col--right">
@@ -346,9 +346,15 @@ function fmtDay(ts) {
 }
 .fv-verso__pname {
   max-width: 100%;
+  /* Nome intero fin dove è ragionevole: fino a 2 righe, poi ellipsis. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-align: center;
   font-weight: var(--fw-medium);
   font-size: var(--fs-sm);
   color: var(--text-body);
@@ -410,6 +416,12 @@ function fmtDay(ts) {
   text-overflow: ellipsis;
   max-width: 9rem;
 }
+/* Direzione = chi dà → chi riceve. Muto chi dà, evidenzio chi riceve la
+   reputazione (destra), così il verso della transazione è leggibile. */
+.fv-ledger__dir-name--from { color: var(--text-faint); }
+.fv-ledger__dir-glyph--from { color: var(--text-faint); }
+.fv-ledger__dir-name--to { color: var(--text-strong); font-weight: var(--fw-medium); }
+.fv-ledger__dir-glyph--to { color: var(--text-muted); }
 .fv-ledger__dir-suffix {
   margin-left: 0.3rem;
   color: var(--text-faint);
