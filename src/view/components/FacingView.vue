@@ -90,7 +90,10 @@
                       {{ row.t.delta >= 0 ? '+' : '' }}{{ row.t.delta }}
                     </span>
                   </td>
-                  <td class="fv-ledger__reason">{{ row.t.name }}</td>
+                  <td class="fv-ledger__reason">
+                    <template v-if="(row.t.name || '').trim()">{{ row.t.name }}</template>
+                    <span v-else class="rep-empty">(nessun motivo)</span>
+                  </td>
                   <td class="rep-col--right fv-ledger__when">{{ fmtDay(row.t.createdAt) }}</td>
                 </tr>
               </tbody>
@@ -418,7 +421,7 @@ function fmtDay(ts) {
 }
 .fv-ledger__delta.pos { color: var(--gold-700); }
 .fv-ledger__delta.neg { color: var(--ember-700); }
-.fv-ledger__reason { color: var(--text-body); }
+.fv-ledger__reason { color: var(--text-body); overflow-wrap: anywhere; word-break: break-word; }
 .fv-ledger__when {
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;

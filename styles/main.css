@@ -751,7 +751,7 @@ a:hover { color: var(--gold-600); }
 .rep-tx-table .rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; }
 .rep-tx__delta.pos { color: #2f7d48; }
 .rep-tx__delta.neg { color: var(--danger); }
-.rep-tx__reason { color: var(--text-body); font-size: var(--fs-sm); }
+.rep-tx__reason { color: var(--text-body); font-size: var(--fs-sm); overflow-wrap: anywhere; word-break: break-word; }
 .rep-tx__when { color: var(--text-faint); font-size: var(--fs-xs); white-space: nowrap; }
 
 .rep-tx-table td.rep-empty { text-align: center; padding: var(--space-5); }

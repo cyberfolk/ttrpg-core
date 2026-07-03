@@ -69,7 +69,8 @@
                 <td class="rep-tx__reason">
                   <input v-if="editingId === t.id" class="ds-input" type="text" :value="t.name"
                     aria-label="Motivo" @change="onEditReason(t.id, $event)" @keyup.enter="stopEdit" />
-                  <span v-else>{{ t.name }}</span>
+                  <span v-else-if="(t.name || '').trim()">{{ t.name }}</span>
+                  <span v-else class="rep-empty">(nessun motivo)</span>
                 </td>
                 <td class="rep-tx__when">{{ fmtDay(t.createdAt) }}</td>
                 <td>

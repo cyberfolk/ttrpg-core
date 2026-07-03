@@ -20,8 +20,6 @@ Casi edge-limit iniettati in `datas/sample-state-v2-large.json` da verificare/ge
 - delta `0`
 - self-loop (`fromId == toId`)
 - verso/da personaggio eliminato (Enya)
-- nome transazione lunghissimo
-- nome transazione vuoto
 
 **Gruppi** (id prefisso `ed9f`):
 - Nome + `type` lunghissimi
