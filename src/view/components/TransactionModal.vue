@@ -60,7 +60,7 @@
               <tr v-for="t in pagedTransactions" :key="t.id">
                 <td class="rep-tx__delta-col">
                   <input v-if="editingId === t.id" class="ds-input rep-tx__delta"
-                    :class="t.delta >= 0 ? 'pos' : 'neg'" type="number" :value="t.delta"
+                    :class="t.delta >= 0 ? 'pos' : 'neg'" type="number" step="1" :value="t.delta"
                     aria-label="Delta" @change="onEditDelta(t.id, $event)" @keyup.enter="stopEdit" />
                   <span v-else class="rep-tx__delta" :class="t.delta >= 0 ? 'pos' : 'neg'">
                     {{ t.delta >= 0 ? '+' : '' }}{{ t.delta }}
@@ -112,7 +112,7 @@
             <tfoot>
               <tr class="rep-tx-addrow">
                 <td class="rep-tx__delta-col">
-                  <input ref="deltaInput" class="ds-input" type="number" placeholder="-5"
+                  <input ref="deltaInput" class="ds-input" type="number" step="1" placeholder="-5"
                     aria-label="Delta" v-model.number="newDelta" @keyup.enter="onAdd" />
                 </td>
                 <td colspan="2">
@@ -144,6 +144,7 @@ import { computed, ref } from 'vue';
 import { useStore } from '../useStore.js';
 import { computeScore, listTransactions, addTransaction, editTransaction, deleteTransaction } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
+import { displayName } from '../disambiguation.js';
 import { usePagedList } from '../usePagedList.js';
 import { useDialog } from '../useDialog.js';
 import HoverTip from './HoverTip.vue';
@@ -173,12 +174,12 @@ useDialog({
 function charName(id) {
   const character = state.value.characters.find((c) => c.id === id);
   if (character) {
-    const charName = character.name;
-    return charName;
+    const label = displayName(character);
+    return label;
   }
   const group = state.value.groups.find((g) => g.id === id);
-  const name = group ? group.name : '???';
-  return name;
+  const label = group ? displayName(group) : '???';
+  return label;
 }
 
 const fromName    = computed(() => charName(props.fromId));
@@ -205,7 +206,7 @@ function stopEdit() {
 }
 
 function onEditDelta(txId, e) {
-  const delta = Number(e.target.value);
+  const delta = Math.round(Number(e.target.value));
   if (Number.isNaN(delta)) return;
   dispatch((s) => editTransaction(s, txId, { delta }));
 }
@@ -217,7 +218,7 @@ function onEditReason(txId, e) {
 }
 
 function onAdd() {
-  const delta = Number(newDelta.value);
+  const delta = Math.round(Number(newDelta.value));
   const reason = newReason.value.trim();
   if (Number.isNaN(delta) || !reason) return;
   dispatch((s) => addTransaction(s, props.fromId, props.toId, delta, reason));

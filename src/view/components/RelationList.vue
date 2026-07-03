@@ -89,7 +89,7 @@
                     <Icon :name="row.node.kind === 'group' ? 'users' : 'user'" />
                   </span>
                   <router-link class="rep-table__name" :to="profileTo(row.node)" @click.stop>
-                    {{ row.node.entity.name }}
+                    {{ $name(row.node.entity) }}
                     <Icon name="goto" />
                   </router-link>
                 </span>
@@ -100,7 +100,7 @@
               <td class="rep-col--right">
                 <button type="button" class="ds-score ds-score--interactive"
                   :style="{ background: scoreColor(row.score) }"
-                  :aria-label="`Registra transazione con ${row.node.entity.name}`"
+                  :aria-label="`Registra transazione con ${$name(row.node.entity)}`"
                   @click.stop="emitTx(row.node.entity.id)">
                   {{ row.score }}
                 </button>

@@ -89,7 +89,7 @@
             <!-- Nome -->
             <td>
               <span v-if="editingId !== group.id" class="rep-table__name" @click.stop="goToProfile(group.id)">
-                {{ group.name }}
+                {{ $name(group) }}
                 <Icon name="goto" />
               </span>
               <input v-else class="ds-input rep-table__edit" type="text" v-model="editName"
@@ -162,7 +162,7 @@
       <div class="rep-drawer__label" style="margin-bottom:0.5rem">Archiviati</div>
       <div v-for="group in archivedGroups" :key="group.id" class="ds-card ds-card--filament rep-group-row rep-group-row--archived">
         <span class="rep-group-row__name" style="opacity:0.6">
-          {{ group.name }}
+          {{ $name(group) }}
           <span v-if="group.type" class="ds-badge" style="margin-left:0.35rem">{{ group.type }}</span>
         </span>
         <div class="rep-group-row__actions">

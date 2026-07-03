@@ -30,6 +30,7 @@
                 :to="linkTo(v.fromKind, v.fromId)" :title="v.fromName">
                 <span class="fv-verso__glyph" aria-hidden="true"><Icon :name="v.fromIcon" /></span>
                 <span class="fv-verso__pname">{{ v.fromName }}</span>
+                <span v-if="v.fromSuffix" class="fv-verso__psuffix">#{{ v.fromSuffix }}</span>
               </RouterLink>
 
               <Icon name="next" class="fv-verso__arrow fv-verso__arrow--1" aria-hidden="true" />
@@ -46,6 +47,7 @@
                 :to="linkTo(v.toKind, v.toId)" :title="v.toName">
                 <span class="fv-verso__glyph" aria-hidden="true"><Icon :name="v.toIcon" /></span>
                 <span class="fv-verso__pname">{{ v.toName }}</span>
+                <span v-if="v.toSuffix" class="fv-verso__psuffix">#{{ v.toSuffix }}</span>
               </RouterLink>
             </div>
             <button type="button" class="ds-btn ds-btn--ghost ds-btn--sm fv-verso__add"
@@ -77,10 +79,10 @@
                   <td>
                     <span class="fv-ledger__dir">
                       <span class="fv-ledger__dir-glyph" aria-hidden="true"><Icon :name="row.fromIcon" /></span>
-                      <span class="fv-ledger__dir-name">{{ row.fromName }}</span>
+                      <span class="fv-ledger__dir-name">{{ row.fromName }}<span v-if="row.fromSuffix" class="fv-ledger__dir-suffix">#{{ row.fromSuffix }}</span></span>
                       <Icon name="next" class="fv-ledger__dir-arrow" aria-hidden="true" />
                       <span class="fv-ledger__dir-glyph" aria-hidden="true"><Icon :name="row.toIcon" /></span>
-                      <span class="fv-ledger__dir-name">{{ row.toName }}</span>
+                      <span class="fv-ledger__dir-name">{{ row.toName }}<span v-if="row.toSuffix" class="fv-ledger__dir-suffix">#{{ row.toSuffix }}</span></span>
                     </span>
                   </td>
                   <td class="rep-col--right">
@@ -111,7 +113,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useStore } from '../useStore.js';
-import { resolveNode, computeScore, listTransactions } from '../../model/reputation.js';
+import { resolveNode, computeScore, listTransactions, listActiveCharacters, listActiveGroups } from '../../model/reputation.js';
+import { ambiguousIds, displayName } from '../disambiguation.js';
 import { scoreColor } from '../scoreColor.js';
 import Icon from './Icon.vue';
 import EntityPicker from './EntityPicker.vue';
@@ -127,6 +130,18 @@ const tx = ref(null);
 const nodeA = computed(() => (idA.value ? resolveNode(state.value, idA.value) : null));
 const nodeB = computed(() => (idB.value ? resolveNode(state.value, idB.value) : null));
 
+// Coda-id per gli omonimi (stesso tipo + nome): mostrata solo quando serve.
+const ambiguous = computed(() => {
+  const chars = listActiveCharacters(state.value).map((e) => ({ id: e.id, name: e.name, kind: 'character' }));
+  const groups = listActiveGroups(state.value).map((e) => ({ id: e.id, name: e.name, kind: 'group' }));
+  const map = ambiguousIds([...chars, ...groups]);
+  return map;
+});
+function suffixOf(id) {
+  const suffix = ambiguous.value.get(id) ?? null;
+  return suffix;
+}
+
 function iconOf(node) {
   const name = node.kind === 'group' ? 'users' : 'user';
   return name;
@@ -141,17 +156,19 @@ const versi = computed(() => {
     {
       key: 'ab',
       fromId: a.entity.id, toId: b.entity.id,
-      fromName: a.entity.name, toName: b.entity.name,
+      fromName: displayName(a.entity), toName: displayName(b.entity),
       fromIcon: iconOf(a), toIcon: iconOf(b),
       fromKind: a.kind, toKind: b.kind,
+      fromSuffix: suffixOf(a.entity.id), toSuffix: suffixOf(b.entity.id),
       score: computeScore(state.value, a.entity.id, b.entity.id),
     },
     {
       key: 'ba',
       fromId: b.entity.id, toId: a.entity.id,
-      fromName: b.entity.name, toName: a.entity.name,
+      fromName: displayName(b.entity), toName: displayName(a.entity),
       fromIcon: iconOf(b), toIcon: iconOf(a),
       fromKind: b.kind, toKind: a.kind,
+      fromSuffix: suffixOf(b.entity.id), toSuffix: suffixOf(a.entity.id),
       score: computeScore(state.value, b.entity.id, a.entity.id),
     },
   ];
@@ -163,10 +180,12 @@ const ledger = computed(() => {
   if (!nodeA.value || !nodeB.value) return [];
   const a = nodeA.value;
   const b = nodeB.value;
+  const aSuffix = suffixOf(a.entity.id);
+  const bSuffix = suffixOf(b.entity.id);
   const ab = listTransactions(state.value, a.entity.id, b.entity.id)
-    .map((t) => ({ t, fromName: a.entity.name, toName: b.entity.name, fromIcon: iconOf(a), toIcon: iconOf(b) }));
+    .map((t) => ({ t, fromName: displayName(a.entity), toName: displayName(b.entity), fromIcon: iconOf(a), toIcon: iconOf(b), fromSuffix: aSuffix, toSuffix: bSuffix }));
   const ba = listTransactions(state.value, b.entity.id, a.entity.id)
-    .map((t) => ({ t, fromName: b.entity.name, toName: a.entity.name, fromIcon: iconOf(b), toIcon: iconOf(a) }));
+    .map((t) => ({ t, fromName: displayName(b.entity), toName: displayName(a.entity), fromIcon: iconOf(b), toIcon: iconOf(a), fromSuffix: bSuffix, toSuffix: aSuffix }));
   const rows = [...ab, ...ba].sort((x, y) => y.t.createdAt - x.t.createdAt);
   return rows;
 });
@@ -175,7 +194,7 @@ const hintText = computed(() => {
   if (!nodeA.value && !nodeB.value) {
     return 'Seleziona due nomi qui sopra per confrontarli.';
   }
-  const chosen = nodeA.value ? nodeA.value.entity.name : nodeB.value.entity.name;
+  const chosen = displayName(nodeA.value ? nodeA.value.entity : nodeB.value.entity);
   return `Hai scelto ${chosen}. Seleziona anche l'altro nome per vedere la reputazione reciproca.`;
 });
 
@@ -331,6 +350,12 @@ function fmtDay(ts) {
   font-size: var(--fs-sm);
   color: var(--text-body);
 }
+/* Coda-id per omonimi: de-enfatizzata, sotto il nome. */
+.fv-verso__psuffix {
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
 .fv-verso__arrow { color: var(--gold-500); }
 .fv-verso__arrow--1 { grid-area: a1; }
 .fv-verso__arrow--2 { grid-area: a2; }
@@ -381,6 +406,11 @@ function fmtDay(ts) {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 9rem;
+}
+.fv-ledger__dir-suffix {
+  margin-left: 0.3rem;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
 }
 .fv-ledger__delta {
   font-variant-numeric: tabular-nums;

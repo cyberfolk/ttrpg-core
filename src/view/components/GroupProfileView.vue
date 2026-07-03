@@ -2,7 +2,7 @@
   <section v-if="group" class="rep-profile">
     <nav class="rep-breadcrumb">
       <router-link to="/gruppi">Gruppi</router-link>
-      <span> / {{ group.name }}</span>
+      <span> / {{ $name(group) }}</span>
     </nav>
     <button class="ds-btn ds-btn--ghost ds-btn--sm" @click="goBack" style="margin-bottom:1rem">
       ← Indietro
@@ -12,7 +12,7 @@
     <div class="ds-card ds-card--filament" style="padding:1.5rem 1.75rem 1.75rem">
       <div class="rep-profile__head">
         <h2>
-          {{ group.name }}
+          {{ $name(group) }}
           <span v-if="group.type" class="ds-badge" style="margin-left:0.5rem">{{ group.type }}</span>
         </h2>
         <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
@@ -57,11 +57,11 @@
 
       <!-- Direzione (giudicante → giudicato), come nel form personaggi -->
       <p v-if="tab === 'in' || tab === 'out'" class="rep-dir-caption">
-        <span class="rep-dir-caption__node">{{ tab === 'in' ? 'Gli altri' : group.name }}</span>
+        <span class="rep-dir-caption__node">{{ tab === 'in' ? 'Gli altri' : $name(group) }}</span>
         <span class="rep-rel-arrow rep-dir-caption__arrow" aria-hidden="true">
           <span class="rep-rel-arrow__glyph"></span>
         </span>
-        <span class="rep-dir-caption__node">{{ tab === 'in' ? group.name : 'gli altri' }}</span>
+        <span class="rep-dir-caption__node">{{ tab === 'in' ? $name(group) : 'gli altri' }}</span>
         <span class="rep-dir-caption__hint">· {{ tab === 'in' ? 'giudizio ricevuto' : 'giudizio dato' }}</span>
       </p>
 
@@ -92,7 +92,7 @@
                 <td class="rep-table__num">{{ membersPage * MEMBERS_PAGE_SIZE + i + 1 }}</td>
                 <td>
                   <span class="rep-table__name" @click.stop="goToChar(char.id)">
-                    {{ char.name }}
+                    {{ $name(char) }}
                     <Icon name="goto" />
                   </span>
                 </td>
@@ -114,7 +114,7 @@
                 <td>
                   <select class="ds-input" v-model="selectedCandidateId" aria-label="Personaggio da aggiungere">
                     <option value="">Scegli un personaggio…</option>
-                    <option v-for="c in addableCandidates" :key="c.id" :value="c.id">{{ c.name }}</option>
+                    <option v-for="c in addableCandidates" :key="c.id" :value="c.id">{{ $name(c) }}</option>
                   </select>
                 </td>
                 <td>
@@ -147,13 +147,13 @@
           <div class="rep-group-scores__head"
             role="button" tabindex="0"
             @click="goToChar(char.id)" v-activate>
-            {{ char.name }}
+            {{ $name(char) }}
             <Icon name="goto" />
           </div>
           <div class="rep-group-scores__grid">
             <!-- X → G diretto -->
             <div class="rep-group-scores__cell">
-              <span class="rep-group-scores__label">{{ char.name }} → gruppo (diretto)</span>
+              <span class="rep-group-scores__label">{{ $name(char) }} → gruppo (diretto)</span>
               <span class="ds-score ds-score--sm"
                 :class="scoreXtoGDirect(char.id) === null ? 'ds-score--empty' : ''"
                 :style="scoreXtoGDirect(char.id) !== null ? { background: scoreColor(scoreXtoGDirect(char.id)) } : undefined">
@@ -162,7 +162,7 @@
             </div>
             <!-- X → G derivato (membri) -->
             <div class="rep-group-scores__cell">
-              <span class="rep-group-scores__label">{{ char.name }} → gruppo (membri)</span>
+              <span class="rep-group-scores__label">{{ $name(char) }} → gruppo (membri)</span>
               <span class="ds-score ds-score--sm"
                 :class="scoreXtoGDerived(char.id) === null ? 'ds-score--empty' : ''"
                 :style="scoreXtoGDerived(char.id) !== null ? { background: scoreColor(scoreXtoGDerived(char.id)) } : undefined">
@@ -171,7 +171,7 @@
             </div>
             <!-- G → X diretto -->
             <div class="rep-group-scores__cell">
-              <span class="rep-group-scores__label">Gruppo → {{ char.name }} (diretto)</span>
+              <span class="rep-group-scores__label">Gruppo → {{ $name(char) }} (diretto)</span>
               <span class="ds-score ds-score--sm"
                 :class="scoreGtoXDirect(char.id) === null ? 'ds-score--empty' : ''"
                 :style="scoreGtoXDirect(char.id) !== null ? { background: scoreColor(scoreGtoXDirect(char.id)) } : undefined">
@@ -180,7 +180,7 @@
             </div>
             <!-- G → X derivato (membri) -->
             <div class="rep-group-scores__cell">
-              <span class="rep-group-scores__label">Gruppo → {{ char.name }} (membri)</span>
+              <span class="rep-group-scores__label">Gruppo → {{ $name(char) }} (membri)</span>
               <span class="ds-score ds-score--sm"
                 :class="scoreGtoXDerived(char.id) === null ? 'ds-score--empty' : ''"
                 :style="scoreGtoXDerived(char.id) !== null ? { background: scoreColor(scoreGtoXDerived(char.id)) } : undefined">
@@ -405,6 +405,9 @@ function openTxFromList(pair) {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .rep-group-scores__head:hover {
@@ -428,5 +431,8 @@ function openTxFromList(pair) {
   font-size: 0.8rem;
   opacity: 0.75;
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 </style>

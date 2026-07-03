@@ -16,8 +16,8 @@
     </button>
 
     <!-- Name -->
-    <div class="rep-cc__namerow" @click.stop="isInteractive ? goToProfile() : undefined" :title="char.name">
-      <span v-if="!editing" class="rep-cc__name">{{ char.name }}</span>
+    <div class="rep-cc__namerow" @click.stop="isInteractive ? goToProfile() : undefined" :title="$name(char)">
+      <span v-if="!editing" class="rep-cc__name">{{ $name(char) }}</span>
       <input v-else ref="nameInput" class="ds-input rep-cc__nameinput" type="text" v-model="editName"
         @click.stop @keydown.enter="saveEdit" @keydown.escape="cancelEdit" aria-label="Nome personaggio" />
     </div>

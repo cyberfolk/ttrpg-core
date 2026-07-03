@@ -20,3 +20,6 @@ dist/
 
 # Superpowers visual companion (sessione brainstorm)
 .superpowers/
+
+# Impeccable: report di critique generati (single-use, non versionati)
+.impeccable/critique/

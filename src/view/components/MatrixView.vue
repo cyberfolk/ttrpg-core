@@ -14,12 +14,12 @@
               <path d="M12 5.5 L16 9.5 L12 13.5" />
             </svg>
           </th>
-          <th v-for="c in chars" :key="c.id" class="col">{{ c.name }}</th>
+          <th v-for="c in chars" :key="c.id" class="col">{{ $name(c) }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="from in chars" :key="from.id">
-          <th class="row" @click="goToProfile(from.id)">{{ from.name }}</th>
+          <th class="row" @click="goToProfile(from.id)">{{ $name(from) }}</th>
           <td v-for="to in chars" :key="to.id">
             <span v-if="from.id === to.id" class="diag">—</span>
             <span v-else class="cell"

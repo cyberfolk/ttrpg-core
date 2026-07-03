@@ -7,7 +7,8 @@
       <span class="ep__glyph" role="img" :aria-label="kindLabel(selected.kind)">
         <Icon :name="selected.kind === 'group' ? 'users' : 'user'" />
       </span>
-      <span class="ep__token-name">{{ selected.entity.name }}</span>
+      <span class="ep__token-name">{{ $name(selected.entity) }}</span>
+      <span v-if="ambiguous.has(selected.entity.id)" class="ep__hint">#{{ ambiguous.get(selected.entity.id) }}</span>
       <span class="ds-badge ep__token-kind">{{ kindLabel(selected.kind) }}</span>
       <button type="button" class="ep__clear" :aria-label="`Cambia ${label.toLowerCase()}`"
         @click="clear">
@@ -50,7 +51,8 @@
           <span class="ep__glyph" aria-hidden="true">
             <Icon :name="node.kind === 'group' ? 'users' : 'user'" />
           </span>
-          <span class="ep__opt-name">{{ node.entity.name }}</span>
+          <span class="ep__opt-name">{{ $name(node.entity) }}</span>
+          <span v-if="ambiguous.has(node.entity.id)" class="ep__hint">#{{ ambiguous.get(node.entity.id) }}</span>
           <span class="ep__opt-kind">{{ kindLabel(node.kind) }}</span>
         </li>
       </ul>
@@ -62,6 +64,7 @@
 import { ref, computed, watch, useId, nextTick } from 'vue';
 import { useStore } from '../useStore.js';
 import { listActiveCharacters, listActiveGroups, resolveNode } from '../../model/reputation.js';
+import { ambiguousIds } from '../disambiguation.js';
 import Icon from './Icon.vue';
 
 // Selettore riusabile di UNA entità (personaggio o gruppo) su tutti gli attivi.
@@ -92,6 +95,13 @@ const nodes = computed(() => {
   const groups = listActiveGroups(state.value).map((entity) => ({ kind: 'group', entity }));
   const all = [...chars, ...groups];
   return all;
+});
+
+// Coda-id per gli omonimi (stesso tipo + stesso nome): mostrata solo quando serve.
+const ambiguous = computed(() => {
+  const list = nodes.value.map((n) => ({ id: n.entity.id, name: n.entity.name, kind: n.kind }));
+  const map = ambiguousIds(list);
+  return map;
 });
 
 const results = computed(() => {
@@ -242,6 +252,13 @@ watch(query, () => { activeIndex.value = 0; });
   flex: none;
   font-size: var(--fs-xs);
   color: var(--text-muted);
+}
+/* Coda-id per omonimi: de-enfatizzata, monospazio numerico. */
+.ep__hint {
+  flex: none;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Glifo kind (personaggio/gruppo) */

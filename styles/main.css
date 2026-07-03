@@ -688,7 +688,7 @@ a:hover { color: var(--gold-600); }
 
 /* === Profile =============================================== */
 .rep-profile { max-width: 760px; margin: 0 auto; animation: rep-rise .4s var(--ease-out) both; }
-.rep-breadcrumb { font-size: var(--fs-sm); color: var(--text-muted); margin-bottom: .75rem; }
+.rep-breadcrumb { font-size: var(--fs-sm); color: var(--text-muted); margin-bottom: .75rem; overflow-wrap: anywhere; word-break: break-word; }
 .rep-breadcrumb a { cursor: pointer; color: var(--text-muted); }
 .rep-breadcrumb a:hover { color: var(--gold-600); }
 .rep-profile__head {

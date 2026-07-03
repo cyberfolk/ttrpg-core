@@ -2,7 +2,7 @@
   <section v-if="character" class="rep-profile">
     <nav class="rep-breadcrumb">
       <router-link to="/personaggi">Personaggi</router-link>
-      <span> / {{ character.name }}</span>
+      <span> / {{ $name(character) }}</span>
     </nav>
 
     <RecordPager v-if="recordIndex >= 0" :index="recordIndex" :total="recordIds.length"
@@ -11,7 +11,7 @@
     <div class="ds-card ds-card--filament rep-profile__card">
       <!-- Profile header -->
       <div class="rep-profile__head">
-        <h2>{{ character.name }}</h2>
+        <h2>{{ $name(character) }}</h2>
         <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
         <span class="rep-profile__synthetic">
           <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
@@ -44,7 +44,7 @@
 
       <!-- Direzione della relazione: esplicita e persistente (giudicante → giudicato) -->
       <p v-if="tab !== 'groups'" class="rep-dir-caption">
-        <span class="rep-dir-caption__node">{{ tab === 'in' ? 'Gli altri' : character.name }}</span>
+        <span class="rep-dir-caption__node">{{ tab === 'in' ? 'Gli altri' : $name(character) }}</span>
         <span class="rep-rel-arrow rep-dir-caption__arrow" aria-hidden="true">
           <span class="rep-rel-arrow__glyph"></span>
         </span>
@@ -84,7 +84,7 @@
                 <td class="rep-table__num">{{ i + 1 }}</td>
                 <td>
                   <span class="rep-table__name" @click.stop="goToGroup(group.id)">
-                    {{ group.name }}
+                    {{ $name(group) }}
                     <Icon name="goto" />
                   </span>
                 </td>
@@ -116,7 +116,7 @@
                 <td colspan="2">
                   <select class="ds-input" v-model="newGroupId" aria-label="Gruppo da aggiungere">
                     <option value="" disabled>Scegli un gruppo…</option>
-                    <option v-for="g in availableGroups" :key="g.id" :value="g.id">{{ g.name }}</option>
+                    <option v-for="g in availableGroups" :key="g.id" :value="g.id">{{ $name(g) }}</option>
                   </select>
                 </td>
                 <td>

@@ -35,7 +35,7 @@
         <td>
           <template v-if="editingId !== item.char.id">
             <span class="rep-table__name" @click.stop="goToProfile(item.char.id)">
-              {{ item.char.name }}
+              {{ $name(item.char) }}
               <Icon name="goto" />
             </span>
             <span v-if="item.char.deletedAt !== null" class="ds-badge ds-badge--ember" style="margin-left:8px">

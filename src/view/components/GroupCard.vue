@@ -13,8 +13,8 @@
     </button>
 
     <!-- Nome -->
-    <div class="rep-cc__namerow" @click.stop="!editing ? goToProfile() : undefined" :title="group.name">
-      <span v-if="!editing" class="rep-cc__name">{{ group.name }}</span>
+    <div class="rep-cc__namerow" @click.stop="!editing ? goToProfile() : undefined" :title="$name(group)">
+      <span v-if="!editing" class="rep-cc__name">{{ $name(group) }}</span>
       <input v-else ref="nameInput" class="ds-input rep-cc__nameinput" type="text" v-model="editName"
         @click.stop @keydown.enter="saveEdit" @keydown.escape="cancelEdit" aria-label="Nome gruppo" />
     </div>
