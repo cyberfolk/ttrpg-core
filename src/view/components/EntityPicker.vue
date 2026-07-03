@@ -2,15 +2,19 @@
   <div class="ep" :class="{ 'ep--filled': selected }">
     <span class="ep__label" :id="labelId">{{ label }}</span>
 
-    <!-- Stato selezionato: gettone con glifo + nome + rimozione -->
+    <!-- Stato selezionato: gettone cliccabile (riapre la ricerca) + X per svuotare -->
     <div v-if="selected" class="ep__token">
-      <span class="ep__glyph" role="img" :aria-label="kindLabel(selected.kind)">
-        <Icon :name="selected.kind === 'group' ? 'users' : 'user'" />
-      </span>
-      <span class="ep__token-name">{{ $name(selected.entity) }}</span>
-      <span v-if="ambiguous.has(selected.entity.id)" class="ep__hint">#{{ ambiguous.get(selected.entity.id) }}</span>
-      <span class="ds-badge ep__token-kind">{{ kindLabel(selected.kind) }}</span>
-      <button type="button" class="ep__clear" :aria-label="`Cambia ${label.toLowerCase()}`"
+      <button type="button" class="ep__token-main"
+        :aria-label="`Cambia ${label.toLowerCase()}: ${$name(selected.entity)}`"
+        @click="clear">
+        <span class="ep__glyph" aria-hidden="true">
+          <Icon :name="selected.kind === 'group' ? 'users' : 'user'" />
+        </span>
+        <span class="ep__token-name">{{ $name(selected.entity) }}</span>
+        <span v-if="ambiguous.has(selected.entity.id)" class="ep__hint">#{{ ambiguous.get(selected.entity.id) }}</span>
+        <span class="ds-badge ep__token-kind">{{ kindLabel(selected.kind) }}</span>
+      </button>
+      <button type="button" class="ep__clear" :aria-label="`Svuota ${label.toLowerCase()}`"
         @click="clear">
         <Icon name="close" />
       </button>
@@ -288,6 +292,31 @@ watch(query, () => { activeIndex.value = 0; });
 }
 .ep--filled .ep__token { border-color: var(--accent); }
 .ep__token .ep__glyph { color: var(--accent-text); }
+
+/* Corpo del gettone come bottone invisibile: cliccarlo riapre la ricerca. */
+.ep__token-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+.ep__token-main:hover .ep__token-name {
+  color: var(--accent-text);
+  text-decoration: underline;
+}
+.ep__token-main:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
 .ep__token-name {
   flex: 1;
   min-width: 0;
