@@ -500,6 +500,14 @@ a:hover { color: var(--gold-600); }
   .rep-table-wrap:not(.rep-table--flush) .rep-table:not(.fv-ledger) td:nth-child(4) { width: 6.5rem; }
   /* Header colonna punteggio nelle tabelle relazioni: non spezzare/troncare */
   .rep-table--flush .rep-table th.rep-col--right { white-space: nowrap; }
+  /* Tabelle flush (RelationList & c.): punteggio e opzioni a larghezza fissa
+     stretta, così il nome (colonna auto) prende tutto lo spazio residuo e non
+     va a capo troppo presto; punteggio + header slittano verso destra. */
+  .rep-table--flush .rep-table th.rep-col--right,
+  .rep-table--flush .rep-table td.rep-col--right { width: 4.25rem; }
+  /* Colonna filtri/colonne via su smartphone (piu' spazio al nome). */
+  .rep-table--flush .rep-table th.rep-col-opts,
+  .rep-table--flush .rep-table td.rep-col-opts { display: none; }
   .rep-table__name { white-space: normal; overflow-wrap: anywhere; }
   .rep-table__actions { flex-wrap: wrap; }
   .rep-table__actions .ds-btn { flex: 1 1 auto; justify-content: center; }
@@ -853,6 +861,12 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
     padding: 0 var(--space-5) var(--space-4);
   }
   .rep-tx-addrow__btn-wide { width: 100%; }
+
+  /* Header transazioni su smartphone: via il badge "Totale" e le frecce.
+     Restano solo le label "Cosa"/"Pensa di"; il box freccia mantiene la
+     larghezza fissa così i nomi restano allineati a sinistra. */
+  .rep-tx-headscore { display: none; }
+  .rep-tx-row .rep-rel-arrow__glyph { display: none; }
 }
 .rep-rel-arrow { display: inline-flex; flex-direction: column; align-items: stretch; line-height: 1; min-width: 4rem; margin-inline: 6px; flex: none; }
 .rep-rel-arrow__label {

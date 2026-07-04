@@ -21,7 +21,7 @@
               <th class="rep-table__num">#</th>
               <SortableTh col="name" :sort="sort" @sort="toggleSort">Nome</SortableTh>
               <SortableTh v-if="showType" col="kind" class="rep-col-type" :sort="sort" @sort="toggleSort">Tipo</SortableTh>
-              <SortableTh col="score" class="rep-col--right" :sort="sort" @sort="toggleSort">Punteggio</SortableTh>
+              <SortableTh col="score" class="rep-col--right" :sort="sort" @sort="toggleSort">Rep.</SortableTh>
               <th class="rep-col-opts">
                 <HoverTip :text="menuActive ? 'Filtri e colonne (attivi)' : 'Filtri e colonne'"
                   label="Filtri e colonne" :tab-index="-1">
