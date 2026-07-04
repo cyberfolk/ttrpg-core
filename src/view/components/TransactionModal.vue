@@ -1,5 +1,10 @@
 <template>
-  <div class="ds-overlay" @click.self="emit('close')">
+  <!-- Teleport su <body>: le viste che montano il modale (rep-profile, rep-cc)
+       hanno animazioni con transform; un antenato con transform intrappola il
+       position:fixed dell'overlay, che nasce scentrato/tagliato. Fuori da lì si
+       ancora sempre al viewport. Stessa scelta di ActionMenu/HoverTip. -->
+  <Teleport to="body">
+    <div class="ds-overlay" @click.self="emit('close')">
     <div class="ds-dialog">
       <div class="ds-dialog__head">
         <h3 class="ds-dialog__title">
@@ -151,7 +156,8 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup>
