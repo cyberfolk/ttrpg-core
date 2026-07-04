@@ -1,5 +1,11 @@
 # Gruppi e reputazione — Implementation Plan
 
+> **STATO: completato.** Piano eseguito — MODEL/STORE/IO in `src/` (test `node:test`
+> verdi) e VIEW gruppi implementata (`GroupsView`, `GroupProfileView`, rotte `/gruppi` e
+> `/gruppo/:id`). Documento **storico** (foto del piano al momento della stesura): checkbox
+> e dettagli NON sono mantenuti aggiornati e possono divergere dal codice. Fonte di verità:
+> il codice e la `spec.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Introdurre l'entità `Gruppo` (contenitore generico di personaggi) come nodo di reputazione diretto + aggregato derivato dai membri, con persistenza e migrazione v1→v2.
