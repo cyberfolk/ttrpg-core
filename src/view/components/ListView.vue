@@ -31,7 +31,7 @@
         @click="isRowInteractive(item.char) ? goToProfile(item.char.id) : undefined"
         v-activate>
 
-        <td class="rep-table__num">{{ offset + i + 1 }}</td>
+        <td class="rep-table__num">{{ i + 1 }}</td>
         <td class="rep-table__name-cell">
           <template v-if="editingId !== item.char.id">
             <span class="rep-table__name" @click.stop="goToProfile(item.char.id)">
@@ -111,7 +111,6 @@ import { SCORE_TIP } from '../uiCopy.js';
 
 defineProps({
   items: { type: Array, required: true },
-  offset: { type: Number, default: 0 },
 });
 
 const { dispatch } = useStore();

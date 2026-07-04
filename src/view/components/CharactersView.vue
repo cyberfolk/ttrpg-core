@@ -29,14 +29,9 @@
       </div>
     </div>
 
-    <!-- Paginazione: in alto a destra. Solo gallery e lista (matrix non consuma items) -->
-    <Pager v-if="ui.activeView !== 'matrix'"
-      :page="ui.page" :page-size="ui.pageSize" :total="total"
-      @update:page="ui.page = $event" @update:page-size="ui.pageSize = $event" />
-
     <!-- Views -->
     <GalleryView v-if="ui.activeView === 'gallery'" :items="items" />
-    <ListView    v-else-if="ui.activeView === 'list'" :items="items" :offset="ui.page * ui.pageSize" />
+    <ListView    v-else-if="ui.activeView === 'list'" :items="items" />
     <MatrixView  v-else />
 
     <!-- Add character dialog -->
@@ -79,12 +74,11 @@ import { addCharacter } from '../../model/reputation.js';
 import GalleryView from './GalleryView.vue';
 import ListView from './ListView.vue';
 import MatrixView from './MatrixView.vue';
-import Pager from './Pager.vue';
 import Icon from './Icon.vue';
 
 const ui = useUiState();
 const { dispatch } = useStore();
-const { items, total } = useDisplayedCharacters();
+const { items } = useDisplayedCharacters();
 const newName = ref('');
 const addOpen = ref(false);
 const nameInput = ref(null);

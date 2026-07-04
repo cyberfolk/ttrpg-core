@@ -97,8 +97,6 @@
 
       <!-- Tab: Membri -->
       <div v-if="tab === 'membri'">
-        <Pager :page="membersPage" :page-size="membersPageSize" :total="membersTotal"
-          @update:page="membersPage = $event" @update:page-size="membersPageSize = $event" />
         <div class="rep-table-wrap rep-table--flush">
           <table class="rep-table">
             <thead>
@@ -112,10 +110,10 @@
               <tr v-if="membersTotal === 0">
                 <td colspan="3" class="rep-empty">Nessun membro nel gruppo.</td>
               </tr>
-              <tr v-for="(char, i) in pagedMembers" :key="char.id"
+              <tr v-for="(char, i) in members" :key="char.id"
                 class="rep-table__row--clickable" role="button" tabindex="0"
                 @click="goToChar(char.id)" v-activate>
-                <td class="rep-table__num">{{ membersOffset + i + 1 }}</td>
+                <td class="rep-table__num">{{ i + 1 }}</td>
                 <td>
                   <span class="rep-table__name" @click.stop="goToChar(char.id)">
                     {{ $name(char) }}
@@ -266,18 +264,14 @@ import {
   hardDeleteGroup,
 } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
-import { usePagedList } from '../usePagedList.js';
 import { SCORE_TIP } from '../uiCopy.js';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import ActionMenu from './ActionMenu.vue';
-import Pager from './Pager.vue';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
-
-const membersPageSize = ref(10);
 
 const props = defineProps({
   id: { type: String, required: true },
@@ -350,9 +344,6 @@ const members = computed(() => {
 });
 
 const membersTotal = computed(() => members.value.length);
-// Paginazione membri: clamp su totale che cala (sgancio membro) nel composable.
-const { page: membersPage, offset: membersOffset, paginate: paginateMembers } = usePagedList(membersTotal, membersPageSize);
-const pagedMembers = computed(() => paginateMembers(members.value));
 
 const addableCandidates = computed(() => {
   if (!group.value) return [];

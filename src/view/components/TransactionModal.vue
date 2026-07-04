@@ -45,8 +45,6 @@
       </div>
 
       <div class="ds-dialog__body">
-        <Pager :page="page" :page-size="pageSize" :total="total"
-          @update:page="page = $event" @update:page-size="pageSize = $event" />
         <div class="rep-table-wrap rep-tx-bleed">
           <table class="rep-table rep-tx-table">
             <thead>
@@ -61,7 +59,7 @@
               <tr v-if="total === 0">
                 <td colspan="4" class="rep-empty">Nessuna transazione — punteggio di base 50.</td>
               </tr>
-              <tr v-for="t in pagedTransactions" :key="t.id">
+              <tr v-for="t in transactions" :key="t.id">
                 <td class="rep-tx__delta-col">
                   <input v-if="editingId === t.id" class="ds-input rep-tx__delta"
                     :class="t.delta >= 0 ? 'pos' : 'neg'" type="number" step="1" :value="t.delta"
@@ -165,12 +163,8 @@ import { useStore } from '../useStore.js';
 import { computeScore, listTransactions, addTransaction, editTransaction, deleteTransaction } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
 import { displayName } from '../disambiguation.js';
-import { usePagedList } from '../usePagedList.js';
 import { useDialog } from '../useDialog.js';
 import HoverTip from './HoverTip.vue';
-import Pager from './Pager.vue';
-
-const pageSize = ref(5);
 
 const props = defineProps({
   fromId: { type: String, required: true },
@@ -213,9 +207,6 @@ const toName      = computed(() => charName(props.toId));
 const score       = computed(() => computeScore(state.value, props.fromId, props.toId));
 const transactions = computed(() => listTransactions(state.value, props.fromId, props.toId));
 const total = computed(() => transactions.value.length);
-// Paginazione: clamp su totale che cala (dopo una cancellazione) nel composable.
-const { page, lastPage, paginate } = usePagedList(total, pageSize);
-const pagedTransactions = computed(() => paginate(transactions.value));
 
 const fmtDay = (ts) => new Date(ts).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
 
@@ -250,7 +241,5 @@ function onAdd() {
   dispatch((s) => addTransaction(s, props.fromId, props.toId, delta, reason));
   newDelta.value = 0;
   newReason.value = '';
-  // mostra la riga appena aggiunta (in coda all'ultima pagina)
-  page.value = lastPage.value;
 }
 </script>

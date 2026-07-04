@@ -28,10 +28,6 @@
       </div>
     </div>
 
-    <!-- Paginazione (come nei personaggi): si nasconde con una sola pagina -->
-    <Pager :page="page" :page-size="ui.pageSize" :total="filteredActive.length"
-      @update:page="page = $event" @update:page-size="ui.pageSize = $event" />
-
     <!-- Lista gruppi attivi -->
     <div v-if="filteredActive.length === 0 && !search" class="rep-empty" style="margin-top:2rem">
       Nessun gruppo. Aggiungine uno!
@@ -41,7 +37,7 @@
     </div>
 
     <!-- Vista card -->
-    <GroupGalleryView v-else-if="viewMode === 'gallery'" :groups="pagedActive" />
+    <GroupGalleryView v-else-if="viewMode === 'gallery'" :groups="sortedActive" />
 
     <div v-else class="rep-table-wrap">
       <table class="rep-table rep-table--stable">
@@ -62,14 +58,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(group, i) in pagedActive" :key="group.id"
+          <tr v-for="(group, i) in sortedActive" :key="group.id"
             :class="editingId === group.id ? 'rep-table__row--editing' : 'rep-table__row--clickable'"
             :role="editingId === group.id ? undefined : 'button'"
             :tabindex="editingId === group.id ? undefined : 0"
             @click="editingId === group.id ? undefined : goToProfile(group.id)"
             v-activate>
 
-            <td class="rep-table__num">{{ page * ui.pageSize + i + 1 }}</td>
+            <td class="rep-table__num">{{ i + 1 }}</td>
 
             <!-- Nome -->
             <td class="rep-table__name-cell">
@@ -181,7 +177,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
@@ -197,11 +193,9 @@ import {
 } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
 import { useSortable } from '../useSortable.js';
-import { usePagedList } from '../usePagedList.js';
 import { useDialog } from '../useDialog.js';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
-import Pager from './Pager.vue';
 import SortableTh from './SortableTh.vue';
 import ActionMenu from './ActionMenu.vue';
 import GroupGalleryView from './GroupGalleryView.vue';
@@ -251,7 +245,7 @@ function scoreOf(id) {
 }
 
 // Ordinamento colonne (stato locale della vista). nome parte asc;
-// numeri (membri/punteggio) partono desc. Il reset di pagina è nel watch sotto.
+// numeri (membri/punteggio) partono desc.
 const { sort, toggleSort } = useSortable({
   initial: { key: 'name', dir: 'asc' },
   descKeys: ['members', 'score'],
@@ -280,13 +274,6 @@ const sortedActive = computed(() => {
   });
   return rows;
 });
-
-// Paginazione locale (come nei personaggi). Stato locale: la search dei gruppi
-// e' propria della vista, non quella globale di ui. Il clamp su totale che cala
-// è dentro usePagedList; qui resta solo il reset a pagina 0 su ricerca/ordine.
-const { page, reset: resetPage, paginate } = usePagedList(() => filteredActive.value.length, () => ui.pageSize);
-const pagedActive = computed(() => paginate(sortedActive.value));
-watch([search, sort], resetPage);
 
 function openAdd() {
   addOpen.value = true;

@@ -38,9 +38,6 @@
         </div>
       </Teleport>
       </div>
-      <Pager v-if="total > 0" class="rep-relbar__pager"
-        :page="page" :page-size="pageSize" :total="total"
-        @update:page="page = $event" @update:page-size="pageSize = $event" />
     </div>
     <p v-if="total === 0" class="rep-empty">{{ query.trim() ? 'Nessun risultato.' : 'Nessuna relazione.' }}</p>
     <template v-else>
@@ -54,11 +51,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(row, i) in pageRows" :key="row.node.kind + '-' + row.node.entity.id"
+            <tr v-for="(row, i) in sortedRows" :key="row.node.kind + '-' + row.node.entity.id"
               class="rep-table__row--clickable"
               @click="emitTx(row.node.entity.id)">
 
-              <td class="rep-table__num">{{ offset + i + 1 }}</td>
+              <td class="rep-table__num">{{ i + 1 }}</td>
               <td>
                 <span class="rep-name-cell">
                   <span class="rep-kind-ico" role="img" :aria-label="kindLabel(row.node)"
@@ -88,19 +85,15 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
 import { listActiveCharacters, listActiveGroups, computeScore, hasTransaction } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
 import { useSortable } from '../useSortable.js';
-import { usePagedList } from '../usePagedList.js';
 import Icon from './Icon.vue';
-import Pager from './Pager.vue';
 import SortableTh from './SortableTh.vue';
 import HoverTip from './HoverTip.vue';
-
-const pageSize = ref(10);
 
 const props = defineProps({
   currentId: { type: String, required: true },
@@ -267,13 +260,6 @@ const sortedRows = computed(() => {
 
 const total = computed(() => sortedRows.value.length);
 
-// Paginazione locale: clamp su totale che cala dentro il composable; qui resta
-// il reset a pagina 0 quando cambiano ricerca o ordinamento.
-const { page, offset, reset: resetPage, paginate } = usePagedList(total, pageSize);
-watch([query, sort], resetPage);
-
-const pageRows = computed(() => paginate(sortedRows.value));
-
 function emitTx(otherId) {
   const pair = props.direction === 'in'
     ? { fromId: otherId, toId: props.currentId }
@@ -361,8 +347,6 @@ button.ds-score {
   pointer-events: none;
   color: var(--text-faint);
 }
-.rep-relbar__pager { flex: none; }
-.rep-relbar :deep(.rep-pager) { margin-block: 0; }
 
 /* Bottone filtri: vive nella searchbar, a destra dell'input. Icon-button bordato
    accoppiato all'input (stesso bordo/raggio/altezza) → ricerca + filtro leggono
