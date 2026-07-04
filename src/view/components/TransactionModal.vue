@@ -120,17 +120,30 @@
                   <input class="ds-input" type="text" placeholder="Es. salvato in battaglia"
                     aria-label="Motivo" v-model="newReason" @keyup.enter="onAdd" />
                 </td>
-                <td>
+                <td class="rep-tx-addrow__btncell">
                   <HoverTip text="Aggiungi" label="Aggiungi transazione" :tab-index="-1">
-                    <button class="ds-btn ds-btn--primary ds-btn--sm ds-btn--icon rep-tx-addrow__btn"
+                    <button class="ds-btn ds-btn--primary ds-btn--sm ds-btn--icon"
                       type="button" @click="onAdd" aria-label="Aggiungi transazione">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 12h14"/><path d="M12 5v14"/>
                       </svg>
-                      <span class="rep-tx-addrow__label">Aggiungi</span>
                     </button>
                   </HoverTip>
+                </td>
+              </tr>
+              <!-- Solo smartphone: bottone Aggiungi a tutta larghezza su riga propria
+                   (colspan), per non incastrare il "+" accanto agli input stretti. -->
+              <tr class="rep-tx-addrow rep-tx-addrow--btnrow">
+                <td colspan="4">
+                  <button class="ds-btn ds-btn--primary rep-tx-addrow__btn-wide"
+                    type="button" @click="onAdd">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em">
+                      <path d="M5 12h14"/><path d="M12 5v14"/>
+                    </svg>
+                    Aggiungi transazione
+                  </button>
                 </td>
               </tr>
             </tfoot>
