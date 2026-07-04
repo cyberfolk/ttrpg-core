@@ -59,21 +59,21 @@
     <div v-else class="rep-table-wrap">
       <table class="rep-table rep-table--stable">
         <colgroup>
-          <col style="width:3rem" />
+          <col class="rep-col--num" />
           <col />
-          <col style="width:9rem" />
-          <col style="width:6rem" />
-          <col style="width:7rem" />
-          <col style="width:6.5rem" />
+          <col class="rep-col--type" />
+          <col class="rep-col--members" />
+          <col class="rep-col--score" />
+          <col class="rep-col--actions" />
         </colgroup>
         <thead>
           <tr>
             <th class="rep-table__num">#</th>
             <SortableTh col="name" :sort="sort" @sort="toggleSort">Nome</SortableTh>
-            <SortableTh col="type" :sort="sort" @sort="toggleSort">Tipo</SortableTh>
+            <SortableTh col="type" class="rep-col--type-cell" :sort="sort" @sort="toggleSort">Tipo</SortableTh>
             <SortableTh col="members" class="rep-col--right" :sort="sort" @sort="toggleSort"># Membri</SortableTh>
             <SortableTh col="score" class="rep-col--right" :sort="sort" @sort="toggleSort">Reputazione</SortableTh>
-            <th>Azioni</th>
+            <th class="rep-table__actions-cell">Azioni</th>
           </tr>
         </thead>
         <tbody>
@@ -97,7 +97,7 @@
             </td>
 
             <!-- Tipo -->
-            <td @click.stop>
+            <td class="rep-col--type-cell" @click.stop>
               <span v-if="editingId !== group.id">
                 <span v-if="group.type" class="ds-badge">{{ group.type }}</span>
                 <span v-else class="rep-empty">–</span>
@@ -120,7 +120,7 @@
             </td>
 
             <!-- Azioni -->
-            <td @click.stop>
+            <td class="rep-table__actions-cell" @click.stop>
               <div class="rep-table__actions">
                 <template v-if="editingId === group.id">
                   <HoverTip text="Salva" label="Salva modifiche" :tab-index="-1">
@@ -443,10 +443,28 @@ function onHardDelete(id) {
   table-layout: fixed;
   width: 100%;
 }
+.rep-col--num { width: 3rem; }
+.rep-col--type { width: 9rem; }
+.rep-col--members { width: 6rem; }
+.rep-col--score { width: 6.5rem; }
+.rep-col--actions { width: 6.5rem; }
 .rep-table--stable :deep(.rep-table__name) {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mobile: recupero larghezza per il nome. Restano nome + membri + reputazione;
+   #, tipo e azioni (rinomina/tipo/archivia stanno nella scheda) spariscono. */
+@media (max-width: 560px) {
+  .rep-table--stable { table-layout: auto; }
+  .rep-col--num,
+  .rep-col--type,
+  .rep-col--actions { width: 0; }
+  .rep-table__num,
+  .rep-col--type-cell,
+  .rep-table__actions-cell { display: none; }
 }
 
 /* Inline edit: input compatti + padding riga ridotto per non alterare

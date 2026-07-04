@@ -11,10 +11,16 @@
     <!-- Intestazione gruppo -->
     <div class="ds-card ds-card--filament" style="padding:1.5rem 1.75rem 1.75rem">
       <div class="rep-profile__head">
-        <h2>
+        <h2 v-if="editing === false">
           {{ $name(group) }}
           <span v-if="group.type" class="ds-badge" style="margin-left:0.5rem">{{ group.type }}</span>
         </h2>
+        <span v-else class="rep-gp-edit">
+          <input class="ds-input rep-gp-edit__name" type="text" v-model="editName"
+            aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
+          <input class="ds-input rep-gp-edit__type" type="text" v-model="editType"
+            placeholder="Tipo (es. fazione)" aria-label="Tipo" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
+        </span>
         <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
         <span class="rep-profile__synthetic">
           <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
@@ -28,6 +34,41 @@
             </span>
           </HoverTip>
         </span>
+      </div>
+
+      <!-- Azioni sul gruppo (rinomina/tipo/archivia/elimina): qui invece che
+           nella lista, cosi' su mobile la lista resta compatta. -->
+      <div class="rep-gp-toolbar">
+        <template v-if="editing">
+          <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit">
+            <span class="ds-btn__icon"><Icon name="check" /></span>
+            Salva
+          </button>
+          <button class="ds-btn ds-btn--sm ds-btn--ghost" @click="cancelEdit">
+            <span class="ds-btn__icon"><Icon name="close" /></span>
+            Annulla
+          </button>
+        </template>
+        <template v-else-if="isArchived === false">
+          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="startEdit">
+            <span class="ds-btn__icon"><Icon name="edit" /></span>
+            Rinomina
+          </button>
+          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onArchive">
+            <span class="ds-btn__icon"><Icon name="archive" /></span>
+            Archivia
+          </button>
+        </template>
+        <template v-else>
+          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onRestore">
+            <span class="ds-btn__icon"><Icon name="restore" /></span>
+            Ripristina
+          </button>
+          <button class="ds-btn ds-btn--sm ds-btn--danger" @click="onHardDelete">
+            <span class="ds-btn__icon"><Icon name="trash" /></span>
+            Elimina
+          </button>
+        </template>
       </div>
 
       <!-- Sezioni con tab switcher -->
@@ -233,6 +274,11 @@ import {
   averageIncomingScore,
   groupDerivedIncoming,
   groupDerivedOutgoing,
+  renameGroup,
+  setGroupType,
+  softDeleteGroup,
+  restoreGroup,
+  hardDeleteGroup,
 } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
 import { usePagedList } from '../usePagedList.js';
@@ -257,6 +303,10 @@ const router = useRouter();
 const tab = ref('membri');
 const selectedCandidateId = ref('');
 const activeTx = ref(null);
+// Rinomina/tipo inline del gruppo dall'header della scheda.
+const editing = ref(false);
+const editName = ref('');
+const editType = ref('');
 
 // Viste avanzate (Punteggi) nascoste di default, rivelate dal toggle.
 const showAdvanced = ref(false);
@@ -377,9 +427,73 @@ function goToChar(id) {
 function openTxFromList(pair) {
   activeTx.value = pair;
 }
+
+function startEdit() {
+  if (group.value === null) return;
+  editName.value = group.value.name;
+  editType.value = group.value.type;
+  editing.value = true;
+}
+
+function cancelEdit() {
+  editing.value = false;
+  editName.value = '';
+  editType.value = '';
+}
+
+function saveEdit() {
+  const name = editName.value.trim();
+  if (!name) return;
+  const type = editType.value.trim();
+  const id = group.value.id;
+  dispatch((s) => renameGroup(s, id, name));
+  dispatch((s) => setGroupType(s, id, type));
+  cancelEdit();
+}
+
+function onArchive() {
+  const id = group.value.id;
+  dispatch((s) => softDeleteGroup(s, id));
+}
+
+function onRestore() {
+  const id = group.value.id;
+  dispatch((s) => restoreGroup(s, id));
+}
+
+function onHardDelete() {
+  const confirmed = window.confirm('Eliminare definitivamente il gruppo? Questa operazione non è reversibile.');
+  if (!confirmed) return;
+  const id = group.value.id;
+  dispatch((s) => hardDeleteGroup(s, id));
+  router.push({ name: 'groups' });
+}
 </script>
 
 <style scoped>
+/* Barra azioni sotto l'header: allineata a sinistra, va a capo se stretta. */
+.rep-gp-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0;
+}
+/* Rinomina inline: nome grande come il titolo, tipo piu' piccolo accanto. */
+.rep-gp-edit {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.rep-gp-edit__name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  max-width: 100%;
+}
+.rep-gp-edit__type {
+  max-width: 12rem;
+}
+
 .rep-gp-tabs {
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: 0.75rem; flex-wrap: wrap; margin: 1.1rem 0 1rem;
