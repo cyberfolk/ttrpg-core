@@ -136,10 +136,12 @@
               <tr class="rep-addrow">
                 <td class="rep-table__num"></td>
                 <td>
-                  <select class="ds-input" v-model="selectedCandidateId" aria-label="Personaggio da aggiungere">
-                    <option value="">Scegli un personaggio…</option>
-                    <option v-for="c in addableCandidates" :key="c.id" :value="c.id">{{ $name(c) }}</option>
-                  </select>
+                  <EntityPicker
+                    v-model="selectedCandidateId"
+                    :only="addableCandidateIds"
+                    label="Personaggio da aggiungere"
+                    placeholder="Scegli un personaggio…"
+                    hide-label />
                 </td>
                 <td>
                   <HoverTip text="Aggiungi membro" label="Aggiungi membro" :tab-index="-1">
@@ -272,6 +274,7 @@ import HoverTip from './HoverTip.vue';
 import ActionMenu from './ActionMenu.vue';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
+import EntityPicker from './EntityPicker.vue';
 
 const props = defineProps({
   id: { type: String, required: true },
@@ -282,7 +285,7 @@ const ui = useUiState();
 const router = useRouter();
 
 const tab = ref('in');
-const selectedCandidateId = ref('');
+const selectedCandidateId = ref(null);
 const activeTx = ref(null);
 
 // Navigazione scheda-per-scheda tra gruppi (come i personaggi). Ordine = default
@@ -352,6 +355,11 @@ const addableCandidates = computed(() => {
   return candidates;
 });
 
+const addableCandidateIds = computed(() => {
+  const ids = addableCandidates.value.map((c) => c.id);
+  return ids;
+});
+
 // Personaggi rilevanti per il tab punteggi:
 // membri del gruppo + qualsiasi personaggio attivo con transazioni dirette verso/da il gruppo.
 const relevantChars = computed(() => {
@@ -402,7 +410,7 @@ function onAddMember() {
   const charId = selectedCandidateId.value;
   if (!charId) return;
   dispatch((s) => addMember(s, props.id, charId));
-  selectedCandidateId.value = '';
+  selectedCandidateId.value = null;
 }
 
 function onRemoveMember(charId) {

@@ -1,6 +1,6 @@
 <template>
   <div class="ep" :class="{ 'ep--filled': selected }">
-    <span class="ep__label" :id="labelId">{{ label }}</span>
+    <span class="ep__label" :class="{ 'ep__label--sr': hideLabel }" :id="labelId">{{ label }}</span>
 
     <!-- Stato selezionato: gettone cliccabile (riapre la ricerca) + X per svuotare -->
     <div v-if="selected" class="ep__token">
@@ -38,34 +38,39 @@
         @focus="onFocus"
         @keydown="onKeydown" />
 
-      <ul v-if="open" :id="listId" class="ep__list" role="listbox" :aria-label="label">
-        <li v-if="results.length === 0" class="ep__none" role="presentation">
-          {{ query.trim() ? 'Nessun risultato.' : 'Nessuna entità disponibile.' }}
-        </li>
-        <li
-          v-for="(node, i) in results"
-          :key="node.entity.id"
-          :id="`${listId}-opt-${i}`"
-          class="ep__opt"
-          :class="{ 'ep__opt--active': i === activeIndex }"
-          role="option"
-          :aria-selected="i === activeIndex"
-          @mousedown.prevent="choose(node)"
-          @mousemove="activeIndex = i">
-          <span class="ep__glyph" aria-hidden="true">
-            <Icon :name="node.kind === 'group' ? 'users' : 'user'" />
-          </span>
-          <span class="ep__opt-name">{{ $name(node.entity) }}</span>
-          <span v-if="ambiguous.has(node.entity.id)" class="ep__hint">#{{ ambiguous.get(node.entity.id) }}</span>
-          <span class="ep__opt-kind">{{ kindLabel(node.kind) }}</span>
-        </li>
-      </ul>
+      <!-- Popup in top-layer (Teleport a body): sfugge a overflow:hidden/auto dei
+           container (es. la tabella profilo). Posizione fixed calcolata dall'input. -->
+      <Teleport to="body">
+        <ul v-if="open" ref="listEl" :id="listId" class="ep__list" role="listbox"
+          :aria-label="label" :style="listStyle">
+          <li v-if="results.length === 0" class="ep__none" role="presentation">
+            {{ query.trim() ? 'Nessun risultato.' : 'Nessuna entità disponibile.' }}
+          </li>
+          <li
+            v-for="(node, i) in results"
+            :key="node.entity.id"
+            :id="`${listId}-opt-${i}`"
+            class="ep__opt"
+            :class="{ 'ep__opt--active': i === activeIndex }"
+            role="option"
+            :aria-selected="i === activeIndex"
+            @mousedown.prevent="choose(node)"
+            @mousemove="activeIndex = i">
+            <span class="ep__glyph" aria-hidden="true">
+              <Icon :name="node.kind === 'group' ? 'users' : 'user'" />
+            </span>
+            <span class="ep__opt-name">{{ $name(node.entity) }}</span>
+            <span v-if="ambiguous.has(node.entity.id)" class="ep__hint">#{{ ambiguous.get(node.entity.id) }}</span>
+            <span class="ep__opt-kind">{{ kindLabel(node.kind) }}</span>
+          </li>
+        </ul>
+      </Teleport>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, useId, nextTick } from 'vue';
+import { ref, computed, watch, useId, nextTick, onBeforeUnmount } from 'vue';
 import { useStore } from '../useStore.js';
 import { listActiveCharacters, listActiveGroups, resolveNode } from '../../model/reputation.js';
 import { ambiguousIds } from '../disambiguation.js';
@@ -78,6 +83,8 @@ const props = defineProps({
   label: { type: String, required: true },
   placeholder: { type: String, default: 'Cerca nome…' },
   excludeId: { type: String, default: null }, // id da nascondere (l'altra scelta)
+  only: { type: Array, default: null }, // se valorizzato, restringe le scelte a questi id
+  hideLabel: { type: Boolean, default: false }, // etichetta solo per screen reader (contesti compatti)
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -92,12 +99,18 @@ const query = ref('');
 const open = ref(false);
 const activeIndex = ref(0);
 const inputEl = ref(null);
+const listEl = ref(null);
+const listStyle = ref({});
+
+// Allowlist di id: null = nessun vincolo (tutte le entità attive).
+const onlySet = computed(() => (props.only ? new Set(props.only) : null));
 
 // Tutti i nodi selezionabili: personaggi + gruppi attivi, con il proprio kind.
 const nodes = computed(() => {
   const chars = listActiveCharacters(state.value).map((entity) => ({ kind: 'character', entity }));
   const groups = listActiveGroups(state.value).map((entity) => ({ kind: 'group', entity }));
-  const all = [...chars, ...groups];
+  let all = [...chars, ...groups];
+  if (onlySet.value) all = all.filter((node) => onlySet.value.has(node.entity.id));
   return all;
 });
 
@@ -184,8 +197,48 @@ function onFocusout(e) {
   open.value = false;
 }
 
-// La query che cambia riporta l'evidenziazione in testa alla lista.
-watch(query, () => { activeIndex.value = 0; });
+// La query che cambia riporta l'evidenziazione in testa alla lista e, cambiando
+// l'altezza del popup, ne aggiorna la posizione (per l'apertura verso l'alto).
+watch(query, async () => {
+  activeIndex.value = 0;
+  if (open.value) { await nextTick(); positionList(); }
+});
+
+// Popup teleportato a body: posizione `fixed` calcolata dal box dell'input.
+// Apre verso il basso; se sotto non c'è spazio sufficiente, apre verso l'alto.
+const LIST_MAX = 272; // ~17rem, coerente con max-height del CSS
+function positionList() {
+  const el = inputEl.value;
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const spaceBelow = window.innerHeight - rect.bottom;
+  const openUp = spaceBelow < LIST_MAX && rect.top > spaceBelow;
+  const style = { left: `${rect.left}px`, width: `${rect.width}px` };
+  if (openUp) style.bottom = `${window.innerHeight - rect.top + 4}px`;
+  else style.top = `${rect.bottom + 4}px`;
+  listStyle.value = style;
+}
+
+function onViewportChange() {
+  if (open.value) positionList();
+}
+
+watch(open, async (isOpen) => {
+  if (isOpen) {
+    await nextTick();
+    positionList();
+    window.addEventListener('scroll', onViewportChange, true);
+    window.addEventListener('resize', onViewportChange);
+  } else {
+    window.removeEventListener('scroll', onViewportChange, true);
+    window.removeEventListener('resize', onViewportChange);
+  }
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onViewportChange, true);
+  window.removeEventListener('resize', onViewportChange);
+});
 </script>
 
 <style scoped>
@@ -204,6 +257,18 @@ watch(query, () => { activeIndex.value = 0; });
   text-transform: uppercase;
   color: var(--accent-text);
 }
+/* Contesti compatti (es. add-row in tabella): etichetta solo per screen reader. */
+.ep__label--sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* Campo di ricerca + lista */
 .ep__field { position: relative; }
@@ -220,11 +285,8 @@ watch(query, () => { activeIndex.value = 0; });
 .ep__input { width: 100%; scroll-margin-top: 5rem; }
 
 .ep__list {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  z-index: 40;
+  position: fixed;
+  z-index: 1000;
   margin: 0;
   padding: var(--space-1);
   list-style: none;

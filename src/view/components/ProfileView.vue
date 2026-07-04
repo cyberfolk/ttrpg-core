@@ -140,10 +140,12 @@
               <tr class="rep-addrow">
                 <td class="rep-table__num"></td>
                 <td>
-                  <select class="ds-input" v-model="newGroupId" aria-label="Gruppo da aggiungere">
-                    <option value="" disabled>Scegli un gruppo…</option>
-                    <option v-for="g in availableGroups" :key="g.id" :value="g.id">{{ $name(g) }}</option>
-                  </select>
+                  <EntityPicker
+                    v-model="newGroupId"
+                    :only="availableGroupIds"
+                    label="Gruppo da aggiungere"
+                    placeholder="Scegli un gruppo…"
+                    hide-label />
                 </td>
                 <td>
                   <HoverTip text="Aggiungi al gruppo" label="Aggiungi al gruppo" :tab-index="-1">
@@ -200,6 +202,7 @@ import {
 import { scoreColor } from '../scoreColor.js';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
+import EntityPicker from './EntityPicker.vue';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
 import HoverTip from './HoverTip.vue';
@@ -216,7 +219,7 @@ const ui = useUiState();
 const router = useRouter();
 const tab = ref('in');
 const tx = ref(null);
-const newGroupId = ref('');
+const newGroupId = ref(null);
 // Rinomina inline del personaggio dall'header della scheda.
 const editing = ref(false);
 const editName = ref('');
@@ -257,6 +260,11 @@ const availableGroups = computed(() => {
   return groups;
 });
 
+const availableGroupIds = computed(() => {
+  const ids = availableGroups.value.map((g) => g.id);
+  return ids;
+});
+
 function confirmUnlink(groupId) {
   const charId = character.value.id;
   dispatch((s) => removeMember(s, groupId, charId));
@@ -268,7 +276,7 @@ function onAddGroup() {
   const charId = character.value.id;
   const groupId = newGroupId.value;
   dispatch((s) => addMember(s, groupId, charId));
-  newGroupId.value = '';
+  newGroupId.value = null;
 }
 
 function goToGroup(id) {
