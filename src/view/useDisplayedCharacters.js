@@ -1,11 +1,13 @@
 import { computed } from 'vue';
 import { useStore } from './useStore.js';
 import { useUiState } from './useUiState.js';
+import { useIsMobile } from './useIsMobile.js';
 import { listActiveCharacters, averageIncomingScore } from '../model/reputation.js';
 
 export function useDisplayedCharacters() {
   const { state } = useStore();
   const ui = useUiState();
+  const isMobile = useIsMobile();
 
   // Insieme completo filtrato + ordinato (l'equivalente del web_search_read di Odoo
   // PRIMA della paginazione): è la sorgente del totale.
@@ -49,6 +51,10 @@ export function useDisplayedCharacters() {
   // Pagina corrente. Matrix non consuma items, quindi paginare sempre copre
   // lista + gallery senza condizioni sull'activeView.
   const items = computed(() => {
+    // Su smartphone la paginazione è disattivata: si mostra la lista intera.
+    if (isMobile.value) {
+      return all.value;
+    }
     const start = ui.page * ui.pageSize;
     const page = all.value.slice(start, start + ui.pageSize);
     return page;

@@ -1,4 +1,5 @@
 import { ref, computed, toValue, watch } from 'vue';
+import { useIsMobile } from './useIsMobile.js';
 
 // Paginazione locale di una lista: numero di pagina + clamp automatico + fetta
 // della pagina corrente. È la meccanica comune dietro ogni <Pager> della VIEW
@@ -15,6 +16,7 @@ import { ref, computed, toValue, watch } from 'vue';
 // @returns {{ page, offset, lastPage, reset, paginate }}
 export function usePagedList(total, pageSize) {
   const page = ref(0);
+  const isMobile = useIsMobile();
 
   const lastPage = computed(() => {
     const max = Math.max(0, Math.ceil(toValue(total) / toValue(pageSize)) - 1);
@@ -39,7 +41,11 @@ export function usePagedList(total, pageSize) {
   }
 
   // Fetta della pagina corrente a partire da una lista già ordinata/filtrata.
+  // Su smartphone la paginazione è disattivata: si mostra la lista intera.
   function paginate(list) {
+    if (isMobile.value) {
+      return list;
+    }
     const start = offset.value;
     const slice = list.slice(start, start + toValue(pageSize));
     return slice;

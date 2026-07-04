@@ -1,5 +1,5 @@
 <template>
-  <nav v-if="totalPages > 1" class="rep-pager" aria-label="Paginazione">
+  <nav v-if="totalPages > 1 && !isMobile" class="rep-pager" aria-label="Paginazione">
     <span v-if="label" class="rep-pager__label">{{ label }}</span>
     <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
       @click="goPrev" aria-label="Pagina precedente">
@@ -24,6 +24,9 @@
 <script setup>
 import { computed, ref, nextTick } from 'vue';
 import Icon from './Icon.vue';
+import { useIsMobile } from '../useIsMobile.js';
+
+const isMobile = useIsMobile();
 
 const props = defineProps({
   page: { type: Number, required: true },      // 0-based
