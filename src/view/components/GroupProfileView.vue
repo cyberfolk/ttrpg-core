@@ -136,7 +136,7 @@
             </tbody>
             <tfoot v-if="addableCandidates.length > 0">
               <tr class="rep-addrow">
-                <td></td>
+                <td class="rep-table__num"></td>
                 <td>
                   <select class="ds-input" v-model="selectedCandidateId" aria-label="Personaggio da aggiungere">
                     <option value="">Scegli un personaggio…</option>
