@@ -4,12 +4,12 @@
       <router-link to="/gruppi">Gruppi</router-link>
       <span> / {{ $name(group) }}</span>
     </nav>
-    <button class="ds-btn ds-btn--ghost ds-btn--sm" @click="goBack" style="margin-bottom:1rem">
-      ← Indietro
-    </button>
+
+    <RecordPager v-if="recordIndex >= 0" :index="recordIndex" :total="recordIds.length"
+      @update:index="goToIndex" />
 
     <!-- Intestazione gruppo -->
-    <div class="ds-card ds-card--filament" style="padding:1.5rem 1.75rem 1.75rem">
+    <div class="ds-card ds-card--filament rep-profile__card">
       <div class="rep-profile__head">
         <!-- Riga titolo: nome e ingranaggio azioni. In editing: input + Salva/Annulla. -->
         <div class="rep-profile__titlerow">
@@ -252,6 +252,7 @@ import { useUiState } from '../useUiState.js';
 import {
   listActiveCharacters,
   listActiveGroups,
+  listArchivedGroups,
   addMember,
   removeMember,
   computeScore,
@@ -273,6 +274,7 @@ import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import ActionMenu from './ActionMenu.vue';
 import Pager from './Pager.vue';
+import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
 
 const membersPageSize = ref(10);
@@ -288,6 +290,25 @@ const router = useRouter();
 const tab = ref('in');
 const selectedCandidateId = ref('');
 const activeTx = ref(null);
+
+// Navigazione scheda-per-scheda tra gruppi (come i personaggi). Ordine = default
+// della lista gruppi (nome asc); archiviati in coda solo se showArchived è attivo.
+const recordIds = computed(() => {
+  const byName = (a, b) => a.name.localeCompare(b.name);
+  const active = [...listActiveGroups(state.value)].sort(byName);
+  const ids = active.map((g) => g.id);
+  if (ui.showArchived) {
+    const archived = [...listArchivedGroups(state.value)].sort(byName);
+    ids.push(...archived.map((g) => g.id));
+  }
+  return ids;
+});
+const recordIndex = computed(() => recordIds.value.indexOf(props.id));
+
+function goToIndex(index) {
+  const id = recordIds.value[index];
+  if (id) router.push({ name: 'groupProfile', params: { id } });
+}
 // Rinomina inline del gruppo dall'header della scheda.
 const editing = ref(false);
 const editName = ref('');
@@ -395,10 +416,6 @@ function onAddMember() {
 
 function onRemoveMember(charId) {
   dispatch((s) => removeMember(s, props.id, charId));
-}
-
-function goBack() {
-  router.push('/gruppi');
 }
 
 function goToChar(id) {
