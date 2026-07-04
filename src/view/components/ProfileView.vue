@@ -138,7 +138,7 @@
             </tbody>
             <tfoot>
               <tr class="rep-addrow">
-                <td></td>
+                <td class="rep-table__num"></td>
                 <td>
                   <select class="ds-input" v-model="newGroupId" aria-label="Gruppo da aggiungere">
                     <option value="" disabled>Scegli un gruppo…</option>
