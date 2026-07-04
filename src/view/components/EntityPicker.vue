@@ -12,7 +12,7 @@
         </span>
         <span class="ep__token-name">{{ $name(selected.entity) }}</span>
         <span v-if="ambiguous.has(selected.entity.id)" class="ep__hint">#{{ ambiguous.get(selected.entity.id) }}</span>
-        <span class="ds-badge ep__token-kind">{{ kindLabel(selected.kind) }}</span>
+        <span v-if="showKind" class="ds-badge ep__token-kind">{{ kindLabel(selected.kind) }}</span>
       </button>
       <button type="button" class="ep__clear" :aria-label="`Svuota ${label.toLowerCase()}`"
         @click="clear">
@@ -61,7 +61,7 @@
             </span>
             <span class="ep__opt-name">{{ $name(node.entity) }}</span>
             <span v-if="ambiguous.has(node.entity.id)" class="ep__hint">#{{ ambiguous.get(node.entity.id) }}</span>
-            <span class="ep__opt-kind">{{ kindLabel(node.kind) }}</span>
+            <span v-if="showKind" class="ep__opt-kind">{{ kindLabel(node.kind) }}</span>
           </li>
         </ul>
       </Teleport>
@@ -112,6 +112,14 @@ const nodes = computed(() => {
   let all = [...chars, ...groups];
   if (onlySet.value) all = all.filter((node) => onlySet.value.has(node.entity.id));
   return all;
+});
+
+// Badge di tipo (Personaggio/Gruppo) utile solo se la lista mescola i due kind.
+// Con `only` che restringe a un solo tipo diventa ridondante col glifo: lo nascondo.
+const showKind = computed(() => {
+  const kinds = new Set(nodes.value.map((node) => node.kind));
+  const isMixed = kinds.size > 1;
+  return isMixed;
 });
 
 // Coda-id per gli omonimi (stesso tipo + stesso nome): mostrata solo quando serve.
