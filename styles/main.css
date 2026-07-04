@@ -345,7 +345,7 @@ a:hover { color: var(--gold-600); }
 .ds-seg__icon { display: inline-flex; width: 1em; height: 1em; }
 .ds-seg__icon svg { width: 100%; height: 100%; }
 /* underline variant */
-.ds-seg--underline { background: transparent; border: none; border-bottom: 1px solid var(--border-hairline); border-radius: 0; padding: 0; gap: .5rem; }
+.ds-seg--underline { display: flex; width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-hairline); border-radius: 0; padding: 0; gap: .5rem; }
 .ds-seg--underline .ds-seg__btn { border-radius: 0; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; background: transparent; }
 .ds-seg--underline .ds-seg__btn:hover { background: transparent; color: var(--text-strong); }
 .ds-seg--underline .ds-seg__btn.active { color: var(--accent-text); background: transparent; border-bottom-color: var(--gold-500); box-shadow: none; }
@@ -503,8 +503,6 @@ a:hover { color: var(--gold-600); }
   .rep-table__name { white-space: normal; overflow-wrap: anywhere; }
   .rep-table__actions { flex-wrap: wrap; }
   .rep-table__actions .ds-btn { flex: 1 1 auto; justify-content: center; }
-  /* Su display piccolo nascondi label "Reputazione Complessiva": resta solo il badge */
-  .rep-profile__synthetic-label { display: none; }
 }
 
 /* === Gallery =============================================== */
@@ -693,21 +691,37 @@ a:hover { color: var(--gold-600); }
 .rep-breadcrumb a { cursor: pointer; color: var(--text-muted); }
 .rep-breadcrumb a:hover { color: var(--gold-600); }
 .rep-profile__head {
-  display: flex; align-items: center; gap: var(--space-4);
-  padding-bottom: var(--space-4); border-bottom: 1px solid var(--border-hairline);
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.rep-profile__titlerow {
+  display: flex; align-items: center; gap: var(--space-3);
 }
 .rep-profile__head h2 {
   font-family: var(--font-display); font-size: var(--fs-h1); color: var(--text-strong);
   min-width: 0; overflow-wrap: anywhere; word-break: break-word;
 }
-.rep-profile__synthetic { margin-left: auto; }
+/* ingranaggio azioni: spinto a destra della riga titolo */
+.rep-profile__gear { margin-left: auto; flex: none; }
+/* trigger nudo: niente sfondo/bordo, glifo piu' grande */
+.rep-profile__gear .ds-menu__trigger.ds-btn {
+  background: transparent; border-color: transparent; box-shadow: none;
+  padding: 0.2rem; font-size: 1.75rem; color: var(--text-faint); opacity: 0.6;
+}
+.rep-profile__gear .ds-menu__trigger.ds-btn:hover { background: transparent; color: var(--text-strong); opacity: 1; }
+.rep-profile__editactions { margin-left: auto; display: flex; gap: var(--space-2); flex: none; }
+/* reputazione complessiva + badge, riga sotto il nome */
+.rep-profile__meta { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 .rep-profile__synthetic-inner { display: inline-flex; align-items: center; gap: .6rem; }
 .rep-profile__synthetic-label {
   font-family: var(--font-display); font-size: var(--fs-label);
   letter-spacing: var(--ls-caps); text-transform: uppercase;
-  color: var(--text-muted); text-align: right; line-height: 1.15;
-  position: relative; top: 4px;
+  color: var(--text-muted); line-height: 1.2; font-weight: var(--fw-bold);
+  position: relative; top: 2px;
+  margin-left: 0.35rem;
 }
+/* punteggio sintetico: pill un filo piu' corta della ds-score--lg standard */
+.rep-profile__synthetic .ds-score--lg { min-width: 2.9rem; padding: .3rem .7rem; }
 .rep-relation {
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
   padding: .65rem .4rem;
@@ -833,22 +847,93 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 
 /* Spaziature profilo: dalla scala --space-*, niente valori inline arbitrari */
 .rep-profile__card { padding: var(--space-6) var(--space-7) var(--space-7); }
-.rep-profile__tabs { margin: var(--space-5) 0 var(--space-4); }
+.rep-profile__tabs { margin: var(--space-5) 0 var(--space-6); }
 .rep-profile__orn  { margin-top: var(--space-6); }
 
-/* Caption direzionale sopra la lista relazioni: rende esplicito chi giudica chi */
-.rep-dir-caption {
-  display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2);
-  margin: 0 var(--space-1) var(--space-3);
-  font-family: var(--font-sans); font-size: var(--fs-sm);
+/* === Menu azioni (kebab/gear) ============================== */
+/* Regole globali: le voci sono slot content, quindi hanno lo scope del genitore
+   e non gli stili scoped di ActionMenu. Il popover e' in Teleport su <body>. */
+.ds-menu { position: relative; display: inline-flex; }
+/* trigger nudo: niente sfondo/bordo, glifo grande fin quasi ai bordi */
+.ds-menu__trigger.ds-btn {
+  background: transparent; border-color: transparent; box-shadow: none;
+  padding: 0.2rem; font-size: 1rem; color: var(--text-muted);
 }
-.rep-dir-caption__node {
-  font-weight: var(--fw-semibold); color: var(--text-body);
-  overflow-wrap: anywhere; word-break: break-word; min-width: 0;
+.ds-menu__trigger.ds-btn:hover { background: transparent; color: var(--text-strong); }
+.ds-menu__trigger.ds-btn svg { width: 1.1em; height: 1.1em; }
+/* nelle card gallery e nelle righe lista il gear resta discreto: attenuato a riposo */
+.rep-cc__actions .ds-menu__trigger.ds-btn,
+.rep-table__actions .ds-menu__trigger.ds-btn { color: var(--text-faint); }
+.rep-cc__actions .ds-menu__trigger.ds-btn:hover,
+.rep-table__actions .ds-menu__trigger.ds-btn:hover { color: var(--text-strong); }
+/* nelle card gallery e nelle liste ancora piu' defilato: glifo piccolo e
+   semi-trasparente, si accende solo al passaggio del mouse */
+.rep-cc__actions .ds-menu__trigger.ds-btn,
+.rep-table__actions .ds-menu__trigger.ds-btn { font-size: 0.9rem; opacity: 0.45; }
+.rep-cc__actions .ds-menu__trigger.ds-btn:hover,
+.rep-table__actions .ds-menu__trigger.ds-btn:hover { opacity: 1; }
+.ds-menu__pop {
+  z-index: 40;
+  padding: 0.3rem;
+  min-width: max-content;
+  background: var(--paper-0);
+  border: 1px solid var(--line-gold);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
 }
-.rep-dir-caption__arrow { min-width: 2.2rem; width: 2.2rem; margin-inline: 0; }
-.rep-dir-caption__hint {
-  color: var(--text-faint); font-style: italic;
+.ds-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  line-height: 1;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+.ds-menu__item:hover,
+.ds-menu__item:focus-visible { background: var(--paper-50); outline: none; }
+.ds-menu__item--danger { color: var(--ember-700); }
+.ds-menu__item--danger:hover,
+.ds-menu__item--danger:focus-visible { background: var(--danger-tint); }
+
+/* Popover "Filtri e colonne" (RelationList): in Teleport su <body>, quindi lo
+   stile deve stare qui (globale), non nello scope del componente. La posizione
+   fixed arriva inline; qui box + voci. */
+.rep-col-opts__menu {
+  z-index: 40;
+  padding: 0.35rem;
+  min-width: 9rem;
+  background: var(--paper-0);
+  border: 1px solid var(--line-gold);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+.rep-col-opts__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.rep-col-opts__item:hover { background: var(--paper-50); }
+.rep-col-opts__item input { cursor: pointer; margin: 0; }
+@media (max-width: 480px) {
+  .rep-col-opts__item--col { display: none; }
 }
 
 /* === Tooltip =============================================== */

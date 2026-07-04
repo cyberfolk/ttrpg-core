@@ -136,20 +136,16 @@
                     </button>
                   </HoverTip>
                 </template>
-                <template v-else>
-                  <HoverTip text="Rinomina" label="Rinomina gruppo" :tab-index="-1">
-                    <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon" @click="startEdit(group)"
-                      aria-label="Rinomina gruppo">
-                      <Icon name="edit" />
+                <ActionMenu v-else label="Azioni gruppo" icon="gear">
+                  <template #default="{ close }">
+                    <button type="button" class="ds-menu__item" @click="startEdit(group); close()">
+                      <Icon name="edit" /> Rinomina
                     </button>
-                  </HoverTip>
-                  <HoverTip text="Archivia" label="Archivia gruppo" :tab-index="-1">
-                    <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon" @click="onArchive(group.id)"
-                      aria-label="Archivia gruppo">
-                      <Icon name="archive" />
+                    <button type="button" class="ds-menu__item" @click="onArchive(group.id); close()">
+                      <Icon name="archive" /> Archivia
                     </button>
-                  </HoverTip>
-                </template>
+                  </template>
+                </ActionMenu>
               </div>
             </td>
           </tr>
@@ -240,6 +236,7 @@ import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import Pager from './Pager.vue';
 import SortableTh from './SortableTh.vue';
+import ActionMenu from './ActionMenu.vue';
 import GroupGalleryView from './GroupGalleryView.vue';
 
 const { state, dispatch } = useStore();

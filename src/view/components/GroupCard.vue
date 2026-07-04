@@ -34,7 +34,7 @@
       </span>
     </HoverTip>
 
-    <!-- Azioni -->
+    <!-- Azioni: in modifica → Salva/Annulla; altrimenti → ingranaggio con menu -->
     <div class="rep-cc__actions" @click.stop>
       <template v-if="editing">
         <HoverTip text="Salva" label="Salva modifiche" :tab-index="-1">
@@ -50,20 +50,16 @@
           </button>
         </HoverTip>
       </template>
-      <template v-else>
-        <HoverTip text="Rinomina" label="Rinomina gruppo" :tab-index="-1">
-          <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
-            @click="startEdit" aria-label="Rinomina gruppo">
-            <Icon name="edit" />
+      <ActionMenu v-else label="Azioni gruppo" icon="gear">
+        <template #default="{ close }">
+          <button type="button" class="ds-menu__item" @click="startEdit(); close()">
+            <Icon name="edit" /> Rinomina
           </button>
-        </HoverTip>
-        <HoverTip text="Archivia" label="Archivia gruppo" :tab-index="-1">
-          <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
-            @click="onArchive" aria-label="Archivia gruppo">
-            <Icon name="archive" />
+          <button type="button" class="ds-menu__item" @click="onArchive(); close()">
+            <Icon name="archive" /> Archivia
           </button>
-        </HoverTip>
-      </template>
+        </template>
+      </ActionMenu>
     </div>
   </div>
 </template>
@@ -77,6 +73,7 @@ import { averageIncomingScore, renameGroup, softDeleteGroup } from '../../model/
 import { scoreColor } from '../scoreColor.js';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
+import ActionMenu from './ActionMenu.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const props = defineProps({

@@ -7,36 +7,6 @@
         <input class="ds-input ds-input--with-icon" type="search" v-model="query"
           placeholder="Cerca per nome…" aria-label="Cerca per nome" />
       </div>
-      <div class="rep-filters">
-        <button ref="filtersBtn" type="button"
-          class="rep-col-opts__btn" :class="{ 'rep-col-opts__btn--active': filtersActive }"
-          :aria-label="filtersActive ? 'Filtri righe (attivi)' : 'Filtri righe'"
-          :title="filtersActive ? 'Filtri righe (attivi)' : 'Filtri righe'"
-          aria-controls="rep-filters-menu" :aria-expanded="filtersOpen"
-          @click.stop="toggleFilters">
-          <Icon name="filter" />
-          <span v-if="filtersActive" class="rep-col-opts__dot" aria-hidden="true"></span>
-        </button>
-        <Teleport to="body">
-          <div v-if="filtersOpen" id="rep-filters-menu" ref="filtersMenu"
-            class="rep-col-opts__menu rep-col-opts__menu--float" role="group"
-            aria-label="Filtri righe" :style="filtersStyle"
-            @click.stop @focusout="onFiltersFocusout">
-            <label class="rep-col-opts__item">
-              <input type="checkbox" v-model="hideEmpty" />
-              <span>Nascondi righe senza interazioni</span>
-            </label>
-            <label class="rep-col-opts__item">
-              <input type="checkbox" v-model="hideCharacters" />
-              <span>Nascondi personaggi</span>
-            </label>
-            <label class="rep-col-opts__item">
-              <input type="checkbox" v-model="hideGroups" />
-              <span>Nascondi gruppi</span>
-            </label>
-          </div>
-        </Teleport>
-      </div>
       </div>
       <Pager v-if="total > 0" class="rep-relbar__pager"
         :page="page" :page-size="PAGE_SIZE" :total="total"
@@ -53,23 +23,37 @@
               <SortableTh v-if="showType" col="kind" class="rep-col-type" :sort="sort" @sort="toggleSort">Tipo</SortableTh>
               <SortableTh col="score" class="rep-col--right" :sort="sort" @sort="toggleSort">Punteggio</SortableTh>
               <th class="rep-col-opts">
-                <button ref="optsBtn" type="button"
-                  class="rep-col-opts__btn" :class="{ 'rep-col-opts__btn--active': colsActive }"
-                  :aria-label="colsActive ? 'Colonne opzionali (Tipo nascosto)' : 'Colonne opzionali'"
-                  :title="colsActive ? 'Colonne (Tipo nascosto)' : 'Colonne'"
-                  aria-controls="rep-cols-menu" :aria-expanded="optsOpen"
-                  @click.stop="toggleOpts">
-                  <Icon name="columns" />
-                  <span v-if="colsActive" class="rep-col-opts__dot" aria-hidden="true"></span>
-                </button>
+                <HoverTip :text="menuActive ? 'Filtri e colonne (attivi)' : 'Filtri e colonne'"
+                  label="Filtri e colonne" :tab-index="-1">
+                  <button ref="optsBtn" type="button"
+                    class="rep-col-opts__btn" :class="{ 'rep-col-opts__btn--active': menuActive }"
+                    :aria-label="menuActive ? 'Filtri e colonne (attivi)' : 'Filtri e colonne'"
+                    aria-controls="rep-opts-menu" :aria-expanded="optsOpen"
+                    @click.stop="toggleOpts">
+                    <Icon name="filter" />
+                    <span v-if="menuActive" class="rep-col-opts__dot" aria-hidden="true"></span>
+                  </button>
+                </HoverTip>
                 <Teleport to="body">
-                  <div v-if="optsOpen" id="rep-cols-menu" ref="optsMenu"
+                  <div v-if="optsOpen" id="rep-opts-menu" ref="optsMenu"
                     class="rep-col-opts__menu rep-col-opts__menu--float" role="group"
-                    aria-label="Colonne opzionali" :style="optsStyle"
+                    aria-label="Filtri e colonne" :style="optsStyle"
                     @click.stop @focusout="onOptsFocusout">
                     <label class="rep-col-opts__item">
+                      <input type="checkbox" v-model="hideEmpty" />
+                      <span>Nascondi righe senza interazioni</span>
+                    </label>
+                    <label class="rep-col-opts__item">
+                      <input type="checkbox" v-model="hideCharacters" />
+                      <span>Nascondi personaggi</span>
+                    </label>
+                    <label class="rep-col-opts__item">
+                      <input type="checkbox" v-model="hideGroups" />
+                      <span>Nascondi gruppi</span>
+                    </label>
+                    <label class="rep-col-opts__item rep-col-opts__item--col">
                       <input type="checkbox" v-model="showType" />
-                      <span>Tipo</span>
+                      <span>Mostra colonna tipo</span>
                     </label>
                   </div>
                 </Teleport>
@@ -125,6 +109,7 @@ import { usePagedList } from '../usePagedList.js';
 import Icon from './Icon.vue';
 import Pager from './Pager.vue';
 import SortableTh from './SortableTh.vue';
+import HoverTip from './HoverTip.vue';
 
 const PAGE_SIZE = 10;
 
@@ -148,26 +133,21 @@ const { sort, toggleSort } = useSortable({
   descKeys: ['score'],
 });
 
-// Filtri righe (dropdown stile Odoo accanto alla ricerca).
+// Filtri righe + colonne opzionali, fusi in un unico dropdown (stile Odoo) in
+// coda all'header: icona filtro, posizione della vecchia tendina colonne.
 const hideEmpty = ref(false);
 const hideCharacters = ref(false);
 const hideGroups = ref(false);
-const filtersOpen = ref(false);
-const filtersBtn = ref(null);
-const filtersMenu = ref(null);
-const filtersStyle = ref(null);
-
-// Colonne opzionali (stile Odoo): toggle nel dropdown in coda all'header.
 const showType = ref(true);
 const optsOpen = ref(false);
 const optsBtn = ref(null);
 const optsMenu = ref(null);
 const optsStyle = ref(null);
 
-// Stato non-default dei due menu: serve a marcare visivamente le icone (un dot)
-// così l'utente sa che righe/colonne sono filtrate anche a tendina chiusa.
-const filtersActive = computed(() => hideEmpty.value || hideCharacters.value || hideGroups.value);
-const colsActive = computed(() => !showType.value);
+// Stato non-default del menu: marca visivamente l'icona (un dot) così l'utente sa
+// che righe/colonne sono filtrate anche a tendina chiusa.
+const menuActive = computed(() =>
+  hideEmpty.value || hideCharacters.value || hideGroups.value || !showType.value);
 
 // I menu sono in Teleport su <body> (la card profilo ha overflow:hidden e la
 // tabella overflow-x:auto: in posizione assoluta verrebbero clippati). Posizione
@@ -188,18 +168,8 @@ function focusFirst(menuRef) {
   if (first) first.focus();
 }
 
-async function toggleFilters() {
-  if (filtersOpen.value) { closeFilters(); return; }
-  optsOpen.value = false;
-  filtersStyle.value = floatStyle(filtersBtn.value);
-  filtersOpen.value = true;
-  await nextTick();
-  focusFirst(filtersMenu);
-}
-
 async function toggleOpts() {
   if (optsOpen.value) { closeOpts(); return; }
-  filtersOpen.value = false;
   optsStyle.value = floatStyle(optsBtn.value);
   optsOpen.value = true;
   await nextTick();
@@ -207,10 +177,6 @@ async function toggleOpts() {
 }
 
 // Chiusura "intenzionale" (toggle, Esc): riporta il focus al bottone di apertura.
-function closeFilters() {
-  filtersOpen.value = false;
-  filtersBtn.value?.focus();
-}
 function closeOpts() {
   optsOpen.value = false;
   optsBtn.value?.focus();
@@ -218,7 +184,6 @@ function closeOpts() {
 
 // Chiusura "passiva" (click esterno, scroll, resize): non rubare il focus.
 function closeMenus() {
-  filtersOpen.value = false;
   optsOpen.value = false;
 }
 
@@ -235,14 +200,12 @@ function makeFocusout(menuRef, openRef) {
     openRef.value = false;
   };
 }
-const onFiltersFocusout = makeFocusout(filtersMenu, filtersOpen);
 const onOptsFocusout = makeFocusout(optsMenu, optsOpen);
 
 // Esc chiude il menu aperto e riporta il focus al suo trigger.
 function onKeydown(e) {
   if (e.key !== 'Escape') return;
-  if (filtersOpen.value) closeFilters();
-  else if (optsOpen.value) closeOpts();
+  if (optsOpen.value) closeOpts();
 }
 
 // Click sul menu o sui bottoni: @click.stop non raggiunge il document, quindi
@@ -410,7 +373,6 @@ button.ds-score {
   pointer-events: none;
   color: var(--text-faint);
 }
-.rep-filters { position: relative; flex: none; }
 .rep-relbar__pager { flex: none; }
 .rep-relbar :deep(.rep-pager) { margin-block: 0; }
 
@@ -455,42 +417,20 @@ button.ds-score {
   background: var(--accent);
   box-shadow: 0 0 0 2px var(--surface-card);
 }
-.rep-col-opts__menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  z-index: 20;
-  margin-top: 0;
-  padding: 0.35rem;
-  min-width: 9rem;
-  background: var(--paper-0);
-  border: 1px solid var(--line-gold);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-}
-.rep-col-opts__item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 0.4rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-weight: 400;
-  white-space: nowrap;
-}
-.rep-col-opts__item:hover { background: var(--paper-50); }
-.rep-col-opts__item input { cursor: pointer; margin: 0; }
+/* NB: gli stili del popover (.rep-col-opts__menu e .rep-col-opts__item) sono in
+   main.css (globali): il menu e' in Teleport su <body>, fuori dallo scope del
+   componente, quindi lo stile scoped non lo raggiungerebbe. */
 
 /* tap target adeguato su touch/stylus (44px raccomandati) */
 @media (pointer: coarse) {
   .rep-col-opts__btn { min-width: 44px; min-height: 44px; }
 }
 
-/* mobile: via colonna Tipo e dropdown colonne; il tipo resta come glifo
-   inline sul nome (il dato si sposta, non si perde) */
+/* mobile: via la colonna Tipo (il tipo resta come glifo inline sul nome, il dato
+   si sposta non si perde). Il dropdown resta: ospita i filtri righe, utili anche
+   su mobile; solo il toggle "Tipo" è inutile qui (colonna forzata nascosta). */
 @media (max-width: 480px) {
-  .rep-col-type,
-  .rep-col-opts { display: none; }
+  .rep-col-type { display: none; }
   .rep-table .rep-kind-ico { display: inline-flex; }
 }
 </style>

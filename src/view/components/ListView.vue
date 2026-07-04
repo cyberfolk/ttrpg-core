@@ -67,34 +67,26 @@
                 </button>
               </HoverTip>
             </template>
-            <template v-else-if="item.char.deletedAt === null">
-              <HoverTip text="Rinomina" label="Rinomina personaggio" :tab-index="-1">
-                <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon" @click="startEdit(item.char)"
-                  aria-label="Rinomina personaggio">
-                  <Icon name="edit" />
-                </button>
-              </HoverTip>
-              <HoverTip text="Archivia" label="Archivia personaggio" :tab-index="-1">
-                <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
-                  @click="onArchive(item.char.id)" aria-label="Archivia personaggio">
-                  <Icon name="archive" />
-                </button>
-              </HoverTip>
-            </template>
-            <template v-else>
-              <HoverTip text="Ripristina" label="Ripristina personaggio" :tab-index="-1">
-                <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
-                  @click="onRestore(item.char.id)" aria-label="Ripristina personaggio">
-                  <Icon name="restore" />
-                </button>
-              </HoverTip>
-              <HoverTip text="Elimina" label="Elimina personaggio" :tab-index="-1">
-                <button class="ds-btn ds-btn--sm ds-btn--danger ds-btn--icon"
-                  @click="onHardDelete(item.char.id)" aria-label="Elimina personaggio">
-                  <Icon name="trash" />
-                </button>
-              </HoverTip>
-            </template>
+            <ActionMenu v-else label="Azioni personaggio" icon="gear">
+              <template #default="{ close }">
+                <template v-if="item.char.deletedAt === null">
+                  <button type="button" class="ds-menu__item" @click="startEdit(item.char); close()">
+                    <Icon name="edit" /> Rinomina
+                  </button>
+                  <button type="button" class="ds-menu__item" @click="onArchive(item.char.id); close()">
+                    <Icon name="archive" /> Archivia
+                  </button>
+                </template>
+                <template v-else>
+                  <button type="button" class="ds-menu__item" @click="onRestore(item.char.id); close()">
+                    <Icon name="restore" /> Ripristina
+                  </button>
+                  <button type="button" class="ds-menu__item ds-menu__item--danger" @click="onHardDelete(item.char.id); close()">
+                    <Icon name="trash" /> Elimina
+                  </button>
+                </template>
+              </template>
+            </ActionMenu>
           </div>
         </td>
       </tr>
@@ -114,6 +106,7 @@ import { softDeleteCharacter, restoreCharacter, hardDeleteCharacter, renameChara
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import SortableTh from './SortableTh.vue';
+import ActionMenu from './ActionMenu.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 defineProps({

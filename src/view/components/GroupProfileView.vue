@@ -11,64 +11,70 @@
     <!-- Intestazione gruppo -->
     <div class="ds-card ds-card--filament" style="padding:1.5rem 1.75rem 1.75rem">
       <div class="rep-profile__head">
-        <h2 v-if="editing === false">
-          {{ $name(group) }}
-          <span v-if="group.type" class="ds-badge" style="margin-left:0.5rem">{{ group.type }}</span>
-        </h2>
-        <span v-else class="rep-gp-edit">
-          <input class="ds-input rep-gp-edit__name" type="text" v-model="editName"
-            aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
-          <input class="ds-input rep-gp-edit__type" type="text" v-model="editType"
-            placeholder="Tipo (es. fazione)" aria-label="Tipo" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
-        </span>
-        <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
-        <span class="rep-profile__synthetic">
-          <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
-            <span class="rep-profile__synthetic-inner">
-              <span class="rep-profile__synthetic-label">Reputazione<br>Complessiva</span>
-              <span class="ds-score ds-score--lg"
-                :class="synthetic === null ? 'ds-score--empty' : ''"
-                :style="synthetic !== null ? { background: scoreColor(synthetic) } : undefined">
-                {{ synthetic !== null ? synthetic : '–' }}
-              </span>
-            </span>
-          </HoverTip>
-        </span>
-      </div>
+        <!-- Riga titolo: nome (+ tipo) e ingranaggio azioni. In editing: input + Salva/Annulla. -->
+        <div class="rep-profile__titlerow">
+          <h2 v-if="editing === false">
+            {{ $name(group) }}
+            <span v-if="group.type" class="ds-badge" style="margin-left:0.5rem">{{ group.type }}</span>
+          </h2>
+          <span v-else class="rep-gp-edit">
+            <input class="ds-input rep-gp-edit__name" type="text" v-model="editName"
+              aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
+            <input class="ds-input rep-gp-edit__type" type="text" v-model="editType"
+              placeholder="Tipo (es. fazione)" aria-label="Tipo" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
+          </span>
 
-      <!-- Azioni sul gruppo (rinomina/tipo/archivia/elimina): qui invece che
-           nella lista, cosi' su mobile la lista resta compatta. -->
-      <div class="rep-gp-toolbar">
-        <template v-if="editing">
-          <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit">
-            <span class="ds-btn__icon"><Icon name="check" /></span>
-            Salva
-          </button>
-          <button class="ds-btn ds-btn--sm ds-btn--ghost" @click="cancelEdit">
-            <span class="ds-btn__icon"><Icon name="close" /></span>
-            Annulla
-          </button>
-        </template>
-        <template v-else-if="isArchived === false">
-          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="startEdit">
-            <span class="ds-btn__icon"><Icon name="edit" /></span>
-            Rinomina
-          </button>
-          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onArchive">
-            <span class="ds-btn__icon"><Icon name="archive" /></span>
-            Archivia
-          </button>
-        </template>
-        <template v-else>
-          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onRestore">
-            <span class="ds-btn__icon"><Icon name="restore" /></span>
-            Ripristina
-          </button>
-          <button class="ds-btn ds-btn--sm ds-btn--danger" @click="onHardDelete">
-            <span class="ds-btn__icon"><Icon name="trash" /></span>
-            Elimina
-          </button>
-        </template>
+          <div v-if="editing" class="rep-profile__editactions">
+            <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit">
+              <span class="ds-btn__icon"><Icon name="check" /></span>
+              Salva
+            </button>
+            <button class="ds-btn ds-btn--sm ds-btn--ghost" @click="cancelEdit">
+              <span class="ds-btn__icon"><Icon name="close" /></span>
+              Annulla
+            </button>
+          </div>
+          <ActionMenu v-else class="rep-profile__gear" label="Azioni gruppo" icon="gear">
+            <template #default="{ close }">
+              <button type="button" class="ds-menu__item" @click="showScores(); close()">
+                <Icon name="sliders" /> Punteggi
+              </button>
+              <template v-if="isArchived === false">
+                <button type="button" class="ds-menu__item" @click="startEdit(); close()">
+                  <Icon name="edit" /> Rinomina
+                </button>
+                <button type="button" class="ds-menu__item" @click="onArchive(); close()">
+                  <Icon name="archive" /> Archivia
+                </button>
+              </template>
+              <template v-else>
+                <button type="button" class="ds-menu__item" @click="onRestore(); close()">
+                  <Icon name="restore" /> Ripristina
+                </button>
+                <button type="button" class="ds-menu__item ds-menu__item--danger" @click="onHardDelete(); close()">
+                  <Icon name="trash" /> Elimina
+                </button>
+              </template>
+            </template>
+          </ActionMenu>
+        </div>
+
+        <!-- Reputazione complessiva, subito sotto il nome, con il badge di stato -->
+        <div class="rep-profile__meta">
+          <span class="rep-profile__synthetic">
+            <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
+              <span class="rep-profile__synthetic-inner">
+                <span class="rep-profile__synthetic-label">Reputazione<br>Complessiva</span>
+                <span class="ds-score ds-score--lg"
+                  :class="synthetic === null ? 'ds-score--empty' : ''"
+                  :style="synthetic !== null ? { background: scoreColor(synthetic) } : undefined">
+                  {{ synthetic !== null ? synthetic : '–' }}
+                </span>
+              </span>
+            </HoverTip>
+          </span>
+          <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
+        </div>
       </div>
 
       <!-- Sezioni con tab switcher -->
@@ -88,23 +94,7 @@
             Punteggi
           </button>
         </div>
-        <button class="ds-btn ds-btn--ghost ds-btn--sm rep-gp-tabs__adv"
-          :class="{ 'is-on': showAdvanced }" :aria-pressed="showAdvanced ? 'true' : 'false'"
-          @click="toggleAdvanced">
-          <span class="ds-btn__icon"><Icon name="sliders" /></span>
-          Avanzate
-        </button>
       </div>
-
-      <!-- Direzione (giudicante → giudicato), come nel form personaggi -->
-      <p v-if="tab === 'in' || tab === 'out'" class="rep-dir-caption">
-        <span class="rep-dir-caption__node">{{ tab === 'in' ? 'Gli altri' : $name(group) }}</span>
-        <span class="rep-rel-arrow rep-dir-caption__arrow" aria-hidden="true">
-          <span class="rep-rel-arrow__glyph"></span>
-        </span>
-        <span class="rep-dir-caption__node">{{ tab === 'in' ? $name(group) : 'gli altri' }}</span>
-        <span class="rep-dir-caption__hint">· {{ tab === 'in' ? 'giudizio ricevuto' : 'giudizio dato' }}</span>
-      </p>
 
       <!-- Relazioni dirette gruppo↔nodo (stesso componente dei personaggi) -->
       <RelationList v-if="tab === 'in' || tab === 'out'" :key="tab"
@@ -287,6 +277,7 @@ import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
+import ActionMenu from './ActionMenu.vue';
 import Pager from './Pager.vue';
 import RelationList from './RelationList.vue';
 
@@ -300,7 +291,7 @@ const { state, dispatch } = useStore();
 const ui = useUiState();
 const router = useRouter();
 
-const tab = ref('membri');
+const tab = ref('in');
 const selectedCandidateId = ref('');
 const activeTx = ref(null);
 // Rinomina/tipo inline del gruppo dall'header della scheda.
@@ -308,14 +299,12 @@ const editing = ref(false);
 const editName = ref('');
 const editType = ref('');
 
-// Viste avanzate (Punteggi) nascoste di default, rivelate dal toggle.
+// Tab "Punteggi" nascosto di default: rivelato dall'azione Punteggi nel menu
+// dell'ingranaggio, che poi ci porta direttamente sopra.
 const showAdvanced = ref(false);
-function toggleAdvanced() {
-  showAdvanced.value = !showAdvanced.value;
-  // Se nascondo le avanzate mentre sono su Punteggi, torno a Membri.
-  if (!showAdvanced.value && tab.value === 'punteggi') {
-    tab.value = 'membri';
-  }
+function showScores() {
+  showAdvanced.value = true;
+  tab.value = 'punteggi';
 }
 
 const group = computed(() => {
@@ -471,13 +460,6 @@ function onHardDelete() {
 </script>
 
 <style scoped>
-/* Barra azioni sotto l'header: allineata a sinistra, va a capo se stretta. */
-.rep-gp-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0.5rem 0 0;
-}
 /* Rinomina inline: nome grande come il titolo, tipo piu' piccolo accanto. */
 .rep-gp-edit {
   display: inline-flex;
@@ -496,13 +478,8 @@ function onHardDelete() {
 
 .rep-gp-tabs {
   display: flex; align-items: flex-end; justify-content: space-between;
-  gap: 0.75rem; flex-wrap: wrap; margin: 1.1rem 0 1rem;
+  gap: 0.75rem; flex-wrap: wrap; margin: 1.1rem 0 1.5rem;
 }
-.rep-gp-tabs__adv { flex: none; }
-.rep-gp-tabs__adv.is-on {
-  background: var(--accent-tint); color: var(--gold-700); border-color: var(--line-gold);
-}
-
 .rep-group-scores {
   border-bottom: 1px solid var(--ds-border, rgba(255,255,255,0.08));
   padding: 0.75rem 0;

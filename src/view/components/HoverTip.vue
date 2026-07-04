@@ -55,4 +55,8 @@ function hide() {
   open.value = false;
   box.value = null;
 }
+
+// Esposto: il chiamante puo' forzare la chiusura (es. ActionMenu quando apre il
+// menu, cosi' il tooltip "Azioni" non resta appeso sopra le voci).
+defineExpose({ hide });
 </script>

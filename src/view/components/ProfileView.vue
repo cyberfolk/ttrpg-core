@@ -11,57 +11,61 @@
     <div class="ds-card ds-card--filament rep-profile__card">
       <!-- Profile header -->
       <div class="rep-profile__head">
-        <h2 v-if="editing === false">{{ $name(character) }}</h2>
-        <input v-else class="ds-input rep-profile__edit" type="text" v-model="editName"
-          aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
-        <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
-        <span class="rep-profile__synthetic">
-          <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
-            <span class="rep-profile__synthetic-inner">
-              <span class="rep-profile__synthetic-label">Reputazione<br>Complessiva</span>
-              <span class="ds-score ds-score--lg"
-                :class="synthetic === null ? 'ds-score--empty' : ''"
-                :style="synthetic !== null ? { background: scoreColor(synthetic) } : undefined">
-                {{ synthetic !== null ? synthetic : '–' }}
-              </span>
-            </span>
-          </HoverTip>
-        </span>
-      </div>
+        <!-- Riga titolo: nome + ingranaggio azioni (rinomina/archivia o
+             ripristina/elimina, secondo lo stato). In editing: input + Salva/Annulla. -->
+        <div class="rep-profile__titlerow">
+          <h2 v-if="editing === false">{{ $name(character) }}</h2>
+          <input v-else class="ds-input rep-profile__edit" type="text" v-model="editName"
+            aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
 
-      <!-- Azioni sul personaggio (rinomina/archivia/elimina): qui invece che
-           nella lista, cosi' su mobile la lista resta compatta. -->
-      <div class="rep-profile__toolbar">
-        <template v-if="editing">
-          <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit">
-            <span class="ds-btn__icon"><Icon name="check" /></span>
-            Salva
-          </button>
-          <button class="ds-btn ds-btn--sm ds-btn--ghost" @click="cancelEdit">
-            <span class="ds-btn__icon"><Icon name="close" /></span>
-            Annulla
-          </button>
-        </template>
-        <template v-else-if="isArchived === false">
-          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="startEdit">
-            <span class="ds-btn__icon"><Icon name="edit" /></span>
-            Rinomina
-          </button>
-          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onArchive">
-            <span class="ds-btn__icon"><Icon name="archive" /></span>
-            Archivia
-          </button>
-        </template>
-        <template v-else>
-          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onRestore">
-            <span class="ds-btn__icon"><Icon name="restore" /></span>
-            Ripristina
-          </button>
-          <button class="ds-btn ds-btn--sm ds-btn--danger" @click="onHardDelete">
-            <span class="ds-btn__icon"><Icon name="trash" /></span>
-            Elimina
-          </button>
-        </template>
+          <div v-if="editing" class="rep-profile__editactions">
+            <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit">
+              <span class="ds-btn__icon"><Icon name="check" /></span>
+              Salva
+            </button>
+            <button class="ds-btn ds-btn--sm ds-btn--ghost" @click="cancelEdit">
+              <span class="ds-btn__icon"><Icon name="close" /></span>
+              Annulla
+            </button>
+          </div>
+          <ActionMenu v-else class="rep-profile__gear" label="Azioni personaggio" icon="gear">
+            <template #default="{ close }">
+              <template v-if="isArchived === false">
+                <button type="button" class="ds-menu__item" @click="startEdit(); close()">
+                  <Icon name="edit" /> Rinomina
+                </button>
+                <button type="button" class="ds-menu__item" @click="onArchive(); close()">
+                  <Icon name="archive" /> Archivia
+                </button>
+              </template>
+              <template v-else>
+                <button type="button" class="ds-menu__item" @click="onRestore(); close()">
+                  <Icon name="restore" /> Ripristina
+                </button>
+                <button type="button" class="ds-menu__item ds-menu__item--danger" @click="onHardDelete(); close()">
+                  <Icon name="trash" /> Elimina
+                </button>
+              </template>
+            </template>
+          </ActionMenu>
+        </div>
+
+        <!-- Reputazione complessiva, subito sotto il nome, con il badge di stato -->
+        <div class="rep-profile__meta">
+          <span class="rep-profile__synthetic">
+            <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
+              <span class="rep-profile__synthetic-inner">
+                <span class="rep-profile__synthetic-label">Reputazione<br>Complessiva</span>
+                <span class="ds-score ds-score--lg"
+                  :class="synthetic === null ? 'ds-score--empty' : ''"
+                  :style="synthetic !== null ? { background: scoreColor(synthetic) } : undefined">
+                  {{ synthetic !== null ? synthetic : '–' }}
+                </span>
+              </span>
+            </HoverTip>
+          </span>
+          <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
+        </div>
       </div>
 
       <!-- Tab switcher -->
@@ -78,16 +82,6 @@
           </button>
         </div>
       </div>
-
-      <!-- Direzione della relazione: esplicita e persistente (giudicante → giudicato) -->
-      <p v-if="tab !== 'groups'" class="rep-dir-caption">
-        <span class="rep-dir-caption__node">{{ tab === 'in' ? 'Gli altri' : $name(character) }}</span>
-        <span class="rep-rel-arrow rep-dir-caption__arrow" aria-hidden="true">
-          <span class="rep-rel-arrow__glyph"></span>
-        </span>
-        <span class="rep-dir-caption__node">{{ tab === 'in' ? character.name : 'gli altri' }}</span>
-        <span class="rep-dir-caption__hint">· {{ tab === 'in' ? 'giudizio ricevuto' : 'giudizio dato' }}</span>
-      </p>
 
       <!-- Relations -->
       <RelationList
@@ -215,6 +209,7 @@ import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
 import HoverTip from './HoverTip.vue';
 import Icon from './Icon.vue';
+import ActionMenu from './ActionMenu.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const props = defineProps({
@@ -328,14 +323,6 @@ function onHardDelete() {
 </script>
 
 <style scoped>
-/* Barra azioni sotto l'header della scheda: allineata a sinistra, va a capo
-   su schermi stretti. */
-.rep-profile__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0.25rem 0 1rem;
-}
 /* Input di rinomina inline: eredita la scala del titolo per non far saltare
    l'altezza dell'header. */
 .rep-profile__edit {

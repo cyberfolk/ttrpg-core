@@ -52,14 +52,12 @@
                   :aria-label="`Reputazione di ${v.toName}: ${v.score} su 100, secondo ${v.fromName}`">
                   <CountUp :value="v.score" />
                 </span>
-                <p class="fv-verso__attrib">
-                  <span class="fv-verso__attrib-kicker">Reputazione secondo</span>
-                  <RouterLink class="fv-verso__source"
-                    :to="linkTo(v.fromKind, v.fromId)" :title="v.fromName">
-                    <span class="fv-verso__source-glyph" aria-hidden="true"><Icon :name="v.fromIcon" /></span>
-                    <span class="fv-verso__source-name">{{ v.fromName }}<span v-if="v.fromSuffix" class="fv-verso__suffix">#{{ v.fromSuffix }}</span></span>
-                  </RouterLink>
-                </p>
+                <span class="fv-verso__attrib-kicker">Reputazione secondo</span>
+                <RouterLink class="fv-verso__source"
+                  :to="linkTo(v.fromKind, v.fromId)" :title="v.fromName">
+                  <span class="fv-verso__source-glyph" aria-hidden="true"><Icon :name="v.fromIcon" /></span>
+                  <span class="fv-verso__source-name">{{ v.fromName }}<span v-if="v.fromSuffix" class="fv-verso__suffix">#{{ v.fromSuffix }}</span></span>
+                </RouterLink>
               </div>
 
               <!-- Comparsa fluida (grid-template-rows 0fr→1fr, non altezza): la
@@ -73,14 +71,12 @@
                       :aria-label="`Reputazione complessiva di ${v.toName}: ${v.aggScore !== null ? v.aggScore + ' su 100' : 'nessun voto'}`">
                       {{ v.aggScore !== null ? v.aggScore : '–' }}
                     </span>
-                    <p class="fv-verso__attrib">
-                      <!-- L'helper è sull'etichetta stessa: al hover/focus spiega cos'è
-                           la reputazione complessiva, senza icona "?". -->
-                      <HoverTip :text="SCORE_TIP" label="Cos'è la reputazione complessiva"
-                        class-name="fv-verso__attrib-kicker fv-verso__agg-help">
-                        Reputazione complessiva
-                      </HoverTip>
-                    </p>
+                    <!-- L'helper è sull'etichetta stessa: al hover/focus spiega cos'è
+                         la reputazione complessiva, senza icona "?". -->
+                    <HoverTip :text="SCORE_TIP" label="Cos'è la reputazione complessiva"
+                      class-name="fv-verso__attrib-kicker fv-verso__agg-help">
+                      Reputazione complessiva
+                    </HoverTip>
                   </div>
                 </div>
               </Transition>
@@ -390,12 +386,24 @@ function fmtDay(ts) {
   display: flex;
   flex-direction: column;
 }
-/* Riga di lettura: badge (ancora sinistra) + etichetta, sullo stesso asse. */
+/* Riga di lettura: badge a sinistra, kicker + fonte a destra su due righe.
+   Il badge (grid-area score) copre entrambe le righe ed è centrato; le due
+   righe 1fr/1fr spezzano l'altezza a metà del badge. Il kicker "Reputazione
+   secondo" è ancorato in fondo alla riga 1 e il nome della fonte in cima alla
+   riga 2 → la coppia resta stretta e a cavallo del centro verticale del badge. */
 .fv-verso__reading {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "score kicker"
+    "score source";
   align-items: center;
-  gap: var(--space-4);
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
 }
+.fv-verso__reading .fv-verso__attrib-kicker { align-self: end; }
+.fv-verso__reading .fv-verso__source { align-self: start; }
 .fv-verso__reading--agg { padding-top: var(--space-4); }
 
 /* Comparsa della complessiva: grid-template-rows 0fr→1fr (riflusso senza
@@ -431,6 +439,7 @@ function fmtDay(ts) {
 
 /* Kicker etichetta: micro-maiuscoletto del catalogo, singola riga. */
 .fv-verso__attrib-kicker {
+  grid-area: kicker;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -495,16 +504,9 @@ function fmtDay(ts) {
 }
 .fv-verso__owner:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
 
-/* Attribuzione: micro-etichetta "REPUTAZIONE" + "secondo [osservatore]". */
-.fv-verso__attrib {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
-  margin: 0;
-  max-width: 100%;
-}
+/* Attribuzione: nome della fonte "secondo [osservatore]", sotto il kicker. */
 .fv-verso__source {
+  grid-area: source;
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
@@ -553,6 +555,7 @@ function fmtDay(ts) {
 /* Il punteggio è l'eroe visivo: grande numerale Cinzel su pillola tinta
    scoreColor, stessa forma dei chip punteggio delle altre schermate. */
 .fv-verso__score {
+  grid-area: score;
   flex: none;
   display: grid;
   place-items: center;
