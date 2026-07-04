@@ -351,6 +351,8 @@ button.ds-score {
   color: var(--text-muted);
 }
 .rep-search .ds-input { width: 100%; }
+/* placeholder piu' tenue in questa searchbar (il globale resta AA altrove) */
+.rep-search .ds-input::placeholder { color: var(--text-faint); }
 .rep-search__icon {
   position: absolute;
   left: 0.7rem;
@@ -379,17 +381,20 @@ button.ds-score {
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   color: var(--text-faint);
+  opacity: .6;
   cursor: pointer;
   line-height: 1;
-  transition: color var(--dur-fast), background var(--dur-fast), border-color var(--dur-fast);
+  transition: color var(--dur-fast), background var(--dur-fast), border-color var(--dur-fast), opacity var(--dur-fast);
 }
 .rep-col-opts__btn:hover {
   background: var(--surface-card);
   border-color: var(--border-strong);
   color: var(--text-strong);
+  opacity: 1;
 }
+.rep-col-opts__btn--active { opacity: 1; }
 .rep-col-opts__btn:focus-visible {
-  outline: none; border-color: var(--gold-500); box-shadow: var(--shadow-focus);
+  outline: none; border-color: var(--gold-500); box-shadow: var(--shadow-focus); opacity: 1;
 }
 /* filtri attivi: bordo oro + icona accento (oltre al dot), niente solo-colore */
 .rep-col-opts__btn--active { color: var(--accent-text); border-color: var(--gold-500); }
