@@ -138,7 +138,7 @@ const { sort, toggleSort } = useSortable({
 const hideEmpty = ref(false);
 const hideCharacters = ref(false);
 const hideGroups = ref(false);
-const showType = ref(true);
+const showType = ref(false);
 const optsOpen = ref(false);
 const optsBtn = ref(null);
 const optsMenu = ref(null);
@@ -147,7 +147,7 @@ const optsStyle = ref(null);
 // Stato non-default del menu: marca visivamente l'icona (un dot) così l'utente sa
 // che righe/colonne sono filtrate anche a tendina chiusa.
 const menuActive = computed(() =>
-  hideEmpty.value || hideCharacters.value || hideGroups.value || !showType.value);
+  hideEmpty.value || hideCharacters.value || hideGroups.value || showType.value);
 
 // I menu sono in Teleport su <body> (la card profilo ha overflow:hidden e la
 // tabella overflow-x:auto: in posizione assoluta verrebbero clippati). Posizione

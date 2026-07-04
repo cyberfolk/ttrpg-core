@@ -500,11 +500,6 @@ a:hover { color: var(--gold-600); }
   .rep-table-wrap:not(.rep-table--flush) .rep-table:not(.fv-ledger) td:nth-child(4) { width: 6.5rem; }
   /* Header colonna punteggio nelle tabelle relazioni: non spezzare/troncare */
   .rep-table--flush .rep-table th.rep-col--right { white-space: nowrap; }
-  /* Tabelle flush (RelationList & c.): punteggio e opzioni a larghezza fissa
-     stretta, così il nome (colonna auto) prende tutto lo spazio residuo e non
-     va a capo troppo presto; punteggio + header slittano verso destra. */
-  .rep-table--flush .rep-table th.rep-col--right,
-  .rep-table--flush .rep-table td.rep-col--right { width: 4.25rem; }
   /* Colonna filtri/colonne via su smartphone (piu' spazio al nome). */
   .rep-table--flush .rep-table th.rep-col-opts,
   .rep-table--flush .rep-table td.rep-col-opts { display: none; }
@@ -620,6 +615,16 @@ a:hover { color: var(--gold-600); }
 .rep-table__sortable:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--gold-400); }
 .rep-table__sortable svg { width: .8em; height: .8em; margin-left: .25em; vertical-align: -.08em; color: var(--gold-600); }
 .rep-col--right { text-align: right; }
+/* Colonna punteggio nelle tabelle flush (liste dentro i profili): larghezza
+   minimizzata al contenuto (width:1% + nowrap → si stringe al box più largo
+   tra header "Rep." e badge "100"). Header e badge centrati, padding ridotto.
+   Il nome (colonna auto) prende tutto lo spazio residuo. */
+.rep-table--flush .rep-table th.rep-col--right,
+.rep-table--flush .rep-table td.rep-col--right {
+  width: 1%; white-space: nowrap; text-align: center;
+  padding-left: .3rem; padding-right: .3rem;
+}
+.rep-table--flush .rep-table td.rep-col--right .ds-score { min-width: 0; }
 .rep-th-help { display: inline-flex; align-items: center; gap: .4rem; }
 
 /* Ultima colonna sempre allineata a destra in tutte le viste lista */
