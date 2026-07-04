@@ -19,10 +19,8 @@
         @click.stop @keydown.enter="saveEdit" @keydown.escape="cancelEdit" aria-label="Nome gruppo" />
     </div>
 
-    <!-- Meta: tipo + numero membri -->
+    <!-- Meta: numero membri -->
     <div class="rep-gc__meta">
-      <span v-if="group.type" class="ds-badge">{{ group.type }}</span>
-      <span v-else class="rep-empty">senza tipo</span>
       <span class="rep-gc__members">{{ memberCount }} {{ memberCount === 1 ? 'membro' : 'membri' }}</span>
     </div>
 

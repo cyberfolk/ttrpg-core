@@ -61,7 +61,6 @@
         <colgroup>
           <col class="rep-col--num" />
           <col />
-          <col class="rep-col--type" />
           <col class="rep-col--members" />
           <col class="rep-col--score" />
           <col class="rep-col--actions" />
@@ -70,7 +69,6 @@
           <tr>
             <th class="rep-table__num">#</th>
             <SortableTh col="name" :sort="sort" @sort="toggleSort">Nome</SortableTh>
-            <SortableTh col="type" class="rep-col--type-cell" :sort="sort" @sort="toggleSort">Tipo</SortableTh>
             <SortableTh col="members" class="rep-col--right" :sort="sort" @sort="toggleSort"># Membri</SortableTh>
             <SortableTh col="score" class="rep-col--right" :sort="sort" @sort="toggleSort">Reputazione</SortableTh>
             <th class="rep-table__actions-cell">Azioni</th>
@@ -96,15 +94,6 @@
                 @keydown.enter="saveEdit(group.id)" @keydown.escape="cancelEdit" />
             </td>
 
-            <!-- Tipo -->
-            <td class="rep-col--type-cell" @click.stop>
-              <span v-if="editingId !== group.id">
-                <span v-if="group.type" class="ds-badge">{{ group.type }}</span>
-                <span v-else class="rep-empty">–</span>
-              </span>
-              <input v-else class="ds-input rep-table__edit" type="text" v-model="editType" placeholder="Tipo (es. fazione)"
-                @keydown.enter="saveEdit(group.id)" @keydown.escape="cancelEdit" />
-            </td>
 
             <!-- # Membri (solo numero, ordinabile come int) -->
             <td class="rep-col--right" style="font-variant-numeric:tabular-nums">
@@ -159,7 +148,6 @@
       <div v-for="group in archivedGroups" :key="group.id" class="ds-card ds-card--filament rep-group-row rep-group-row--archived">
         <span class="rep-group-row__name" style="opacity:0.6">
           {{ $name(group) }}
-          <span v-if="group.type" class="ds-badge" style="margin-left:0.35rem">{{ group.type }}</span>
         </span>
         <div class="rep-group-row__actions">
           <button class="ds-btn ds-btn--ghost ds-btn--sm" @click="onRestore(group.id)">
@@ -192,13 +180,6 @@
                   placeholder="Es. Fratellanza dell'Alba" v-model="newName" />
               </span>
             </span>
-            <span class="ds-field ds-field--block">
-              <label class="ds-field__label" for="add-group-type">Tipo (opzionale)</label>
-              <span class="ds-field__wrap">
-                <input id="add-group-type" class="ds-input" type="text"
-                  placeholder="Es. fazione, gilda, casata…" v-model="newType" />
-              </span>
-            </span>
           </form>
         </div>
         <div class="ds-dialog__foot">
@@ -225,7 +206,6 @@ import {
   restoreGroup,
   hardDeleteGroup,
   renameGroup,
-  setGroupType,
   averageIncomingScore,
 } from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
@@ -247,12 +227,10 @@ const viewMode = ref('gallery');
 const search = ref('');
 const addOpen = ref(false);
 const newName = ref('');
-const newType = ref('');
 const nameInput = ref(null);
 
 const editingId = ref(null);
 const editName = ref('');
-const editType = ref('');
 
 const activeGroups = computed(() => listActiveGroups(state.value));
 const archivedGroups = computed(() => listArchivedGroups(state.value));
@@ -281,7 +259,7 @@ function scoreOf(id) {
   return score;
 }
 
-// Ordinamento colonne (stato locale della vista). nome/tipo partono asc;
+// Ordinamento colonne (stato locale della vista). nome parte asc;
 // numeri (membri/punteggio) partono desc. Il reset di pagina è nel watch sotto.
 const { sort, toggleSort } = useSortable({
   initial: { key: 'name', dir: 'asc' },
@@ -294,10 +272,6 @@ const sortedActive = computed(() => {
   const rows = [...filteredActive.value].sort((a, b) => {
     if (key === 'name') {
       const cmp = a.name.localeCompare(b.name) * mul;
-      return cmp;
-    }
-    if (key === 'type') {
-      const cmp = (a.type || '').localeCompare(b.type || '') * mul;
       return cmp;
     }
     if (key === 'members') {
@@ -330,7 +304,6 @@ function openAdd() {
 function closeAdd() {
   addOpen.value = false;
   newName.value = '';
-  newType.value = '';
 }
 
 // Dialog "aggiungi gruppo": Escape chiude, apertura mette a fuoco il nome.
@@ -343,8 +316,7 @@ useDialog({
 function onAdd() {
   const name = newName.value.trim();
   if (!name) return;
-  const type = newType.value.trim();
-  dispatch((s) => addGroup(s, name, type));
+  dispatch((s) => addGroup(s, name));
   closeAdd();
 }
 
@@ -355,21 +327,17 @@ function goToProfile(id) {
 function startEdit(group) {
   editingId.value = group.id;
   editName.value = group.name;
-  editType.value = group.type;
 }
 
 function cancelEdit() {
   editingId.value = null;
   editName.value = '';
-  editType.value = '';
 }
 
 function saveEdit(id) {
   const name = editName.value.trim();
   if (!name) return;
-  const type = editType.value.trim();
   dispatch((s) => renameGroup(s, id, name));
-  dispatch((s) => setGroupType(s, id, type));
   cancelEdit();
 }
 
@@ -441,7 +409,6 @@ function onHardDelete(id) {
   width: 100%;
 }
 .rep-col--num { width: 3rem; }
-.rep-col--type { width: 9rem; }
 .rep-col--members { width: 6rem; }
 .rep-col--score { width: 6.5rem; }
 .rep-col--actions { width: 6.5rem; }
@@ -453,14 +420,12 @@ function onHardDelete(id) {
 }
 
 /* Mobile: recupero larghezza per il nome. Restano nome + membri + reputazione;
-   #, tipo e azioni (rinomina/tipo/archivia stanno nella scheda) spariscono. */
+   # e azioni (rinomina/archivia stanno nella scheda) spariscono. */
 @media (max-width: 560px) {
   .rep-table--stable { table-layout: auto; }
   .rep-col--num,
-  .rep-col--type,
   .rep-col--actions { width: 0; }
   .rep-table__num,
-  .rep-col--type-cell,
   .rep-table__actions-cell { display: none; }
 }
 

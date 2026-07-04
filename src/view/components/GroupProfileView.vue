@@ -11,17 +11,12 @@
     <!-- Intestazione gruppo -->
     <div class="ds-card ds-card--filament" style="padding:1.5rem 1.75rem 1.75rem">
       <div class="rep-profile__head">
-        <!-- Riga titolo: nome (+ tipo) e ingranaggio azioni. In editing: input + Salva/Annulla. -->
+        <!-- Riga titolo: nome e ingranaggio azioni. In editing: input + Salva/Annulla. -->
         <div class="rep-profile__titlerow">
-          <h2 v-if="editing === false">
-            {{ $name(group) }}
-            <span v-if="group.type" class="ds-badge" style="margin-left:0.5rem">{{ group.type }}</span>
-          </h2>
+          <h2 v-if="editing === false">{{ $name(group) }}</h2>
           <span v-else class="rep-gp-edit">
             <input class="ds-input rep-gp-edit__name" type="text" v-model="editName"
               aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
-            <input class="ds-input rep-gp-edit__type" type="text" v-model="editType"
-              placeholder="Tipo (es. fazione)" aria-label="Tipo" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
           </span>
 
           <div v-if="editing" class="rep-profile__editactions">
@@ -265,7 +260,6 @@ import {
   groupDerivedIncoming,
   groupDerivedOutgoing,
   renameGroup,
-  setGroupType,
   softDeleteGroup,
   restoreGroup,
   hardDeleteGroup,
@@ -294,10 +288,9 @@ const router = useRouter();
 const tab = ref('in');
 const selectedCandidateId = ref('');
 const activeTx = ref(null);
-// Rinomina/tipo inline del gruppo dall'header della scheda.
+// Rinomina inline del gruppo dall'header della scheda.
 const editing = ref(false);
 const editName = ref('');
-const editType = ref('');
 
 // Tab "Punteggi" nascosto di default: rivelato dall'azione Punteggi nel menu
 // dell'ingranaggio, che poi ci porta direttamente sopra.
@@ -420,23 +413,19 @@ function openTxFromList(pair) {
 function startEdit() {
   if (group.value === null) return;
   editName.value = group.value.name;
-  editType.value = group.value.type;
   editing.value = true;
 }
 
 function cancelEdit() {
   editing.value = false;
   editName.value = '';
-  editType.value = '';
 }
 
 function saveEdit() {
   const name = editName.value.trim();
   if (!name) return;
-  const type = editType.value.trim();
   const id = group.value.id;
   dispatch((s) => renameGroup(s, id, name));
-  dispatch((s) => setGroupType(s, id, type));
   cancelEdit();
 }
 
@@ -460,7 +449,7 @@ function onHardDelete() {
 </script>
 
 <style scoped>
-/* Rinomina inline: nome grande come il titolo, tipo piu' piccolo accanto. */
+/* Rinomina inline: nome grande come il titolo. */
 .rep-gp-edit {
   display: inline-flex;
   flex-wrap: wrap;
@@ -471,9 +460,6 @@ function onHardDelete() {
   font-size: 1.3rem;
   font-weight: 600;
   max-width: 100%;
-}
-.rep-gp-edit__type {
-  max-width: 12rem;
 }
 
 .rep-gp-tabs {

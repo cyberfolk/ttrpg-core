@@ -100,13 +100,12 @@
               <tr>
                 <th class="rep-table__num">#</th>
                 <th>Nome</th>
-                <th>Tipo</th>
                 <th>Azioni</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="memberGroups.length === 0">
-                <td colspan="4" class="rep-empty">Non è membro di alcun gruppo.</td>
+                <td colspan="3" class="rep-empty">Non è membro di alcun gruppo.</td>
               </tr>
               <tr v-for="(group, i) in memberGroups" :key="group.id"
                 class="rep-table__row--clickable" role="button" tabindex="0"
@@ -118,10 +117,6 @@
                     {{ $name(group) }}
                     <Icon name="goto" />
                   </span>
-                </td>
-                <td>
-                  <span v-if="group.type" class="ds-badge">{{ group.type }}</span>
-                  <span v-else>–</span>
                 </td>
                 <td @click.stop>
                   <div class="rep-table__actions">
@@ -144,7 +139,7 @@
             <tfoot>
               <tr class="rep-addrow">
                 <td></td>
-                <td colspan="2">
+                <td>
                   <select class="ds-input" v-model="newGroupId" aria-label="Gruppo da aggiungere">
                     <option value="" disabled>Scegli un gruppo…</option>
                     <option v-for="g in availableGroups" :key="g.id" :value="g.id">{{ $name(g) }}</option>
