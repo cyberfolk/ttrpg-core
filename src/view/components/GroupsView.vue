@@ -14,24 +14,26 @@
         </span>
       </div>
 
-      <!-- Segmented view switcher -->
-      <div class="ds-seg">
+      <!-- Segmented view switcher (icone: label solo per screen reader) -->
+      <div class="ds-seg ds-seg--icons" role="group" aria-label="Vista">
         <button class="ds-seg__btn" :class="{ active: viewMode === 'gallery' }"
-          @click="viewMode = 'gallery'">
-          <span class="ds-seg__icon"><Icon name="gallery" /></span>
-          Gallery
+          @click="viewMode = 'gallery'" :aria-pressed="viewMode === 'gallery'"
+          aria-label="Vista gallery" title="Gallery">
+          <span class="ds-seg__icon" aria-hidden="true"><Icon name="gallery" /></span>
+          <span class="ds-vh">Gallery</span>
         </button>
         <button class="ds-seg__btn" :class="{ active: viewMode === 'list' }"
-          @click="viewMode = 'list'">
-          <span class="ds-seg__icon"><Icon name="list" /></span>
-          Lista
+          @click="viewMode = 'list'" :aria-pressed="viewMode === 'list'"
+          aria-label="Vista lista" title="Lista">
+          <span class="ds-seg__icon" aria-hidden="true"><Icon name="list" /></span>
+          <span class="ds-vh">Lista</span>
         </button>
       </div>
 
       <div class="rep-toolbar__add">
-        <button class="ds-btn ds-btn--primary" @click="openAdd">
-          <span class="ds-btn__icon"><Icon name="plus" /></span>
-          Aggiungi gruppo
+        <button class="ds-btn ds-btn--primary" @click="openAdd" aria-label="Aggiungi gruppo">
+          <span class="ds-btn__icon" aria-hidden="true"><Icon name="plus" /></span>
+          <span class="ds-btn__label">Aggiungi gruppo</span>
         </button>
       </div>
     </div>
@@ -64,9 +66,7 @@
           <tr>
             <th class="rep-table__num">#</th>
             <SortableTh col="name" :sort="sort" @sort="toggleSort">Nome</SortableTh>
-            <SortableTh col="members" :sort="sort" @sort="toggleSort">
-              <span class="rep-th-full"># Membri</span><span class="rep-th-abbr">Membri</span>
-            </SortableTh>
+            <SortableTh col="members" class="rep-table__members-cell" :sort="sort" @sort="toggleSort"># Membri</SortableTh>
             <SortableTh col="score" class="rep-col--right" :sort="sort" @sort="toggleSort">Rep.</SortableTh>
             <th class="rep-table__actions-cell">Azioni</th>
           </tr>
@@ -93,7 +93,7 @@
 
 
             <!-- # Membri (solo numero, ordinabile come int) -->
-            <td style="font-variant-numeric:tabular-nums">
+            <td class="rep-table__members-cell" style="font-variant-numeric:tabular-nums">
               {{ group.memberIds.length }}
             </td>
 
@@ -418,26 +418,23 @@ function onHardDelete(id) {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* Header Membri/Reputazione: label piena su desktop, abbreviata su mobile (@media). */
-.rep-th-abbr { display: none; }
 
-/* Mobile: resta table-layout:fixed (deterministico). Le colonne # e Azioni
-   (rinomina/archivia stanno nella scheda) vanno a larghezza 0 con contenuto
-   nascosto, MA le celle restano nel DOM: con display:none la colonna sparirebbe
-   dal modello tabella mentre il <colgroup> mantiene i suoi 5 <col>, sfasando le
-   larghezze di una colonna (il nome collassa sotto il punteggio). Membri e
-   Reputazione restano stretti, il nome prende il resto e tronca con ellissi. */
+/* Mobile: resta table-layout:fixed (deterministico). Le colonne #, Membri e
+   Azioni (rinomina/archivia stanno nella scheda) vanno a larghezza 0 con
+   contenuto nascosto, MA le celle restano nel DOM: con display:none la colonna
+   sparirebbe dal modello tabella mentre il <colgroup> mantiene i suoi 5 <col>,
+   sfasando le larghezze di una colonna (il nome collassa sotto il punteggio).
+   Restano solo Nome + Reputazione; il nome prende il resto e tronca con ellissi. */
 @media (max-width: 560px) {
   .rep-col--num,
+  .rep-col--members,
   .rep-col--actions { width: 0; }
   .rep-table__num,
+  .rep-table__members-cell,
   .rep-table__actions-cell { padding-left: 0; padding-right: 0; overflow: hidden; }
-  .rep-table__num { font-size: 0; }
+  .rep-table__num,
+  .rep-table__members-cell { font-size: 0; }
   .rep-table__actions-cell :deep(.rep-table__actions) { display: none; }
-  .rep-col--members { width: 5rem; }
-  .rep-col--score { width: 4.5rem; }
-  .rep-th-full { display: none; }
-  .rep-th-abbr { display: inline; }
   .rep-table--stable :deep(td.rep-table__name-cell) {
     overflow: hidden;
     text-overflow: ellipsis;

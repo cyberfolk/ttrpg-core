@@ -448,7 +448,15 @@ a:hover { color: var(--gold-600); }
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-lg);
 }
-.rep-toolbar__search { flex: 1 1 240px; min-width: 200px; }
+.rep-toolbar__search { flex: 1 1 auto; min-width: 0; }
+/* Switch-vista a sole icone: label testuale resta per screen reader (.ds-vh) */
+.ds-seg--icons .ds-seg__btn { gap: 0; padding: .45rem .6rem; }
+.ds-seg--icons .ds-seg__icon { width: 1.1em; height: 1.1em; }
+/* Solo screen reader: testo accessibile ma invisibile a schermo */
+.ds-vh {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
 /* Switch (toggle) — coerente col design system dorato */
 .ds-switch { position: relative; display: inline-flex; flex: none; }
 .ds-switch input {
@@ -483,12 +491,15 @@ a:hover { color: var(--gold-600); }
 }
 .rep-toolbar__add { display: flex; gap: var(--space-2); margin-left: auto; }
 
-/* Mobile: segmented switcher full-width, bottoni equi-divisi, no overflow */
+/* Mobile: toolbar su una riga sola. Search cresce, azioni compatte a destra:
+   segmented a sole icone + "+" solo icona (la label passa a screen reader). */
 @media (max-width: 480px) {
-  .ds-seg { display: flex; width: 100%; }
-  .ds-seg__btn { flex: 1 1 0; min-width: 0; justify-content: center; padding: .45rem .4rem; }
-  .rep-toolbar__add { width: 100%; margin-left: 0; }
-  .rep-toolbar__add .ds-btn { flex: 1 1 auto; justify-content: center; }
+  .rep-toolbar { gap: var(--space-2); padding: .6rem .65rem; flex-wrap: nowrap; }
+  .rep-toolbar .ds-seg { flex: none; }
+  .rep-toolbar .ds-seg__btn { min-height: 40px; }
+  .rep-toolbar__add { margin-left: 0; flex: none; }
+  .rep-toolbar__add .ds-btn { padding: .5rem; min-width: 44px; min-height: 44px; }
+  .rep-toolbar__add .ds-btn__label { display: none; }
   /* Le tabelle lista (personaggi/gruppi) gestiscono il proprio layout mobile nei
      rispettivi componenti (colgroup + table-layout:auto, colonne # e Azioni nascoste).
      Qui niente table-layout/larghezze fisse: sovrascriverebbero l'auto scoped con

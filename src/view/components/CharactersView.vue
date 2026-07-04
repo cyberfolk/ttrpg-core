@@ -15,25 +15,27 @@
         </span>
       </div>
 
-      <!-- Segmented view switcher -->
-      <div class="ds-seg">
+      <!-- Segmented view switcher (icone: label solo per screen reader) -->
+      <div class="ds-seg ds-seg--icons" role="group" aria-label="Vista">
         <button class="ds-seg__btn" :class="{ active: ui.activeView === 'gallery' }"
-          @click="ui.activeView = 'gallery'">
-          <span class="ds-seg__icon"><Icon name="gallery" /></span>
-          Gallery
+          @click="ui.activeView = 'gallery'" :aria-pressed="ui.activeView === 'gallery'"
+          aria-label="Vista gallery" title="Gallery">
+          <span class="ds-seg__icon" aria-hidden="true"><Icon name="gallery" /></span>
+          <span class="ds-vh">Gallery</span>
         </button>
         <button class="ds-seg__btn" :class="{ active: ui.activeView === 'list' }"
-          @click="ui.activeView = 'list'">
-          <span class="ds-seg__icon"><Icon name="list" /></span>
-          Lista
+          @click="ui.activeView = 'list'" :aria-pressed="ui.activeView === 'list'"
+          aria-label="Vista lista" title="Lista">
+          <span class="ds-seg__icon" aria-hidden="true"><Icon name="list" /></span>
+          <span class="ds-vh">Lista</span>
         </button>
       </div>
 
-      <!-- Add character -->
+      <!-- Add character (label visibile su desktop, solo icona su mobile) -->
       <div class="rep-toolbar__add">
-        <button class="ds-btn ds-btn--primary" @click="openAdd">
-          <span class="ds-btn__icon"><Icon name="plus" /></span>
-          Aggiungi personaggio
+        <button class="ds-btn ds-btn--primary" @click="openAdd" aria-label="Aggiungi personaggio">
+          <span class="ds-btn__icon" aria-hidden="true"><Icon name="plus" /></span>
+          <span class="ds-btn__label">Aggiungi personaggio</span>
         </button>
       </div>
     </div>
