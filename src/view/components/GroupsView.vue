@@ -14,26 +14,16 @@
         </span>
       </div>
 
-      <!-- Segmented view switcher (icone: label solo per screen reader) -->
-      <div class="ds-seg ds-seg--icons" role="group" aria-label="Vista">
-        <button class="ds-seg__btn" :class="{ active: viewMode === 'gallery' }"
-          @click="viewMode = 'gallery'" :aria-pressed="viewMode === 'gallery'"
-          aria-label="Vista gallery" title="Gallery">
-          <span class="ds-seg__icon" aria-hidden="true"><Icon name="gallery" /></span>
-          <span class="ds-vh">Gallery</span>
+      <!-- Azioni: toggle vista (griglia<->lista) + aggiungi, icone compatte -->
+      <div class="rep-toolbar__actions">
+        <button class="ds-btn ds-btn--secondary ds-btn--icon" @click="toggleView"
+          :aria-label="viewMode === 'list' ? 'Mostra come griglia' : 'Mostra come lista'"
+          :title="viewMode === 'list' ? 'Mostra come griglia' : 'Mostra come lista'">
+          <Icon :name="viewMode === 'list' ? 'gallery' : 'list'" />
         </button>
-        <button class="ds-seg__btn" :class="{ active: viewMode === 'list' }"
-          @click="viewMode = 'list'" :aria-pressed="viewMode === 'list'"
-          aria-label="Vista lista" title="Lista">
-          <span class="ds-seg__icon" aria-hidden="true"><Icon name="list" /></span>
-          <span class="ds-vh">Lista</span>
-        </button>
-      </div>
-
-      <div class="rep-toolbar__add">
-        <button class="ds-btn ds-btn--primary" @click="openAdd" aria-label="Aggiungi gruppo">
-          <span class="ds-btn__icon" aria-hidden="true"><Icon name="plus" /></span>
-          <span class="ds-btn__label">Aggiungi gruppo</span>
+        <button class="ds-btn ds-btn--primary ds-btn--icon" @click="openAdd"
+          aria-label="Aggiungi gruppo" title="Aggiungi gruppo">
+          <Icon name="plus" />
         </button>
       </div>
     </div>
@@ -221,6 +211,10 @@ const ui = useUiState();
 const router = useRouter();
 
 const viewMode = ref('gallery');
+// Toggle vista: da lista torna a griglia, altrimenti va in lista
+function toggleView() {
+  viewMode.value = viewMode.value === 'list' ? 'gallery' : 'list';
+}
 const search = ref('');
 const addOpen = ref(false);
 const newName = ref('');

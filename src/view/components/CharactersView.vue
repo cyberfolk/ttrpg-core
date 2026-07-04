@@ -15,27 +15,16 @@
         </span>
       </div>
 
-      <!-- Segmented view switcher (icone: label solo per screen reader) -->
-      <div class="ds-seg ds-seg--icons" role="group" aria-label="Vista">
-        <button class="ds-seg__btn" :class="{ active: ui.activeView === 'gallery' }"
-          @click="ui.activeView = 'gallery'" :aria-pressed="ui.activeView === 'gallery'"
-          aria-label="Vista gallery" title="Gallery">
-          <span class="ds-seg__icon" aria-hidden="true"><Icon name="gallery" /></span>
-          <span class="ds-vh">Gallery</span>
+      <!-- Azioni: toggle vista (griglia<->lista) + aggiungi, icone compatte -->
+      <div class="rep-toolbar__actions">
+        <button class="ds-btn ds-btn--secondary ds-btn--icon" @click="toggleView"
+          :aria-label="isList ? 'Mostra come griglia' : 'Mostra come lista'"
+          :title="isList ? 'Mostra come griglia' : 'Mostra come lista'">
+          <Icon :name="isList ? 'gallery' : 'list'" />
         </button>
-        <button class="ds-seg__btn" :class="{ active: ui.activeView === 'list' }"
-          @click="ui.activeView = 'list'" :aria-pressed="ui.activeView === 'list'"
-          aria-label="Vista lista" title="Lista">
-          <span class="ds-seg__icon" aria-hidden="true"><Icon name="list" /></span>
-          <span class="ds-vh">Lista</span>
-        </button>
-      </div>
-
-      <!-- Add character (label visibile su desktop, solo icona su mobile) -->
-      <div class="rep-toolbar__add">
-        <button class="ds-btn ds-btn--primary" @click="openAdd" aria-label="Aggiungi personaggio">
-          <span class="ds-btn__icon" aria-hidden="true"><Icon name="plus" /></span>
-          <span class="ds-btn__label">Aggiungi personaggio</span>
+        <button class="ds-btn ds-btn--primary ds-btn--icon" @click="openAdd"
+          aria-label="Aggiungi personaggio" title="Aggiungi personaggio">
+          <Icon name="plus" />
         </button>
       </div>
     </div>
@@ -82,7 +71,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { useUiState } from '../useUiState.js';
 import { useStore } from '../useStore.js';
 import { useDisplayedCharacters } from '../useDisplayedCharacters.js';
@@ -99,6 +88,12 @@ const { items, total } = useDisplayedCharacters();
 const newName = ref('');
 const addOpen = ref(false);
 const nameInput = ref(null);
+
+// Toggle vista: se in lista torna a griglia, altrimenti (griglia o matrix) va in lista
+const isList = computed(() => ui.activeView === 'list');
+function toggleView() {
+  ui.activeView = isList.value ? 'gallery' : 'list';
+}
 
 async function openAdd() {
   addOpen.value = true;
