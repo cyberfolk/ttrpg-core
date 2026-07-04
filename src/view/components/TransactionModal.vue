@@ -183,7 +183,13 @@ const editingId = ref(null);
 // Modale montata solo da aperta: Escape chiude, apertura seleziona il delta.
 useDialog({
   onClose: () => emit('close'),
-  onOpen: () => deltaInput.value?.select(),
+  onOpen: () => {
+    // Su touch niente auto-focus: scatenerebbe tastiera + scroll dell'input in
+    // fondo (add-row) dentro la vista, aprendo il dialog storto/tagliato. Da
+    // desktop resta la comodità di avere il delta già selezionato.
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+    if (!isTouchDevice) deltaInput.value?.select();
+  },
 });
 
 function charName(id) {
