@@ -26,11 +26,6 @@
           <span class="ds-seg__icon"><Icon name="list" /></span>
           Lista
         </button>
-        <button class="ds-seg__btn" :class="{ active: viewMode === 'matrix' }"
-          disabled aria-disabled="true" title="Non ancora disponibile">
-          <span class="ds-seg__icon"><Icon name="matrix" /></span>
-          Matrice
-        </button>
       </div>
 
       <div class="rep-toolbar__add">

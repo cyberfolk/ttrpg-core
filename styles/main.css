@@ -826,6 +826,15 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 .rep-tx-table tbody tr:hover { background: var(--paper-50); }
 .rep-tx-table .rep-tx__delta { font-size: var(--fs-sm); font-weight: 800; }
 .rep-tx-table .rep-tx__when { text-align: left; }
+
+/* Smartphone: nel popup transazione tengo solo Delta + Motivo (+ riga Aggiungi).
+   Via la colonna Data e le azioni Modifica/Elimina sulle righe; il bottone
+   Aggiungi nel tfoot resta (e' fuori dallo scope tbody). */
+@media (max-width: 560px) {
+  .rep-tx-table .rep-tx__when-col,
+  .rep-tx-table .rep-tx__when { display: none; }
+  .rep-tx-table tbody .rep-table__actions { display: none; }
+}
 .rep-rel-arrow { display: inline-flex; flex-direction: column; align-items: stretch; line-height: 1; min-width: 4rem; margin-inline: 6px; flex: none; }
 .rep-rel-arrow__label {
   font-family: var(--font-sans); font-style: italic; font-weight: 400;
@@ -849,6 +858,12 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 .rep-profile__card { padding: var(--space-6) var(--space-7) var(--space-7); }
 .rep-profile__tabs { margin: var(--space-5) 0 var(--space-6); }
 .rep-profile__orn  { margin-top: var(--space-6); }
+
+/* Smartphone: nelle liste dentro le schede (RelationList, Membri, Membro di)
+   la colonna "#" numero riga ruba spazio al nome → via su schermi stretti. */
+@media (max-width: 560px) {
+  .rep-profile .rep-table__num { display: none; }
+}
 
 /* === Menu azioni (kebab/gear) ============================== */
 /* Regole globali: le voci sono slot content, quindi hanno lo scope del genitore

@@ -27,11 +27,6 @@
           <span class="ds-seg__icon"><Icon name="list" /></span>
           Lista
         </button>
-        <button class="ds-seg__btn" :class="{ active: ui.activeView === 'matrix' }"
-          @click="ui.activeView = 'matrix'">
-          <span class="ds-seg__icon"><Icon name="matrix" /></span>
-          Matrice
-        </button>
       </div>
 
       <!-- Add character -->
