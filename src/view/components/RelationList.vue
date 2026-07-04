@@ -375,16 +375,17 @@ button.ds-score {
   aspect-ratio: 1;          /* quadrato: larghezza segue l'altezza */
   padding: 0.4rem;
   font-size: 1.2rem;
-  background: var(--surface-card);
-  border: 1px solid var(--border-strong);
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: var(--radius-md);
-  color: var(--text-muted);
+  color: var(--text-faint);
   cursor: pointer;
   line-height: 1;
   transition: color var(--dur-fast), background var(--dur-fast), border-color var(--dur-fast);
 }
 .rep-col-opts__btn:hover {
-  border-color: var(--gold-500);
+  background: var(--surface-card);
+  border-color: var(--border-strong);
   color: var(--text-strong);
 }
 .rep-col-opts__btn:focus-visible {
