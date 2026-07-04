@@ -402,8 +402,12 @@ function fmtDay(ts) {
   column-gap: var(--space-4);
   row-gap: var(--space-1);
 }
-.fv-verso__reading .fv-verso__attrib-kicker { align-self: end; }
-.fv-verso__reading .fv-verso__source { align-self: start; }
+/* Nudge ottico: la coppia kicker→fonte sale un filo verso l'alto del badge.
+   Margini (non transform), così resta nel flusso: il margin-bottom sul kicker
+   (ancorato in fondo alla riga 1) lo solleva; il margin-top negativo sulla fonte
+   (ancorata in cima alla riga 2) la tira su un pelo di più → coppia stretta e alta. */
+.fv-verso__reading .fv-verso__attrib-kicker { align-self: end; margin-bottom: 6px; }
+.fv-verso__reading .fv-verso__source { align-self: start; margin-top: -9px; }
 .fv-verso__reading--agg { padding-top: var(--space-4); }
 
 /* Comparsa della complessiva: grid-template-rows 0fr→1fr (riflusso senza
