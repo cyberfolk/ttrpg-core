@@ -5,6 +5,14 @@ Stato: COMPLETATA — implementata via `plan.md`, mergiata in `main`, live su Gi
 Riferimenti: `requisiti.md`, [[01-presentazione-dati]], [[02-domande-pre-brainstorm]],
 [[03-scelta-framework-frontend]], [[0002-no-anticipare-backend]]
 
+> ⚠️ **Snapshot storico (feature 003).** Il cuore di questo design — stack Vue (ADR 0003),
+> bridge sottile store→ref, `averageIncomingScore`, routing history + `404.html`, profilo
+> entrata/uscita — è **tuttora valido**. Sono invece **superate** alcune parti della VIEW:
+> - la **vista Matrice** (switcher, `MatrixView`, `activeView: 'matrix'`, §Routing/§Componenti)
+>   è stata **rimossa**: lo switcher attivo è solo **Gallery | Lista**.
+> - **Export/Import** e il toggle **"Mostra archiviati"**, qui descritti nell'header/toolbar,
+>   sono stati **spostati nel drawer** dalla feature 004.
+
 ## Obiettivo
 
 Migliorare la presentazione dei dati di reputazione. Oggi esiste solo la matrice, poco
