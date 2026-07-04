@@ -3,8 +3,8 @@
     <header class="fv__intro">
       <h1 class="fv__title">Faccia a faccia</h1>
       <p class="fv__lead">
-        Scegli due nomi e leggi la reputazione che ciascuno ha dell'altro — le due
-        direzioni sono indipendenti — con il registro delle transazioni tra loro.
+        Scegli due nomi e leggi che reputazione ha ciascuno dell'altro: due giudizi
+        indipendenti, con il registro delle transazioni tra loro.
       </p>
     </header>
 
@@ -20,42 +20,80 @@
     <!-- Entrambi scelti: reputazione reciproca + registro -->
     <Transition name="fv-rise">
       <div v-if="nodeA && nodeB" class="fv__relation">
+        <!-- Testata del blocco: titolo di sezione a sinistra, controllo unico
+             (mostra/nasconde la complessiva su entrambe le card) a destra.
+             Barra a due estremi voluta; dà contesto e casa al toggle. -->
+        <div class="fv__reciprocal-head">
+          <h2 class="fv__reciprocal-title">Reputazione reciproca</h2>
+          <button type="button" class="fv__aggtoggle"
+            :class="{ 'is-on': aggShown }" :aria-pressed="aggShown"
+            @click="toggleAgg()">
+            {{ aggShown ? 'Nascondi' : 'Mostra' }} reputazione complessiva
+          </button>
+        </div>
+
         <div class="fv__versi">
+
           <article v-for="v in versi" :key="v.key" class="fv-verso">
-            <div class="fv-verso__body">
-              <!-- Possessore della reputazione = l'osservato (chi riceve il giudizio):
-                   soggetto in alto, identità della card. -->
-              <RouterLink class="fv-verso__owner"
-                :to="linkTo(v.toKind, v.toId)" :title="v.toName">
-                <span class="fv-verso__owner-glyph" aria-hidden="true"><Icon :name="v.toIcon" /></span>
-                <span class="fv-verso__owner-name">{{ v.toName }}<span v-if="v.toSuffix" class="fv-verso__suffix">#{{ v.toSuffix }}</span></span>
-              </RouterLink>
+            <!-- Titolo = il possessore (l'osservato), identità della card. -->
+            <RouterLink class="fv-verso__owner"
+              :to="linkTo(v.toKind, v.toId)" :title="v.toName">
+              <span class="fv-verso__owner-glyph" aria-hidden="true"><Icon :name="v.toIcon" /></span>
+              <span class="fv-verso__owner-name">{{ v.toName }}<span v-if="v.toSuffix" class="fv-verso__suffix">#{{ v.toSuffix }}</span></span>
+            </RouterLink>
 
-              <span class="fv-verso__score"
-                :style="{ background: scoreColor(v.score) }"
-                :aria-label="`Reputazione di ${v.toName}: ${v.score} su 100, secondo ${v.fromName}`">
-                <CountUp :value="v.score" />
-              </span>
-
-              <!-- Attribuzione: di chi è questo giudizio (l'osservatore = la fonte). -->
-              <p class="fv-verso__attrib">
-                <span class="fv-verso__attrib-label">Reputazione</span>
-                <span class="fv-verso__attrib-by">
-                  <span>secondo</span>
+            <!-- Letture: il giudizio del singolo osservatore e, in progressive
+                 disclosure, la reputazione complessiva. Stesso schema riga: badge
+                 a sinistra + etichetta, su un unico asse. -->
+            <div class="fv-verso__readings">
+              <div class="fv-verso__reading">
+                <span class="fv-verso__score"
+                  :style="{ background: scoreColor(v.score) }"
+                  :aria-label="`Reputazione di ${v.toName}: ${v.score} su 100, secondo ${v.fromName}`">
+                  <CountUp :value="v.score" />
+                </span>
+                <p class="fv-verso__attrib">
+                  <span class="fv-verso__attrib-kicker">Reputazione secondo</span>
                   <RouterLink class="fv-verso__source"
                     :to="linkTo(v.fromKind, v.fromId)" :title="v.fromName">
                     <span class="fv-verso__source-glyph" aria-hidden="true"><Icon :name="v.fromIcon" /></span>
                     <span class="fv-verso__source-name">{{ v.fromName }}<span v-if="v.fromSuffix" class="fv-verso__suffix">#{{ v.fromSuffix }}</span></span>
                   </RouterLink>
-                </span>
-              </p>
+                </p>
+              </div>
+
+              <!-- Comparsa fluida (grid-template-rows 0fr→1fr, non altezza): la
+                   reputazione complessiva scivola giù invece di apparire di scatto. -->
+              <Transition name="fv-agg">
+                <div v-if="aggShown" class="fv-verso__agg-wrap">
+                  <div class="fv-verso__reading fv-verso__reading--agg">
+                    <span class="fv-verso__score fv-verso__score--agg"
+                      :class="v.aggScore === null ? 'fv-verso__score--empty' : ''"
+                      :style="v.aggScore !== null ? { background: scoreColor(v.aggScore) } : undefined"
+                      :aria-label="`Reputazione complessiva di ${v.toName}: ${v.aggScore !== null ? v.aggScore + ' su 100' : 'nessun voto'}`">
+                      {{ v.aggScore !== null ? v.aggScore : '–' }}
+                    </span>
+                    <p class="fv-verso__attrib">
+                      <!-- L'helper è sull'etichetta stessa: al hover/focus spiega cos'è
+                           la reputazione complessiva, senza icona "?". -->
+                      <HoverTip :text="SCORE_TIP" label="Cos'è la reputazione complessiva"
+                        class-name="fv-verso__attrib-kicker fv-verso__agg-help">
+                        Reputazione complessiva
+                      </HoverTip>
+                    </p>
+                  </div>
+                </div>
+              </Transition>
             </div>
+
+            <!-- Azione: unica, allineata all'asse sinistro come tutto il resto. -->
             <button type="button" class="ds-btn ds-btn--ghost ds-btn--sm fv-verso__add"
               @click="registra(v.fromId, v.toId)">
               <span class="ds-btn__icon"><Icon name="plus" /></span>
               Registra transazione
             </button>
           </article>
+
         </div>
 
         <!-- Registro relazionale: entrambe le direzioni, dalle più recenti -->
@@ -116,19 +154,28 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useStore } from '../useStore.js';
-import { resolveNode, computeScore, listTransactions, listActiveCharacters, listActiveGroups } from '../../model/reputation.js';
+import { resolveNode, computeScore, averageIncomingScore, listTransactions, listActiveCharacters, listActiveGroups } from '../../model/reputation.js';
 import { ambiguousIds, displayName } from '../disambiguation.js';
 import { scoreColor } from '../scoreColor.js';
+import { SCORE_TIP } from '../uiCopy.js';
 import Icon from './Icon.vue';
 import EntityPicker from './EntityPicker.vue';
 import TransactionModal from './TransactionModal.vue';
 import CountUp from './CountUp.vue';
+import HoverTip from './HoverTip.vue';
 
 const { state } = useStore();
 
 const idA = ref(null);
 const idB = ref(null);
 const tx = ref(null);
+
+// Toggle globale: mostra/nasconde la reputazione complessiva (media dei giudizi
+// entranti) su entrambe le card insieme.
+const aggShown = ref(false);
+function toggleAgg() {
+  aggShown.value = !aggShown.value;
+}
 
 const nodeA = computed(() => (idA.value ? resolveNode(state.value, idA.value) : null));
 const nodeB = computed(() => (idB.value ? resolveNode(state.value, idB.value) : null));
@@ -164,6 +211,7 @@ const versi = computed(() => {
       fromKind: a.kind, toKind: b.kind,
       fromSuffix: suffixOf(a.entity.id), toSuffix: suffixOf(b.entity.id),
       score: computeScore(state.value, a.entity.id, b.entity.id),
+      aggScore: averageIncomingScore(state.value, b.entity.id, false),
     },
     {
       key: 'ba',
@@ -173,6 +221,7 @@ const versi = computed(() => {
       fromKind: b.kind, toKind: a.kind,
       fromSuffix: suffixOf(b.entity.id), toSuffix: suffixOf(a.entity.id),
       score: computeScore(state.value, b.entity.id, a.entity.id),
+      aggScore: averageIncomingScore(state.value, a.entity.id, false),
     },
   ];
   // Card sinistra = il Primo (idA) come possessore della reputazione; il Secondo
@@ -272,13 +321,52 @@ function fmtDay(ts) {
   grid-template-columns: 1fr 1fr;
   gap: var(--space-5);
 }
+/* Testata del blocco reciproco: titolo di sezione + toggle della complessiva,
+   barra a due estremi. Rispecchia il titolo "Registro" più sotto (coerenza). */
+.fv__reciprocal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+.fv__reciprocal-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+  color: var(--text-strong);
+  margin: 0;
+}
+.fv__aggtoggle {
+  padding: 0.28rem 0.7rem;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+}
+.fv__aggtoggle:hover { color: var(--accent-text); border-color: var(--gold-500); background: var(--gold-100); }
+.fv__aggtoggle:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+.fv__aggtoggle:active { transform: translateY(1px); }
+.fv__aggtoggle.is-on { color: var(--accent-text); border-color: var(--gold-500); background: var(--gold-100); }
+
+/* Card distillata: asse unico a sinistra, gerarchia titolo → punteggio →
+   contesto → azione. La segnatura oro resta il filetto in cima. */
 .fv-verso {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: var(--space-4);
-  padding: var(--space-7) var(--space-5) var(--space-6);
+  align-items: flex-start;
+  text-align: left;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-5);
   background: var(--surface-card);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-lg);
@@ -294,25 +382,82 @@ function fmtDay(ts) {
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: linear-gradient(90deg, transparent, var(--gold-400), transparent);
 }
-/* Corpo della card: gerarchia ribaltata. Il POSSESSORE della reputazione
-   (l'osservato) è il soggetto in alto; il suo punteggio sotto; l'attribuzione
-   "secondo [osservatore]" chiude dichiarando la fonte del giudizio. Così il
-   numero non "galleggia tra i due volti": si legge di chi è. */
-.fv-verso__body {
+
+/* Letture impilate: giudizio del singolo osservatore e, in progressive
+   disclosure, la reputazione complessiva. Gap 0: la spaziatura della complessiva
+   vive nel suo padding-top, così la comparsa la clippa insieme al contenuto. */
+.fv-verso__readings {
   display: flex;
   flex-direction: column;
+}
+/* Riga di lettura: badge (ancora sinistra) + etichetta, sullo stesso asse. */
+.fv-verso__reading {
+  display: flex;
   align-items: center;
-  gap: var(--space-3);
-  width: 100%;
+  gap: var(--space-4);
+}
+.fv-verso__reading--agg { padding-top: var(--space-4); }
+
+/* Comparsa della complessiva: grid-template-rows 0fr→1fr (riflusso senza
+   animare l'altezza) + opacità. ease-out-expo, uscita più rapida. */
+.fv-verso__agg-wrap {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+.fv-verso__agg-wrap > .fv-verso__reading { overflow: hidden; }
+.fv-agg-enter-active,
+.fv-agg-leave-active {
+  transition: grid-template-rows 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fv-agg-leave-active { transition-duration: 220ms; }
+.fv-agg-enter-from,
+.fv-agg-leave-to { grid-template-rows: 0fr; opacity: 0; }
+.fv-agg-enter-to,
+.fv-agg-leave-from { grid-template-rows: 1fr; opacity: 1; }
+
+/* Badge complessiva: stessa forma del chip, più piccolo → subordinato al
+   giudizio del singolo osservatore. */
+.fv-verso__score--agg {
+  min-width: 3.25rem;
+  padding: 0.3rem 0.9rem;
+  font-size: 1.6rem;
+}
+.fv-verso__score--empty {
+  background: var(--surface-panel);
+  color: var(--text-faint);
+  box-shadow: inset 0 0 0 1px var(--border-hairline);
 }
 
-/* Possessore = identità eroe della card: glifo + nome display (link scheda). */
+/* Kicker etichetta: micro-maiuscoletto del catalogo, singola riga. */
+.fv-verso__attrib-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-display);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+/* Helper sull'etichetta stessa: al hover/focus spiega cos'è la reputazione
+   complessiva. Cursore "help" come segnale che c'è una spiegazione. */
+.fv-verso__agg-help { cursor: help; transition: color var(--dur-fast); }
+.fv-verso__agg-help:hover { color: var(--accent-text); }
+.fv-verso__agg-help:focus-visible { outline: none; box-shadow: var(--shadow-focus); border-radius: var(--radius-sm); }
+
+/* Possessore = identità eroe della card: glifo + nome display (link scheda).
+   Nessun inset a sinistra: il glifo allinea col bordo sinistro delle righe sotto. */
 .fv-verso__owner {
   max-width: 100%;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-1) var(--space-2) var(--space-1) 0;
+  /* Nome grosso leggermente rientrato a sinistra (allineamento ottico del
+     maiuscoletto display, che ha spalla sinistra marcata). */
+  margin-left: -0.2rem;
   border-radius: var(--radius-sm);
   text-decoration: none;
   color: inherit;
@@ -354,27 +499,10 @@ function fmtDay(ts) {
 .fv-verso__attrib {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-1);
   margin: 0;
-}
-.fv-verso__attrib-label {
-  font-family: var(--font-display);
-  font-size: var(--fs-label);
-  font-weight: var(--fw-semibold);
-  letter-spacing: var(--ls-caps);
-  text-transform: uppercase;
-  /* Parola-chiave che contestualizza il numero: leggibile, non slavata. */
-  color: var(--text-muted);
-}
-.fv-verso__attrib-by {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.35rem;
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
+  max-width: 100%;
 }
 .fv-verso__source {
   display: inline-flex;
@@ -382,7 +510,8 @@ function fmtDay(ts) {
   gap: 0.3rem;
   max-width: 100%;
   min-width: 0;
-  padding: 0.1rem 0.3rem;
+  /* Nessun inset a sinistra: il glifo fonte allinea col resto del blocco. */
+  padding: 0.1rem 0.3rem 0.1rem 0;
   border-radius: var(--radius-sm);
   text-decoration: none;
   color: var(--text-body);
@@ -424,6 +553,7 @@ function fmtDay(ts) {
 /* Il punteggio è l'eroe visivo: grande numerale Cinzel su pillola tinta
    scoreColor, stessa forma dei chip punteggio delle altre schermate. */
 .fv-verso__score {
+  flex: none;
   display: grid;
   place-items: center;
   min-width: 4.75rem;
@@ -439,7 +569,12 @@ function fmtDay(ts) {
   box-shadow: inset 0 0 0 1px rgba(33, 28, 21, 0.08), var(--shadow-sm);
 }
 
-.fv-verso__add { align-self: center; margin-top: var(--space-2); }
+/* Filo sinistro come le altre righe: compenso il padding-left del bottone sm
+   (.7rem) con un margine negativo, così l'icona "+" allinea coi glifi sopra. */
+/* Filo sinistro: compenso il padding-left del bottone ghost sm (~0.7rem) con un
+   margine negativo, così l'icona "+" allinea con il bordo sinistro dei badge e
+   del titolo — l'asse unico della card. */
+.fv-verso__add { align-self: flex-start; margin: 0 0 0 -0.7rem; }
 
 /* Registro */
 .fv__ledger { margin-top: var(--space-8); }
@@ -519,8 +654,10 @@ function fmtDay(ts) {
   .fv__vs { display: none; }
   .fv__versi { grid-template-columns: 1fr; }
 
-  /* Card più stretta: punteggio più compatto e nome possessore fino a 3 righe,
-     così nomi tipo "Sera Ombravento" non si croppano. */
+  /* Card più stretta: gap ridotto tra pillola e testo, punteggio più compatto
+     e nome possessore fino a 3 righe, così nomi tipo "Sera Ombravento" non si
+     croppano. La riga orizzontale resta (card a piena larghezza sul telefono). */
+  .fv-verso { gap: var(--space-4); }
   .fv-verso__score { min-width: 3.75rem; padding: 0.4rem 0.9rem; }
   .fv-verso__owner-name { -webkit-line-clamp: 3; line-clamp: 3; }
 
@@ -580,5 +717,11 @@ function fmtDay(ts) {
 @media (prefers-reduced-motion: reduce) {
   .fv-rise-enter-active { transition: opacity var(--dur) linear; }
   .fv-rise-enter-from { transform: none; }
+
+  /* Comparsa complessiva: niente riflusso animato, solo crossfade. */
+  .fv-agg-enter-active,
+  .fv-agg-leave-active { transition: opacity 120ms linear; }
+  .fv-agg-enter-from,
+  .fv-agg-leave-to { grid-template-rows: 1fr; opacity: 0; }
 }
 </style>
