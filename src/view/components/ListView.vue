@@ -13,7 +13,7 @@
         <SortableTh col="name" :sort="ui.sort" @sort="toggleSort">Nome</SortableTh>
         <SortableTh col="score" :sort="ui.sort" @sort="toggleSort">
           <HoverTip :text="SCORE_TIP" :tab-index="-1" label="Reputazione complessiva">
-            Reputazione
+            Rep.
           </HoverTip>
         </SortableTh>
         <th class="rep-table__actions-cell">Azioni</th>
@@ -32,7 +32,7 @@
         v-activate>
 
         <td class="rep-table__num">{{ offset + i + 1 }}</td>
-        <td>
+        <td class="rep-table__name-cell">
           <template v-if="editingId !== item.char.id">
             <span class="rep-table__name" @click.stop="goToProfile(item.char.id)">
               {{ $name(item.char) }}
@@ -187,7 +187,10 @@ function onHardDelete(id) {
   width: 100%;
 }
 .rep-col--num { width: 3rem; }
-.rep-col--score { width: 6.5rem; }
+/* Colonna numerazione: label # e numeri centrati (il globale e' right-aligned). */
+.rep-table--stable :deep(.rep-table__num) { text-align: center; }
+/* Reputazione: label "Rep." e larghezza minima anche su desktop (come mobile). */
+.rep-col--score { width: 4.5rem; }
 .rep-col--actions { width: 6.5rem; }
 .rep-table--stable :deep(.rep-table__name) {
   max-width: 100%;
@@ -196,15 +199,24 @@ function onHardDelete(id) {
   white-space: nowrap;
 }
 
-/* Mobile: recupero larghezza per il nome. Niente colonna # e niente azioni
-   inline (rinomina/archivia stanno nella scheda). La tabella passa a layout
-   auto cosi' il nome prende tutto lo spazio liberato. */
+/* Mobile: resta table-layout:fixed (deterministico). Le colonne # e Azioni
+   (rinomina/archivia stanno nella scheda) vanno a larghezza 0 con contenuto
+   nascosto, MA le celle restano nel DOM: con display:none la colonna sparirebbe
+   dal modello tabella mentre il <colgroup> mantiene i suoi 5 <col>, sfasando le
+   larghezze di una colonna (il nome collassa sotto il punteggio). Il punteggio
+   si stringe, il nome prende lo spazio residuo e tronca con ellissi. */
 @media (max-width: 560px) {
-  .rep-table--stable { table-layout: auto; }
   .rep-col--num,
   .rep-col--actions { width: 0; }
   .rep-table__num,
-  .rep-table__actions-cell { display: none; }
+  .rep-table__actions-cell { padding-left: 0; padding-right: 0; overflow: hidden; }
+  .rep-table__num { font-size: 0; }
+  .rep-table__actions-cell :deep(.rep-table__actions) { display: none; }
+  .rep-table--stable :deep(td.rep-table__name-cell) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 /* Inline edit: input compatto + padding riga ridotto per non alterare

@@ -489,18 +489,11 @@ a:hover { color: var(--gold-600); }
   .ds-seg__btn { flex: 1 1 0; min-width: 0; justify-content: center; padding: .45rem .4rem; }
   .rep-toolbar__add { width: 100%; margin-left: 0; }
   .rep-toolbar__add .ds-btn { flex: 1 1 auto; justify-content: center; }
-  /* Tabella lista: rispetta larghezza container invece di crescere su min-content.
-     Escluse le flush (relazioni): la colonna punteggio usa width:1% content-shrink,
-     che funziona solo con table-layout:auto — sotto fixed collassa e la colonna Rep
-     sparisce. Coerente col commento sotto ("le flush restano auto"). */
-  .rep-table-wrap:not(.rep-table--flush) .rep-table { table-layout: fixed; }
+  /* Le tabelle lista (personaggi/gruppi) gestiscono il proprio layout mobile nei
+     rispettivi componenti (colgroup + table-layout:auto, colonne # e Azioni nascoste).
+     Qui niente table-layout/larghezze fisse: sovrascriverebbero l'auto scoped con
+     specificità maggiore e farebbero collassare le colonne (nome sotto il punteggio). */
   .rep-table th, .rep-table td { padding: .55rem .6rem; }
-  /* Larghezze fisse solo per la tabella lista (4 col); le tabelle flush (relazioni, 3 col)
-     e il registro Faccia a faccia (.fv-ledger, che su mobile diventa una lista) restano auto */
-  .rep-table-wrap:not(.rep-table--flush) .rep-table:not(.fv-ledger) th:nth-child(3),
-  .rep-table-wrap:not(.rep-table--flush) .rep-table:not(.fv-ledger) td:nth-child(3) { width: 4.5rem; }
-  .rep-table-wrap:not(.rep-table--flush) .rep-table:not(.fv-ledger) th:nth-child(4),
-  .rep-table-wrap:not(.rep-table--flush) .rep-table:not(.fv-ledger) td:nth-child(4) { width: 6.5rem; }
   /* Header colonna punteggio nelle tabelle relazioni: non spezzare/troncare */
   .rep-table--flush .rep-table th.rep-col--right { white-space: nowrap; }
   /* Padding orizzontale = verticale mobile (.55rem, come .rep-table td qui sopra).
