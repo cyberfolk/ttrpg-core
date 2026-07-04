@@ -1,7 +1,14 @@
 # Spec — Feature 004: Drawer di navigazione e contesto app
 
 Data: 2026-06-09
-Stato: COMPLETATA — implementata via `plan.md` (subagent-driven), 41/41 test verdi, build pulita, mergiata in `main` (2026-06-09). Le impostazioni del drawer sono diventate reali (export/import + mostra archiviati) rispetto alla bozza iniziale a placeholder.
+Stato: COMPLETATA — implementata via `plan.md` (subagent-driven), 41/41 test verdi, build pulita, mergiata in `main` (2026-06-09).
+
+> ⚠️ **Snapshot storico (feature 004).** Il design del drawer (shell di contesto, selettore
+> funzioni, spiegazione Reputazione, comportamento/a11y/responsive) è **tuttora valido**.
+> È invece **superato** il "per ora placeholder" delle impostazioni: in coda alla feature
+> sono state rese **reali** — **Scarica/Carica dati** (export/import) spostati qui
+> dall'header e toggle **"Mostra archiviati"** spostato dalla toolbar. Dove il corpo dice
+> "placeholder" (§Obiettivo, §Scope, checklist §Testing, §Estensibilità), leggi **"reali"**.
 
 ## Obiettivo
 
