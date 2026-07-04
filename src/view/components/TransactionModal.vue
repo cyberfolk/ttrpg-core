@@ -41,8 +41,8 @@
       </div>
 
       <div class="ds-dialog__body">
-        <Pager :page="page" :page-size="PAGE_SIZE" :total="total"
-          @update:page="page = $event" />
+        <Pager :page="page" :page-size="pageSize" :total="total"
+          @update:page="page = $event" @update:page-size="pageSize = $event" />
         <div class="rep-table-wrap rep-tx-bleed">
           <table class="rep-table rep-tx-table">
             <thead>
@@ -122,12 +122,13 @@
                 </td>
                 <td>
                   <HoverTip text="Aggiungi" label="Aggiungi transazione" :tab-index="-1">
-                    <button class="ds-btn ds-btn--primary ds-btn--sm ds-btn--icon"
+                    <button class="ds-btn ds-btn--primary ds-btn--sm ds-btn--icon rep-tx-addrow__btn"
                       type="button" @click="onAdd" aria-label="Aggiungi transazione">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 12h14"/><path d="M12 5v14"/>
                       </svg>
+                      <span class="rep-tx-addrow__label">Aggiungi</span>
                     </button>
                   </HoverTip>
                 </td>
@@ -151,7 +152,7 @@ import { useDialog } from '../useDialog.js';
 import HoverTip from './HoverTip.vue';
 import Pager from './Pager.vue';
 
-const PAGE_SIZE = 5;
+const pageSize = ref(5);
 
 const props = defineProps({
   fromId: { type: String, required: true },
@@ -189,7 +190,7 @@ const score       = computed(() => computeScore(state.value, props.fromId, props
 const transactions = computed(() => listTransactions(state.value, props.fromId, props.toId));
 const total = computed(() => transactions.value.length);
 // Paginazione: clamp su totale che cala (dopo una cancellazione) nel composable.
-const { page, lastPage, paginate } = usePagedList(total, PAGE_SIZE);
+const { page, lastPage, paginate } = usePagedList(total, pageSize);
 const pagedTransactions = computed(() => paginate(transactions.value));
 
 const fmtDay = (ts) => new Date(ts).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });

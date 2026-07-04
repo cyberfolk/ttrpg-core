@@ -827,6 +827,9 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 .rep-tx-table .rep-tx__delta { font-size: var(--fs-sm); font-weight: 800; }
 .rep-tx-table .rep-tx__when { text-align: left; }
 
+/* Etichetta "Aggiungi" del bottone: solo su smartphone (desktop = bottone icona) */
+.rep-tx-addrow__label { display: none; }
+
 /* Smartphone: nel popup transazione tengo solo Delta + Motivo (+ riga Aggiungi).
    Via la colonna Data e le azioni Modifica/Elimina sulle righe; il bottone
    Aggiungi nel tfoot resta (e' fuori dallo scope tbody). */
@@ -834,6 +837,21 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
   .rep-tx-table .rep-tx__when-col,
   .rep-tx-table .rep-tx__when { display: none; }
   .rep-tx-table tbody .rep-table__actions { display: none; }
+
+  /* Riga "Aggiungi": le 3 celle strette in linea diventano un mini-form
+     impilato — delta + motivo su una riga, bottone primario etichettato a
+     tutta larghezza sotto. Fine del pop-up compresso su smartphone. */
+  .rep-tx-addrow {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+    padding: var(--space-3) var(--space-5) var(--space-4);
+    background: var(--paper-50); border-top: 1px solid var(--line-gold);
+  }
+  .rep-tx-addrow td { display: block; padding: 0; background: none; border: none; }
+  .rep-tx-addrow .rep-tx__delta-col { flex: 0 0 4.5rem; width: auto; }
+  .rep-tx-addrow td[colspan] { flex: 1 1 7rem; }
+  .rep-tx-addrow td:last-child { flex: 1 1 100%; }
+  .rep-tx-addrow__btn { padding: .55rem .95rem; }
+  .rep-tx-addrow__label { display: inline; }
 }
 .rep-rel-arrow { display: inline-flex; flex-direction: column; align-items: stretch; line-height: 1; min-width: 4rem; margin-inline: 6px; flex: none; }
 .rep-rel-arrow__label {

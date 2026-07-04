@@ -9,8 +9,8 @@
       </div>
       </div>
       <Pager v-if="total > 0" class="rep-relbar__pager"
-        :page="page" :page-size="PAGE_SIZE" :total="total"
-        @update:page="page = $event" />
+        :page="page" :page-size="pageSize" :total="total"
+        @update:page="page = $event" @update:page-size="pageSize = $event" />
     </div>
     <p v-if="total === 0" class="rep-empty">{{ query.trim() ? 'Nessun risultato.' : 'Nessuna relazione.' }}</p>
     <template v-else>
@@ -111,7 +111,7 @@ import Pager from './Pager.vue';
 import SortableTh from './SortableTh.vue';
 import HoverTip from './HoverTip.vue';
 
-const PAGE_SIZE = 10;
+const pageSize = ref(10);
 
 const props = defineProps({
   currentId: { type: String, required: true },
@@ -281,7 +281,7 @@ const total = computed(() => sortedRows.value.length);
 
 // Paginazione locale: clamp su totale che cala dentro il composable; qui resta
 // il reset a pagina 0 quando cambiano ricerca o ordinamento.
-const { page, offset, reset: resetPage, paginate } = usePagedList(total, PAGE_SIZE);
+const { page, offset, reset: resetPage, paginate } = usePagedList(total, pageSize);
 watch([query, sort], resetPage);
 
 const pageRows = computed(() => paginate(sortedRows.value));

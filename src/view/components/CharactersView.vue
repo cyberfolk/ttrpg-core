@@ -41,7 +41,7 @@
     <!-- Paginazione: in alto a destra. Solo gallery e lista (matrix non consuma items) -->
     <Pager v-if="ui.activeView !== 'matrix'"
       :page="ui.page" :page-size="ui.pageSize" :total="total"
-      @update:page="ui.page = $event" />
+      @update:page="ui.page = $event" @update:page-size="ui.pageSize = $event" />
 
     <!-- Views -->
     <GalleryView v-if="ui.activeView === 'gallery'" :items="items" />

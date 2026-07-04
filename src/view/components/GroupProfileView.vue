@@ -97,8 +97,8 @@
 
       <!-- Tab: Membri -->
       <div v-if="tab === 'membri'">
-        <Pager :page="membersPage" :page-size="MEMBERS_PAGE_SIZE" :total="membersTotal"
-          @update:page="membersPage = $event" />
+        <Pager :page="membersPage" :page-size="membersPageSize" :total="membersTotal"
+          @update:page="membersPage = $event" @update:page-size="membersPageSize = $event" />
         <div class="rep-table-wrap rep-table--flush">
           <table class="rep-table">
             <thead>
@@ -115,7 +115,7 @@
               <tr v-for="(char, i) in pagedMembers" :key="char.id"
                 class="rep-table__row--clickable" role="button" tabindex="0"
                 @click="goToChar(char.id)" v-activate>
-                <td class="rep-table__num">{{ membersPage * MEMBERS_PAGE_SIZE + i + 1 }}</td>
+                <td class="rep-table__num">{{ membersOffset + i + 1 }}</td>
                 <td>
                   <span class="rep-table__name" @click.stop="goToChar(char.id)">
                     {{ $name(char) }}
@@ -275,7 +275,7 @@ import ActionMenu from './ActionMenu.vue';
 import Pager from './Pager.vue';
 import RelationList from './RelationList.vue';
 
-const MEMBERS_PAGE_SIZE = 10;
+const membersPageSize = ref(10);
 
 const props = defineProps({
   id: { type: String, required: true },
@@ -330,7 +330,7 @@ const members = computed(() => {
 
 const membersTotal = computed(() => members.value.length);
 // Paginazione membri: clamp su totale che cala (sgancio membro) nel composable.
-const { page: membersPage, paginate: paginateMembers } = usePagedList(membersTotal, MEMBERS_PAGE_SIZE);
+const { page: membersPage, offset: membersOffset, paginate: paginateMembers } = usePagedList(membersTotal, membersPageSize);
 const pagedMembers = computed(() => paginateMembers(members.value));
 
 const addableCandidates = computed(() => {

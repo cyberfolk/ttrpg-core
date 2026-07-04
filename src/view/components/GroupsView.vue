@@ -38,7 +38,7 @@
 
     <!-- Paginazione (come nei personaggi): si nasconde con una sola pagina -->
     <Pager :page="page" :page-size="ui.pageSize" :total="filteredActive.length"
-      @update:page="page = $event" />
+      @update:page="page = $event" @update:page-size="ui.pageSize = $event" />
 
     <!-- Lista gruppi attivi -->
     <div v-if="filteredActive.length === 0 && !search" class="rep-empty" style="margin-top:2rem">
