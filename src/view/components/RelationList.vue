@@ -7,6 +7,36 @@
         <input class="ds-input ds-input--with-icon" type="search" v-model="query"
           placeholder="Cerca per nome…" aria-label="Cerca per nome" />
       </div>
+      <HoverTip :text="menuActive ? 'Filtri (attivi)' : 'Filtri'"
+        label="Filtri" :tab-index="-1">
+        <button ref="optsBtn" type="button"
+          class="rep-col-opts__btn" :class="{ 'rep-col-opts__btn--active': menuActive }"
+          :aria-label="menuActive ? 'Filtri (attivi)' : 'Filtri'"
+          aria-controls="rep-opts-menu" :aria-expanded="optsOpen"
+          @click.stop="toggleOpts">
+          <Icon name="filter" />
+          <span v-if="menuActive" class="rep-col-opts__dot" aria-hidden="true"></span>
+        </button>
+      </HoverTip>
+      <Teleport to="body">
+        <div v-if="optsOpen" id="rep-opts-menu" ref="optsMenu"
+          class="rep-col-opts__menu rep-col-opts__menu--float" role="group"
+          aria-label="Filtri" :style="optsStyle"
+          @click.stop @focusout="onOptsFocusout">
+          <label class="rep-col-opts__item">
+            <input type="checkbox" v-model="hideEmpty" />
+            <span>Nascondi righe senza interazioni</span>
+          </label>
+          <label class="rep-col-opts__item">
+            <input type="checkbox" v-model="hideCharacters" />
+            <span>Nascondi personaggi</span>
+          </label>
+          <label class="rep-col-opts__item">
+            <input type="checkbox" v-model="hideGroups" />
+            <span>Nascondi gruppi</span>
+          </label>
+        </div>
+      </Teleport>
       </div>
       <Pager v-if="total > 0" class="rep-relbar__pager"
         :page="page" :page-size="pageSize" :total="total"
@@ -15,49 +45,12 @@
     <p v-if="total === 0" class="rep-empty">{{ query.trim() ? 'Nessun risultato.' : 'Nessuna relazione.' }}</p>
     <template v-else>
       <div class="rep-table-wrap rep-table--flush">
-        <table class="rep-table" :class="{ 'rep-has-type': showType }">
+        <table class="rep-table">
           <thead>
             <tr>
               <th class="rep-table__num">#</th>
               <SortableTh col="name" :sort="sort" @sort="toggleSort">Nome</SortableTh>
-              <SortableTh v-if="showType" col="kind" class="rep-col-type" :sort="sort" @sort="toggleSort">Tipo</SortableTh>
               <SortableTh col="score" class="rep-col--right" :sort="sort" @sort="toggleSort">Rep.</SortableTh>
-              <th class="rep-col-opts">
-                <HoverTip :text="menuActive ? 'Filtri e colonne (attivi)' : 'Filtri e colonne'"
-                  label="Filtri e colonne" :tab-index="-1">
-                  <button ref="optsBtn" type="button"
-                    class="rep-col-opts__btn" :class="{ 'rep-col-opts__btn--active': menuActive }"
-                    :aria-label="menuActive ? 'Filtri e colonne (attivi)' : 'Filtri e colonne'"
-                    aria-controls="rep-opts-menu" :aria-expanded="optsOpen"
-                    @click.stop="toggleOpts">
-                    <Icon name="filter" />
-                    <span v-if="menuActive" class="rep-col-opts__dot" aria-hidden="true"></span>
-                  </button>
-                </HoverTip>
-                <Teleport to="body">
-                  <div v-if="optsOpen" id="rep-opts-menu" ref="optsMenu"
-                    class="rep-col-opts__menu rep-col-opts__menu--float" role="group"
-                    aria-label="Filtri e colonne" :style="optsStyle"
-                    @click.stop @focusout="onOptsFocusout">
-                    <label class="rep-col-opts__item">
-                      <input type="checkbox" v-model="hideEmpty" />
-                      <span>Nascondi righe senza interazioni</span>
-                    </label>
-                    <label class="rep-col-opts__item">
-                      <input type="checkbox" v-model="hideCharacters" />
-                      <span>Nascondi personaggi</span>
-                    </label>
-                    <label class="rep-col-opts__item">
-                      <input type="checkbox" v-model="hideGroups" />
-                      <span>Nascondi gruppi</span>
-                    </label>
-                    <label class="rep-col-opts__item rep-col-opts__item--col">
-                      <input type="checkbox" v-model="showType" />
-                      <span>Mostra colonna tipo</span>
-                    </label>
-                  </div>
-                </Teleport>
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -78,9 +71,6 @@
                   </router-link>
                 </span>
               </td>
-              <td v-if="showType" class="rep-col-type">
-                <span class="ds-badge">{{ kindLabel(row.node) }}</span>
-              </td>
               <td class="rep-col--right">
                 <button type="button" class="ds-score ds-score--interactive"
                   :style="{ background: scoreColor(row.score) }"
@@ -89,7 +79,6 @@
                   {{ row.score }}
                 </button>
               </td>
-              <td class="rep-col-opts"></td>
             </tr>
           </tbody>
         </table>
@@ -138,7 +127,6 @@ const { sort, toggleSort } = useSortable({
 const hideEmpty = ref(false);
 const hideCharacters = ref(false);
 const hideGroups = ref(false);
-const showType = ref(false);
 const optsOpen = ref(false);
 const optsBtn = ref(null);
 const optsMenu = ref(null);
@@ -147,7 +135,7 @@ const optsStyle = ref(null);
 // Stato non-default del menu: marca visivamente l'icona (un dot) così l'utente sa
 // che righe/colonne sono filtrate anche a tendina chiusa.
 const menuActive = computed(() =>
-  hideEmpty.value || hideCharacters.value || hideGroups.value || showType.value);
+  hideEmpty.value || hideCharacters.value || hideGroups.value);
 
 // I menu sono in Teleport su <body> (la card profilo ha overflow:hidden e la
 // tabella overflow-x:auto: in posizione assoluta verrebbero clippati). Posizione
@@ -315,14 +303,12 @@ function profileTo(node) {
    su piu' righe segue il testo riga per riga (box-decoration-break: clone). */
 .rep-name-cell { display: inline; }
 .rep-kind-ico {
-  display: none;
+  display: inline-flex;
   vertical-align: -0.15em;
   margin-right: 0.4rem;
   color: var(--text-muted);
 }
 .rep-kind-ico :deep(svg) { width: 1em; height: 1em; }
-/* colonna Tipo nascosta dal toggle → mostra il glifo */
-.rep-table:not(.rep-has-type) .rep-kind-ico { display: inline-flex; }
 
 /* Nome = link reale al profilo: niente stile <a> nativo, focus visibile. */
 .rep-table__name { color: inherit; text-decoration: none; }
@@ -376,37 +362,36 @@ button.ds-score {
 .rep-relbar__pager { flex: none; }
 .rep-relbar :deep(.rep-pager) { margin-block: 0; }
 
-/* colonna dropdown "colonne opzionali" stile Odoo */
-.rep-col-opts {
-  position: relative;
-  width: 1%;
-  white-space: nowrap;
-  text-align: right;
-}
+/* Bottone filtri: vive nella searchbar, a destra dell'input. Icon-button bordato
+   accoppiato all'input (stesso bordo/raggio/altezza) → ricerca + filtro leggono
+   come un unico gruppo di controlli, non un'icona che fluttua. */
 .rep-col-opts__btn {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 38px;
-  min-height: 38px;
+  align-self: stretch;      /* altezza = input accanto */
+  flex: none;
+  aspect-ratio: 1;          /* quadrato: larghezza segue l'altezza */
   padding: 0.4rem;
   font-size: 1.2rem;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  background: var(--surface-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
   color: var(--text-muted);
   cursor: pointer;
   line-height: 1;
   transition: color var(--dur-fast), background var(--dur-fast), border-color var(--dur-fast);
 }
 .rep-col-opts__btn:hover {
-  background: var(--surface-panel);
-  border-color: transparent;
+  border-color: var(--gold-500);
   color: var(--text-strong);
 }
-/* filtri/colonne in stato non-default: icona oro + dot, niente solo-colore */
-.rep-col-opts__btn--active { color: var(--accent-text); }
+.rep-col-opts__btn:focus-visible {
+  outline: none; border-color: var(--gold-500); box-shadow: var(--shadow-focus);
+}
+/* filtri attivi: bordo oro + icona accento (oltre al dot), niente solo-colore */
+.rep-col-opts__btn--active { color: var(--accent-text); border-color: var(--gold-500); }
 .rep-col-opts__dot {
   position: absolute;
   top: 6px;
@@ -424,13 +409,5 @@ button.ds-score {
 /* tap target adeguato su touch/stylus (44px raccomandati) */
 @media (pointer: coarse) {
   .rep-col-opts__btn { min-width: 44px; min-height: 44px; }
-}
-
-/* mobile: via la colonna Tipo (il tipo resta come glifo inline sul nome, il dato
-   si sposta non si perde). Il dropdown resta: ospita i filtri righe, utili anche
-   su mobile; solo il toggle "Tipo" è inutile qui (colonna forzata nascosta). */
-@media (max-width: 480px) {
-  .rep-col-type { display: none; }
-  .rep-table .rep-kind-ico { display: inline-flex; }
 }
 </style>

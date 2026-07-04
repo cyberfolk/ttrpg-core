@@ -510,9 +510,6 @@ a:hover { color: var(--gold-600); }
   .rep-table-wrap.rep-table--flush .rep-table td.rep-col--right {
     padding-left: .8rem; padding-right: .8rem;
   }
-  /* Colonna filtri/colonne via su smartphone (piu' spazio al nome). */
-  .rep-table--flush .rep-table th.rep-col-opts,
-  .rep-table--flush .rep-table td.rep-col-opts { display: none; }
   .rep-table__name { white-space: normal; overflow-wrap: anywhere; }
   .rep-table__actions { flex-wrap: wrap; }
   .rep-table__actions .ds-btn { flex: 1 1 auto; justify-content: center; }
@@ -670,6 +667,9 @@ a:hover { color: var(--gold-600); }
 .rep-table--flush .rep-table td:first-child { padding-left: var(--space-7); }
 .rep-table--flush .rep-table th:last-child,
 .rep-table--flush .rep-table td:last-child { padding-right: var(--space-7); }
+/* Colonna # nelle flush: contenuto centrato (globale e' right-aligned). */
+.rep-table--flush .rep-table th.rep-table__num,
+.rep-table--flush .rep-table td.rep-table__num { text-align: center; }
 
 /* === Matrix ================================================ */
 .rep-matrix-wrap {
@@ -997,10 +997,6 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 }
 .rep-col-opts__item:hover { background: var(--paper-50); }
 .rep-col-opts__item input { cursor: pointer; margin: 0; }
-@media (max-width: 480px) {
-  .rep-col-opts__item--col { display: none; }
-}
-
 /* === Tooltip =============================================== */
 .rep-tip {
   display: inline-flex; align-items: center; justify-content: center;
