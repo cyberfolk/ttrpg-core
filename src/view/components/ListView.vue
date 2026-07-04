@@ -2,10 +2,10 @@
   <div class="rep-table-wrap">
   <table class="rep-table rep-table--stable">
     <colgroup>
-      <col style="width:3rem" />
+      <col class="rep-col--num" />
       <col />
-      <col style="width:8.5rem" />
-      <col style="width:6.5rem" />
+      <col class="rep-col--score" />
+      <col class="rep-col--actions" />
     </colgroup>
     <thead>
       <tr>
@@ -16,7 +16,7 @@
             Reputazione
           </HoverTip>
         </SortableTh>
-        <th>Azioni</th>
+        <th class="rep-table__actions-cell">Azioni</th>
       </tr>
     </thead>
     <tbody>
@@ -51,7 +51,7 @@
             {{ item.score !== null ? item.score : '–' }}
           </span>
         </td>
-        <td @click.stop>
+        <td class="rep-table__actions-cell" @click.stop>
           <div class="rep-table__actions">
             <template v-if="editingId === item.char.id">
               <HoverTip text="Salva" label="Salva modifiche" :tab-index="-1">
@@ -193,10 +193,25 @@ function onHardDelete(id) {
   table-layout: fixed;
   width: 100%;
 }
+.rep-col--num { width: 3rem; }
+.rep-col--score { width: 6.5rem; }
+.rep-col--actions { width: 6.5rem; }
 .rep-table--stable :deep(.rep-table__name) {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mobile: recupero larghezza per il nome. Niente colonna # e niente azioni
+   inline (rinomina/archivia stanno nella scheda). La tabella passa a layout
+   auto cosi' il nome prende tutto lo spazio liberato. */
+@media (max-width: 560px) {
+  .rep-table--stable { table-layout: auto; }
+  .rep-col--num,
+  .rep-col--actions { width: 0; }
+  .rep-table__num,
+  .rep-table__actions-cell { display: none; }
 }
 
 /* Inline edit: input compatto + padding riga ridotto per non alterare

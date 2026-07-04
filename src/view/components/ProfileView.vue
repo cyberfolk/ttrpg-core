@@ -11,7 +11,9 @@
     <div class="ds-card ds-card--filament rep-profile__card">
       <!-- Profile header -->
       <div class="rep-profile__head">
-        <h2>{{ $name(character) }}</h2>
+        <h2 v-if="editing === false">{{ $name(character) }}</h2>
+        <input v-else class="ds-input rep-profile__edit" type="text" v-model="editName"
+          aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
         <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
         <span class="rep-profile__synthetic">
           <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
@@ -25,6 +27,41 @@
             </span>
           </HoverTip>
         </span>
+      </div>
+
+      <!-- Azioni sul personaggio (rinomina/archivia/elimina): qui invece che
+           nella lista, cosi' su mobile la lista resta compatta. -->
+      <div class="rep-profile__toolbar">
+        <template v-if="editing">
+          <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit">
+            <span class="ds-btn__icon"><Icon name="check" /></span>
+            Salva
+          </button>
+          <button class="ds-btn ds-btn--sm ds-btn--ghost" @click="cancelEdit">
+            <span class="ds-btn__icon"><Icon name="close" /></span>
+            Annulla
+          </button>
+        </template>
+        <template v-else-if="isArchived === false">
+          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="startEdit">
+            <span class="ds-btn__icon"><Icon name="edit" /></span>
+            Rinomina
+          </button>
+          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onArchive">
+            <span class="ds-btn__icon"><Icon name="archive" /></span>
+            Archivia
+          </button>
+        </template>
+        <template v-else>
+          <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="onRestore">
+            <span class="ds-btn__icon"><Icon name="restore" /></span>
+            Ripristina
+          </button>
+          <button class="ds-btn ds-btn--sm ds-btn--danger" @click="onHardDelete">
+            <span class="ds-btn__icon"><Icon name="trash" /></span>
+            Elimina
+          </button>
+        </template>
       </div>
 
       <!-- Tab switcher -->
@@ -167,7 +204,10 @@ import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
 import { useDisplayedCharacters } from '../useDisplayedCharacters.js';
-import { averageIncomingScore, listActiveGroups, addMember, removeMember } from '../../model/reputation.js';
+import {
+  averageIncomingScore, listActiveGroups, addMember, removeMember,
+  renameCharacter, softDeleteCharacter, restoreCharacter, hardDeleteCharacter,
+} from '../../model/reputation.js';
 import { scoreColor } from '../scoreColor.js';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
@@ -187,6 +227,9 @@ const router = useRouter();
 const tab = ref('in');
 const tx = ref(null);
 const newGroupId = ref('');
+// Rinomina inline del personaggio dall'header della scheda.
+const editing = ref(false);
+const editName = ref('');
 // Sgancio gruppo: conferma inline a due passi (niente delete silenzioso).
 const confirmUnlinkId = ref(null);
 // Cambio tab azzera una conferma di sgancio in sospeso.
@@ -245,4 +288,59 @@ function goToGroup(id) {
 function openTx(pair) {
   tx.value = pair;
 }
+
+function startEdit() {
+  if (character.value === null) return;
+  editName.value = character.value.name;
+  editing.value = true;
+}
+
+function cancelEdit() {
+  editing.value = false;
+  editName.value = '';
+}
+
+function saveEdit() {
+  const name = editName.value.trim();
+  if (!name) return;
+  const id = character.value.id;
+  dispatch((s) => renameCharacter(s, id, name));
+  cancelEdit();
+}
+
+function onArchive() {
+  const id = character.value.id;
+  dispatch((s) => softDeleteCharacter(s, id));
+}
+
+function onRestore() {
+  const id = character.value.id;
+  dispatch((s) => restoreCharacter(s, id));
+}
+
+function onHardDelete() {
+  const confirmed = window.confirm('Eliminazione DEFINITIVA e irreversibile. Confermi?');
+  if (!confirmed) return;
+  const id = character.value.id;
+  dispatch((s) => hardDeleteCharacter(s, id));
+  router.push({ name: 'characters' });
+}
 </script>
+
+<style scoped>
+/* Barra azioni sotto l'header della scheda: allineata a sinistra, va a capo
+   su schermi stretti. */
+.rep-profile__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.25rem 0 1rem;
+}
+/* Input di rinomina inline: eredita la scala del titolo per non far saltare
+   l'altezza dell'header. */
+.rep-profile__edit {
+  font-size: 1.3rem;
+  font-weight: 600;
+  max-width: 100%;
+}
+</style>
