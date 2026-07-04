@@ -28,8 +28,7 @@
         <span class="rep-tx-headscore">
           <HoverTip text="Punteggio Totale" label="Punteggio totale" class-name="rep-cc__scoretip">
             <span class="rep-tx-headscore__inner">
-              <span class="rep-tx-headscore__label">Totale</span>
-              <span class="ds-score ds-score--sm"
+              <span class="ds-score ds-score--lg"
                 :class="{ 'ds-score--empty': score === null }"
                 :style="score !== null ? { background: scoreColor(score) } : undefined">
                 {{ score !== null ? score : '–' }}
