@@ -31,7 +31,11 @@
   --ember-700: #8f3315;
   --ember-600: #b4471f;
   --ember-500: #d9663a;
+  --ember-300: #ecc6b3;
+  --ember-200: #f1d2c2;
   --ember-100: #f7e3d7;
+  /* green (unico accent positivo: delta reputazione in salita) */
+  --green-600: #2f7d48;
   /* hairlines */
   --line-neutral:   #e8e1d4;
   --line-strong:    #ddd3c2;
@@ -60,6 +64,23 @@
   --danger-tint:   var(--ember-100);
   --focus-ring:    rgba(184,137,58,.38);
   --selection:     rgba(201,162,75,.28);
+  /* on-color: elemento scuro/chiaro sopra una superficie a tinta piena */
+  --on-accent:     #2c220e;
+  --on-danger:     var(--paper-0);
+  /* danger: stati e bordi */
+  --danger-tint-hover:  var(--ember-200);
+  --danger-tint-active: var(--ember-300);
+  --border-danger:      rgba(180,71,31,.35);
+  --border-danger-soft: rgba(180,71,31,.30);
+  /* delta reputazione: positivo (verde) / negativo (ember) */
+  --success:       var(--green-600);
+  --delta-pos:     var(--success);
+  --delta-neg:     var(--danger);
+  /* superfici traslucide e veli */
+  --surface-header: rgba(250,247,241,.86);
+  --overlay:        rgba(40,33,22,.18);
+  --scrim:          rgba(40,32,18,.34);
+  --score-inset:    rgba(33,28,21,.12);
   /* typography */
   --font-display: "Cinzel", Georgia, "Times New Roman", serif;
   --font-sans:    "Source Sans 3", ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -108,6 +129,7 @@
   --shadow-sm: 0 1px 3px rgba(33,28,21,.08), 0 1px 2px rgba(33,28,21,.04);
   --shadow-md: 0 6px 16px rgba(33,28,21,.08), 0 1px 3px rgba(33,28,21,.05);
   --shadow-lg: 0 16px 36px rgba(33,28,21,.13), 0 2px 6px rgba(33,28,21,.06);
+  --shadow-drawer: 0 8px 24px rgba(40,32,18,.22);
   --shadow-focus: 0 0 0 3px var(--focus-ring);
   --border-1: 1px;
   --border-2: 2px;
@@ -171,7 +193,7 @@ a:hover { color: var(--gold-600); }
     color-mix(in oklab, var(--gold-400), var(--gold-300) 38%),
     color-mix(in oklab, var(--gold-500), var(--gold-400) 38%));
   border-color: var(--gold-500);
-  color: #2c220e;
+  color: var(--on-accent);
   box-shadow: var(--shadow-xs);
 }
 .ds-btn--primary:hover:not([disabled]) {
@@ -199,11 +221,11 @@ a:hover { color: var(--gold-600); }
 .ds-btn--ghost:hover:not([disabled]) { background: var(--surface-panel); color: var(--text-strong); }
 .ds-btn--danger {
   background: var(--danger-tint);
-  border-color: rgba(180,71,31,.35);
+  border-color: var(--border-danger);
   color: var(--ember-700);
 }
-.ds-btn--danger:hover:not([disabled]) { background: #f1d2c2; border-color: var(--danger); color: var(--ember-700); }
-.ds-btn--danger:active:not([disabled]) { background: #ecc6b3; }
+.ds-btn--danger:hover:not([disabled]) { background: var(--danger-tint-hover); border-color: var(--danger); color: var(--ember-700); }
+.ds-btn--danger:active:not([disabled]) { background: var(--danger-tint-active); }
 .ds-btn__icon { display: inline-flex; width: 1.05em; height: 1.05em; }
 .ds-btn__icon svg { width: 100%; height: 100%; }
 
@@ -220,14 +242,14 @@ a:hover { color: var(--gold-600); }
   font-variant-numeric: tabular-nums;
   font-size: var(--fs-body);
   color: var(--score-ink);
-  box-shadow: inset 0 0 0 1px rgba(33,28,21,.12);
+  box-shadow: inset 0 0 0 1px var(--score-inset);
   transition: transform .15s, box-shadow .15s;
 }
 .ds-score--sm  { min-width: 2.1rem; padding: .18rem .5rem; font-size: var(--fs-sm); }
 .ds-score--lg  { min-width: 3.4rem; padding: .4rem .9rem; font-size: var(--fs-h3); font-family: var(--font-display); font-weight: var(--fw-bold); }
 .ds-score--empty { background: var(--paper-200) !important; color: var(--text-faint); box-shadow: inset 0 0 0 1px var(--line-strong); }
 .ds-score--interactive { cursor: pointer; }
-.ds-score--interactive:hover { transform: scale(1.06); box-shadow: 0 0 0 2px var(--gold-400), inset 0 0 0 1px rgba(33,28,21,.12); }
+.ds-score--interactive:hover { transform: scale(1.06); box-shadow: 0 0 0 2px var(--gold-400), inset 0 0 0 1px var(--score-inset); }
 /* Chip punteggio come <button> reale (ScoreChip interattivo): azzera il chrome
    nativo. Globale perché ScoreChip è un componente figlio: lo scope del padre
    non raggiungerebbe il suo elemento radice. */
@@ -251,12 +273,12 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
 }
 .ds-badge--neutral { background: var(--surface-panel); color: var(--text-muted); border-color: var(--border-hairline); }
 .ds-badge--gold    { background: var(--accent-tint); color: var(--gold-700); border-color: var(--line-gold); }
-.ds-badge--ember   { background: var(--danger-tint); color: var(--ember-700); border-color: rgba(180,71,31,.3); }
+.ds-badge--ember   { background: var(--danger-tint); color: var(--ember-700); border-color: var(--border-danger-soft); }
 .ds-ribbon {
   position: absolute; top: 0; right: 0;
   font-family: var(--font-display); font-size: var(--fs-label); font-weight: var(--fw-semibold);
   letter-spacing: var(--ls-caps); text-transform: uppercase;
-  color: #fff;
+  color: var(--on-danger);
   background: linear-gradient(180deg, var(--ember-500), var(--ember-600));
   padding: .2rem .55rem;
   border-bottom-left-radius: var(--radius-sm);
@@ -339,7 +361,7 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
 }
 .ds-seg__btn:hover { color: var(--text-strong); background: var(--surface-card); }
 .ds-seg__btn.active {
-  color: #2c220e;
+  color: var(--on-accent);
   background: linear-gradient(180deg,
     color-mix(in oklab, var(--gold-400), var(--gold-300) 38%),
     color-mix(in oklab, var(--gold-500), var(--gold-400) 38%));
@@ -360,7 +382,7 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
   position: fixed; inset: 0; z-index: 1000;
   display: flex; align-items: center; justify-content: center;
   padding: var(--space-4);
-  background: rgba(40,33,22,.18);
+  background: var(--overlay);
   backdrop-filter: blur(3px);
 }
 .ds-dialog {
@@ -472,7 +494,7 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
   position: sticky; top: 0; z-index: 30;
   display: flex; align-items: center; justify-content: flex-start; gap: var(--space-4);
   padding: .85rem var(--gutter);
-  background: rgba(250,247,241,.86);
+  background: var(--surface-header);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-hairline);
 }
@@ -518,7 +540,7 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
   border-color: var(--gold-500);
 }
 .ds-switch input:checked + .ds-switch__track .ds-switch__thumb {
-  transform: translateX(1rem); background: #2c220e;
+  transform: translateX(1rem); background: var(--on-accent);
 }
 .ds-switch input:focus-visible + .ds-switch__track {
   box-shadow: 0 0 0 2px var(--gold-400);
@@ -782,8 +804,8 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
 .rep-tx__delta-col { width: 4.5rem; }
 .rep-tx__when-col { width: 5rem; }
 .rep-tx-table .rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; }
-.rep-tx__delta.pos { color: #2f7d48; }
-.rep-tx__delta.neg { color: var(--danger); }
+.rep-tx__delta.pos { color: var(--delta-pos); }
+.rep-tx__delta.neg { color: var(--delta-neg); }
 .rep-tx__reason { color: var(--text-body); font-size: var(--fs-sm); overflow-wrap: anywhere; word-break: break-word; }
 .rep-tx__when { color: var(--text-faint); font-size: var(--fs-xs); white-space: nowrap; }
 
@@ -1079,7 +1101,7 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 
 .rep-drawer-scrim {
   position: fixed; inset: 0; z-index: 1500;
-  background: rgba(40, 32, 18, .34);
+  background: var(--scrim);
   opacity: 0; pointer-events: none;
   transition: opacity var(--dur-fast) var(--ease-out);
 }
@@ -1091,7 +1113,7 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
   display: flex; flex-direction: column;
   background: var(--surface-panel);
   border-right: 1px solid var(--line-gold);
-  box-shadow: 0 8px 24px rgba(40, 32, 18, .22);
+  box-shadow: var(--shadow-drawer);
   transform: translateX(-100%);
   transition: transform var(--dur-fast) var(--ease-out);
   overflow-y: auto;
@@ -1135,7 +1157,7 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
   background: linear-gradient(180deg,
     color-mix(in oklab, var(--gold-400), var(--gold-300) 38%),
     color-mix(in oklab, var(--gold-500), var(--gold-400) 38%));
-  border-color: var(--gold-500); color: #2c220e; font-weight: var(--fw-semibold);
+  border-color: var(--gold-500); color: var(--on-accent); font-weight: var(--fw-semibold);
 }
 .rep-drawer__fn:focus-visible { outline: none; border-color: var(--gold-500); box-shadow: 0 0 0 2px var(--gold-400); }
 .rep-drawer__fn--soon { color: var(--text-faint); cursor: default; }

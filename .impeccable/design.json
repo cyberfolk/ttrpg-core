@@ -6,6 +6,7 @@
     "colorMeta": {
       "gold-500": { "role": "primary", "displayName": "Oro Antico", "canonical": "#b8893a", "tonalRamp": ["#3a2c0f", "#5a4517", "#7a5c1f", "#9a7628", "#b8893a", "#c9a24b", "#e0c074", "#f3e9cf"] },
       "ember-600": { "role": "secondary", "displayName": "Ember", "canonical": "#b4471f", "tonalRamp": ["#4a1908", "#6b240e", "#8f3315", "#b4471f", "#d9663a", "#e88a63", "#f2b39a", "#f7e3d7"] },
+      "green-600": { "role": "signal", "displayName": "Verde di Segnale", "canonical": "#2f7d48", "purpose": "Unico colore fuori dalle famiglie calde; solo delta di reputazione positivo (--delta-pos)." },
       "paper-50": { "role": "neutral", "displayName": "Avorio", "canonical": "#faf7f1", "tonalRamp": ["#221d16", "#3c3429", "#6c6253", "#b6ab98", "#e3dac8", "#ece5d6", "#f4efe5", "#faf7f1"] },
       "ink-900": { "role": "neutral", "displayName": "Inchiostro", "canonical": "#221d16", "tonalRamp": ["#221d16", "#3c3429", "#574d3f", "#6c6253", "#8c8273", "#b6ab98", "#d4ccbd", "#ece5d6"] }
     },

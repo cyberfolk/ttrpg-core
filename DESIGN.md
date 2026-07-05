@@ -22,7 +22,11 @@ colors:
   ember-700: "#8f3315"
   ember-600: "#b4471f"
   ember-500: "#d9663a"
+  ember-300: "#ecc6b3"
+  ember-200: "#f1d2c2"
   ember-100: "#f7e3d7"
+  green-600: "#2f7d48"
+  on-accent: "#2c220e"
 typography:
   display:
     fontFamily: "Cinzel, Georgia, 'Times New Roman', serif"
@@ -67,12 +71,12 @@ spacing:
 components:
   button-primary:
     backgroundColor: "{colors.gold-400}"
-    textColor: "#2c220e"
+    textColor: "{colors.on-accent}"
     rounded: "{rounded.md}"
     padding: "0.6rem 0.95rem"
   button-primary-hover:
     backgroundColor: "{colors.gold-300}"
-    textColor: "#2c220e"
+    textColor: "{colors.on-accent}"
   button-secondary:
     backgroundColor: "{colors.paper-100}"
     textColor: "{colors.ink-500}"
@@ -108,7 +112,7 @@ components:
     padding: "0.55rem 0.75rem"
   segmented-active:
     backgroundColor: "{colors.gold-400}"
-    textColor: "#2c220e"
+    textColor: "{colors.on-accent}"
     rounded: "{rounded.sm}"
     padding: "0.45rem 0.8rem"
   switch-track-on:
@@ -157,7 +161,15 @@ restare seri e densi: il mobile non è una versione mutilata, è un cittadino di
 ## 2. Colors
 
 Tavolozza calda a tre famiglie: avorio neutro che porta tutta la superficie, oro antico come
-unico accento, ember (terracotta) riservato a delta negativi e azioni distruttive.
+unico accento, ember (terracotta) riservato a delta negativi e azioni distruttive. Un solo
+verde di segnale (`green-600`) fuori famiglia, riservato al delta di reputazione positivo.
+
+**Tokenizzazione completa.** Ogni colore vive come custom property in `:root` (`styles/main.css`):
+famiglie raw (`--paper-*`, `--ink-*`, `--gold-*`, `--ember-*`, `--green-600`) e semantici che vi
+puntano (`--accent`, `--danger`, `--success`, `--on-accent`, `--surface-header`, `--scrim`…).
+I componenti e le regole non contengono mai un letterale a-tinta: leggono i token. Conseguenza
+operativa: un cambio di tema (o una variante `[data-theme]`) tocca **solo `:root`**, mai il
+markup né i corpi delle regole.
 
 ### Primary
 - **Oro Antico** (`gold-500`, #b8893a): l'accento canonico. Bordi di badge, righe di
@@ -174,7 +186,13 @@ unico accento, ember (terracotta) riservato a delta negativi e azioni distruttiv
 - **Ember** (`ember-600`, #b4471f): il rosso del sistema. Azioni distruttive, ribbon, errore.
 - **Brace** (`ember-700`, #8f3315 / `ember-500`, #d9663a): testo ember (su tinta) e varianti
   soft per i bottoni danger "tranquilli".
-- **Cenere d'Ember** (`ember-100`, #f7e3d7): fondo dei badge/bottoni danger a riposo.
+- **Cenere d'Ember** (`ember-200`/`300`, #f1d2c2/#ecc6b3 → tint hover/active dei bottoni danger;
+  `ember-100`, #f7e3d7 → fondo dei badge/bottoni danger a riposo).
+
+### Signal
+- **Verde di Segnale** (`green-600`, #2f7d48): unico colore fuori dalle famiglie calde. Solo il
+  delta di reputazione **positivo** nel modale transazioni (`--delta-pos`); il negativo usa ember
+  (`--delta-neg`). Non è un accento decorativo: è semantica di direzione del punteggio.
 
 ### Neutral
 - **Avorio** (`paper-50`, #faf7f1): sfondo dell'app. La carta del tomo.
