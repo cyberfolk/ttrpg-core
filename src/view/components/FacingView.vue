@@ -409,6 +409,15 @@ function fmtDay(ts) {
 .fv-verso__reading .fv-verso__attrib-kicker { align-self: end; margin-bottom: 6px; }
 .fv-verso__reading .fv-verso__source { align-self: start; margin-top: -9px; }
 .fv-verso__reading--agg { padding-top: var(--space-4); }
+/* L'agg-reading ha solo il kicker (niente riga fonte): la griglia base lo chiude
+   nella sola riga 1 (metà alta) → resta in alto. Qui lo faccio occupare entrambe
+   le righe della col2 e lo centro, così sta in mezzo all'altezza del badge. */
+.fv-verso__reading--agg .fv-verso__attrib-kicker {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  margin-bottom: 0;
+}
 
 /* Comparsa della complessiva: grid-template-rows 0fr→1fr (riflusso senza
    animare l'altezza) + opacità. ease-out-expo, uscita più rapida. */
@@ -665,7 +674,18 @@ function fmtDay(ts) {
      e nome possessore fino a 3 righe, così nomi tipo "Sera Ombravento" non si
      croppano. La riga orizzontale resta (card a piena larghezza sul telefono). */
   .fv-verso { gap: var(--space-4); }
-  .fv-verso__score { min-width: 3.75rem; padding: 0.4rem 0.9rem; }
+  /* Badge più grosso su telefono (l'eroe visivo della card compatta). */
+  .fv-verso__score {
+    min-width: 4.5rem;
+    padding: 0.55rem 1.15rem;
+    font-size: clamp(2.4rem, 2rem + 3vw, 3.1rem);
+  }
+  /* Fonte a filo del kicker: annullo il padding-inline della regola touch (che
+     la indentava a destra) e la alzo a paro con l'inizio di "Reputazione secondo". */
+  /* Specificità pari alla regola base .fv-verso__reading .fv-verso__source
+     (0-2-0): con solo .fv-verso__source (0-1-0) il margin-top base -9px vince e
+     questo resta inerte (il @media non aggiunge specificità). */
+  .fv-verso__reading .fv-verso__source { padding-inline: 0; margin-top: -16px; }
   .fv-verso__owner-name { -webkit-line-clamp: 3; line-clamp: 3; }
 
   /* Registro: la tabella a 4 colonne si accrocchia su telefono (la colonna
