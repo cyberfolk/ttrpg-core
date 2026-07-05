@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction, createGroup } from '../../src/model/schema.js';
-import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction, addGroup, listActiveGroups, listArchivedGroups, softDeleteGroup, restoreGroup, hardDeleteGroup, addMember, removeMember, resolveNode, groupDerivedIncoming, groupDerivedOutgoing, renameGroup, setGroupType, renameCharacter } from '../../src/model/reputation.js';
+import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction, createGroup } from '../src/model/schema.js';
+import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction, addGroup, listActiveGroups, listArchivedGroups, softDeleteGroup, restoreGroup, hardDeleteGroup, addMember, removeMember, resolveNode, groupDerivedIncoming, groupDerivedOutgoing, renameGroup, setGroupType, renameCharacter } from '../src/model/reputation.js';
 
 test('BASE è 50', () => {
   assert.equal(BASE, 50);

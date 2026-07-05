@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { APP_FUNCTIONS, activeFunctionId } from '../../src/view/appFunctions.js';
+import { APP_FUNCTIONS, activeFunctionId } from '../src/view/appFunctions.js';
 
 test('APP_FUNCTIONS: prima voce è Reputazione attiva', () => {
   const first = APP_FUNCTIONS[0];

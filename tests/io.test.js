@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createState, createGroup } from '../../src/model/schema.js';
-import { addCharacter, addTransaction, addGroup, addMember } from '../../src/model/reputation.js';
-import { serializeState, parseImport, validateState, migrate } from '../../src/store/io.js';
+import { createState, createGroup } from '../src/model/schema.js';
+import { addCharacter, addTransaction, addGroup, addMember } from '../src/model/reputation.js';
+import { serializeState, parseImport, validateState, migrate } from '../src/store/io.js';
 
 function sample() {
   let s = createState();

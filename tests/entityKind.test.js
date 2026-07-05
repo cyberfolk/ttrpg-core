@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { kindIcon, kindLabel, entityRouteTo } from '../../src/view/entityKind.js';
+import { kindIcon, kindLabel, entityRouteTo } from '../src/view/entityKind.js';
 
 test('kindIcon: gruppo → users, personaggio → user', () => {
   assert.equal(kindIcon('group'), 'users');

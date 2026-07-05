@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ref, computed } from 'vue';
-import { useSortable } from '../../src/view/useSortable.js';
+import { useSortable } from '../src/view/useSortable.js';
 
 test('useSortable: nuova colonna parte dalla direzione di default', () => {
   const { sort, toggleSort } = useSortable({ initial: { key: 'name', dir: 'asc' }, descKeys: ['score'] });

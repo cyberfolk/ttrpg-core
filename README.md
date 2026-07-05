@@ -87,7 +87,7 @@ npm run preview    # serve in locale la build di produzione, per verifica finale
 Suite con il runner integrato di Node (nessuna dipendenza esterna):
 
 ```bash
-npm test          # = node --test (auto-discovery di scripts/tests/**/*.test.js)
+npm test          # = node --test (auto-discovery di tests/**/*.test.js)
 ```
 
 Coperti MODEL, STORE e IO. La VIEW (DOM) si verifica manualmente nel browser.
