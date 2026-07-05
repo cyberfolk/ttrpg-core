@@ -181,7 +181,8 @@ grigio slavato su avorio "per eleganza": è la causa numero uno di testo illeggi
 
 **Display Font:** Cinzel (fallback Georgia, "Times New Roman", serif)
 **Body Font:** Source Sans 3 (fallback ui-sans-serif, system-ui, sans-serif)
-**Label/Serif Font:** EB Garamond (fallback Georgia, serif) — corsivo da nota a margine
+**Label:** Cinzel maiuscolo (stesso font display, `text-transform: uppercase` +
+letter-spacing) — vedi §Gerarchia. Sistema a **due font**: nessun terzo font serif.
 
 **Character:** Cinzel è un'epigrafica romana: maiuscole incise, autorevole, da frontespizio.
 Source Sans 3 è una humanist sans neutra e leggibile, perfetta per dati e numeri tabellari

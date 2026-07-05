@@ -3,7 +3,7 @@
    Cinzel display · Source Sans 3 body · warm ivory + antique gold
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 /* === Tokens ================================================ */
 :root {
@@ -62,7 +62,6 @@
   /* typography */
   --font-display: "Cinzel", Georgia, "Times New Roman", serif;
   --font-sans:    "Source Sans 3", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-serif:   "EB Garamond", Georgia, serif;
   --font-body:    var(--font-sans);
   --fs-display: 2.5rem;
   --fs-h1:      2rem;
