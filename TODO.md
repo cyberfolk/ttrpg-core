@@ -5,7 +5,7 @@ Tracker prossimo ID: **T002**
 ---
 
 ### [T001] | Gestire casi edge nei dati di esempio
-Casi edge-limit iniettati in `datas/sample-state-v2-large.json` da verificare/gestire nella VIEW (rendering, troncamento, escaping, ordinamento, disambiguazione).
+Casi edge-limit dentro a `datas/sample-state-v2-large.json` da verificare/gestire nella VIEW.
 
 **Personaggi** (id prefisso `ed9e`):
 - Nome 1 carattere (`Ц`)
@@ -27,4 +27,3 @@ Casi edge-limit iniettati in `datas/sample-state-v2-large.json` da verificare/ge
 - 1 membro, `type: ""`
 - membri duplicati + id fantasma inesistente + membro eliminato
 - nome/type con emoji + HTML + membri con nome vuoto/XSS
-- 29 membri (stress lista)
