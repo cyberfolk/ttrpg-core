@@ -2,14 +2,16 @@
   <section class="fv">
     <header class="fv__intro">
       <h1 class="fv__title">Faccia a faccia</h1>
-      <p class="fv__lead">
+      <!-- Lead e selettori solo con ≥2 personaggi: sotto soglia non c'è nulla da
+           scegliere e il welcome di primo accesso è l'unico centro d'attenzione. -->
+      <p v-if="charCount >= 2" class="fv__lead">
         Scegli due nomi e leggi che reputazione ha ciascuno dell'altro: due giudizi
         indipendenti, con il registro delle transazioni tra loro.
       </p>
     </header>
 
     <!-- Selettori affiancati -->
-    <div class="fv__pickers">
+    <div v-if="charCount >= 2" class="fv__pickers">
       <EntityPicker v-model="idA" label="Primo" placeholder="Cerca personaggio o gruppo…"
         :exclude-id="idB" />
       <span class="fv__vs" aria-hidden="true"><Icon name="facing" /></span>
@@ -95,9 +97,14 @@
         <!-- Registro relazionale: entrambe le direzioni, dalle più recenti -->
         <div class="fv__ledger">
           <h2 class="fv__ledger-title">Registro</h2>
-          <p v-if="ledger.length === 0" class="rep-empty">
-            Nessuna transazione tra loro — entrambi partono da 50.
-          </p>
+          <div v-if="ledger.length === 0" class="fv__ledger-empty">
+            <p class="rep-empty fv__ledger-empty-text">{{ ONBOARD.facingNoLedger.body }}</p>
+            <button type="button" class="ds-btn ds-btn--primary ds-btn--sm"
+              @click="registra(nodeA.entity.id, nodeB.entity.id)">
+              <Icon name="plus" />
+              {{ ONBOARD.facingNoLedger.cta }}
+            </button>
+          </div>
           <div v-else class="rep-table-wrap">
             <table class="rep-table fv-ledger">
               <thead>
@@ -137,8 +144,25 @@
       </div>
     </Transition>
 
-    <!-- Stati vuoti che insegnano -->
-    <div v-if="!nodeA || !nodeB" class="fv__hint">
+    <!-- Primo accesso: campagna senza personaggi. La schermata iniziale non è un
+         vicolo cieco (due selettori vuoti) ma instrada a creare il primo nome. -->
+    <EmptyState v-if="charCount === 0" icon="user"
+      :title="ONBOARD.facingZero.title" :body="ONBOARD.facingZero.body">
+      <button type="button" class="ds-btn ds-btn--primary" @click="goCreate">
+        <Icon name="plus" /> {{ ONBOARD.facingZero.cta }}
+      </button>
+    </EmptyState>
+
+    <!-- Un solo personaggio: manca il secondo per poter confrontare. -->
+    <EmptyState v-else-if="charCount === 1 && (!nodeA || !nodeB)" icon="users"
+      :title="ONBOARD.facingOne.title" :body="ONBOARD.facingOne.body">
+      <button type="button" class="ds-btn ds-btn--primary" @click="goCreate">
+        <Icon name="plus" /> {{ ONBOARD.facingOne.cta }}
+      </button>
+    </EmptyState>
+
+    <!-- ≥2 personaggi ma selezione incompleta: l'hint ha di nuovo senso. -->
+    <div v-else-if="!nodeA || !nodeB" class="fv__hint">
       <span class="fv__hint-glyph" aria-hidden="true"><Icon name="facing" /></span>
       <p class="fv__hint-text">{{ hintText }}</p>
     </div>
@@ -149,19 +173,30 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { resolveNode, computeScore, averageIncomingScore, listTransactions, listActiveCharacters, listActiveGroups } from '../../model/reputation.js';
 import { ambiguousIds, displayName } from '../disambiguation.js';
 import { scoreColor } from '../scoreColor.js';
 import { kindIcon, entityRouteTo } from '../entityKind.js';
-import { SCORE_TIP } from '../uiCopy.js';
+import { SCORE_TIP, ONBOARD } from '../uiCopy.js';
 import Icon from './Icon.vue';
 import EntityPicker from './EntityPicker.vue';
+import EmptyState from './EmptyState.vue';
 import TransactionModal from './TransactionModal.vue';
 import CountUp from './CountUp.vue';
 import HoverTip from './HoverTip.vue';
 
 const { state } = useStore();
+const router = useRouter();
+
+// Personaggi attivi: guida gli stati di primo accesso della schermata iniziale.
+const charCount = computed(() => listActiveCharacters(state.value).length);
+
+// Instrada alla creazione: elenco personaggi con il dialog "aggiungi" già aperto.
+function goCreate() {
+  router.push({ name: 'characters', query: { nuovo: '1' } });
+}
 
 const idA = ref(null);
 const idB = ref(null);
@@ -626,6 +661,20 @@ function fmtDay(ts) {
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+/* Registro vuoto: testo + CTA per registrare la prima transazione (l'ultimo
+   passo prima che il punteggio si muova da 50). */
+.fv__ledger-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5) 0;
+}
+.fv__ledger-empty-text {
+  padding: 0;
+  margin: 0;
 }
 
 /* Hint / empty */

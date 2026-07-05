@@ -25,8 +25,21 @@
       </div>
     </div>
 
+    <!-- Primo accesso: nessun personaggio e nessuna ricerca attiva. Insegna cosa
+         sono i personaggi e instrada a crearne il primo. -->
+    <EmptyState v-if="items.length === 0 && !ui.search" icon="user"
+      :title="ONBOARD.charactersZero.title" :body="ONBOARD.charactersZero.body">
+      <button type="button" class="ds-btn ds-btn--primary" @click="openAdd">
+        <Icon name="plus" /> {{ ONBOARD.charactersZero.cta }}
+      </button>
+    </EmptyState>
+
+    <!-- Ricerca senza risultati: stato secondario, tono leggero. -->
+    <EmptyState v-else-if="items.length === 0" compact icon="search"
+      :title="ONBOARD.noResults.title" :body="ONBOARD.noResults.body" />
+
     <!-- Views -->
-    <GalleryView v-if="ui.activeView === 'gallery'" :items="items" />
+    <GalleryView v-else-if="ui.activeView === 'gallery'" :items="items" />
     <ListView    v-else :items="items" />
 
     <!-- Add character dialog -->
@@ -61,16 +74,21 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed, nextTick, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useUiState } from '../useUiState.js';
 import { useStore } from '../useStore.js';
 import { useDisplayedCharacters } from '../useDisplayedCharacters.js';
 import { addCharacter } from '../../model/reputation.js';
+import { ONBOARD } from '../uiCopy.js';
 import GalleryView from './GalleryView.vue';
 import ListView from './ListView.vue';
+import EmptyState from './EmptyState.vue';
 import Icon from './Icon.vue';
 
 const ui = useUiState();
+const route = useRoute();
+const router = useRouter();
 const { dispatch } = useStore();
 const { items } = useDisplayedCharacters();
 const newName = ref('');
@@ -88,6 +106,15 @@ async function openAdd() {
   await nextTick();
   nameInput.value?.focus();
 }
+
+// Arrivo da "Crea il primo personaggio" (faccia a faccia): apri subito il dialog
+// e ripulisci la query, così un refresh non lo riapre.
+onMounted(() => {
+  if (route.query.nuovo) {
+    openAdd();
+    router.replace({ name: 'characters', query: {} });
+  }
+});
 
 function closeAdd() {
   addOpen.value = false;

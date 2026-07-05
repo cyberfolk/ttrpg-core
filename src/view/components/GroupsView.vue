@@ -24,13 +24,18 @@
       </div>
     </div>
 
-    <!-- Lista gruppi attivi -->
-    <div v-if="filteredActive.length === 0 && !search" class="rep-empty" style="margin-top:2rem">
-      Nessun gruppo. Aggiungine uno!
-    </div>
-    <div v-else-if="filteredActive.length === 0" class="rep-empty" style="margin-top:2rem">
-      Nessun gruppo corrisponde alla ricerca.
-    </div>
+    <!-- Primo accesso: nessun gruppo e nessuna ricerca. Insegna cosa sono i
+         gruppi e instrada a crearne il primo. -->
+    <EmptyState v-if="filteredActive.length === 0 && !search" icon="users"
+      :title="ONBOARD.groupsZero.title" :body="ONBOARD.groupsZero.body">
+      <button type="button" class="ds-btn ds-btn--primary" @click="openAdd">
+        <Icon name="plus" /> {{ ONBOARD.groupsZero.cta }}
+      </button>
+    </EmptyState>
+
+    <!-- Ricerca senza risultati: stato secondario, tono leggero. -->
+    <EmptyState v-else-if="filteredActive.length === 0" compact icon="search"
+      :title="ONBOARD.noResults.title" :body="ONBOARD.noResults.body" />
 
     <!-- Vista card -->
     <GroupGalleryView v-else-if="viewMode === 'gallery'" :groups="sortedActive" />
@@ -186,6 +191,8 @@ import {
 } from '../../model/reputation.js';
 import { useSortable } from '../useSortable.js';
 import { useDialog } from '../useDialog.js';
+import { ONBOARD } from '../uiCopy.js';
+import EmptyState from './EmptyState.vue';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import SortableTh from './SortableTh.vue';
