@@ -64,6 +64,9 @@
         </div>
       </div>
 
+      <!-- MOCKUP scheda anagrafica (dati hardcodati, non persistiti) -->
+      <EntitySheetMock kind="character" />
+
       <!-- Tab switcher -->
       <div class="rep-profile__tabs">
         <div class="ds-seg ds-seg--underline">
@@ -204,6 +207,7 @@ import HoverTip from './HoverTip.vue';
 import Icon from './Icon.vue';
 import ActionMenu from './ActionMenu.vue';
 import ScoreChip from './ScoreChip.vue';
+import EntitySheetMock from './EntitySheetMock.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const props = defineProps({

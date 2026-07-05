@@ -68,6 +68,9 @@
         </div>
       </div>
 
+      <!-- MOCKUP scheda gruppo (dati hardcodati, non persistiti) -->
+      <EntitySheetMock kind="group" />
+
       <!-- Sezioni con tab switcher -->
       <div class="rep-gp-tabs">
         <div class="ds-seg ds-seg--underline">
@@ -252,6 +255,7 @@ import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import ActionMenu from './ActionMenu.vue';
 import ScoreChip from './ScoreChip.vue';
+import EntitySheetMock from './EntitySheetMock.vue';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
 import EntityPicker from './EntityPicker.vue';
