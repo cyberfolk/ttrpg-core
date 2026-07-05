@@ -15,7 +15,11 @@ Stack: VIEW in **Vue 3 + Vite + vue-router** (routing history mode con `404.html
 
 Requisiti funzionali (cosa fa l'app), caricati sempre in contesto:
 
-@docs/funzionale.md
+@docs/requisiti-funzionali/01-entita.md
+@docs/requisiti-funzionali/02-modello-reputazione.md
+@docs/requisiti-funzionali/03-viste-e-navigazione.md
+@docs/requisiti-funzionali/04-flussi.md
+@docs/requisiti-funzionali/05-dati-e-persistenza.md
 
 **Riferimenti (leggi al bisogno, non caricati di default):**
 - Lavoro VIEW → `DESIGN.md`: design system "Atlante" (token, componenti `ds-*`, `<ScoreChip>`, matrice).
@@ -35,6 +39,21 @@ Tre layer, dipendenze solo verso il basso:
 La logica di reputazione vive **solo nel MODEL**: view e store non calcolano punteggi.
 
 Asset statici (immagini, ecc.) in `assets/` alla radice del progetto, non in `src/`.
+
+Orchestrazione: lo STORE fa `dispatch → muta via MODEL → salva → notifica`; la VIEW disegna.
+
+Mappa file (responsabilità):
+
+| File | Responsabilità |
+|------|----------------|
+| `src/model/schema.js` | Costanti (`BASE`, `SCHEMA_VERSION`) e costruttori dei dati (personaggi, gruppi, transazioni) |
+| `src/model/reputation.js` | Logica: `computeScore`, `clampView`, aggregati di gruppo, CRUD entità/transazioni |
+| `src/store/storage.js` | Adattatori storage (localStorage / in-memory per i test) |
+| `src/store/io.js` | Serializzazione, validazione, migrazione, parsing import |
+| `src/store/store.js` | Stato, `dispatch`, `subscribe`, persistenza |
+| `src/view/main.js` · `router.js` · `App.vue` | Bootstrap Vue, rotte (history mode), layout + drawer |
+| `src/view/components/*.vue` | Viste e componenti (faccia-a-faccia, galleria, lista, profili, modale) |
+| `src/view/use*.js` | Composables: accesso allo STORE, stato UI, entità visualizzate |
 
 ## Invarianti dati
 
