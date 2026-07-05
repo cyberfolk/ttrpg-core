@@ -14,7 +14,7 @@ $p = $path -replace '\\', '/'
 $isGrafica = ($p -match '/src/view/') -or ($p -match '\.vue$') -or ($p -match '\.css$')
 if (-not $isGrafica) { exit 0 }
 
-$ctx = 'TRIGGER GRAFICA (' + [System.IO.Path]::GetFileName($p) + '): stai per modificare la VIEW/CSS. Prima di procedere: (1) carica in contesto DESIGN.md e PRODUCT.md se non gia presenti; (2) considera la skill impeccable. Vedi "Direttive grafiche" in CLAUDE.md.'
+$ctx = 'TRIGGER GRAFICA (' + [System.IO.Path]::GetFileName($p) + '): stai per modificare la VIEW/CSS. Se non hai gia fatto, invoca la skill impeccable (tool Skill) prima di procedere. Vedi "Direttive grafiche" in CLAUDE.md.'
 
 $out = @{
     hookSpecificOutput = @{

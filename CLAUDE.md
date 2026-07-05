@@ -22,12 +22,9 @@ La funzione attiva è un sistema di **reputazione** tra le entità di una campag
 
 ## Direttive grafiche
 
-Prima di fare qualunque compito riguardante la grafica aggiungi assolutamente questi file al contesto:
+**Trigger** (se il task tocca uno di questi → è "grafica"): le parole "grafica", "impeccable", "vista"/"view"/"VIEW", componenti Vue in `src/view/`, CSS/stili, layout, colori, tipografia/font, spaziatura/allineamento, classi `ds-*`, componenti UI (card, badge, chip, drawer, modale, toolbar), stati (hover/focus/empty/error), responsive/mobile/smartphone/tablet, animazioni/transizioni, o qualunque modifica all'aspetto visibile.
 
-- DESIGN.md
-- PRODUCT.md
-
-**Trigger** (se il task tocca uno di questi, è "grafica" → carica i file prima di agire): le parole "grafica", "impeccable", "vista"/"view"/"VIEW", componenti Vue in `src/view/`, CSS/stili, layout, colori, tipografia/font, spaziatura/allineamento, classi `ds-*`, componenti UI (card, badge, chip, drawer, modale, toolbar), stati (hover/focus/empty/error), responsive/mobile/smartphone/tablet, animazioni/transizioni, o qualunque modifica all'aspetto visibile.
+Quando scatta un trigger grafico, **prima di agire** invoca la skill `impeccable` (tool Skill) e instrada il task sul comando giusto. Se il comando non è ovvio proponi un menu a scelta (`AskUserQuestion`) coi 2-3 comandi più adatti.
 
 ## Architettura
 
