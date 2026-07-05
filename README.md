@@ -3,7 +3,7 @@
 **App live:** https://cyberfolk.github.io/ttrpg-core/
 
 Web app **locale** (gira nel browser, nessun server) per gestire tool da TTRPG.
-Prima feature: **sistema di reputazione tra personaggi** per Dungeons & Dragons.
+Prima feature: **sistema di reputazione tra entità** per Dungeons & Dragons.
 
 La VIEW usa **Vue 3 + Vite + vue-router** (dalla feature 003, vedi ADR 0003). I layer
 MODEL e STORE/IO restano **framework-agnostici**: dati puri e funzioni pure, pensati per
@@ -13,44 +13,52 @@ una futura migrazione a Python a costo quasi nullo. Il framework tocca solo la V
 
 ## Cos'è
 
-Traccia quanto i personaggi di una campagna si stimano a vicenda. Ogni relazione ha
-un punteggio **1-100** ed è **asimmetrica**: quanto A pensa di B è indipendente da
-quanto B pensa di A (faide unilaterali, cotte non corrisposte...).
+Traccia quanto le entità di una campagna si stimano a vicenda. Un'**entità** è un **personaggio** oppure un **gruppo** (fazione, città, gilda…).  
+Ogni relazione è **asimmetrica**: quanto A pensa di B è indipendente da quanto B pensa di A (faide unilaterali, cotte non corrisposte…).
 
-Il punteggio non si modifica a mano: si registrano **transazioni** (eventi con un
-valore positivo o negativo e un motivo). Il punteggio è sempre *derivato*:
+Il punteggio non si modifica a mano: si registrano **transazioni** (eventi con un valore positivo o negativo e un motivo). Il punteggio è sempre *derivato*:
 
 ```
-punteggio(A→B) = clamp1-100( 50 + somma dei delta delle transazioni A→B )
+punteggio(A→B) = clampView( 50 + somma dei delta delle transazioni A→B )
 ```
 
-- Ogni nuovo personaggio nasce a **50** verso tutti (somma vuota = 50).
-- Lo storico delle transazioni è l'unica fonte di verità: niente disallineamenti.
+- Ogni entità nasce a **50** (`BASE`) verso tutte (somma vuota = 50).
+- `clampView` limita il valore mostrato (definizione unica in `src/model/reputation.js`).
+- Lo storico delle transazioni è l'unica fonte di verità: il punteggio non è mai salvato, niente disallineamenti.
+
+### Gruppi
+
+Un gruppo ha una lista di **membri** (personaggi) e partecipa alla reputazione in due modi affiancati:
+
+- **nodo diretto** — riceve/dà transazioni come un personaggio;
+- **aggregato derivato** — media dei punteggi dei membri *con almeno una transazione* nella direzione considerata (`null` se nessun membro qualificato).
+
+Le transazioni sono **polimorfe**: `fromId`/`toId` può essere un personaggio o un gruppo (UUID globalmente unici; `resolveNode` disambigua).
 
 ---
 
 ## Come si usa
 
-1. Apri l'app (vedi *Avvio*).
-2. **Aggiungi personaggi** dalla toolbar (`+ Personaggio`).
-3. Appare una **matrice** N×N: riga = chi giudica (`da`), colonna = chi è giudicato (`a`).
-   La cella `A→B` mostra il punteggio, colorato da rosso (basso) a verde (alto).
-4. **Click su una cella** → pannello con lo storico di quella relazione:
-   - aggiungi una transazione (delta + motivo),
-   - modifica o elimina transazioni esistenti.
-   Il punteggio si ricalcola al volo.
-5. **🗑 su un personaggio** → archiviazione (soft delete, reversibile).
-   Toggle **Mostra archiviati** → da lì *Ripristina* oppure *Elimina definitivamente*
-   (irreversibile, con conferma: rimuove il personaggio e tutte le sue transazioni).
+La navigazione passa dal **drawer** laterale (shell multi-tool; la funzione attiva è **Reputazione**). Dentro Reputazione:
+
+- **Faccia a faccia** (schermata iniziale) — confronta due entità testa a testa: come si considerano reciprocamente, in diretto e in aggregato.
+- **Personaggi** — elenco con 2 modi di lettura: **galleria**, **lista**;
+- **Profilo personaggio** — storico relazioni in entrata/uscita e gruppi di appartenenza.
+- **Gruppi** — elenco gruppi: crea, rinomina, gestisci membri, archivia/ripristina.
+- **Profilo gruppo** — membri + i punteggi diretto/aggregato per ogni coppia.
+
+Per registrare un evento: dal punteggio di una relazione si apre il **modale transazioni**
+(aggiungi / modifica / elimina delta + motivo); il punteggio si ricalcola al volo.
+
+Cancellazioni: **archiviazione** (soft delete, reversibile) oppure **eliminazione definitiva** (hard delete a cascata sulle transazioni; per un personaggio ripulisce anche
+i `memberIds` dei gruppi). Toggle **Mostra archiviati** per *Ripristina* / *Elimina definitivamente* (con conferma).
 
 ### Salvataggio e backup
 
-- **Auto-save**: ogni modifica è salvata nel `localStorage` del browser. Ricaricando
-  la pagina i dati restano.
+- **Auto-save**: ogni modifica è salvata nel `localStorage` del browser. Ricaricando la pagina i dati restano.
 - **Scarica**: esporta tutto in un file JSON (`reputation-AAAAMMGG-hhmm.json`).
 - **Carica**: reimporta un file JSON (sostituisce i dati correnti, previa conferma).
-  L'import valida il file: JSON malformato o con riferimenti rotti viene rifiutato
-  senza toccare i dati attuali.
+  L'import valida il file: JSON malformato o con riferimenti rotti viene rifiutato senza toccare i dati attuali.
 
 ---
 
@@ -107,34 +115,38 @@ La logica di reputazione vive **solo** nel MODEL. Lo STORE orchestra
 
 | File | Responsabilità |
 |------|----------------|
-| `src/model/schema.js` | Costanti (`BASE`, `SCHEMA_VERSION`) e costruttori dei dati |
-| `src/model/reputation.js` | Logica: `computeScore`, `clampView`, CRUD personaggi/transazioni |
+| `src/model/schema.js` | Costanti (`BASE`, `SCHEMA_VERSION`) e costruttori dei dati (personaggi, gruppi, transazioni) |
+| `src/model/reputation.js` | Logica: `computeScore`, `clampView`, aggregati di gruppo, CRUD entità/transazioni |
 | `src/store/storage.js` | Adattatori storage (localStorage / in-memory per i test) |
 | `src/store/io.js` | Serializzazione, validazione, migrazione, parsing import |
 | `src/store/store.js` | Stato, `dispatch`, `subscribe`, persistenza |
 | `src/view/main.js` | Bootstrap Vue: monta l'app e registra il router |
 | `src/view/router.js` | Definizione rotte (vue-router, history mode) |
-| `src/view/App.vue` | Layout radice e navigazione |
-| `src/view/components/*.vue` | Viste e componenti: matrice, galleria, lista, profilo, modale transazioni |
-| `src/view/use*.js` | Composables: accesso allo STORE, stato UI, personaggi visualizzati |
+| `src/view/App.vue` | Layout radice, drawer e navigazione |
+| `src/view/components/*.vue` | Viste e componenti: faccia-a-faccia, galleria, lista, profili, modale transazioni |
+| `src/view/use*.js` | Composables: accesso allo STORE, stato UI, entità visualizzate |
 
 ### Formato dati (export/import)
 
 ```json
 {
-  "version": 1,
+  "version": 2,
   "exportedAt": 1749200000000,
   "characters": [
     { "id": "c1", "name": "Aragorn", "deletedAt": null }
   ],
+  "groups": [
+    { "id": "g1", "name": "La Compagnia", "type": "fazione",
+      "memberIds": ["c1"], "deletedAt": null }
+  ],
   "transactions": [
-    { "id": "t1", "fromId": "c1", "toId": "c2",
+    { "id": "t1", "fromId": "c1", "toId": "g1",
       "delta": 10, "name": "salvato in battaglia", "createdAt": 1749100000000 }
   ]
 }
 ```
 
-Il campo `version` consente migrazioni di schema future (`migrate()` in `io.js`).
+Il campo `version` consente migrazioni di schema (`migrate()` in `io.js`).
 
-Documentazione di design e piano implementativo: `docs/features/<NNN-slug>/` (vedi `docs/README.md`).
-```
+Decisioni architetturali e note di ricerca: `docs/adr/` e `docs/research/` (indice in
+`docs/README.md`).
