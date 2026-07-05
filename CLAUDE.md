@@ -7,9 +7,16 @@
 
 ## Progetto
 
-Web app **locale** (browser, no server) di tool per TTRPG. Prima feature: sistema di reputazione tra personaggi D&D.
+Web app **locale** (browser, no server) di tool per TTRPG. Feature centrale: sistema di
+reputazione asimmetrica tra **entità** (personaggi e gruppi). Feature consegnate: reputazione,
+deploy/distribuzione, viste e profilo, drawer di navigazione, gruppi (vedi `docs/features/`).
 
 Stack: VIEW in **Vue 3 + Vite + vue-router** (routing history mode con `404.html` per GitHub Pages; vedi ADR 0003). `MODEL`/`STORE`/`IO` sono framework-agnostici: il framework tocca **solo la VIEW**.
+
+**Riferimenti (leggi al bisogno, non caricati di default):**
+- Lavoro VIEW → `DESIGN.md`: design system "Atlante" (token, componenti `ds-*`, `<ScoreChip>`, matrice).
+- Brand, utenti, principi di prodotto → `PRODUCT.md`.
+- Perché di una scelta architetturale → `docs/adr/` (invarianti già distillati qui sotto).
 
 ## Architettura (vincolo forte)
 
