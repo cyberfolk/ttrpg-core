@@ -9,7 +9,7 @@
 
 Web app **locale** (browser, no server) di tool per TTRPG. Feature centrale: sistema di
 reputazione asimmetrica tra **entità** (personaggi e gruppi). Feature consegnate: reputazione,
-deploy/distribuzione, viste e profilo, drawer di navigazione, gruppi (vedi `docs/features/`).
+deploy/distribuzione, viste e profilo, drawer di navigazione, gruppi.
 
 Stack: VIEW in **Vue 3 + Vite + vue-router** (routing history mode con `404.html` per GitHub Pages; vedi ADR 0003). `MODEL`/`STORE`/`IO` sono framework-agnostici: il framework tocca **solo la VIEW**.
 
@@ -30,18 +30,26 @@ Tre layer, dipendenze solo verso il basso:
 
 La logica di reputazione vive **solo nel MODEL**: view e store non calcolano punteggi.
 
+Asset statici (immagini, ecc.) in `assets/` alla radice del progetto, non in `src/`.
+
 ## Invarianti dati
 
 - Punteggio **derivato, mai salvato**: `clampView(50 + somma delta transazioni A→B)`.
 - Relazioni **asimmetriche**: `A→B` indipendente da `B→A`.
+- Nodi di reputazione **polimorfi**: `from`/`to` di una transazione può essere un
+  personaggio *o* un gruppo. UUID globalmente unici → nessun campo `type` sulla
+  transazione; `resolveNode(state, id)` disambigua (personaggio | gruppo | `null`).
 - `BASE` (50) e `clampView` isolati in `src/model/` → cambiarli è una riga sola.
 - Export/import: unico formato JSON con campo `version` (vedi `src/store/io.js`).
+- Aggregato gruppo: media (arrotondata) dei `computeScore` dei membri con ≥1 transazione
+  nella direzione considerata; `null` se nessun membro qualificato. Nodo diretto e
+  aggregato si mostrano **separati**, mai fusi in un numero unico.
 
 ## Comandi
 
-- Test: `npm test` (= `node --test`, auto-discovery di `scripts/tests/**/*.test.js`).
-  **Non** usare `node --test scripts/tests/` (forma directory rotta su Windows): per un
-  singolo file usa `node --test scripts/tests/<nome>.test.js`.
+- Test: `npm test` (= `node --test`, auto-discovery di `tests/**/*.test.js`).
+  **Non** usare `node --test tests/` (forma directory rotta su Windows): per un
+  singolo file usa `node --test tests/<nome>.test.js`.
 - Avvio app (dev): `npm run dev` (Vite dev server). Build di produzione: `npm run build` (genera `dist/` + `404.html` per il routing SPA su Pages); anteprima: `npm run preview`.
 
 ## Test
@@ -50,14 +58,11 @@ MODEL/STORE/IO coperti da `node:test` (TDD). La VIEW si verifica a mano nel brow
 
 ## Docs
 
-Mappa e tracker ID in `docs/README.md`. Workflow a 5 stadi:
+Solo due tipi di documento, indice in `docs/README.md`:
 
-1. **Indagine** — ricerca/note. Specifica di una feature → `docs/features/NNN-slug/research/<slug>.md`;
-   trasversale → `docs/research/<slug>.md`.
-2. **Requisiti** — nuova feature → `docs/features/NNN-slug/requisiti.md` (bozza seed dell'utente).
-3. **Spec** — output brainstorm → `docs/features/NNN-slug/spec.md`.
-4. **Plan** — output writing-plans → `docs/features/NNN-slug/plan.md`.
-5. **Decisione** — scelta architetturale → `docs/adr/NNNN-slug.md`.
+- `docs/adr/NNNN-slug.md` — **Architecture Decision Record**: una decisione architetturale
+  per file, immutabile. Struttura: Contesto / Decisione / Conseguenze / Alternative /
+  Quando rivedere. Nuovo ADR → prossimo `NNNN` (tracker in `docs/README.md`).
+- `docs/research/<slug>.md` — note di ricerca **trasversali** (reference, non decisioni).
 
-Override dei path di default di superpowers: spec e plan vanno nella cartella della feature,
-non in `docs/superpowers/`. Tracker prossimi ID (feature, ADR) in `docs/README.md`, non qui.
+Gli invarianti già distillati sono qui sopra; il *perché* di una scelta sta nel suo ADR.

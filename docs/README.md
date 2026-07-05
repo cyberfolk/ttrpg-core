@@ -1,28 +1,31 @@
 # Mappa docs
 
-Tracker prossimo ID feature: **006**
-Tracker prossimo ID ADR: **0004**
+Tracker prossimo ID ADR: **0005**
 
-## Cosa sta dove
+## Struttura
 
-| Cartella             | Contenuto                                                                                                                                                            | Numerazione                             |
-|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
-| `features/NNN-slug/` | Ciclo di vita di una feature: `requisiti.md` (bozza seed) → `spec.md` (brainstorm) → `plan.md` (writing-plans); + `research/` per la ricerca specifica della feature | `NNN` per feature, 3 cifre, mai riusato |
-| `adr/NNNN-slug.md`   | Architecture Decision Record: una decisione architetturale, immutabile                                                                                               | `NNNN` 4 cifre, mai riusato             |
-| `research/slug.md`   | Ricerca **trasversale** (vale per più feature / progetto in generale)                                                                                                | per topic, niente numero                |
+- `adr/NNNN-slug.md` — Architecture Decision Record: una decisione architetturale, immutabile.
+  Una decisione per file. Superseding invece di modifica: un ADR che ne rimpiazza un altro
+  lo cita (`Supersedes 000X`) e aggiorna lo `Stato` del vecchio a `Superseded by 000Y`.
+- `research/<slug>.md` — ricerca **trasversale** (reference riusabile, non una decisione).
 
-Ricerca **specifica di una feature** → `features/NNN-slug/research/<slug>.md`. Ricerca
-**trasversale** → `docs/research/<slug>.md`.
+Il *cosa/come* corrente vive in `CLAUDE.md` (invarianti, architettura) e nel codice; qui sta
+solo il **perché** (ADR) e le **note di ricerca** (research).
 
-## Workflow (5 stadi)
+## Indice ADR
 
-```
-1. INDAGINE   specifica feature → docs/features/NNN-slug/research/<slug>.md
-              trasversale      → docs/research/<slug>.md
-2. REQUISITI  nuova feature → docs/features/NNN-slug/requisiti.md
-3. SPEC       brainstorm → spec.md (stessa cartella)
-4. PLAN       writing-plans → plan.md (stessa cartella)
-5. DECISIONE  scelta architetturale → docs/adr/NNNN-slug.md
-```
+| ID   | Titolo                                             | Stato     | Data       |
+|------|----------------------------------------------------|-----------|------------|
+| 0001 | Modello dati: oggetti piani + funzioni pure        | Accettato | 2026-06-06 |
+| 0002 | Non anticipare il backend: tenere i seam           | Accettato | 2026-06-07 |
+| 0003 | Stack frontend VIEW: Vue 3 + Vite + vue-router     | Accettato | 2026-06-07 |
+| 0004 | Distribuzione: hosting GitHub Pages, solo-link     | Accettato | 2026-07-05 |
 
-Ad ogni nuova feature/ADR: incrementa il tracker qui sopra (ID mai riusato, gap normali).
+## Research (reference)
+
+- `research/analisi-importabilita-odoo-ded.md` — inventario moduli `odoo_ded` per una
+  migrazione futura.
+- `research/migrazione-cf-ded-campaign.md` — piano/checklist per la feature campagne (non
+  ancora costruita).
+- `research/odoo-pattern-viste-search-list-form.md` — pattern search/list/form riusabili in
+  future viste.

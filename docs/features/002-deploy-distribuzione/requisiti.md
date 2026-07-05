@@ -1,6 +1,0 @@
-- Voglio che questa applicazione possa essereeseguita nel browser dai miei amici i quali hanno competenze informatiche limitate
-- io vorrei passerei a loro un qualcosa di semplice un file o una cartella o uno zip o un eseguibile, vediamo
-- dove cliccandoci gli fa partire l'app nel browser/o anche app locale e poi possono spegnerlo/chiuderlo
-- qualcosa tipo Flutter?
-- Pero poi ques'app sicuramente verra deployata su un server aws e miei amici avranno le credenziali per accdedre all'app via browser
-- ma in questa fase di sviluppo/prototipo qual'è la strada migliore per lasciare loro qualcosa che possono testare/usare in locale? forse dovrei usare un sito per deploy più easy tipo vercel? skippando la parte dove gli passo qualcosa da far girare in locale

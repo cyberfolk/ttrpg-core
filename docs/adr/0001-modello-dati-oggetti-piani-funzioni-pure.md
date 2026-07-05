@@ -40,10 +40,19 @@ costruttori di classe. Nessuna classe JS.
 4. **La verità è lo stato intero.** `computeScore` opera sull'array transazioni, non su
    un singolo oggetto. Pattern "functional core": dati separati dal comportamento.
 
+## Nota: cosa significa "traducibile 1:1 in Python"
+
+È un obiettivo di **port meccanico pratico**, non una corrispondenza letterale riga-per-riga.
+Corollario importante: lo **stile funzionale del JS di oggi non obbliga un Python funzionale
+domani** — le due scelte sono indipendenti. Un futuro backend Python può benissimo essere
+**OOP** (dataclass/classi ricche) senza contraddire questo ADR. Le ragioni per restare
+funzionali qui (testabilità + protezione dell'invariante "punteggio derivato, mai salvato")
+valgono **a prescindere dal port**: reggerebbero anche se la migrazione Python fosse abbandonata.
+
 ## Conseguenze
 
 **Positive:**
-- Test banali (input→output, già coperti in `scripts/tests/`).
+- Test banali (input→output, già coperti in `tests/`).
 - Persistenza/export/import senza reidratazione.
 - Porting a Python lineare.
 
