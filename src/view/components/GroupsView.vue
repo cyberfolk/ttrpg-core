@@ -12,15 +12,18 @@
 
       <!-- Azioni: toggle vista (griglia<->lista) + aggiungi, icone compatte -->
       <div class="rep-toolbar__actions">
-        <button class="ds-btn ds-btn--secondary ds-btn--icon" @click="toggleView"
-          :aria-label="viewMode === 'list' ? 'Mostra come griglia' : 'Mostra come lista'"
-          :title="viewMode === 'list' ? 'Mostra come griglia' : 'Mostra come lista'">
-          <Icon :name="viewMode === 'list' ? 'gallery' : 'list'" />
-        </button>
-        <button class="ds-btn ds-btn--primary ds-btn--icon" @click="openAdd"
-          aria-label="Aggiungi gruppo" title="Aggiungi gruppo">
-          <Icon name="plus" />
-        </button>
+        <HoverTip :text="viewMode === 'list' ? 'Mostra come griglia' : 'Mostra come lista'" :tab-index="-1">
+          <button class="ds-btn ds-btn--secondary ds-btn--icon" @click="toggleView"
+            :aria-label="viewMode === 'list' ? 'Mostra come griglia' : 'Mostra come lista'">
+            <Icon :name="viewMode === 'list' ? 'gallery' : 'list'" />
+          </button>
+        </HoverTip>
+        <HoverTip text="Aggiungi gruppo" :tab-index="-1">
+          <button class="ds-btn ds-btn--primary ds-btn--icon" @click="openAdd"
+            aria-label="Aggiungi gruppo">
+            <Icon name="plus" />
+          </button>
+        </HoverTip>
       </div>
     </div>
 

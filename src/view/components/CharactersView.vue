@@ -13,15 +13,18 @@
 
       <!-- Azioni: toggle vista (griglia<->lista) + aggiungi, icone compatte -->
       <div class="rep-toolbar__actions">
-        <button class="ds-btn ds-btn--secondary ds-btn--icon" @click="toggleView"
-          :aria-label="isList ? 'Mostra come griglia' : 'Mostra come lista'"
-          :title="isList ? 'Mostra come griglia' : 'Mostra come lista'">
-          <Icon :name="isList ? 'gallery' : 'list'" />
-        </button>
-        <button class="ds-btn ds-btn--primary ds-btn--icon" @click="openAdd"
-          aria-label="Aggiungi personaggio" title="Aggiungi personaggio">
-          <Icon name="plus" />
-        </button>
+        <HoverTip :text="isList ? 'Mostra come griglia' : 'Mostra come lista'" :tab-index="-1">
+          <button class="ds-btn ds-btn--secondary ds-btn--icon" @click="toggleView"
+            :aria-label="isList ? 'Mostra come griglia' : 'Mostra come lista'">
+            <Icon :name="isList ? 'gallery' : 'list'" />
+          </button>
+        </HoverTip>
+        <HoverTip text="Aggiungi personaggio" :tab-index="-1">
+          <button class="ds-btn ds-btn--primary ds-btn--icon" @click="openAdd"
+            aria-label="Aggiungi personaggio">
+            <Icon name="plus" />
+          </button>
+        </HoverTip>
       </div>
     </div>
 
@@ -84,6 +87,7 @@ import { ONBOARD } from '../uiCopy.js';
 import GalleryView from './GalleryView.vue';
 import ListView from './ListView.vue';
 import EmptyState from './EmptyState.vue';
+import HoverTip from './HoverTip.vue';
 import Icon from './Icon.vue';
 
 const ui = useUiState();
