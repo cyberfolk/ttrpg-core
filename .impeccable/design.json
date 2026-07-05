@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-06-26T00:00:00Z",
+  "generatedAt": "2026-07-05T00:00:00Z",
   "title": "Design System: TTRPG Core — Atlante",
   "extensions": {
     "colorMeta": {
@@ -31,7 +31,9 @@
       { "name": "dur-slow", "value": "0.4s", "purpose": "Entrata profilo, rise delle card." }
     ],
     "breakpoints": [
-      { "name": "mobile", "value": "480px" }
+      { "name": "mobile", "value": "480px", "purpose": "Toolbar su riga sola; segmented full-width." },
+      { "name": "tx-mobile", "value": "560px", "purpose": "Modale transazioni: via colonne Data/Azioni e frecce." },
+      { "name": "desktop", "value": "720px", "purpose": "Nav nell'header; il drawer muta in popover." }
     ]
   },
   "components": [
@@ -79,9 +81,49 @@
       "name": "Search Input",
       "kind": "input",
       "refersTo": "input",
-      "description": "Campo testo carta pura; focus a bordo oro + anello.",
+      "description": "Campo testo carta pura; focus a bordo oro + anello. Placeholder AA (ink-500).",
       "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Cerca personaggio…\" />",
-      "css": ".ds-input { font-family: 'Source Sans 3', sans-serif; font-size: 1rem; color: #221d16; background: #ffffff; border: 1px solid #ddd3c2; border-radius: 10px; padding: 0.55rem 0.75rem; width: 100%; transition: border-color .15s, box-shadow .15s; } .ds-input::placeholder { color: #8c8273; } .ds-input:hover { border-color: #b8893a; } .ds-input:focus { outline: none; border-color: #b8893a; box-shadow: 0 0 0 3px rgba(184,137,58,.38); }"
+      "css": ".ds-input { font-family: 'Source Sans 3', sans-serif; font-size: 1rem; color: #221d16; background: #ffffff; border: 1px solid #ddd3c2; border-radius: 10px; padding: 0.55rem 0.75rem; width: 100%; transition: border-color .15s, box-shadow .15s; } .ds-input::placeholder { color: #6c6253; opacity: 1; } .ds-input:hover { border-color: #b8893a; } .ds-input:focus { outline: none; border-color: #b8893a; box-shadow: 0 0 0 3px rgba(184,137,58,.38); }"
+    },
+    {
+      "name": "Relation Arrow",
+      "kind": "custom",
+      "refersTo": "relation-arrow",
+      "description": "Firma dell'asimmetria A→B: label corsiva + freccia oro disegnata (non un carattere).",
+      "html": "<span class=\"ds-rel-arrow\"><span class=\"ds-rel-arrow__label\">cosa pensa di</span><span class=\"ds-rel-arrow__glyph\"></span></span>",
+      "css": ".ds-rel-arrow { display: inline-flex; flex-direction: column; align-items: stretch; line-height: 1; min-width: 4rem; margin-inline: 6px; } .ds-rel-arrow__label { font-family: 'Source Sans 3', sans-serif; font-style: italic; font-weight: 400; font-size: 0.75rem; color: #8c8273; margin-bottom: 2px; white-space: nowrap; text-align: center; } .ds-rel-arrow__glyph { position: relative; width: 100%; height: 2px; background: #b8893a; border-radius: 1px; } .ds-rel-arrow__glyph::after { content: ''; position: absolute; right: 0; top: 50%; width: 7px; height: 7px; border-top: 2px solid #b8893a; border-right: 2px solid #b8893a; transform: translate(1px, -50%) rotate(45deg); }"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "nav",
+      "refersTo": "segmented-active",
+      "description": "Pillole per cambiare vista; voce attiva a gradiente oro, etichette Cinzel maiuscolo.",
+      "html": "<div class=\"ds-seg\"><button class=\"ds-seg__btn active\">Galleria</button><button class=\"ds-seg__btn\">Lista</button></div>",
+      "css": ".ds-seg { display: inline-flex; gap: 0.25rem; padding: 0.25rem; background: #f4efe5; border: 1px solid #e8e1d4; border-radius: 10px; } .ds-seg__btn { font-family: Cinzel, Georgia, serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6c6253; background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 0.45rem 0.8rem; cursor: pointer; transition: background .15s, color .15s; } .ds-seg__btn:hover { color: #221d16; background: #ffffff; } .ds-seg__btn.active { color: #2c220e; background: linear-gradient(180deg, #d6b157, #c39845); border-color: #b8893a; box-shadow: 0 1px 2px rgba(33,28,21,.06); }"
+    },
+    {
+      "name": "Switch",
+      "kind": "custom",
+      "refersTo": "switch-track-on",
+      "description": "Toggle oro (es. Mostra archiviati): track oro + thumb bruno quando attivo.",
+      "html": "<label class=\"ds-switch\"><input type=\"checkbox\" checked /><span class=\"ds-switch__track\"><span class=\"ds-switch__thumb\"></span></span></label>",
+      "css": ".ds-switch { position: relative; display: inline-flex; } .ds-switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; } .ds-switch__track { display: inline-flex; align-items: center; width: 2.2rem; height: 1.2rem; padding: 2px; background: #f4efe5; border: 1px solid #e8e1d4; border-radius: 999px; transition: background .15s, border-color .15s; } .ds-switch__thumb { width: .9rem; height: .9rem; border-radius: 50%; background: #6c6253; box-shadow: 0 1px 2px rgba(33,28,21,.06); transition: transform .15s, background .15s; } .ds-switch input:checked + .ds-switch__track { background: linear-gradient(180deg, #d6b157, #c39845); border-color: #b8893a; } .ds-switch input:checked + .ds-switch__track .ds-switch__thumb { transform: translateX(1rem); background: #2c220e; }"
+    },
+    {
+      "name": "Menu Item",
+      "kind": "custom",
+      "refersTo": "menu-item",
+      "description": "Voce del menu azioni (kebab/gear) in popover teleportato; variante danger in ember.",
+      "html": "<div class=\"ds-menu-pop\"><button class=\"ds-menu-item\">Rinomina</button><button class=\"ds-menu-item ds-menu-item--danger\">Elimina</button></div>",
+      "css": ".ds-menu-pop { padding: 0.3rem; min-width: max-content; background: #ffffff; border: 1px solid rgba(184,137,58,.30); border-radius: 10px; box-shadow: 0 6px 16px rgba(33,28,21,.08), 0 1px 3px rgba(33,28,21,.05); display: flex; flex-direction: column; gap: 0.1rem; } .ds-menu-item { display: flex; align-items: center; gap: 0.55rem; width: 100%; padding: 0.5rem 0.6rem; border: none; border-radius: 6px; background: transparent; color: #3c3429; font-family: 'Source Sans 3', sans-serif; font-size: 0.875rem; line-height: 1; text-align: left; white-space: nowrap; cursor: pointer; transition: background .15s, color .15s; } .ds-menu-item:hover, .ds-menu-item:focus-visible { background: #faf7f1; outline: none; } .ds-menu-item--danger { color: #8f3315; } .ds-menu-item--danger:hover { background: #f7e3d7; }"
+    },
+    {
+      "name": "Dialog",
+      "kind": "custom",
+      "refersTo": "dialog",
+      "description": "Modale carta pura con filetto oro in testa e chiusura a triangolo d'angolo.",
+      "html": "<div class=\"ds-dialog\"><div class=\"ds-dialog__head\"><span class=\"ds-dialog__title\">Transazioni</span></div><div class=\"ds-dialog__body\">Aggiungi o modifica una transazione.</div></div>",
+      "css": ".ds-dialog { position: relative; width: 100%; max-width: 540px; background: #ffffff; border: 1px solid rgba(184,137,58,.30); border-radius: 14px; box-shadow: 0 16px 36px rgba(33,28,21,.13), 0 2px 6px rgba(33,28,21,.06); overflow: hidden; } .ds-dialog::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #c9a24b, transparent); opacity: .8; } .ds-dialog__head { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.25rem 1rem; border-bottom: 1px solid #e8e1d4; } .ds-dialog__title { font-family: Cinzel, Georgia, serif; font-size: 1.25rem; font-weight: 600; color: #221d16; } .ds-dialog__body { padding: 1.25rem; font-family: 'Source Sans 3', sans-serif; font-size: 1rem; line-height: 1.5; color: #3c3429; }"
     }
   ],
   "narrative": {
@@ -101,11 +143,11 @@
       { "name": "La Regola Piatta-di-Default", "body": "Le superfici sono piatte a riposo. L'ombra appare solo come risposta a uno stato (hover, focus, dialog).", "section": "elevation" }
     ],
     "dos": [
-      "Do tenere il testo di corpo su ink-700 (#3c3429) o più scuro; placeholder a ink-400.",
+      "Do tenere il testo di corpo su ink-700 (#3c3429) o più scuro; placeholder a text-muted (ink-500), non ink-400.",
       "Do usare l'oro come segnatura (filetto, bordo, intestazione): ≤15% di schermata.",
-      "Do rendere sempre esplicita la direzione A→B con frecce/etichette.",
+      "Do rendere sempre esplicita la direzione A→B con la freccia disegnata (rep-rel-arrow), mai bidirezionale.",
       "Do lasciare le superfici piatte a riposo; ombra solo su hover/focus/dialog.",
-      "Do trattare il mobile come prima classe: tabelle e matrice scrollano, non si mutilano.",
+      "Do trattare il mobile come prima classe: le tabelle scrollano, non si mutilano.",
       "Do usare Cinzel maiuscolo con tracking 0.08em per le micro-etichette ricorrenti."
     ],
     "donts": [

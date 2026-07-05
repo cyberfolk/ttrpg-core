@@ -17,6 +17,7 @@ colors:
   gold-500: "#b8893a"
   gold-400: "#c9a24b"
   gold-300: "#e0c074"
+  gold-200: "#e9d4a1"
   gold-100: "#f3e9cf"
   ember-700: "#8f3315"
   ember-600: "#b4471f"
@@ -105,6 +106,22 @@ components:
     textColor: "{colors.ink-900}"
     rounded: "{rounded.md}"
     padding: "0.55rem 0.75rem"
+  segmented-active:
+    backgroundColor: "{colors.gold-400}"
+    textColor: "#2c220e"
+    rounded: "{rounded.sm}"
+    padding: "0.45rem 0.8rem"
+  switch-track-on:
+    backgroundColor: "{colors.gold-400}"
+    rounded: "{rounded.pill}"
+  dialog:
+    backgroundColor: "{colors.paper-0}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.5}"
+  menu-item:
+    textColor: "{colors.ink-700}"
+    rounded: "{rounded.sm}"
+    padding: "0.5rem 0.6rem"
 ---
 
 # Design System: TTRPG Core — Atlante
@@ -243,6 +260,21 @@ risposta a uno stato (hover, focus, dialog). Un'ombra a riposo va giustificata o
   Da preferire alla ripetizione manuale dello span `.ds-score`. Il reset del `<button>` e il
   focus-ring stanno in `main.css` (globali: lo scope del padre non raggiunge il figlio).
 
+### Relation arrow (signature)
+La resa visiva del principio cardine "asimmetria leggibile": la direzione `A→B` non si affida
+mai a sole etichette, ha una **freccia disegnata** che la incide sullo schermo.
+- **`.rep-rel-arrow`** — colonna verticale (label sopra, glifo sotto), `min-width` fissa (4rem;
+  4.5rem nel modale) così i nomi restano allineati anche con label di lunghezza diversa.
+- **Label** (`.rep-rel-arrow__label`): Source Sans 3 **corsivo** 400, `fs-xs`, `text-faint`,
+  minuscolo (es. *"cosa pensa di"*). È l'unico corsivo del sistema: segnala la relazione, non
+  il dato.
+- **Glifo** (`.rep-rel-arrow__glyph`): non un carattere `→` ma una **linea oro** (`gold-500`,
+  2px, `border-radius` 1px) larga quanto la label, con la punta costruita da due bordi ruotati
+  a 45° via `::after`. Segue il testo, non va mai a capo. Su smartphone nel modale il glifo
+  sparisce (`display:none`) e restano le sole label per risparmiare larghezza.
+- **Vietato:** invertire l'orientamento o rendere la freccia bidirezionale. `A→B` è
+  indipendente da `B→A`: due frecce separate, mai una doppia punta.
+
 ### Badge
 - Cinzel maiuscolo, pill, bordo sottile. `neutral` (pannello), `gold` (velina d'oro su
   `gold-700`), `ember` (cenere su `ember-700`). Mai più di un badge che urla per riga.
@@ -257,13 +289,61 @@ risposta a uno stato (hover, focus, dialog). Un'ombra a riposo va giustificata o
 ### Inputs / Fields
 - **Style:** fondo carta pura, bordo `#ddd3c2`, radius `md`. Icona opzionale a sinistra.
 - **Focus:** bordo `gold-500` + anello `shadow-focus`. Hover = bordo oro.
-- **Placeholder:** `ink-400` (mai più chiaro: deve restare leggibile).
+- **Placeholder:** `text-muted` (`ink-500`, ~5.5:1 su carta pura) — **non** `text-faint`
+  (`ink-400`, ~3.6:1, sotto AA). Il placeholder è testo a tutti gli effetti: regge il 4.5:1.
+- **Touch:** su puntatore grossolano (`@media (pointer: coarse)`) l'input sale a `min-height: 44px`.
+
+### Segmented control & Switch
+- **Segmented** (`.ds-seg`): pillole per cambiare vista/opzione. Etichette Cinzel maiuscolo
+  (`ls-caps`), voce `active` a **gradiente oro** (`gold-400`→`gold-500`) su testo bruno #2c220e,
+  bordo `gold-500`. Variante **underline** (`.ds-seg--underline`): niente pillola, filetto oro
+  2px sotto la voce attiva. Su ≤480px va full-width.
+- **Switch** (`.ds-switch`): toggle coerente col gradiente oro — track pergamena a riposo, track
+  oro + thumb bruno (#2c220e) traslato quando `:checked`. Focus-visible = anello `gold-400`. È
+  l'unico toggle del sistema (es. "Mostra archiviati"): niente checkbox custom altrove.
 
 ### Navigation
 - **Header** sticky, avorio translucido con `backdrop-filter: blur(10px)`, hairline in basso.
-- **Drawer** laterale (mobile e non), fondo pannello, bordo destro oro; voce attiva con
-  gradiente oro. **Segmented control** per cambiare vista: Cinzel maiuscolo, attivo a gradiente
-  oro o, in variante underline, filetto oro sotto. Su ≤480px il segmented va full-width.
+  Da ≥720px la nav primaria vive nell'header come segmented; sotto, sta nel drawer.
+- **Drawer** (`.rep-drawer`): su mobile scivola da sinistra (`translateX`), fondo pannello,
+  bordo destro oro; voce attiva (`.rep-drawer__fn.is-active`) a gradiente oro. Da ≥720px muta in
+  **popover** ancorato in alto a destra sotto l'header (`transform-origin: top right`, scrim
+  trasparente). La sezione "Come funziona" è un `<details>` collassato per tenere il menu magro.
+
+### Action menu (kebab / gear)
+- **`.ds-menu`** + composable `useAnchoredMenu.js`: trigger **nudo** (niente sfondo/bordo, solo
+  il glifo). Nelle card gallery e nelle righe lista il glifo è **attenuato a riposo**
+  (`opacity: .45`, `fs 0.9rem`) e si accende solo su hover — l'azione non compete col dato.
+- **Popover** (`.ds-menu__pop`): teleportato su `<body>` (fuori da ogni `overflow`), carta pura,
+  bordo `line-gold`, `shadow-md`. Voci (`.ds-menu__item`) Source Sans; variante `--danger` in
+  `ember-700` con hover a `danger-tint`. Stessa struttura per il popover "Filtri e colonne".
+
+### Dialog / Modal
+- **`.ds-overlay`** (z-index 1000): scrim bruno translucido + `backdrop-filter: blur(3px)`.
+  **`.ds-dialog`**: carta pura, bordo `line-gold`, `shadow-lg`, **filetto oro** in testa
+  (`::before`, 2px), entrata `ds-rise` (translateY + scale, .22s ease-out; annullata da
+  `prefers-reduced-motion`). Head/body/foot divisi da hairline. Chiusura come **triangolo
+  d'angolo** in alto a destra (affordance "clicca qui per chiudere"), coerente con l'angolo
+  "apri scheda" delle card.
+- Il modale resta l'eccezione, non il primo pensiero (registrazione transazioni): per il resto
+  si preferiscono affordance inline (righe di aggiunta in coda a tabella, editing in loco).
+
+### Tooltip
+- **`.rep-tip`** (trigger, `cursor: help`) + **`.rep-hint__bubble`** teleportato, `position:
+  fixed`, freccia costruita con doppio `::before`/`::after`. Testo Source Sans regolare
+  (annulla maiuscolo/tracking ereditati), `text-body` su carta pura, `shadow-lg`. Solo
+  spiegazione contestuale (es. come si calcola un punteggio), mai decorazione.
+
+### Decorative marks (la segnatura dell'archivista)
+Elementi d'identità, tenuti al minimo per la Regola della Segnatura (≤15% oro).
+- **Logo** (`.ds-logo`): marchio + wordmark Cinzel maiuscolo (`ls-wordmark` 0.16em) in
+  `gold-700`, con tagline `fs .66rem`.
+- **Ornamento** (`.ds-orn`): motivo centrale tra due linee oro sfumate — divisore da frontespizio,
+  usato con parsimonia (chiusura profilo).
+- **Ribbon** (`.ds-ribbon`): nastro d'angolo ember maiuscolo per lo stato "archiviato". Unico uso
+  dell'ember come superficie piena.
+- **Corner-triangle** (`.rep-cc__corner`): angolo oro in alto a destra della card, `clip-path`
+  triangolare, freccia "apri scheda". La stessa forma serve da chiusura nei dialog.
 
 ### Utilities & composables
 - **`.ds-sr-only`** — visually-hidden (etichette compatte, intestazioni tabellari nascoste ma
@@ -281,7 +361,8 @@ risposta a uno stato (hover, focus, dialog). Un'ombra a riposo va giustificata o
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** tenere il testo di corpo su `ink-700` (#3c3429) o più scuro; placeholder a `ink-400`.
+- **Do** tenere il testo di corpo su `ink-700` (#3c3429) o più scuro; placeholder a `text-muted`
+  (`ink-500`), non `ink-400` (sotto AA).
 - **Do** usare l'oro come segnatura (filetto, bordo, intestazione, un accento): ≤15% di schermata.
 - **Do** rendere sempre esplicita la direzione A→B con frecce/etichette (`rep-rel-arrow`).
 - **Do** lasciare le superfici piatte a riposo; ombra solo su hover/focus/dialog.
