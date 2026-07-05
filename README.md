@@ -40,4 +40,4 @@ Toggle **Mostra archiviati** per *Ripristina* / *Elimina definitivamente*.
 
 - **Requisiti funzionali** (modello, entità, gruppi, viste, flussi, formato dati) → [`docs/requisiti-funzionali/`](docs/requisiti-funzionali/)
 - **Sviluppo** (avvio, build, test, architettura) → `CLAUDE.md`
-- **Decisioni architetturali** e note di ricerca → [`docs/adr/`](docs/adr/) e [`docs/research/`](docs/research/)
+- **Decisioni architetturali** e note di ricerca → [`docs/ADR/`](docs/ADR/) e [`docs/research/`](docs/research/)

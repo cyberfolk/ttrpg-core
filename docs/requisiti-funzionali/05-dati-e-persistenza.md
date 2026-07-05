@@ -3,7 +3,7 @@
 ## Auto-save
 
 Ogni modifica è salvata nel `localStorage` del browser: ricaricando la pagina i dati restano.
-Lo STORE è l'**unico layer** che tocca `localStorage` (il MODEL resta framework-agnostico).
+(L'architettura dei layer — chi tocca `localStorage` — sta in `CLAUDE.md` §Architettura.)
 
 ## Export / import
 
