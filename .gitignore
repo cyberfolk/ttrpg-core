@@ -20,3 +20,7 @@ dist/
 
 # Superpowers visual companion (sessione brainstorm)
 .superpowers/
+
+# Impeccable: rumore storico/effimero (design.json resta tracciato)
+.impeccable/critique/
+.impeccable/live/
