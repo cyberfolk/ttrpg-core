@@ -13,7 +13,9 @@ punteggio(A→B) = clampView( BASE + Σ delta delle transazioni A→B )
 ```
 
 - `BASE` = **50**: ogni entità parte da 50 verso tutte (somma vuota = 50).
-- `clampView` limita il valore mostrato (definizione unica in `src/model/reputation.js`).
+- `clampView` limita il valore mostrato. `BASE` (`src/model/schema.js`) e `clampView`
+  (`src/model/reputation.js`) sono **isolati**: sono la sola definizione, cambiarli è una
+  riga sola.
 - Lo storico delle transazioni è l'**unica fonte di verità**: impossibile un disallineamento tra un punteggio salvato e le sue cause, perché il punteggio salvato non esiste.
 
 ## Transazioni

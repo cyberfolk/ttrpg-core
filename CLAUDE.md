@@ -21,20 +21,25 @@ Requisiti funzionali (cosa fa l'app), caricati sempre in contesto:
 @docs/requisiti-funzionali/04-flussi.md
 @docs/requisiti-funzionali/05-dati-e-persistenza.md
 
+**Responsabilità di manutenzione (Claude):** tieni `docs/requisiti-funzionali/` allineato.
+Quando una modifica al codice cambia un comportamento funzionale (entità, modello di
+reputazione, viste/navigazione, flussi, dati/persistenza) — o quando decidiamo qualcosa di
+funzionale — aggiorna il pezzo pertinente **nello stesso lavoro**, senza aspettare che te lo
+chieda. È la fonte unica caricata in contesto: se diverge dal codice, il contesto mente. Se
+una modifica non ha impatto funzionale (refactor interno, stile, test), non toccarla.
+
 **Riferimenti (leggi al bisogno, non caricati di default):**
-- Lavoro VIEW → `DESIGN.md`: design system "Atlante" (token, componenti `ds-*`, `<ScoreChip>`, matrice).
+- Lavoro VIEW → `DESIGN.md`: design system "Atlante" (token, componenti `ds-*`, `<ScoreChip>`).
 - Brand, utenti, principi di prodotto → `PRODUCT.md`.
-- Perché di una scelta architetturale → `docs/adr/` (invarianti già distillati qui sotto).
+- Perché di una scelta architetturale → `docs/adr/`
 
 ## Architettura (vincolo forte)
 
 Tre layer, dipendenze solo verso il basso:
 
-- `src/model/` — dati puri + funzioni pure. **Nessuna dipendenza dal browser** (no
-  `window`/`document`/`localStorage`): traducibile 1:1 in Python (migrazione futura).
+- `src/model/` — dati puri + funzioni pure. **Nessuna dipendenza dal browser** (no `window`/`document`/`localStorage`): traducibile 1:1 in Python (migrazione futura).
 - `src/store/` — stato in memoria + persistenza. **Unico layer che tocca localStorage.**
-- `src/view/` — rendering UI (componenti Vue 3). Parla solo con lo store. Layer isolato:
-  cambiarlo non tocca MODEL/STORE/IO.
+- `src/view/` — rendering UI (componenti Vue 3). Parla solo con lo store. Layer isolato: cambiarlo non tocca MODEL/STORE/IO.
 
 La logica di reputazione vive **solo nel MODEL**: view e store non calcolano punteggi.
 
@@ -55,19 +60,6 @@ Mappa file (responsabilità):
 | `src/view/components/*.vue` | Viste e componenti (faccia-a-faccia, galleria, lista, profili, modale) |
 | `src/view/use*.js` | Composables: accesso allo STORE, stato UI, entità visualizzate |
 
-## Invarianti dati
-
-- Punteggio **derivato, mai salvato**: `clampView(50 + somma delta transazioni A→B)`.
-- Relazioni **asimmetriche**: `A→B` indipendente da `B→A`.
-- Nodi di reputazione **polimorfi**: `from`/`to` di una transazione può essere un
-  personaggio *o* un gruppo. UUID globalmente unici → nessun campo `type` sulla
-  transazione; `resolveNode(state, id)` disambigua (personaggio | gruppo | `null`).
-- `BASE` (50) e `clampView` isolati in `src/model/` → cambiarli è una riga sola.
-- Export/import: unico formato JSON con campo `version` (vedi `src/store/io.js`).
-- Aggregato gruppo: media (arrotondata) dei `computeScore` dei membri con ≥1 transazione
-  nella direzione considerata; `null` se nessun membro qualificato. Nodo diretto e
-  aggregato si mostrano **separati**, mai fusi in un numero unico.
-
 ## Comandi
 
 - Test: `npm test` (= `node --test`, auto-discovery di `tests/**/*.test.js`).
@@ -81,11 +73,10 @@ MODEL/STORE/IO coperti da `node:test` (TDD). La VIEW si verifica a mano nel brow
 
 ## Docs
 
-Solo due tipi di documento, indice in `docs/README.md`:
+Tre tipi di documento, indice in `docs/README.md`:
 
 - `docs/adr/NNNN-slug.md` — **Architecture Decision Record**: una decisione architetturale
   per file, immutabile. Struttura: Contesto / Decisione / Conseguenze / Alternative /
   Quando rivedere. Nuovo ADR → prossimo `NNNN` (tracker in `docs/README.md`).
 - `docs/research/<slug>.md` — note di ricerca **trasversali** (reference, non decisioni).
-
-Gli invarianti già distillati sono qui sopra; il *perché* di una scelta sta nel suo ADR.
+- `docs/requisiti-funzionali/NN-slug.md` — cosa fa l'app, in dettaglio.
