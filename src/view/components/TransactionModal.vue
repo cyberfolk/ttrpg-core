@@ -28,11 +28,7 @@
         <span class="rep-tx-headscore">
           <HoverTip text="Punteggio Totale" label="Punteggio totale" class-name="rep-cc__scoretip">
             <span class="rep-tx-headscore__inner">
-              <span class="ds-score ds-score--lg"
-                :class="{ 'ds-score--empty': score === null }"
-                :style="score !== null ? { background: scoreColor(score) } : undefined">
-                {{ score !== null ? score : '–' }}
-              </span>
+              <ScoreChip :score="score" size="lg" />
             </span>
           </HoverTip>
         </span>
@@ -161,10 +157,10 @@
 import { computed, ref } from 'vue';
 import { useStore } from '../useStore.js';
 import { computeScore, listTransactions, addTransaction, editTransaction, deleteTransaction } from '../../model/reputation.js';
-import { scoreColor } from '../scoreColor.js';
 import { displayName } from '../disambiguation.js';
 import { useDialog } from '../useDialog.js';
 import HoverTip from './HoverTip.vue';
+import ScoreChip from './ScoreChip.vue';
 
 const props = defineProps({
   fromId: { type: String, required: true },

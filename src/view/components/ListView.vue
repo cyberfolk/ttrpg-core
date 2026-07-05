@@ -46,10 +46,7 @@
             @keydown.enter="saveEdit(item.char.id)" @keydown.escape="cancelEdit" />
         </td>
         <td @click.stop>
-          <span class="ds-score" :class="item.score === null ? 'ds-score--empty' : ''"
-            :style="item.score !== null ? { background: scoreColor(item.score) } : undefined">
-            {{ item.score !== null ? item.score : '–' }}
-          </span>
+          <ScoreChip :score="item.score" />
         </td>
         <td class="rep-table__actions-cell" @click.stop>
           <div class="rep-table__actions">
@@ -101,12 +98,12 @@ import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
 import { useSortable } from '../useSortable.js';
-import { scoreColor } from '../scoreColor.js';
 import { softDeleteCharacter, restoreCharacter, hardDeleteCharacter, renameCharacter } from '../../model/reputation.js';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import SortableTh from './SortableTh.vue';
 import ActionMenu from './ActionMenu.vue';
+import ScoreChip from './ScoreChip.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 defineProps({

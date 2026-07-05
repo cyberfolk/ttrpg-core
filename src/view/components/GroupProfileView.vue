@@ -60,11 +60,7 @@
             <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
               <span class="rep-profile__synthetic-inner">
                 <span class="rep-profile__synthetic-label">Reputazione<br>Complessiva</span>
-                <span class="ds-score ds-score--lg"
-                  :class="synthetic === null ? 'ds-score--empty' : ''"
-                  :style="synthetic !== null ? { background: scoreColor(synthetic) } : undefined">
-                  {{ synthetic !== null ? synthetic : '–' }}
-                </span>
+                <ScoreChip :score="synthetic" size="lg" />
               </span>
             </HoverTip>
           </span>
@@ -180,38 +176,22 @@
             <!-- X → G diretto -->
             <div class="rep-group-scores__cell">
               <span class="rep-group-scores__label">{{ $name(char) }} → gruppo (diretto)</span>
-              <span class="ds-score ds-score--sm"
-                :class="scoreXtoGDirect(char.id) === null ? 'ds-score--empty' : ''"
-                :style="scoreXtoGDirect(char.id) !== null ? { background: scoreColor(scoreXtoGDirect(char.id)) } : undefined">
-                {{ scoreXtoGDirect(char.id) !== null ? scoreXtoGDirect(char.id) : 'n/d' }}
-              </span>
+              <ScoreChip :score="scoreXtoGDirect(char.id)" size="sm" empty="n/d" />
             </div>
             <!-- X → G derivato (membri) -->
             <div class="rep-group-scores__cell">
               <span class="rep-group-scores__label">{{ $name(char) }} → gruppo (membri)</span>
-              <span class="ds-score ds-score--sm"
-                :class="scoreXtoGDerived(char.id) === null ? 'ds-score--empty' : ''"
-                :style="scoreXtoGDerived(char.id) !== null ? { background: scoreColor(scoreXtoGDerived(char.id)) } : undefined">
-                {{ scoreXtoGDerived(char.id) !== null ? scoreXtoGDerived(char.id) : 'n/d' }}
-              </span>
+              <ScoreChip :score="scoreXtoGDerived(char.id)" size="sm" empty="n/d" />
             </div>
             <!-- G → X diretto -->
             <div class="rep-group-scores__cell">
               <span class="rep-group-scores__label">Gruppo → {{ $name(char) }} (diretto)</span>
-              <span class="ds-score ds-score--sm"
-                :class="scoreGtoXDirect(char.id) === null ? 'ds-score--empty' : ''"
-                :style="scoreGtoXDirect(char.id) !== null ? { background: scoreColor(scoreGtoXDirect(char.id)) } : undefined">
-                {{ scoreGtoXDirect(char.id) !== null ? scoreGtoXDirect(char.id) : 'n/d' }}
-              </span>
+              <ScoreChip :score="scoreGtoXDirect(char.id)" size="sm" empty="n/d" />
             </div>
             <!-- G → X derivato (membri) -->
             <div class="rep-group-scores__cell">
               <span class="rep-group-scores__label">Gruppo → {{ $name(char) }} (membri)</span>
-              <span class="ds-score ds-score--sm"
-                :class="scoreGtoXDerived(char.id) === null ? 'ds-score--empty' : ''"
-                :style="scoreGtoXDerived(char.id) !== null ? { background: scoreColor(scoreGtoXDerived(char.id)) } : undefined">
-                {{ scoreGtoXDerived(char.id) !== null ? scoreGtoXDerived(char.id) : 'n/d' }}
-              </span>
+              <ScoreChip :score="scoreGtoXDerived(char.id)" size="sm" empty="n/d" />
             </div>
           </div>
         </div>
@@ -265,13 +245,13 @@ import {
   restoreGroup,
   hardDeleteGroup,
 } from '../../model/reputation.js';
-import { scoreColor } from '../scoreColor.js';
 import { SCORE_TIP } from '../uiCopy.js';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import ActionMenu from './ActionMenu.vue';
+import ScoreChip from './ScoreChip.vue';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
 import EntityPicker from './EntityPicker.vue';

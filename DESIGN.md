@@ -236,6 +236,11 @@ risposta a uno stato (hover, focus, dialog). Un'ombra a riposo va giustificata o
 - Bollino pill a numeri tabellari, colore di fondo derivato dal punteggio (vedi
   `scoreColor.js`), testo `score-ink` #2a2114, `inset` hairline. Varianti `sm`/`lg`; `lg` passa
   a Cinzel. `empty` = pergamena con testo faint. `interactive` scala 1.06 su hover.
+- **Componente `<ScoreChip>`** (`components/ScoreChip.vue`): incapsula classe `.ds-score`,
+  variante `size` (`sm`/`md`/`lg`), stato `empty` (score `null`), tinta `scoreColor` e simbolo
+  di fallback (`empty`, default `–`). `interactive` lo rende un `<button>` (apre la transazione).
+  Da preferire alla ripetizione manuale dello span `.ds-score`. Il reset del `<button>` e il
+  focus-ring stanno in `main.css` (globali: lo scope del padre non raggiunge il figlio).
 
 ### Badge
 - Cinzel maiuscolo, pill, bordo sottile. `neutral` (pannello), `gold` (velina d'oro su
@@ -263,6 +268,19 @@ risposta a uno stato (hover, focus, dialog). Un'ombra a riposo va giustificata o
 - Griglia di reputazione: intestazioni Cinzel su velina d'oro, colonne in `writing-mode`
   verticale, celle a numeri tabellari colorate per punteggio, diagonale neutra. Scroll
   orizzontale su mobile, mai compressione illeggibile.
+
+### Utilities & composables
+- **`.ds-sr-only`** — visually-hidden (etichette compatte, intestazioni tabellari nascoste ma
+  leggibili dall'AT). Sempre nascosto; per un nascondere *responsive* usare un `@media` locale.
+- **`.ds-idhint`** — coda-id `#n` per omonimi: `fs-xs`, `text-faint`, numeri tabellari. Da
+  affiancare a un'eventuale classe locale che porta solo il margine.
+- **`.ds-search`** — wrapper campo di ricerca con icona assoluta centrata a sinistra; da usare
+  con `.ds-input.ds-input--with-icon`.
+- **`entityKind.js`** — helper puri per il `kind` (`kindIcon`, `kindLabel`, `entityRouteTo`):
+  unico posto dove vive il ternario personaggio/gruppo.
+- **`useAnchoredMenu.js`** — popup teleportato su `<body>` ancorato al bordo destro di un
+  trigger (dropdown Filtri, ActionMenu): apertura/chiusura, dismiss su click esterno/scroll/
+  resize ed Esc, focus alla prima voce.
 
 ## 6. Do's and Don'ts
 

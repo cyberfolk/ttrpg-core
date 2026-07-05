@@ -37,9 +37,9 @@
           <article v-for="v in versi" :key="v.key" class="fv-verso">
             <!-- Titolo = il possessore (l'osservato), identità della card. -->
             <RouterLink class="fv-verso__owner"
-              :to="linkTo(v.toKind, v.toId)" :title="v.toName">
+              :to="entityRouteTo(v.toKind, v.toId)" :title="v.toName">
               <span class="fv-verso__owner-glyph" aria-hidden="true"><Icon :name="v.toIcon" /></span>
-              <span class="fv-verso__owner-name">{{ v.toName }}<span v-if="v.toSuffix" class="fv-verso__suffix">#{{ v.toSuffix }}</span></span>
+              <span class="fv-verso__owner-name">{{ v.toName }}<span v-if="v.toSuffix" class="ds-idhint fv-verso__suffix">#{{ v.toSuffix }}</span></span>
             </RouterLink>
 
             <!-- Letture: il giudizio del singolo osservatore e, in progressive
@@ -54,9 +54,9 @@
                 </span>
                 <span class="fv-verso__attrib-kicker">Reputazione secondo</span>
                 <RouterLink class="fv-verso__source"
-                  :to="linkTo(v.fromKind, v.fromId)" :title="v.fromName">
+                  :to="entityRouteTo(v.fromKind, v.fromId)" :title="v.fromName">
                   <span class="fv-verso__source-glyph" aria-hidden="true"><Icon :name="v.fromIcon" /></span>
-                  <span class="fv-verso__source-name">{{ v.fromName }}<span v-if="v.fromSuffix" class="fv-verso__suffix">#{{ v.fromSuffix }}</span></span>
+                  <span class="fv-verso__source-name">{{ v.fromName }}<span v-if="v.fromSuffix" class="ds-idhint fv-verso__suffix">#{{ v.fromSuffix }}</span></span>
                 </RouterLink>
               </div>
 
@@ -113,10 +113,10 @@
                   <td>
                     <span class="fv-ledger__dir">
                       <span class="fv-ledger__dir-glyph fv-ledger__dir-glyph--from" aria-hidden="true"><Icon :name="row.fromIcon" /></span>
-                      <span class="fv-ledger__dir-name fv-ledger__dir-name--from">{{ row.fromName }}<span v-if="row.fromSuffix" class="fv-ledger__dir-suffix">#{{ row.fromSuffix }}</span></span>
+                      <span class="fv-ledger__dir-name fv-ledger__dir-name--from">{{ row.fromName }}<span v-if="row.fromSuffix" class="ds-idhint fv-ledger__dir-suffix">#{{ row.fromSuffix }}</span></span>
                       <Icon name="next" class="fv-ledger__dir-arrow" aria-hidden="true" />
                       <span class="fv-ledger__dir-glyph fv-ledger__dir-glyph--to" aria-hidden="true"><Icon :name="row.toIcon" /></span>
-                      <span class="fv-ledger__dir-name fv-ledger__dir-name--to">{{ row.toName }}<span v-if="row.toSuffix" class="fv-ledger__dir-suffix">#{{ row.toSuffix }}</span></span>
+                      <span class="fv-ledger__dir-name fv-ledger__dir-name--to">{{ row.toName }}<span v-if="row.toSuffix" class="ds-idhint fv-ledger__dir-suffix">#{{ row.toSuffix }}</span></span>
                     </span>
                   </td>
                   <td class="rep-col--right">
@@ -153,6 +153,7 @@ import { useStore } from '../useStore.js';
 import { resolveNode, computeScore, averageIncomingScore, listTransactions, listActiveCharacters, listActiveGroups } from '../../model/reputation.js';
 import { ambiguousIds, displayName } from '../disambiguation.js';
 import { scoreColor } from '../scoreColor.js';
+import { kindIcon, entityRouteTo } from '../entityKind.js';
 import { SCORE_TIP } from '../uiCopy.js';
 import Icon from './Icon.vue';
 import EntityPicker from './EntityPicker.vue';
@@ -189,7 +190,7 @@ function suffixOf(id) {
 }
 
 function iconOf(node) {
-  const name = node.kind === 'group' ? 'users' : 'user';
+  const name = kindIcon(node.kind);
   return name;
 }
 
@@ -248,13 +249,6 @@ const hintText = computed(() => {
   const chosen = displayName(nodeA.value ? nodeA.value.entity : nodeB.value.entity);
   return `Hai scelto ${chosen}. Seleziona anche l'altro nome per vedere la reputazione reciproca.`;
 });
-
-// Destinazione del link al profilo/scheda dell'entità (personaggio o gruppo).
-function linkTo(kind, id) {
-  const name = kind === 'group' ? 'groupProfile' : 'profile';
-  const loc = { name, params: { id } };
-  return loc;
-}
 
 function registra(fromId, toId) {
   tx.value = { fromId, toId };
@@ -557,13 +551,8 @@ function fmtDay(ts) {
   .fv-verso__source { min-height: 44px; padding-inline: var(--space-2); }
 }
 
-/* Coda-id per omonimi: de-enfatizzata, in linea col nome. */
-.fv-verso__suffix {
-  margin-left: 0.25rem;
-  font-size: var(--fs-xs);
-  color: var(--text-faint);
-  font-variant-numeric: tabular-nums;
-}
+/* Coda-id per omonimi (base .ds-idhint): qui solo l'inset in linea col nome. */
+.fv-verso__suffix { margin-left: 0.25rem; }
 
 /* Il punteggio è l'eroe visivo: grande numerale Cinzel su pillola tinta
    scoreColor, stessa forma dei chip punteggio delle altre schermate. */
@@ -624,11 +613,8 @@ function fmtDay(ts) {
 .fv-ledger__dir-glyph--from { color: var(--text-faint); }
 .fv-ledger__dir-name--to { color: var(--text-strong); font-weight: var(--fw-medium); }
 .fv-ledger__dir-glyph--to { color: var(--text-muted); }
-.fv-ledger__dir-suffix {
-  margin-left: 0.3rem;
-  color: var(--text-faint);
-  font-variant-numeric: tabular-nums;
-}
+/* Coda-id per omonimi (base .ds-idhint): qui solo l'inset. */
+.fv-ledger__dir-suffix { margin-left: 0.3rem; }
 .fv-ledger__delta {
   font-variant-numeric: tabular-nums;
   font-weight: var(--fw-semibold);

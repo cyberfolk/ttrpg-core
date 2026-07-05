@@ -228,6 +228,11 @@ a:hover { color: var(--gold-600); }
 .ds-score--empty { background: var(--paper-200) !important; color: var(--text-faint); box-shadow: inset 0 0 0 1px var(--line-strong); }
 .ds-score--interactive { cursor: pointer; }
 .ds-score--interactive:hover { transform: scale(1.06); box-shadow: 0 0 0 2px var(--gold-400), inset 0 0 0 1px rgba(33,28,21,.12); }
+/* Chip punteggio come <button> reale (ScoreChip interattivo): azzera il chrome
+   nativo. Globale perché ScoreChip è un componente figlio: lo scope del padre
+   non raggiungerebbe il suo elemento radice. */
+button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: inherit; cursor: pointer; }
+.ds-score:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 2px; }
 
 /* === DS: Badge ============================================= */
 .ds-badge {
@@ -428,6 +433,40 @@ a:hover { color: var(--gold-600); }
 .ds-orn__line--r { background: linear-gradient(90deg, var(--gold-400), transparent); }
 .ds-orn__motif { flex: none; display: inline-flex; color: var(--gold-500); }
 .ds-orn__motif svg { display: block; }
+
+/* === DS: Utilities ========================================= */
+/* Solo screen reader: fuori dal flusso visivo ma leggibile dall'AT (etichette
+   compatte, intestazioni tabellari nascoste nei layout impilati mobile). */
+.ds-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+/* Coda-id per omonimi (stesso tipo + nome): de-enfatizzata, numeri tabellari. */
+.ds-idhint {
+  flex: none;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+/* Campo di ricerca: input con icona assoluta centrata verticalmente a sinistra.
+   Da usare con .ds-input.ds-input--with-icon. */
+.ds-search { position: relative; display: flex; align-items: center; min-width: 0; }
+.ds-search__icon {
+  position: absolute;
+  left: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-faint);
+  display: inline-flex;
+  z-index: 1;
+}
+.ds-search .ds-input { width: 100%; }
 
 /* === App layout ============================================ */
 .rep-header {

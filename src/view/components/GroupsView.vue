@@ -85,10 +85,7 @@
 
             <!-- Reputazione complessiva -->
             <td class="rep-col--right" @click.stop>
-              <span class="ds-score ds-score--sm" :class="scoreOf(group.id) === null ? 'ds-score--empty' : ''"
-                :style="scoreOf(group.id) !== null ? { background: scoreColor(scoreOf(group.id)) } : undefined">
-                {{ scoreOf(group.id) !== null ? scoreOf(group.id) : '–' }}
-              </span>
+              <ScoreChip :score="scoreOf(group.id)" size="sm" />
             </td>
 
             <!-- Azioni -->
@@ -191,13 +188,13 @@ import {
   renameGroup,
   averageIncomingScore,
 } from '../../model/reputation.js';
-import { scoreColor } from '../scoreColor.js';
 import { useSortable } from '../useSortable.js';
 import { useDialog } from '../useDialog.js';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import SortableTh from './SortableTh.vue';
 import ActionMenu from './ActionMenu.vue';
+import ScoreChip from './ScoreChip.vue';
 import GroupGalleryView from './GroupGalleryView.vue';
 
 const { state, dispatch } = useStore();

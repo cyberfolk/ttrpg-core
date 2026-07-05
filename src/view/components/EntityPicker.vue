@@ -1,6 +1,6 @@
 <template>
   <div class="ep" :class="{ 'ep--filled': selected }">
-    <span class="ep__label" :class="{ 'ep__label--sr': hideLabel }" :id="labelId">{{ label }}</span>
+    <span class="ep__label" :class="{ 'ds-sr-only': hideLabel }" :id="labelId">{{ label }}</span>
 
     <!-- Stato selezionato: gettone cliccabile (riapre la ricerca) + X per svuotare -->
     <div v-if="selected" class="ep__token">
@@ -8,10 +8,10 @@
         :aria-label="`Cambia ${label.toLowerCase()}: ${$name(selected.entity)}`"
         @click="clear">
         <span class="ep__glyph" aria-hidden="true">
-          <Icon :name="selected.kind === 'group' ? 'users' : 'user'" />
+          <Icon :name="kindIcon(selected.kind)" />
         </span>
         <span class="ep__token-name">{{ $name(selected.entity) }}</span>
-        <span v-if="ambiguous.has(selected.entity.id)" class="ep__hint">#{{ ambiguous.get(selected.entity.id) }}</span>
+        <span v-if="ambiguous.has(selected.entity.id)" class="ds-idhint">#{{ ambiguous.get(selected.entity.id) }}</span>
         <span v-if="showKind" class="ds-badge ep__token-kind">{{ kindLabel(selected.kind) }}</span>
       </button>
       <button type="button" class="ep__clear" :aria-label="`Svuota ${label.toLowerCase()}`"
@@ -21,8 +21,8 @@
     </div>
 
     <!-- Stato ricerca: combobox -->
-    <div v-else class="ep__field" @focusout="onFocusout">
-      <span class="ep__search-ico" aria-hidden="true"><Icon name="search" /></span>
+    <div v-else class="ep__field ds-search" @focusout="onFocusout">
+      <span class="ds-search__icon" aria-hidden="true"><Icon name="search" /></span>
       <input
         ref="inputEl"
         class="ds-input ds-input--with-icon ep__input"
@@ -57,10 +57,10 @@
             @mousedown.prevent="choose(node)"
             @mousemove="activeIndex = i">
             <span class="ep__glyph" aria-hidden="true">
-              <Icon :name="node.kind === 'group' ? 'users' : 'user'" />
+              <Icon :name="kindIcon(node.kind)" />
             </span>
             <span class="ep__opt-name">{{ $name(node.entity) }}</span>
-            <span v-if="ambiguous.has(node.entity.id)" class="ep__hint">#{{ ambiguous.get(node.entity.id) }}</span>
+            <span v-if="ambiguous.has(node.entity.id)" class="ds-idhint">#{{ ambiguous.get(node.entity.id) }}</span>
             <span v-if="showKind" class="ep__opt-kind">{{ kindLabel(node.kind) }}</span>
           </li>
         </ul>
@@ -74,6 +74,7 @@ import { ref, computed, watch, useId, nextTick, onBeforeUnmount } from 'vue';
 import { useStore } from '../useStore.js';
 import { listActiveCharacters, listActiveGroups, resolveNode } from '../../model/reputation.js';
 import { ambiguousIds } from '../disambiguation.js';
+import { kindIcon, kindLabel } from '../entityKind.js';
 import Icon from './Icon.vue';
 
 // Selettore riusabile di UNA entità (personaggio o gruppo) su tutti gli attivi.
@@ -144,11 +145,6 @@ const selected = computed(() => {
   const node = resolveNode(state.value, props.modelValue);
   return node;
 });
-
-function kindLabel(kind) {
-  const label = kind === 'group' ? 'Gruppo' : 'Personaggio';
-  return label;
-}
 
 function choose(node) {
   emit('update:modelValue', node.entity.id);
@@ -265,32 +261,11 @@ onBeforeUnmount(() => {
   text-transform: uppercase;
   color: var(--accent-text);
 }
-/* Contesti compatti (es. add-row in tabella): etichetta solo per screen reader. */
-.ep__label--sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
+/* Contesti compatti (es. add-row in tabella): etichetta solo per screen reader
+   → utility .ds-sr-only. Il campo ricerca usa .ds-search (icona a sinistra). */
 
-/* Campo di ricerca + lista */
-.ep__field { position: relative; }
-.ep__search-ico {
-  position: absolute;
-  left: 0.7rem;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--text-faint);
-  z-index: 1;
-}
 /* scroll-margin: riserva lo spazio dell'header sticky quando scrollIntoView porta su l'input. */
-.ep__input { width: 100%; scroll-margin-top: 5rem; }
+.ep__input { scroll-margin-top: 5rem; }
 
 .ep__list {
   position: fixed;
@@ -339,13 +314,7 @@ onBeforeUnmount(() => {
   font-size: var(--fs-xs);
   color: var(--text-muted);
 }
-/* Coda-id per omonimi: de-enfatizzata, monospazio numerico. */
-.ep__hint {
-  flex: none;
-  font-size: var(--fs-xs);
-  color: var(--text-faint);
-  font-variant-numeric: tabular-nums;
-}
+/* Coda-id per omonimi (#) → utility .ds-idhint. */
 
 /* Glifo kind (personaggio/gruppo) */
 .ep__glyph {

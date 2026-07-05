@@ -26,10 +26,7 @@
 
     <!-- Punteggio sintetico -->
     <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
-      <span class="ds-score ds-score--lg" :class="{ 'ds-score--empty': score === null }"
-        :style="score !== null ? { background: scoreColor(score) } : undefined">
-        {{ score !== null ? score : '–' }}
-      </span>
+      <ScoreChip :score="score" size="lg" />
     </HoverTip>
 
     <!-- Azioni: in modifica → Salva/Annulla; altrimenti → ingranaggio con menu -->
@@ -68,10 +65,10 @@ import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
 import { averageIncomingScore, renameGroup, softDeleteGroup } from '../../model/reputation.js';
-import { scoreColor } from '../scoreColor.js';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import ActionMenu from './ActionMenu.vue';
+import ScoreChip from './ScoreChip.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const props = defineProps({

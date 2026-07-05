@@ -2,8 +2,8 @@
   <div>
     <div class="rep-relbar">
       <div class="rep-searchbar">
-      <div class="rep-search">
-        <Icon name="search" class="rep-search__icon" />
+      <div class="rep-search ds-search">
+        <span class="ds-search__icon"><Icon name="search" /></span>
         <input class="ds-input ds-input--with-icon" type="search" v-model="query"
           placeholder="Cerca per nome…" aria-label="Cerca per nome" />
       </div>
@@ -58,23 +58,21 @@
               <td class="rep-table__num">{{ i + 1 }}</td>
               <td>
                 <span class="rep-name-cell">
-                  <span class="rep-kind-ico" role="img" :aria-label="kindLabel(row.node)"
-                    :title="kindLabel(row.node)">
-                    <Icon :name="row.node.kind === 'group' ? 'users' : 'user'" />
+                  <span class="rep-kind-ico" role="img" :aria-label="kindLabel(row.node.kind)"
+                    :title="kindLabel(row.node.kind)">
+                    <Icon :name="kindIcon(row.node.kind)" />
                   </span>
-                  <router-link class="rep-table__name" :to="profileTo(row.node)" @click.stop>
+                  <router-link class="rep-table__name"
+                    :to="entityRouteTo(row.node.kind, row.node.entity.id)" @click.stop>
                     {{ $name(row.node.entity) }}
                     <Icon name="goto" />
                   </router-link>
                 </span>
               </td>
               <td class="rep-col--right">
-                <button type="button" class="ds-score ds-score--interactive"
-                  :style="{ background: scoreColor(row.score) }"
+                <ScoreChip :score="row.score" interactive
                   :aria-label="`Registra transazione con ${$name(row.node.entity)}`"
-                  @click.stop="emitTx(row.node.entity.id)">
-                  {{ row.score }}
-                </button>
+                  @click.stop="emitTx(row.node.entity.id)" />
               </td>
             </tr>
           </tbody>
@@ -85,15 +83,17 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
 import { listActiveCharacters, listActiveGroups, computeScore, hasTransaction } from '../../model/reputation.js';
-import { scoreColor } from '../scoreColor.js';
 import { useSortable } from '../useSortable.js';
+import { useAnchoredMenu } from '../useAnchoredMenu.js';
+import { kindIcon, kindLabel, entityRouteTo } from '../entityKind.js';
 import Icon from './Icon.vue';
 import SortableTh from './SortableTh.vue';
 import HoverTip from './HoverTip.vue';
+import ScoreChip from './ScoreChip.vue';
 
 const props = defineProps({
   currentId: { type: String, required: true },
@@ -120,90 +120,29 @@ const { sort, toggleSort } = useSortable({
 const hideEmpty = ref(false);
 const hideCharacters = ref(false);
 const hideGroups = ref(false);
-const optsOpen = ref(false);
 const optsBtn = ref(null);
 const optsMenu = ref(null);
-const optsStyle = ref(null);
 
 // Stato non-default del menu: marca visivamente l'icona (un dot) così l'utente sa
 // che righe/colonne sono filtrate anche a tendina chiusa.
 const menuActive = computed(() =>
   hideEmpty.value || hideCharacters.value || hideGroups.value);
 
-// I menu sono in Teleport su <body> (la card profilo ha overflow:hidden e la
-// tabella overflow-x:auto: in posizione assoluta verrebbero clippati). Posizione
-// fixed calcolata dal rettangolo del bottone, allineata al suo bordo destro.
-function floatStyle(btnEl) {
-  const r = btnEl.getBoundingClientRect();
-  const style = {
-    position: 'fixed',
-    top: `${r.bottom + 4}px`,
-    right: `${window.innerWidth - r.right}px`,
-  };
-  return style;
-}
+// Dropdown "Filtri" (Teleport su <body>): apertura/chiusura, posizione ancorata
+// al bordo destro del bottone, dismiss su click esterno/scroll/resize ed Esc dal
+// composable. Focus alla prima checkbox (input) all'apertura.
+const { open: optsOpen, popStyle: optsStyle, closePassive, toggle: toggleOpts } =
+  useAnchoredMenu(optsBtn, optsMenu, { focusSelector: 'input' });
 
-// Porta il focus sul primo input del menu appena aperto (accessibilità tastiera).
-function focusFirst(menuRef) {
-  const first = menuRef.value?.querySelector('input');
-  if (first) first.focus();
+// Tab fuori dal menu (oltre l'ultimo checkbox) → chiudi senza spostare il focus.
+// Chiudiamo solo quando il focus va su un elemento reale fuori dal menu; un blur
+// senza relatedTarget (click sul testo della label, non focusabile) non chiude.
+function onOptsFocusout(e) {
+  const to = e.relatedTarget;
+  if (!(to instanceof Node)) return;
+  if (optsMenu.value && optsMenu.value.contains(to)) return;
+  closePassive();
 }
-
-async function toggleOpts() {
-  if (optsOpen.value) { closeOpts(); return; }
-  optsStyle.value = floatStyle(optsBtn.value);
-  optsOpen.value = true;
-  await nextTick();
-  focusFirst(optsMenu);
-}
-
-// Chiusura "intenzionale" (toggle, Esc): riporta il focus al bottone di apertura.
-function closeOpts() {
-  optsOpen.value = false;
-  optsBtn.value?.focus();
-}
-
-// Chiusura "passiva" (click esterno, scroll, resize): non rubare il focus.
-function closeMenus() {
-  optsOpen.value = false;
-}
-
-// Tab fuori dal menu (es. oltre l'ultimo checkbox) → chiudi senza spostare il focus.
-// NB: chiudiamo solo quando il focus va su un elemento reale fuori dal menu. Un blur
-// senza relatedTarget (click sul testo della label, che non è focusabile) NON deve
-// chiudere, altrimenti il toggle via stringa si annulla; al click davvero esterno
-// pensa il listener su document.
-function makeFocusout(menuRef, openRef) {
-  return (e) => {
-    const to = e.relatedTarget;
-    if (!(to instanceof Node)) return;
-    if (menuRef.value && menuRef.value.contains(to)) return;
-    openRef.value = false;
-  };
-}
-const onOptsFocusout = makeFocusout(optsMenu, optsOpen);
-
-// Esc chiude il menu aperto e riporta il focus al suo trigger.
-function onKeydown(e) {
-  if (e.key !== 'Escape') return;
-  if (optsOpen.value) closeOpts();
-}
-
-// Click sul menu o sui bottoni: @click.stop non raggiunge il document, quindi
-// qui chiudiamo solo su click realmente esterni. Scroll/resize: la posizione
-// fixed si scollegherebbe dal bottone → chiudi.
-onMounted(() => {
-  document.addEventListener('click', closeMenus);
-  document.addEventListener('keydown', onKeydown);
-  window.addEventListener('scroll', closeMenus, true);
-  window.addEventListener('resize', closeMenus);
-});
-onUnmounted(() => {
-  document.removeEventListener('click', closeMenus);
-  document.removeEventListener('keydown', onKeydown);
-  window.removeEventListener('scroll', closeMenus, true);
-  window.removeEventListener('resize', closeMenus);
-});
 
 // Esiste una transazione registrata in questa direzione tra currentId e l'altro?
 function hasInteraction(otherId) {
@@ -266,19 +205,6 @@ function emitTx(otherId) {
     : { fromId: props.currentId, toId: otherId };
   emit('open-tx', pair);
 }
-
-// Etichetta del tipo nodo (badge colonna Tipo + nome accessibile del glifo kind).
-function kindLabel(node) {
-  const label = node.kind === 'group' ? 'Gruppo' : 'Personaggio';
-  return label;
-}
-
-// Destinazione del link al profilo: gruppo o personaggio.
-function profileTo(node) {
-  const routeName = node.kind === 'group' ? 'groupProfile' : 'profile';
-  const location = { name: routeName, params: { id: node.entity.id } };
-  return location;
-}
 </script>
 
 <style scoped>
@@ -303,17 +229,7 @@ function profileTo(node) {
   outline-offset: 2px;
 }
 
-/* Punteggio = <button> reale (apre la transazione): azzera il chrome nativo. */
-button.ds-score {
-  appearance: none;
-  -webkit-appearance: none;
-  border: 0;
-  cursor: pointer;
-}
-.ds-score:focus-visible {
-  outline: 2px solid var(--gold-500);
-  outline-offset: 2px;
-}
+/* Punteggio = ScoreChip interattivo (<button>): reset e focus-ring nel DS globale. */
 
 /* toolbar: ricerca + dropdown filtri righe */
 .rep-relbar {
@@ -330,23 +246,14 @@ button.ds-score {
   gap: 0.5rem;
   flex: 1 1 16rem;
 }
+/* .rep-search dà solo il sizing nella searchbar; icona e posizione da .ds-search. */
 .rep-search {
-  position: relative;
   flex: 1;
   min-width: 0;
   color: var(--text-muted);
 }
-.rep-search .ds-input { width: 100%; }
 /* placeholder piu' tenue in questa searchbar (il globale resta AA altrove) */
 .rep-search .ds-input::placeholder { color: var(--text-faint); }
-.rep-search__icon {
-  position: absolute;
-  left: 0.7rem;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--text-faint);
-}
 
 /* Bottone filtri: vive nella searchbar, a destra dell'input. Icon-button bordato
    accoppiato all'input (stesso bordo/raggio/altezza) → ricerca + filtro leggono

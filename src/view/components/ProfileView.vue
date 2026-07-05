@@ -56,11 +56,7 @@
             <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
               <span class="rep-profile__synthetic-inner">
                 <span class="rep-profile__synthetic-label">Reputazione<br>Complessiva</span>
-                <span class="ds-score ds-score--lg"
-                  :class="synthetic === null ? 'ds-score--empty' : ''"
-                  :style="synthetic !== null ? { background: scoreColor(synthetic) } : undefined">
-                  {{ synthetic !== null ? synthetic : '–' }}
-                </span>
+                <ScoreChip :score="synthetic" size="lg" />
               </span>
             </HoverTip>
           </span>
@@ -199,7 +195,6 @@ import {
   averageIncomingScore, listActiveGroups, addMember, removeMember,
   renameCharacter, softDeleteCharacter, restoreCharacter, hardDeleteCharacter,
 } from '../../model/reputation.js';
-import { scoreColor } from '../scoreColor.js';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
 import EntityPicker from './EntityPicker.vue';
@@ -208,6 +203,7 @@ import NotFound from './NotFound.vue';
 import HoverTip from './HoverTip.vue';
 import Icon from './Icon.vue';
 import ActionMenu from './ActionMenu.vue';
+import ScoreChip from './ScoreChip.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const props = defineProps({
