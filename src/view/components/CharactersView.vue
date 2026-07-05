@@ -27,8 +27,7 @@
 
     <!-- Views -->
     <GalleryView v-if="ui.activeView === 'gallery'" :items="items" />
-    <ListView    v-else-if="ui.activeView === 'list'" :items="items" />
-    <MatrixView  v-else />
+    <ListView    v-else :items="items" />
 
     <!-- Add character dialog -->
     <div v-if="addOpen" class="ds-overlay" @click.self="closeAdd">
@@ -69,7 +68,6 @@ import { useDisplayedCharacters } from '../useDisplayedCharacters.js';
 import { addCharacter } from '../../model/reputation.js';
 import GalleryView from './GalleryView.vue';
 import ListView from './ListView.vue';
-import MatrixView from './MatrixView.vue';
 import Icon from './Icon.vue';
 
 const ui = useUiState();
@@ -79,7 +77,7 @@ const newName = ref('');
 const addOpen = ref(false);
 const nameInput = ref(null);
 
-// Toggle vista: se in lista torna a griglia, altrimenti (griglia o matrix) va in lista
+// Toggle vista: alterna griglia (galleria) e lista
 const isList = computed(() => ui.activeView === 'list');
 function toggleView() {
   ui.activeView = isList.value ? 'gallery' : 'list';

@@ -265,11 +265,6 @@ risposta a uno stato (hover, focus, dialog). Un'ombra a riposo va giustificata o
   gradiente oro. **Segmented control** per cambiare vista: Cinzel maiuscolo, attivo a gradiente
   oro o, in variante underline, filetto oro sotto. Su ≤480px il segmented va full-width.
 
-### Matrix (signature)
-- Griglia di reputazione: intestazioni Cinzel su velina d'oro, colonne in `writing-mode`
-  verticale, celle a numeri tabellari colorate per punteggio, diagonale neutra. Scroll
-  orizzontale su mobile, mai compressione illeggibile.
-
 ### Utilities & composables
 - **`.ds-sr-only`** — visually-hidden (etichette compatte, intestazioni tabellari nascoste ma
   leggibili dall'AT). Sempre nascosto; per un nascondere *responsive* usare un `@media` locale.
@@ -290,7 +285,7 @@ risposta a uno stato (hover, focus, dialog). Un'ombra a riposo va giustificata o
 - **Do** usare l'oro come segnatura (filetto, bordo, intestazione, un accento): ≤15% di schermata.
 - **Do** rendere sempre esplicita la direzione A→B con frecce/etichette (`rep-rel-arrow`).
 - **Do** lasciare le superfici piatte a riposo; ombra solo su hover/focus/dialog.
-- **Do** trattare il mobile come prima classe: tabelle e matrice scrollano, non si mutilano.
+- **Do** trattare il mobile come prima classe: le tabelle scrollano, non si mutilano.
 - **Do** usare Cinzel maiuscolo con tracking 0.08em per le micro-etichette ricorrenti.
 
 ### Don't:
