@@ -1,13 +1,25 @@
 {
   "hooks": {
-    "PreToolUse": [
+    "UserPromptSubmit": [
       {
-        "matcher": "Edit|Write|MultiEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -File \".claude\\hooks\\grafica-reminder.ps1\"",
-            "statusMessage": "Check trigger grafica..."
+            "command": "powershell -NoProfile -File \".claude\\hooks\\grafica-prompt-trigger.ps1\"",
+            "statusMessage": "Check trigger grafica (prompt)..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -File \".claude\\hooks\\requisiti-tripwire.ps1\"",
+            "if": "Bash(git commit*)",
+            "statusMessage": "Check requisiti funzionali..."
           }
         ]
       }

@@ -22,9 +22,14 @@ La funzione attiva è un sistema di **reputazione** tra le entità di una campag
 
 ## Direttive grafiche
 
-**Trigger** (se il task tocca uno di questi → è "grafica"): le parole "grafica", "impeccable", "vista"/"view"/"VIEW", componenti Vue in `src/view/`, CSS/stili, layout, colori, tipografia/font, spaziatura/allineamento, classi `ds-*`, componenti UI (card, badge, chip, drawer, modale, toolbar), stati (hover/focus/empty/error), responsive/mobile/smartphone/tablet, animazioni/transizioni, o qualunque modifica all'aspetto visibile.
+Un task è **grafica** se tocca VIEW/`src/view/`, CSS/stili, layout, colori, tipografia, componenti UI, stati, responsive, animazioni o qualunque modifica al look. Allora, **prima di agire**, invoca la skill `impeccable` (tool Skill) e instrada sul comando giusto; se il comando non è ovvio proponi un menu (`AskUserQuestion`) coi 2-3 più adatti.
 
-Quando scatta un trigger grafico, **prima di agire** invoca la skill `impeccable` (tool Skill) e instrada il task sul comando giusto. Se il comando non è ovvio proponi un menu a scelta (`AskUserQuestion`) coi 2-3 comandi più adatti.
+## Hook
+
+Reti di sicurezza che rinforzano le direttive sopra — reti, non blocchi: la regola resta la prosa della direttiva.
+
+- **`grafica-prompt-trigger.ps1`** (UserPromptSubmit) — intercetta i trigger grafici dal prompt e ricorda di invocare `impeccable`. Il suo regex è la lista trigger canonica.
+- **`requisiti-tripwire.ps1`** (PreToolUse, `git commit`) — se lo staged tocca MODEL/STORE/VIEW-comportamento ma non `docs/requisiti-funzionali/`, chiede conferma (allineamento requisiti).
 
 ## Architettura
 
