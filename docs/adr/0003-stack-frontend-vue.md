@@ -8,9 +8,7 @@ Ambito: VIEW. Non tocca MODEL/STORE/IO.
 
 La feature 003 (viste-e-profilo) riscrive la VIEW: elenco personaggi con più viste e
 profilo per-personaggio. La VIEW vanilla di V1 non scala con la crescita di feature.
-Andava scelto lo stack frontend. Vincoli rilevanti (vedi
-`docs/features/003-viste-e-profilo/spec.md` e la ricerca
-`docs/features/003-viste-e-profilo/research/03-scelta-framework-frontend.md`):
+Andava scelto lo stack frontend. Vincoli rilevanti:
 
 - La VIEW è un layer isolato: cambiarlo non deve toccare MODEL/STORE/IO.
 - MODEL/STORE restano proprietari dello stato e framework-agnostici (porting Python del

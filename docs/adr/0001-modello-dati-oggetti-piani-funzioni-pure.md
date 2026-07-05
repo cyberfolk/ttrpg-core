@@ -10,8 +10,7 @@ Il modello dati del sistema di reputazione (`src/model/schema.js`,
 reputazione. Andava scelto come rappresentarli: **classi JS** (istanze con metodi)
 oppure **oggetti dati piani + funzioni pure**.
 
-Vincoli rilevanti dal design (vedi
-`docs/features/001-sistema-reputazione/spec.md`):
+Vincoli rilevanti dal design:
 
 - Il modello deve essere **traducibile 1:1 in Python** in una fase futura, a costo quasi
   nullo.
