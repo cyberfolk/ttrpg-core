@@ -13,6 +13,10 @@ deploy/distribuzione, viste e profilo, drawer di navigazione, gruppi.
 
 Stack: VIEW in **Vue 3 + Vite + vue-router** (routing history mode con `404.html` per GitHub Pages; vedi ADR 0003). `MODEL`/`STORE`/`IO` sono framework-agnostici: il framework tocca **solo la VIEW**.
 
+Requisiti funzionali (cosa fa l'app), caricati sempre in contesto:
+
+@docs/funzionale.md
+
 **Riferimenti (leggi al bisogno, non caricati di default):**
 - Lavoro VIEW → `DESIGN.md`: design system "Atlante" (token, componenti `ds-*`, `<ScoreChip>`, matrice).
 - Brand, utenti, principi di prodotto → `PRODUCT.md`.

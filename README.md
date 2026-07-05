@@ -13,27 +13,12 @@ una futura migrazione a Python a costo quasi nullo. Il framework tocca solo la V
 
 ## Cos'è
 
-Traccia quanto le entità di una campagna si stimano a vicenda. Un'**entità** è un **personaggio** oppure un **gruppo** (fazione, città, gilda…).  
-Ogni relazione è **asimmetrica**: quanto A pensa di B è indipendente da quanto B pensa di A (faide unilaterali, cotte non corrisposte…).
+Traccia la **reputazione asimmetrica** tra le entità di una campagna TTRPG — **personaggi**
+e **gruppi** (fazioni, città, gilda…). Ogni relazione A→B è indipendente da B→A; il punteggio
+non si imposta a mano, è *derivato* dalle transazioni registrate (`clampView(50 + Σ delta)`).
 
-Il punteggio non si modifica a mano: si registrano **transazioni** (eventi con un valore positivo o negativo e un motivo). Il punteggio è sempre *derivato*:
-
-```
-punteggio(A→B) = clampView( 50 + somma dei delta delle transazioni A→B )
-```
-
-- Ogni entità nasce a **50** (`BASE`) verso tutte (somma vuota = 50).
-- `clampView` limita il valore mostrato (definizione unica in `src/model/reputation.js`).
-- Lo storico delle transazioni è l'unica fonte di verità: il punteggio non è mai salvato, niente disallineamenti.
-
-### Gruppi
-
-Un gruppo ha una lista di **membri** (personaggi) e partecipa alla reputazione in due modi affiancati:
-
-- **nodo diretto** — riceve/dà transazioni come un personaggio;
-- **aggregato derivato** — media dei punteggi dei membri *con almeno una transazione* nella direzione considerata (`null` se nessun membro qualificato).
-
-Le transazioni sono **polimorfe**: `fromId`/`toId` può essere un personaggio o un gruppo (UUID globalmente unici; `resolveNode` disambigua).
+> **Requisiti funzionali completi** (modello, entità, gruppi, viste, flussi):
+> [`docs/funzionale.md`](docs/funzionale.md).
 
 ---
 
