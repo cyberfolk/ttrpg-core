@@ -1,7 +1,9 @@
 .idea/
 .venv/
-.claude/
 outputs/
+
+# Claude Code: config condivisa tracciata; override personale ignorato
+.claude/settings.local.json
 
 # Python
 __pycache__/
