@@ -289,8 +289,7 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
 .ds-field--block { display: flex; width: 100%; }
 .ds-field__label { font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-body); }
 .ds-field__wrap { position: relative; display: flex; align-items: center; }
-.ds-field__icon { position: absolute; left: .7rem; display: inline-flex; width: 1.05rem; height: 1.05rem; color: var(--text-faint); pointer-events: none; }
-.ds-field__icon svg { width: 100%; height: 100%; }
+/* Icona nei campi di ricerca → utility .ds-search / .ds-search__icon. */
 .ds-input {
   font-family: var(--font-sans);
   font-size: var(--fs-body);

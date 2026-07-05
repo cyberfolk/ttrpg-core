@@ -3,14 +3,10 @@
     <!-- Toolbar -->
     <div class="rep-toolbar">
       <div class="rep-toolbar__search">
-        <span class="ds-field ds-field--block">
-          <span class="ds-field__wrap">
-            <span class="ds-field__icon">
-              <Icon name="search" />
-            </span>
-            <input class="ds-input ds-input--with-icon" type="search" placeholder="Cerca per nome…"
-              v-model="search" />
-          </span>
+        <span class="ds-search">
+          <span class="ds-search__icon"><Icon name="search" /></span>
+          <input class="ds-input ds-input--with-icon" type="search" placeholder="Cerca per nome…"
+            v-model="search" />
         </span>
       </div>
 
