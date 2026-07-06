@@ -26,14 +26,16 @@
             <ScoreChip :score="reputation" size="sm" />
           </HoverTip>
 
-          <!-- Select inline (Razza, Allineamento, Giocatore, Sede, Influenza) -->
-          <template v-else-if="f.type === 'select'">
+          <!-- Select inline (Razza, Allineamento, Giocatore, Guida) e combo
+               ricercabile+crea (Tipo: etichetta libera). -->
+          <template v-else-if="f.type === 'select' || f.type === 'combo'">
             <button v-if="editingField !== f.key" type="button" class="led__val led__val--edit"
               :aria-label="`Modifica ${f.label}`" @click.stop="startField(f.key)">
               <span>{{ form[f.model] }}</span>
               <Icon name="edit" class="led__val-ico" />
             </button>
-            <InlineSelect v-else flush auto-open :model-value="form[f.model]" :options="f.options"
+            <InlineSelect v-else flush auto-open :creatable="f.type === 'combo'"
+              :model-value="form[f.model]" :options="f.options"
               :aria-label="f.label" @update:model-value="form[f.model] = $event" @close="stopField" />
           </template>
 
@@ -129,9 +131,9 @@ const LEVELS = Array.from({ length: 20 }, (_, i) => i + 1);
 const ALIGNMENTS = ['Legale Buono', 'Neutrale Buono', 'Caotico Buono',
   'Legale Neutrale', 'Neutrale', 'Caotico Neutrale',
   'Legale Malvagio', 'Neutrale Malvagio', 'Caotico Malvagio'];
-const SEATS = ['Valdûr', 'Porto Cenere', 'Emberfall', 'Le Guglie', 'Fosso Nero', "Rocca d'Avorio"];
-const REACHES = ['Locale', 'Regionale', 'Nazionale', 'Continentale'];
 const TYPES = ['Fazione', 'Città', 'Gilda', 'Villaggio', 'Casato', 'Ordine', 'Clan'];
+// Pool della Guida: nel modello reale sarebbe l'elenco dei membri del gruppo.
+const MEMBERS = ['Gorim', 'Sara', 'Luca', 'Elwin', 'Bran'];
 
 /* ---- Stato locale hardcodato (non persistito) ---- */
 const isPg = ref(false);
@@ -139,10 +141,10 @@ const form = reactive({
   race: 'Mezzelfo',
   alignment: 'Caotico Neutrale',
   player: 'Giulia',
-  seat: 'Porto Cenere',
-  reach: 'Regionale',
-  founded: '1247 E.T.',
   type: 'Fazione',
+  seat: 'Quartiere dei Fabbri, Valdûr',
+  guide: 'Gorim',
+  motto: "L'ombra ricorda.",
 });
 
 // Edit inline: un solo campo alla volta (null = tutto in lettura).
@@ -265,10 +267,10 @@ const fields = computed(() => {
     return characterFields;
   }
   const groupFields = [
-    { key: 'tipo', label: 'Tipo', type: 'select', model: 'type', options: TYPES },
-    { key: 'sede', label: 'Sede', type: 'select', model: 'seat', options: SEATS },
-    { key: 'influenza', label: 'Influenza', type: 'select', model: 'reach', options: REACHES },
-    { key: 'fondata', label: 'Fondata', type: 'text', model: 'founded' },
+    { key: 'tipo', label: 'Tipo', type: 'combo', model: 'type', options: TYPES },
+    { key: 'sede', label: 'Sede', type: 'text', model: 'seat' },
+    { key: 'guida', label: 'Guida', type: 'select', model: 'guide', options: MEMBERS },
+    { key: 'motto', label: 'Motto', type: 'text', model: 'motto' },
     { key: 'reputazione', label: 'Reputazione', type: 'score' },
   ];
   return groupFields;

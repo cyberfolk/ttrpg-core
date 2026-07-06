@@ -1,7 +1,8 @@
 <template>
   <!-- Dropdown single-select custom: trigger stilato + popover teleportato con
        opzioni stilate (hover oro, selezionata marcata). Rimpiazza il <select>
-       nativo, la cui lista opzioni non e' stilabile via CSS. -->
+       nativo, la cui lista opzioni non e' stilabile via CSS.
+       Con `creatable`: campo di ricerca in testa + riga "Crea «...»" (etichetta libera). -->
   <div class="isel" :class="{ 'isel--open': open }">
     <button ref="trigger" type="button" class="isel__trigger" :class="{ 'isel__trigger--flush': flush }"
       :aria-label="ariaLabel" aria-haspopup="listbox" :aria-expanded="open"
@@ -14,27 +15,41 @@
     </button>
 
     <Teleport to="body">
-      <ul v-if="open" ref="pop" class="isel__pop" role="listbox" tabindex="-1"
-        :aria-label="ariaLabel" :style="popStyle" @click.stop @keydown="onPopKey">
-        <li v-for="(o, i) in options" :key="o">
-          <button type="button" class="isel__opt" role="option"
-            :aria-selected="o === modelValue"
-            :class="{ 'is-sel': o === modelValue, 'is-active': i === activeIndex }"
-            @click="choose(o)" @mousemove="activeIndex = i">
-            <span class="isel__opt-label">{{ o }}</span>
-            <svg v-if="o === modelValue" class="isel__opt-check" viewBox="0 0 12 12" aria-hidden="true">
-              <path d="M2.5 6.5 L5 9 L9.5 3.5" fill="none" stroke="currentColor" stroke-width="1.7"
-                stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </button>
-        </li>
-      </ul>
+      <div v-if="open" ref="pop" class="isel__pop" tabindex="-1" :style="popStyle"
+        @click.stop @keydown="onKey">
+        <div v-if="creatable" class="isel__search">
+          <input ref="searchInput" v-model="query" type="text" class="isel__search-input"
+            :placeholder="searchPlaceholder" :aria-label="ariaLabel" @input="activeIndex = 0" />
+        </div>
+        <ul class="isel__opts" role="listbox" :aria-label="ariaLabel">
+          <li v-for="(o, i) in shown" :key="o">
+            <button type="button" class="isel__opt" role="option"
+              :aria-selected="o === modelValue"
+              :class="{ 'is-sel': o === modelValue, 'is-active': i === activeIndex }"
+              @click="choose(o)" @mousemove="activeIndex = i">
+              <span class="isel__opt-label">{{ o }}</span>
+              <svg v-if="o === modelValue" class="isel__opt-check" viewBox="0 0 12 12" aria-hidden="true">
+                <path d="M2.5 6.5 L5 9 L9.5 3.5" fill="none" stroke="currentColor" stroke-width="1.7"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </li>
+          <li v-if="canCreate">
+            <button type="button" class="isel__opt isel__opt--create" role="option"
+              :class="{ 'is-active': activeIndex === shown.length }"
+              @click="createValue" @mousemove="activeIndex = shown.length">
+              <span class="isel__opt-label">Crea «<strong>{{ query.trim() }}</strong>»</span>
+            </button>
+          </li>
+          <li v-if="!shown.length && !canCreate" class="isel__opt-empty">Nessun risultato</li>
+        </ul>
+      </div>
     </Teleport>
   </div>
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted, onUnmounted } from 'vue';
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
@@ -44,14 +59,35 @@ const props = defineProps({
   flush: { type: Boolean, default: false },
   // Apre subito il popover al montaggio (flusso "click sul valore -> apri").
   autoOpen: { type: Boolean, default: false },
+  // Ricerca + "Crea «...»": la selezione può essere un'opzione o un valore digitato.
+  creatable: { type: Boolean, default: false },
+  searchPlaceholder: { type: String, default: 'cerca o crea…' },
 });
-const emit = defineEmits(['update:modelValue', 'close']);
+const emit = defineEmits(['update:modelValue', 'close', 'create']);
 
 const open = ref(false);
 const activeIndex = ref(-1);
+const query = ref('');
 const popStyle = ref(null);
 const trigger = ref(null);
 const pop = ref(null);
+const searchInput = ref(null);
+
+// Opzioni mostrate: filtrate per query solo in modalità creatable.
+const shown = computed(() => {
+  if (!props.creatable) return props.options;
+  const q = query.value.trim().toLowerCase();
+  const filtered = q ? props.options.filter((o) => String(o).toLowerCase().includes(q)) : props.options;
+  return filtered;
+});
+// "Crea …" quando c'è testo e nessuna opzione con quel nome esatto.
+const canCreate = computed(() => {
+  if (!props.creatable) return false;
+  const q = query.value.trim();
+  if (!q) return false;
+  const exists = props.options.some((o) => String(o).toLowerCase() === q.toLowerCase());
+  return !exists;
+});
 
 function anchor() {
   const rect = trigger.value.getBoundingClientRect();
@@ -63,12 +99,14 @@ function anchor() {
   };
 }
 async function openMenu() {
+  query.value = '';
   const idx = props.options.findIndex((o) => o === props.modelValue);
-  activeIndex.value = idx >= 0 ? idx : 0;
+  activeIndex.value = props.creatable ? 0 : (idx >= 0 ? idx : 0);
   anchor();
   open.value = true;
   await nextTick();
-  pop.value?.focus();
+  if (props.creatable) searchInput.value?.focus();
+  else pop.value?.focus();
   scrollActiveIntoView();
 }
 function closeMenu() {
@@ -84,14 +122,27 @@ function choose(o) {
   emit('update:modelValue', o);
   closeMenu();
 }
+function createValue() {
+  const name = query.value.trim();
+  if (!name) return;
+  emit('update:modelValue', name);
+  emit('create', name);
+  closeMenu();
+}
 function scrollActiveIntoView() {
   const el = pop.value?.querySelectorAll('.isel__opt')[activeIndex.value];
   el?.scrollIntoView({ block: 'nearest' });
 }
 function move(delta) {
-  const n = props.options.length;
-  activeIndex.value = (activeIndex.value + delta + n) % n;
+  const total = shown.value.length + (canCreate.value ? 1 : 0);
+  if (!total) return;
+  activeIndex.value = (activeIndex.value + delta + total) % total;
   scrollActiveIntoView();
+}
+function pick() {
+  if (canCreate.value && activeIndex.value === shown.value.length) { createValue(); return; }
+  const o = shown.value[activeIndex.value];
+  if (o != null) choose(o);
 }
 function onTriggerKey(e) {
   if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) {
@@ -99,10 +150,10 @@ function onTriggerKey(e) {
     if (!open.value) openMenu();
   }
 }
-function onPopKey(e) {
+function onKey(e) {
   if (e.key === 'ArrowDown') { e.preventDefault(); move(1); }
   else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
-  else if (e.key === 'Enter') { e.preventDefault(); choose(props.options[activeIndex.value]); }
+  else if (e.key === 'Enter') { e.preventDefault(); pick(); }
   else if (e.key === 'Escape') { e.preventDefault(); closeMenu(); }
 }
 
@@ -148,13 +199,19 @@ onUnmounted(() => {
 .isel--open .isel__chev { transform: rotate(180deg); }
 
 .isel__pop {
-  z-index: 1100; max-height: 15rem; overflow: auto; list-style: none; margin: 0;
-  padding: .25rem; display: flex; flex-direction: column; gap: 1px;
+  z-index: 1100; display: flex; flex-direction: column;
   max-width: min(20rem, calc(100vw - 1rem));
   background: var(--surface-card); border: 1px solid var(--line-gold);
-  border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: .25rem;
 }
 .isel__pop:focus-visible { outline: none; }
+.isel__search { padding: .1rem .1rem .3rem; border-bottom: 1px solid var(--border-hairline); margin-bottom: .25rem; }
+.isel__search-input {
+  width: 100%; box-sizing: border-box; border: none; background: none; outline: none;
+  font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-strong); padding: .2rem .4rem;
+}
+.isel__search-input::placeholder { color: var(--text-muted); opacity: 1; }
+.isel__opts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; max-height: 13rem; overflow: auto; }
 .isel__opt {
   width: 100%; display: flex; align-items: center; gap: .5rem; text-align: left;
   border: none; background: none; cursor: pointer; border-radius: var(--radius-sm);
@@ -165,6 +222,10 @@ onUnmounted(() => {
 .isel__opt.is-active { background: var(--accent-tint); color: var(--gold-700); }
 .isel__opt.is-sel { color: var(--gold-700); font-weight: var(--fw-semibold); }
 .isel__opt-check { width: .8rem; height: .8rem; flex: 0 0 auto; color: var(--gold-600); }
+/* "Crea …": accento oro sull'azione di creazione. */
+.isel__opt--create { color: var(--gold-700); border-top: 1px solid var(--border-hairline); margin-top: 1px; border-radius: 0 0 var(--radius-sm) var(--radius-sm); }
+.isel__opt--create strong { font-weight: var(--fw-semibold); }
+.isel__opt-empty { padding: .5rem; font-size: var(--fs-sm); color: var(--text-faint); }
 
 @media (pointer: coarse) { .isel__opt { min-height: 44px; } }
 @media (prefers-reduced-motion: reduce) {
