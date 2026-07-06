@@ -371,7 +371,9 @@ const fields = computed(() => {
   gap: .4rem 1.5rem;
   font-family: var(--font-sans); font-size: var(--fs-body); line-height: 1.4;
 }
-.led__item { display: flex; align-items: center; gap: .4rem; min-width: 0; }
+/* min-height riserva lo spazio del controllo di modifica: aprendo il select
+   la riga non cresce e le righe restano allineate (lettura ed edit stessa altezza). */
+.led__item { display: flex; align-items: center; gap: .4rem; min-width: 0; min-height: 1.7rem; }
 .led__repchip { display: inline-flex; }
 /* Chip vuoto "–": il glifo trattino siede alto nella pill → sembra avere più
    padding sotto. Ricentro il glifo dentro la pill (solo qui, non nel DS). */
@@ -422,9 +424,13 @@ const fields = computed(() => {
 
 /* Controllo inline (select/input): altezza ridotta per non far crescere la riga
    rispetto al valore in lettura quando si apre la selezione. */
-.led__select--inline {
-  font-weight: var(--fw-semibold); box-sizing: border-box; height: 1.5rem;
-  padding-top: 0; padding-bottom: 0; line-height: 1.4;
+.led__select.led__select--inline {
+  font-size: var(--fs-body); font-weight: var(--fw-semibold);
+  box-sizing: border-box; height: 1.7rem; line-height: 1.4;
+  padding-top: 0; padding-bottom: 0;
+  /* stesso rientro del valore in lettura (button con margin/padding -.35/.35):
+     il testo resta fermo passando da lettura a select. */
+  margin-left: -.35rem; padding-left: .35rem;
 }
 /* Classe in modifica: la cella prende tutta la larghezza per l'editor multiclasse. */
 .led__item--wide { grid-column: 1 / -1; align-items: flex-start; }
