@@ -83,73 +83,26 @@
       </div>
     </div>
 
-    <!-- Campo "Gruppi": widget many2many inline (stile Odoo many2many_tags).
-         MOCKUP: pool e link locali, non persistiti. Sempre interattivo (niente matita):
-         badge cliccabile → gruppo, ✕ su hover per scollegare, riga "aggiungi" che apre
-         un combobox filtrabile. Solo per i personaggi. -->
-    <div v-if="kind === 'character'" class="grp" :class="{ 'grp--picking': pickerOpen }">
-      <span class="led__sep" aria-hidden="true">·</span>
-      <span class="led__k grp__label">Gruppi</span>
-      <div class="grp__body">
-        <ul v-if="linkedGroups.length" class="grp__tags">
-          <li v-for="g in linkedGroups" :key="g.id">
-            <span class="grp__tag ds-badge ds-badge--gold" role="link" tabindex="0"
-              :aria-label="`Vai al gruppo ${g.name}`"
-              @click="goToGroup(g)" @keydown.enter="goToGroup(g)">
-              <Icon name="users" class="grp__tag-ico" />
-              <span class="grp__tag-name">{{ g.name }}</span>
-              <button type="button" class="grp__tag-x" tabindex="-1"
-                :aria-label="`Scollega ${g.name}`"
-                @click.stop="unlink(g)" @keydown.enter.stop="unlink(g)">
-                <Icon name="close" />
-              </button>
-            </span>
-          </li>
-        </ul>
-        <button ref="addTrigger" type="button" class="grp__addline"
-          :class="{ 'is-empty': !linkedGroups.length }"
-          aria-haspopup="listbox" :aria-expanded="pickerOpen" @click.stop="togglePicker">
-          <Icon name="plus" class="grp__add-ico" />
-          <span>{{ linkedGroups.length ? 'aggiungi gruppo…' : 'Nessun gruppo · aggiungi' }}</span>
-        </button>
-      </div>
-
-      <Teleport to="body">
-        <div v-if="pickerOpen" ref="pickerPop" class="grp__pop" :style="pickerStyle" @click.stop>
-          <div class="grp__search">
-            <Icon name="search" class="grp__search-ico" />
-            <input ref="searchInput" v-model="query" type="text" class="grp__search-input"
-              placeholder="cerca gruppo…" aria-label="Cerca gruppo da collegare"
-              @keydown.escape="closePicker" @keydown.enter.prevent="addFirst" />
-          </div>
-          <ul class="grp__opts" role="listbox" aria-label="Gruppi disponibili">
-            <li v-for="g in available" :key="g.id">
-              <button type="button" class="grp__opt" role="option" @click="addGroup(g)">
-                <Icon name="users" class="grp__opt-ico" />
-                <span>{{ g.name }}</span>
-              </button>
-            </li>
-            <li v-if="canCreate">
-              <button type="button" class="grp__opt grp__opt--create" role="option" @click="createGroup">
-                <Icon name="plus" class="grp__opt-ico" />
-                <span>Crea «<strong>{{ query.trim() }}</strong>»</span>
-              </button>
-            </li>
-            <li v-if="!available.length && !canCreate" class="grp__opt-empty">Nessun gruppo disponibile</li>
-          </ul>
-        </div>
-      </Teleport>
-    </div>
+    <!-- Campi many2many inline (widget riusabile): badge + combobox filtrabile.
+         Gruppi solo per i personaggi; Tag per personaggi e gruppi. -->
+    <Many2ManyField v-if="kind === 'character'" label="Gruppi" v-model="groupIds"
+      :pool="GROUP_POOL" icon="users" navigable
+      add-text="aggiungi gruppo…" empty-text="Nessun gruppo · aggiungi"
+      search-placeholder="cerca gruppo…" @navigate="goToGroup" />
+    <Many2ManyField label="Tag" v-model="tagIds" :pool="TAG_POOL" icon="tag"
+      add-text="aggiungi tag…" empty-text="Nessun tag · aggiungi"
+      search-placeholder="cerca tag…" />
   </section>
 </template>
 
 <script setup>
-import { ref, reactive, computed, nextTick, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import Icon from './Icon.vue';
 import ScoreChip from './ScoreChip.vue';
 import HoverTip from './HoverTip.vue';
 import InlineSelect from './InlineSelect.vue';
+import Many2ManyField from './Many2ManyField.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const router = useRouter();
@@ -175,6 +128,7 @@ const ALIGNMENTS = ['Legale Buono', 'Neutrale Buono', 'Caotico Buono',
   'Legale Malvagio', 'Neutrale Malvagio', 'Caotico Malvagio'];
 const SEATS = ['Valdûr', 'Porto Cenere', 'Emberfall', 'Le Guglie', 'Fosso Nero', "Rocca d'Avorio"];
 const REACHES = ['Locale', 'Regionale', 'Nazionale', 'Continentale'];
+const TYPES = ['Fazione', 'Città', 'Gilda', 'Villaggio', 'Casato', 'Ordine', 'Clan'];
 
 /* ---- Stato locale hardcodato (non persistito) ---- */
 const isPg = ref(false);
@@ -185,6 +139,7 @@ const form = reactive({
   seat: 'Porto Cenere',
   reach: 'Regionale',
   founded: '1247 E.T.',
+  type: 'Fazione',
 });
 
 // Edit inline: un solo campo alla volta (null = tutto in lettura).
@@ -210,7 +165,7 @@ function removeClass(i) {
   if (classes.value.length > 1) classes.value.splice(i, 1);
 }
 
-/* ---- Campo Gruppi (many2many, mockup) ---- */
+/* ---- Campi many2many (Gruppi, Tag) — pool fittizi, non persistiti ---- */
 const GROUP_POOL = [
   { id: 'g1', name: 'La Compagnia' },
   { id: 'g2', name: "Corte d'Ombra" },
@@ -221,109 +176,25 @@ const GROUP_POOL = [
   { id: 'g7', name: 'Cerchio dei Druidi' },
   { id: 'g8', name: 'Casa Vantis' },
 ];
-const linkedIds = ref(['g1', 'g2', 'g6']);
+const groupIds = ref(['g1', 'g2', 'g6']);
 
-const query = ref('');
-const groupPool = ref([...GROUP_POOL]);
-const linkedGroups = computed(() => groupPool.value.filter((g) => linkedIds.value.includes(g.id)));
-let nextGroupN = GROUP_POOL.length + 1;
+const TAG_POOL = [
+  { id: 't1', name: 'mercenario' },
+  { id: 't2', name: 'nobile' },
+  { id: 't3', name: 'traditore' },
+  { id: 't4', name: 'mago' },
+  { id: 't5', name: 'ricercato' },
+  { id: 't6', name: 'alleato' },
+  { id: 't7', name: 'commerciante' },
+  { id: 't8', name: 'veterano' },
+];
+const tagIds = ref(['t1', 't5']);
 
-const available = computed(() => {
-  const q = query.value.trim().toLowerCase();
-  const pool = groupPool.value.filter((g) => !linkedIds.value.includes(g.id));
-  const filtered = q ? pool.filter((g) => g.name.toLowerCase().includes(q)) : pool;
-  return filtered;
-});
-// Mostra "Crea …" (stile Odoo) quando c'è testo e nessun gruppo con quel nome esatto.
-const canCreate = computed(() => {
-  const q = query.value.trim();
-  if (!q) return false;
-  const exists = groupPool.value.some((g) => g.name.toLowerCase() === q.toLowerCase());
-  return !exists;
-});
-
-function unlink(g) {
-  linkedIds.value = linkedIds.value.filter((id) => id !== g.id);
-}
-function addGroup(g) {
-  linkedIds.value.push(g.id);
-  query.value = '';
-  nextTick(() => searchInput.value?.focus());
-}
-// Crea al volo un gruppo col nome digitato (mock) e lo collega subito.
-function createGroup() {
-  const name = query.value.trim();
-  if (!name) return;
-  const g = { id: `gm${nextGroupN++}`, name };
-  groupPool.value.push(g);
-  addGroup(g);
-}
-// Enter: se c'è un match lo aggiunge, altrimenti crea col testo digitato.
-function addFirst() {
-  const first = available.value[0];
-  if (first) addGroup(first);
-  else if (canCreate.value) createGroup();
-}
-function goToGroup(g) {
-  // MOCKUP: gli id sono fittizi, non risolvono a gruppi reali → si va all'elenco.
-  // Nel profilo reale: router.push({ name: 'groupProfile', params: { id: g.id } }).
+function goToGroup() {
+  // MOCKUP: gli id sono fittizi → si va all'elenco gruppi.
+  // Nel profilo reale: router.push({ name: 'groupProfile', params: { id } }).
   router.push('/gruppi');
 }
-
-// Combobox "aggiungi": popover teleportato su <body> (la card ha overflow:hidden),
-// posizione fixed ancorata al bordo sinistro della riga "aggiungi".
-const pickerOpen = ref(false);
-const pickerStyle = ref(null);
-const addTrigger = ref(null);
-const pickerPop = ref(null);
-const searchInput = ref(null);
-
-function anchorPicker() {
-  const rect = addTrigger.value.getBoundingClientRect();
-  pickerStyle.value = {
-    position: 'fixed',
-    top: `${rect.bottom + 6}px`,
-    left: `${rect.left}px`,
-    minWidth: `${Math.max(rect.width, 220)}px`,
-  };
-}
-async function openPicker() {
-  query.value = '';
-  anchorPicker();
-  pickerOpen.value = true;
-  await nextTick();
-  searchInput.value?.focus();
-}
-function closePicker() {
-  pickerOpen.value = false;
-}
-function togglePicker() {
-  if (pickerOpen.value) closePicker();
-  else openPicker();
-}
-
-// @click.stop su trigger e popover → qui arrivano solo i click esterni.
-function onDocClick() {
-  if (pickerOpen.value) closePicker();
-}
-function onDocKey(e) {
-  if (e.key === 'Escape' && pickerOpen.value) closePicker();
-}
-function onViewportShift() {
-  if (pickerOpen.value) closePicker();
-}
-onMounted(() => {
-  document.addEventListener('click', onDocClick);
-  document.addEventListener('keydown', onDocKey);
-  window.addEventListener('scroll', onViewportShift, true);
-  window.addEventListener('resize', onViewportShift);
-});
-onUnmounted(() => {
-  document.removeEventListener('click', onDocClick);
-  document.removeEventListener('keydown', onDocKey);
-  window.removeEventListener('scroll', onViewportShift, true);
-  window.removeEventListener('resize', onViewportShift);
-});
 
 // Descrittori dei campi meta: tipo di controllo + sorgente valore.
 // Derivati (livello, reputazione) → sola lettura; classe → editor multiclasse.
@@ -343,7 +214,7 @@ const fields = computed(() => {
     return characterFields;
   }
   const groupFields = [
-    { key: 'allineamento', label: 'Allineamento', type: 'select', model: 'alignment', options: ALIGNMENTS },
+    { key: 'tipo', label: 'Tipo', type: 'select', model: 'type', options: TYPES },
     { key: 'sede', label: 'Sede', type: 'select', model: 'seat', options: SEATS },
     { key: 'influenza', label: 'Influenza', type: 'select', model: 'reach', options: REACHES },
     { key: 'fondata', label: 'Fondata', type: 'text', model: 'founded' },
@@ -462,99 +333,11 @@ const fields = computed(() => {
 /* Giocatore (solo PG): valore oro per distinguerlo. */
 .led__item--player .led__val { color: var(--gold-600); font-weight: var(--fw-semibold); }
 
-/* === Campo Gruppi: many2many inline ==================================== */
-/* Stessa riga da registro dei fatti: "· Gruppi: [tag] [tag]".
-   Middot + label muta a sinistra, contenuto (tag + aggiungi) a destra. */
-.grp {
-  display: flex; align-items: baseline; gap: .4rem;
-  margin-top: .8rem; font-family: var(--font-sans); font-size: var(--fs-body);
-}
-.grp__label { flex: 0 0 auto; line-height: 1.4; }
-.grp__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: .3rem; }
-.grp__tags { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; margin: 0; padding: 0; }
-
-/* Badge gruppo: pill oro cliccabile → naviga. La ✕ compare a destra su hover. */
-.grp__tag {
-  gap: .32em; padding-right: .4rem; cursor: pointer;
-  transition: background .15s, border-color .15s, box-shadow .15s, transform .1s;
-}
-.grp__tag:hover { background: var(--gold-100); border-color: var(--gold-500); box-shadow: var(--shadow-xs); }
-.grp__tag:active { transform: translateY(1px); }
-.grp__tag:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
-.grp__tag-ico { font-size: .82em; opacity: .65; }
-.grp__tag-name { line-height: 1.1; }
-
-/* ✕: sempre visibile (larghezza fissa, il badge non cambia mai dimensione).
-   A riposo tenue; badge in hover la accende un po'; ✕ in hover vira al rosso
-   (effetto distinto dal badge) per dire "premi qui per scollegare". */
-.grp__tag-x {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 1.2em; height: 1.2em; margin-left: .15rem;
-  border: none; background: none; padding: 0; cursor: pointer;
-  color: var(--text-faint); border-radius: var(--radius-pill); font-size: .95em; line-height: 1;
-  transition: color .15s, background .15s;
-}
-.grp__tag:hover .grp__tag-x,
-.grp__tag:focus-within .grp__tag-x { color: var(--text-muted); }
-.grp__tag-x:hover { color: var(--ember-500); background: var(--danger-tint); }
-.grp__tag-x:focus-visible { outline: none; opacity: 1; box-shadow: var(--shadow-focus); }
-
-/* Riga "aggiungi": affordance discreta che emerge all'hover dell'area. */
-.grp__addline {
-  align-self: flex-start; display: inline-flex; align-items: center; gap: .3rem;
-  margin-left: -.4rem; padding: .22rem .4rem; cursor: pointer;
-  font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-muted);
-  background: none; border: 1px dashed transparent; border-radius: var(--radius-sm);
-  opacity: 0; transition: opacity .15s, color .15s, border-color .15s, background .15s;
-}
-.grp:hover .grp__addline,
-.grp:focus-within .grp__addline,
-.grp--picking .grp__addline,
-.grp__addline.is-empty { opacity: 1; }
-.grp__addline:hover,
-.grp--picking .grp__addline { color: var(--gold-700); border-color: var(--line-gold); background: var(--accent-tint); }
-.grp__add-ico { font-size: .9em; }
-
-/* Combobox teleportato su <body>. */
-.grp__pop {
-  z-index: 1100; max-width: min(20rem, calc(100vw - 1rem)); max-height: 15rem; overflow: auto;
-  background: var(--surface-card); border: 1px solid var(--line-gold);
-  border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: .3rem;
-}
-.grp__search { display: flex; align-items: center; gap: .4rem; padding: .3rem .4rem .4rem; border-bottom: 1px solid var(--border-hairline); }
-.grp__search-ico { flex: 0 0 auto; color: var(--text-faint); font-size: .9em; }
-.grp__search-input {
-  width: 100%; border: none; background: none; outline: none;
-  font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-strong);
-}
-.grp__search-input::placeholder { color: var(--text-muted); opacity: 1; }
-.grp__opts { list-style: none; margin: 0; padding: .25rem 0 0; display: flex; flex-direction: column; gap: 1px; }
-.grp__opt {
-  width: 100%; display: flex; align-items: center; gap: .5rem; text-align: left;
-  border: none; background: none; cursor: pointer; border-radius: var(--radius-sm);
-  font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-body); padding: .4rem .5rem;
-  transition: background .12s, color .12s;
-}
-.grp__opt:hover,
-.grp__opt:focus-visible { outline: none; background: var(--accent-tint); color: var(--gold-700); }
-.grp__opt-ico { flex: 0 0 auto; color: var(--text-faint); font-size: .9em; }
-/* "Crea …": separata dai match esistenti, accento oro sull'azione di creazione. */
-.grp__opt--create { color: var(--gold-700); margin-top: 1px; border-top: 1px solid var(--border-hairline); border-radius: 0 0 var(--radius-sm) var(--radius-sm); }
-.grp__opt--create .grp__opt-ico { color: var(--gold-600); }
-.grp__opt--create strong { font-weight: var(--fw-semibold); }
-.grp__opt-empty { padding: .5rem; font-size: var(--fs-sm); color: var(--text-faint); }
-
-@media (max-width: 520px) { .grp { flex-direction: column; align-items: stretch; gap: .3rem; } }
-
-/* Touch: niente hover → ✕, riga "aggiungi" e icona matita sempre visibili. */
+/* Touch: niente hover → l'icona matita dei valori resta visibile. */
 @media (pointer: coarse) {
-  .grp__tag-x { opacity: .7; }
-  .grp__addline { opacity: 1; }
-  .grp__opt { min-height: 44px; }
   .led__val-ico { opacity: .75; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .grp__tag, .grp__tag-x, .grp__addline, .grp__opt,
   .led__val--edit, .led__val-ico { transition: none; }
 }
 </style>
