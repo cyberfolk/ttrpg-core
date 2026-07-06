@@ -373,6 +373,9 @@ const fields = computed(() => {
 }
 .led__item { display: flex; align-items: center; gap: .4rem; min-width: 0; }
 .led__repchip { display: inline-flex; }
+/* Chip vuoto "–": il glifo trattino siede alto nella pill → sembra avere più
+   padding sotto. Ricentro il glifo dentro la pill (solo qui, non nel DS). */
+.led__repchip :deep(.ds-score--empty) { padding-top: .3em; padding-bottom: .14em; }
 @media (max-width: 520px) { .led__grid { grid-template-columns: 1fr; } }
 
 /* Ruolo: badge-toggle. Default PNG (grigio), clic → PG (oro tenue).
@@ -417,8 +420,12 @@ const fields = computed(() => {
 .led__val--edit:hover .led__val-ico,
 .led__val--edit:focus-visible .led__val-ico { opacity: .75; }
 
-/* Controllo inline (select/input) quando il campo passa in modifica. */
-.led__select--inline { font-weight: var(--fw-semibold); padding-top: .18rem; padding-bottom: .18rem; }
+/* Controllo inline (select/input): altezza ridotta per non far crescere la riga
+   rispetto al valore in lettura quando si apre la selezione. */
+.led__select--inline {
+  font-weight: var(--fw-semibold); box-sizing: border-box; height: 1.5rem;
+  padding-top: 0; padding-bottom: 0; line-height: 1.4;
+}
 /* Classe in modifica: la cella prende tutta la larghezza per l'editor multiclasse. */
 .led__item--wide { grid-column: 1 / -1; align-items: flex-start; }
 .led__select {
@@ -477,14 +484,14 @@ const fields = computed(() => {
    (effetto distinto dal badge) per dire "premi qui per scollegare". */
 .grp__tag-x {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 1.05em; height: 1.05em; margin-left: .12rem; opacity: .5;
+  width: 1.2em; height: 1.2em; margin-left: .15rem;
   border: none; background: none; padding: 0; cursor: pointer;
-  color: var(--gold-700); border-radius: var(--radius-pill); font-size: .82em; line-height: 1;
-  transition: opacity .15s, color .15s, background .15s, transform .12s;
+  color: var(--text-faint); border-radius: var(--radius-pill); font-size: .95em; line-height: 1;
+  transition: color .15s, background .15s;
 }
 .grp__tag:hover .grp__tag-x,
-.grp__tag:focus-within .grp__tag-x { opacity: .8; }
-.grp__tag-x:hover { color: var(--danger); opacity: 1; background: var(--danger-tint); transform: scale(1.18); }
+.grp__tag:focus-within .grp__tag-x { color: var(--text-muted); }
+.grp__tag-x:hover { color: var(--ember-500); background: var(--danger-tint); }
 .grp__tag-x:focus-visible { outline: none; opacity: 1; box-shadow: var(--shadow-focus); }
 
 /* Riga "aggiungi": affordance discreta che emerge all'hover dell'area. */
