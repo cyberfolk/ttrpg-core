@@ -3,120 +3,88 @@
        Resa "riga da registro": valori forti, label mute, inline. Nessuna scatola,
        nessuna eyebrow oro. Serve a valutare il look nelle testate profilo. -->
   <section class="led" :aria-label="title">
-    <!-- Comando in alto a destra: matita (con tooltip "Modifica") ↔ "Fatto" in modifica. -->
-    <div class="led__topright">
-      <HoverTip v-if="!editing" text="Modifica" :tab-index="-1">
-        <button type="button" class="led__pencil" aria-label="Modifica dati" @click="editing = true">
-          <Icon name="edit" />
-        </button>
-      </HoverTip>
-      <button v-else type="button" class="ds-btn ds-btn--sm ds-btn--ghost" @click="editing = false">
-        <span class="ds-btn__icon"><Icon name="check" /></span> Fatto
-      </button>
-    </div>
-
-    <!-- Riga meta: lettura immediata (default) -->
-    <div v-if="!editing" class="led__read">
+    <!-- Riga meta: valori inline, ognuno editabile al click sul valore.
+         Niente matita globale: l'affordance è per campo (hover → cornice + icona). -->
+    <div class="led__read">
       <button v-if="kind === 'character'" type="button" class="led__role"
         :class="isPg ? 'led__role--pg' : 'led__role--png'" :aria-pressed="isPg"
         aria-label="Cambia ruolo (PG/PNG)" title="Clic: cambia PG/PNG"
         @click="isPg = !isPg">{{ isPg ? 'PG' : 'PNG' }}</button>
 
       <div class="led__grid">
-        <div v-for="f in facts" :key="f.k" class="led__item">
+        <div v-for="f in fields" :key="f.key" class="led__item"
+          :class="{ 'led__item--player': f.key === 'giocatore',
+                    'led__item--wide': editingField === f.key && f.type === 'multiclass' }">
           <span class="led__sep" aria-hidden="true">·</span>
-          <span class="led__k">{{ f.k }}</span>
-          <span class="led__val">{{ f.v }}</span>
-        </div>
-        <div class="led__item">
-          <span class="led__sep" aria-hidden="true">·</span>
-          <span class="led__k">Reputazione</span>
-          <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="led__repchip">
+          <span class="led__k">{{ f.label }}</span>
+
+          <!-- Livello: derivato (somma classi), sola lettura -->
+          <span v-if="f.type === 'readonly'" class="led__val">{{ f.display }}</span>
+
+          <!-- Reputazione: derivata dalle transazioni, sola lettura -->
+          <HoverTip v-else-if="f.type === 'score'" :text="SCORE_TIP"
+            label="Spiegazione punteggio sintetico" class-name="led__repchip">
             <ScoreChip :score="reputation" size="sm" />
           </HoverTip>
-        </div>
-        <div v-if="kind === 'character' && isPg" class="led__item led__item--player">
-          <span class="led__sep" aria-hidden="true">·</span>
-          <span class="led__k">Giocatore</span>
-          <span class="led__val">{{ player }}</span>
-        </div>
-      </div>
-    </div>
 
-    <!-- Riga meta: modifica inline. Due colonne come la lettura: a destra
-         l'editor multiclasse (che computa il Livello). -->
-    <div v-else class="led__edit">
-      <template v-if="kind === 'character'">
-        <div class="led__col">
-          <label class="led__field">
-            <span class="led__flabel">Razza</span>
-            <select class="led__select" v-model="race">
-              <option v-for="r in RACES" :key="r" :value="r">{{ r }}</option>
+          <!-- Select inline (Razza, Allineamento, Giocatore, Sede, Influenza) -->
+          <template v-else-if="f.type === 'select'">
+            <button v-if="editingField !== f.key" type="button" class="led__val led__val--edit"
+              :aria-label="`Modifica ${f.label}`" @click.stop="startField(f.key)">
+              <span>{{ form[f.model] }}</span>
+              <Icon name="edit" class="led__val-ico" />
+            </button>
+            <select v-else class="led__select led__select--inline" v-model="form[f.model]" v-focus
+              :aria-label="f.label" @change="stopField" @blur="stopField" @keydown.escape="stopField">
+              <option v-for="o in f.options" :key="o" :value="o">{{ o }}</option>
             </select>
-          </label>
-          <label class="led__field">
-            <span class="led__flabel">Allineamento</span>
-            <select class="led__select" v-model="alignment">
-              <option v-for="a in ALIGNMENTS" :key="a" :value="a">{{ a }}</option>
-            </select>
-          </label>
-          <label class="led__field" v-if="isPg">
-            <span class="led__flabel">Giocatore</span>
-            <select class="led__select" v-model="player">
-              <option v-for="p in PLAYERS" :key="p" :value="p">{{ p }}</option>
-            </select>
-          </label>
-        </div>
-        <div class="led__col">
-          <div class="led__mc">
-            <span class="led__flabel">Classe · liv. {{ totalLevel }}</span>
-            <div class="led__mc-rows">
-              <div v-for="(c, i) in classes" :key="i" class="led__mc-row">
-                <select class="led__select led__mc-lvl" v-model.number="c.level" aria-label="Livello classe">
-                  <option v-for="n in LEVELS" :key="n" :value="n">{{ n }}</option>
-                </select>
-                <select class="led__select" v-model="c.klass" aria-label="Classe">
-                  <option v-for="cl in CLASSES" :key="cl" :value="cl">{{ cl }}</option>
-                </select>
-                <button v-if="classes.length > 1" type="button" class="led__mc-rm"
-                  aria-label="Rimuovi classe" @click="removeClass(i)"><Icon name="close" /></button>
+          </template>
+
+          <!-- Testo inline (Fondata) -->
+          <template v-else-if="f.type === 'text'">
+            <button v-if="editingField !== f.key" type="button" class="led__val led__val--edit"
+              :aria-label="`Modifica ${f.label}`" @click.stop="startField(f.key)">
+              <span>{{ form[f.model] }}</span>
+              <Icon name="edit" class="led__val-ico" />
+            </button>
+            <input v-else class="led__select led__input led__select--inline" type="text"
+              v-model="form[f.model]" v-focus :aria-label="f.label"
+              @blur="stopField" @keydown.enter="stopField" @keydown.escape="stopField" />
+          </template>
+
+          <!-- Classe: display sintetico; click apre l'editor multiclasse inline
+               (che computa il Livello). -->
+          <template v-else-if="f.type === 'multiclass'">
+            <button v-if="editingField !== 'classe'" type="button" class="led__val led__val--edit"
+              aria-label="Modifica classe e livelli" @click.stop="startField('classe')">
+              <span>{{ classLabel }}</span>
+              <Icon name="edit" class="led__val-ico" />
+            </button>
+            <div v-else class="led__mc">
+              <div class="led__mc-rows">
+                <div v-for="(c, i) in classes" :key="i" class="led__mc-row">
+                  <select class="led__select led__mc-lvl" v-model.number="c.level" aria-label="Livello classe">
+                    <option v-for="n in LEVELS" :key="n" :value="n">{{ n }}</option>
+                  </select>
+                  <select class="led__select" v-model="c.klass" aria-label="Classe">
+                    <option v-for="cl in CLASSES" :key="cl" :value="cl">{{ cl }}</option>
+                  </select>
+                  <button v-if="classes.length > 1" type="button" class="led__mc-rm"
+                    aria-label="Rimuovi classe" @click="removeClass(i)"><Icon name="close" /></button>
+                </div>
+              </div>
+              <div class="led__mc-foot">
+                <button type="button" class="led__mc-add ds-btn ds-btn--sm ds-btn--ghost" @click="addClass">
+                  <span class="ds-btn__icon"><Icon name="plus" /></span> classe
+                </button>
+                <button type="button" class="ds-btn ds-btn--sm ds-btn--ghost" @click="stopField">
+                  <span class="ds-btn__icon"><Icon name="check" /></span> Fatto
+                </button>
               </div>
             </div>
-            <button type="button" class="led__mc-add ds-btn ds-btn--sm ds-btn--ghost" @click="addClass">
-              <span class="ds-btn__icon"><Icon name="plus" /></span> classe
-            </button>
-          </div>
+          </template>
         </div>
-      </template>
-
-      <template v-else>
-        <div class="led__col">
-          <label class="led__field">
-            <span class="led__flabel">Allineamento</span>
-            <select class="led__select" v-model="alignment">
-              <option v-for="a in ALIGNMENTS" :key="a" :value="a">{{ a }}</option>
-            </select>
-          </label>
-          <label class="led__field">
-            <span class="led__flabel">Influenza</span>
-            <select class="led__select" v-model="reach">
-              <option v-for="r in REACHES" :key="r" :value="r">{{ r }}</option>
-            </select>
-          </label>
-        </div>
-        <div class="led__col">
-          <label class="led__field">
-            <span class="led__flabel">Sede</span>
-            <select class="led__select" v-model="seat">
-              <option v-for="s in SEATS" :key="s" :value="s">{{ s }}</option>
-            </select>
-          </label>
-          <label class="led__field led__field--tiny">
-            <span class="led__flabel">Fondata</span>
-            <input class="led__select led__input" type="text" v-model="founded" size="9" />
-          </label>
-        </div>
-      </template>
+      </div>
     </div>
 
     <!-- Campo "Gruppi": widget many2many inline (stile Odoo many2many_tags).
@@ -124,7 +92,8 @@
          badge cliccabile → gruppo, ✕ su hover per scollegare, riga "aggiungi" che apre
          un combobox filtrabile. Solo per i personaggi. -->
     <div v-if="kind === 'character'" class="grp" :class="{ 'grp--picking': pickerOpen }">
-      <span class="grp__label">Gruppi</span>
+      <span class="led__sep" aria-hidden="true">·</span>
+      <span class="led__k grp__label">Gruppi</span>
       <div class="grp__body">
         <ul v-if="linkedGroups.length" class="grp__tags">
           <li v-for="g in linkedGroups" :key="g.id">
@@ -179,7 +148,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, computed, nextTick, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Icon from './Icon.vue';
 import ScoreChip from './ScoreChip.vue';
@@ -212,8 +181,21 @@ const REACHES = ['Locale', 'Regionale', 'Nazionale', 'Continentale'];
 
 /* ---- Stato locale hardcodato (non persistito) ---- */
 const isPg = ref(false);
-const player = ref('Giulia');
-const race = ref('Mezzelfo');
+const form = reactive({
+  race: 'Mezzelfo',
+  alignment: 'Caotico Neutrale',
+  player: 'Giulia',
+  seat: 'Porto Cenere',
+  reach: 'Regionale',
+  founded: '1247 E.T.',
+});
+
+// Edit inline: un solo campo alla volta (null = tutto in lettura).
+const editingField = ref(null);
+function startField(key) { editingField.value = key; }
+function stopField() { editingField.value = null; }
+// Autofocus sul controllo appena montato all'apertura dell'edit inline.
+const vFocus = { mounted(el) { el.focus(); } };
 
 // Multiclasse: lista {livello, classe}. Il livello personaggio è la somma (come D&D).
 const classes = ref([
@@ -346,30 +328,31 @@ onUnmounted(() => {
   window.removeEventListener('resize', onViewportShift);
 });
 
-const alignment = ref('Caotico Neutrale');
-const seat = ref('Porto Cenere');
-const reach = ref('Regionale');
-const founded = ref('1247 E.T.');
-
-const editing = ref(false);
-
-// Fatti in riga come coppie label-muta / valore-forte, separati da middot.
-// Il ruolo (PG/PNG) esce dai fatti: è un badge nella toprow.
-const facts = computed(() => {
+// Descrittori dei campi meta: tipo di controllo + sorgente valore.
+// Derivati (livello, reputazione) → sola lettura; classe → editor multiclasse.
+// Il ruolo (PG/PNG) esce dai campi: è un badge sopra la griglia.
+const fields = computed(() => {
   if (props.kind === 'character') {
-    return [
-      { k: 'Razza', v: race.value },
-      { k: 'Classe', v: classLabel.value },
-      { k: 'Allineamento', v: alignment.value },
-      { k: 'Livello', v: String(totalLevel.value) },
+    const characterFields = [
+      { key: 'razza', label: 'Razza', type: 'select', model: 'race', options: RACES },
+      { key: 'classe', label: 'Classe', type: 'multiclass' },
+      { key: 'allineamento', label: 'Allineamento', type: 'select', model: 'alignment', options: ALIGNMENTS },
+      { key: 'livello', label: 'Livello', type: 'readonly', display: String(totalLevel.value) },
+      { key: 'reputazione', label: 'Reputazione', type: 'score' },
     ];
+    if (isPg.value) {
+      characterFields.push({ key: 'giocatore', label: 'Giocatore', type: 'select', model: 'player', options: PLAYERS });
+    }
+    return characterFields;
   }
-  return [
-    { k: 'Allineamento', v: alignment.value },
-    { k: 'Sede', v: seat.value },
-    { k: 'Influenza', v: reach.value },
-    { k: 'Fondata', v: founded.value },
+  const groupFields = [
+    { key: 'allineamento', label: 'Allineamento', type: 'select', model: 'alignment', options: ALIGNMENTS },
+    { key: 'sede', label: 'Sede', type: 'select', model: 'seat', options: SEATS },
+    { key: 'influenza', label: 'Influenza', type: 'select', model: 'reach', options: REACHES },
+    { key: 'fondata', label: 'Fondata', type: 'text', model: 'founded' },
+    { key: 'reputazione', label: 'Reputazione', type: 'score' },
   ];
+  return groupFields;
 });
 </script>
 
@@ -379,10 +362,7 @@ const facts = computed(() => {
   border-top: 1px solid var(--border-hairline);
   margin-top: var(--space-3);
   padding-top: var(--space-3);
-  padding-right: 3rem;
 }
-/* comando in alto a destra: matita ↔ Fatto */
-.led__topright { position: absolute; top: var(--space-3); right: 0; }
 
 /* --- meta (lettura): campi impilati su due colonne, ciascuno col "·" --- */
 .led__read { position: relative; }
@@ -416,27 +396,31 @@ const facts = computed(() => {
 .led__val { color: var(--text-strong); font-weight: var(--fw-semibold); overflow-wrap: anywhere; }
 .led__sep { color: var(--text-faint); font-weight: 400; }
 .led__k { color: var(--text-muted); }
+/* Nome campo seguito da due punti: "· Livello: 6". Un solo punto di verità.
+   margin-right → piccolo respiro tra ":" e il contenuto (solo lì, non sul middot). */
+.led__k::after { content: ':'; margin-right: .18rem; }
 
-/* matita: affordance discreta, si accende su hover/focus */
-.led__pencil {
-  background: none; border: none; cursor: pointer;
-  color: var(--text-faint); opacity: .6; padding: .25rem;
-  font-size: 1rem; line-height: 1; border-radius: var(--radius-sm);
-  transition: opacity .15s, color .15s;
+/* Valore editabile inline: a riposo sembra testo forte; su hover/focus
+   compaiono cornice oro tenue + icona matita → "cliccami per editare". */
+.led__val--edit {
+  font: inherit; color: var(--text-strong); font-weight: var(--fw-semibold);
+  display: inline-flex; align-items: center; gap: .3rem;
+  margin: -.1rem -.35rem; padding: .1rem .35rem;
+  background: none; border: 1px solid transparent; border-radius: var(--radius-sm);
+  cursor: pointer; text-align: left; overflow-wrap: anywhere;
+  transition: background .15s, border-color .15s;
 }
-.led__pencil:hover, .led__pencil:focus-visible { opacity: 1; color: var(--text-strong); }
-.led__pencil:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+.led__val--edit:hover, .led__val--edit:focus-visible {
+  outline: none; background: var(--accent-tint); border-color: var(--line-gold);
+}
+.led__val-ico { flex: 0 0 auto; font-size: .78em; color: var(--gold-600); opacity: 0; transition: opacity .15s; }
+.led__val--edit:hover .led__val-ico,
+.led__val--edit:focus-visible .led__val-ico { opacity: .75; }
 
-/* --- meta (modifica): due colonne come la lettura --- */
-.led__edit {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .8rem 1.5rem; align-items: start;
-}
-.led__col { display: flex; flex-direction: column; gap: .7rem; min-width: 0; }
-@media (max-width: 520px) { .led__edit { grid-template-columns: 1fr; } }
-.led__field { display: flex; flex-direction: column; gap: .25rem; }
-.led__field--tiny { max-width: 6rem; }
-.led__flabel { font-size: var(--fs-xs); color: var(--text-muted); }
+/* Controllo inline (select/input) quando il campo passa in modifica. */
+.led__select--inline { font-weight: var(--fw-semibold); padding-top: .18rem; padding-bottom: .18rem; }
+/* Classe in modifica: la cella prende tutta la larghezza per l'editor multiclasse. */
+.led__item--wide { grid-column: 1 / -1; align-items: flex-start; }
 .led__select {
   font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-strong);
   background: var(--surface-card); border: 1px solid var(--border-strong);
@@ -458,7 +442,8 @@ const facts = computed(() => {
   transition: color .15s;
 }
 .led__mc-rm:hover { color: var(--danger); }
-.led__mc-add { align-self: flex-start; margin-top: .2rem; }
+.led__mc-foot { display: flex; align-items: center; gap: .4rem; margin-top: .3rem; }
+.led__mc-add { align-self: flex-start; }
 .led__select:hover { border-color: var(--gold-500); }
 .led__select:focus { outline: none; border-color: var(--gold-500); box-shadow: var(--shadow-focus); }
 
@@ -466,14 +451,13 @@ const facts = computed(() => {
 .led__item--player .led__val { color: var(--gold-600); font-weight: var(--fw-semibold); }
 
 /* === Campo Gruppi: many2many inline ==================================== */
+/* Stessa riga da registro dei fatti: "· Gruppi: [tag] [tag]".
+   Middot + label muta a sinistra, contenuto (tag + aggiungi) a destra. */
 .grp {
-  display: flex; align-items: baseline; gap: .4rem 1rem;
-  margin-top: .8rem;
+  display: flex; align-items: baseline; gap: .4rem;
+  margin-top: .8rem; font-family: var(--font-sans); font-size: var(--fs-body);
 }
-.grp__label {
-  flex: 0 0 auto; font-family: var(--font-sans); font-size: var(--fs-body);
-  color: var(--text-muted); line-height: 1.6;
-}
+.grp__label { flex: 0 0 auto; line-height: 1.4; }
 .grp__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: .3rem; }
 .grp__tags { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; margin: 0; padding: 0; }
 
@@ -488,17 +472,19 @@ const facts = computed(() => {
 .grp__tag-ico { font-size: .82em; opacity: .65; }
 .grp__tag-name { line-height: 1.1; }
 
-/* ✕: nascosta a riposo (larghezza 0), si apre su hover/focus del badge. */
+/* ✕: sempre visibile (larghezza fissa, il badge non cambia mai dimensione).
+   A riposo tenue; badge in hover la accende un po'; ✕ in hover vira al rosso
+   (effetto distinto dal badge) per dire "premi qui per scollegare". */
 .grp__tag-x {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 0; opacity: 0; overflow: hidden; margin-left: 0;
+  width: 1.05em; height: 1.05em; margin-left: .12rem; opacity: .5;
   border: none; background: none; padding: 0; cursor: pointer;
   color: var(--gold-700); border-radius: var(--radius-pill); font-size: .82em; line-height: 1;
-  transition: width .15s, opacity .15s, margin .15s, color .15s, background .15s;
+  transition: opacity .15s, color .15s, background .15s, transform .12s;
 }
 .grp__tag:hover .grp__tag-x,
-.grp__tag:focus-within .grp__tag-x { width: 1.05em; opacity: .7; margin-left: .12rem; }
-.grp__tag-x:hover { color: var(--danger); opacity: 1; background: var(--danger-tint); }
+.grp__tag:focus-within .grp__tag-x { opacity: .8; }
+.grp__tag-x:hover { color: var(--danger); opacity: 1; background: var(--danger-tint); transform: scale(1.18); }
 .grp__tag-x:focus-visible { outline: none; opacity: 1; box-shadow: var(--shadow-focus); }
 
 /* Riga "aggiungi": affordance discreta che emerge all'hover dell'area. */
@@ -546,15 +532,17 @@ const facts = computed(() => {
 .grp__opt--create strong { font-weight: var(--fw-semibold); }
 .grp__opt-empty { padding: .5rem; font-size: var(--fs-sm); color: var(--text-faint); }
 
-@media (max-width: 520px) { .grp { flex-direction: column; gap: .3rem; } }
+@media (max-width: 520px) { .grp { flex-direction: column; align-items: stretch; gap: .3rem; } }
 
-/* Touch: niente hover → ✕ e riga "aggiungi" sempre visibili, target più ampi. */
+/* Touch: niente hover → ✕, riga "aggiungi" e icona matita sempre visibili. */
 @media (pointer: coarse) {
-  .grp__tag-x { width: 1.05em; opacity: .7; margin-left: .12rem; }
+  .grp__tag-x { opacity: .7; }
   .grp__addline { opacity: 1; }
   .grp__opt { min-height: 44px; }
+  .led__val-ico { opacity: .75; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .grp__tag, .grp__tag-x, .grp__addline, .grp__opt { transition: none; }
+  .grp__tag, .grp__tag-x, .grp__addline, .grp__opt,
+  .led__val--edit, .led__val-ico { transition: none; }
 }
 </style>
