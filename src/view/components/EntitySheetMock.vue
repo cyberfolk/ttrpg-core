@@ -446,6 +446,12 @@ const fields = computed(() => {
 
 /* editor multiclasse: righe livello+classe impilate, con aggiungi/rimuovi. */
 .led__mc { display: flex; flex-direction: column; gap: .25rem; align-items: stretch; }
+/* Select dell'editor coerenti con quelli inline: fs-body, semibold, stessa altezza. */
+.led__mc .led__select {
+  font-size: var(--fs-body); font-weight: var(--fw-semibold);
+  box-sizing: border-box; height: 1.7rem; line-height: 1.4;
+  padding-top: 0; padding-bottom: 0;
+}
 .led__mc-rows { display: flex; flex-direction: column; gap: .35rem; }
 .led__mc-row { display: flex; align-items: center; gap: .4rem; }
 .led__mc-lvl { max-width: 4rem; }
