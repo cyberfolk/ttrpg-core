@@ -249,6 +249,32 @@ export function removeMember(state, groupId, charId) {
   return next;
 }
 
+export function addLookupItem(state, coll, item) {
+  const exists = state[coll].some((x) => x.id === item.id);
+  if (exists) {
+    return state;
+  }
+  const next = { ...state, [coll]: [...state[coll], item] };
+  return next;
+}
+
+export function renameLookupItem(state, coll, id, name) {
+  const list = state[coll].map((x) => {
+    if (x.id !== id) {
+      return x;
+    }
+    const updated = { ...x, name };
+    return updated;
+  });
+  const next = { ...state, [coll]: list };
+  return next;
+}
+
+export function listLookup(state, coll) {
+  const list = state[coll];
+  return list;
+}
+
 export function resolveNode(state, id) {
   const character = state.characters.find((c) => c.id === id);
   if (character) {
