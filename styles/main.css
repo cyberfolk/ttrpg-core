@@ -63,6 +63,8 @@
   --danger-soft:   var(--ember-500);
   --danger-tint:   var(--ember-100);
   --focus-ring:    rgba(184,137,58,.38);
+  /* Coach-mark: onde dorate (gold-500), abbastanza sature da staccare sul fondo caldo. */
+  --coach-glow:    rgba(184,137,58,.85);
   --selection:     rgba(201,162,75,.28);
   /* on-color: elemento scuro/chiaro sopra una superficie a tinta piena */
   --on-accent:     #2c220e;
@@ -1059,6 +1061,93 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 .rep-empty { color: var(--text-muted); font-style: italic; padding: 1.5rem 0; text-align: center; }
 .notfound { text-align: center; padding: 4rem 1rem; }
 .notfound h2 { color: var(--gold-700); font-size: var(--fs-h1); margin-bottom: .5rem; }
+
+/* === Coach-mark (primo accesso) =========================== */
+/* Segnala "clicca qui" sui controlli reali: anello oro pulsante ancorato al
+   controllo + etichetta a bolla. Mostrato solo nello stato a un personaggio.
+   Il colore dell'anello viene dal token --focus-ring (swap tema → solo :root);
+   la coda del pulse svanisce a `transparent`. */
+.coach { position: relative; }
+/* Beacon: due onde dorate sfasate che partono dal controllo, crescono e sfumano
+   (segnale "guarda qui" chiaro, come il puntino delle mappe) — non un alone soft
+   appena percettibile. Nessun bordo fisso: le onde se ne vanno. */
+.coach::before, .coach::after {
+  content: ""; position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 3px 1px var(--coach-glow);
+  pointer-events: none;
+  animation: coach-beacon 1.5s var(--ease-out) infinite;
+}
+.coach::after { animation-delay: 0.75s; } /* sfasata → onda continua */
+@keyframes coach-beacon {
+  0%   { box-shadow: 0 0 3px 1px var(--coach-glow); }
+  100% { box-shadow: 0 0 8px 12px transparent; }
+}
+
+/* Etichetta a bolla: grammatica del tooltip (carta pura, bordo oro, freccia su),
+   ancorata sotto il controllo. Il centraggio usa `translate` (proprietà a sé),
+   così `transform` resta libero per il bob. */
+.coach-tag {
+  position: absolute; top: calc(100% + 9px); left: 50%; translate: -50% 0;
+  z-index: 50; width: max-content; max-width: 13rem;
+  font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: var(--fw-semibold);
+  letter-spacing: 0; text-transform: none; line-height: 1.3; text-align: center;
+  color: var(--text-strong);
+  background: var(--surface-card); border: 1px solid var(--line-gold);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+  padding: .36rem .56rem;
+  pointer-events: none;
+  animation: coach-tag-fade var(--dur) var(--ease-out) both,
+             coach-tag-bob 1.9s ease-in-out infinite;
+}
+/* Varianti d'allineamento per non sforare il bordo viewport: --end ancora a
+   destra (toolbar), --start a sinistra (hamburger). */
+.coach-tag--end   { left: auto; right: 0;  translate: 0; --tag-arrow: calc(100% - 15px); text-align: left; }
+.coach-tag--start { left: 0;    right: auto; translate: 0; --tag-arrow: 15px; text-align: left; }
+.coach-tag::before, .coach-tag::after {
+  content: ""; position: absolute; bottom: 100%;
+  left: var(--tag-arrow, 50%); transform: translateX(-50%);
+  border: 6px solid transparent; border-bottom-color: var(--line-gold);
+}
+.coach-tag::after {
+  border-width: 5px; border-bottom-color: var(--surface-card);
+  transform: translateX(-50%) translateY(1.5px);
+}
+@keyframes coach-tag-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+/* Bob leggero verso il controllo: la bolla "gesticola" così l'occhio la coglie. */
+@keyframes coach-tag-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Niente onde: un anello dorato statico (il segnale resta), etichetta ferma. */
+  .coach::before { display: none; }
+  .coach::after { animation: none; box-shadow: 0 0 0 2px var(--coach-glow); }
+  .coach-tag { animation: none; opacity: 1; }
+}
+
+/* CTA sotto lo stato di guida (primo accesso, personaggi e gruppi): stesso font
+   del corpo, enfasi oro leggera, stretta al corpo (annulla il gap di colonna
+   dello stato vuoto per questo elemento). */
+.rep-onboard-cta {
+  margin: calc(-1 * var(--space-3)) 0 0;
+  font-family: var(--font-sans);
+  font-weight: var(--fw-medium);
+  color: var(--gold-700);
+  text-wrap: pretty;
+}
+
+/* Campo di ricerca (o altro input) disabilitato: chiaramente inattivo. */
+.ds-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--surface-panel);
+}
+.ds-input:disabled::placeholder { color: var(--text-faint); }
 
 /* === Animations ============================================ */
 @keyframes rep-rise { from { transform: translateY(12px); } to { transform: none; } }

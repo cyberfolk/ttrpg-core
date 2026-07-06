@@ -161,6 +161,9 @@ const wipeOpen = ref(false);
 const wipeCancelBtn = ref(null);
 
 function openWipe() {
+  // Chiudi il drawer (z-index 1600, sopra l'overlay 1000) così la conferma di
+  // pulizia si vede in chiaro invece di restare coperta.
+  emit('close');
   wipeOpen.value = true;
 }
 

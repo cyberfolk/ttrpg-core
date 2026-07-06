@@ -2,9 +2,12 @@
   <div id="app-root">
     <header class="rep-header">
       <!-- Trigger drawer (solo mobile) -->
-      <button ref="menuBtn" class="rep-header__menu rep-header__menu--mobile" @click="openDrawer"
+      <button ref="menuBtn" class="rep-header__menu rep-header__menu--mobile"
+        :class="{ coach: coachActive }" @click="openDrawer"
         aria-label="Menu" :aria-expanded="drawerOpen ? 'true' : 'false'">
         <Icon name="menu" />
+        <!-- Coach-mark primo accesso: su mobile le sezioni vivono nel drawer. -->
+        <span v-if="coachActive" class="coach-tag coach-tag--start">{{ ONBOARD.coach.sections }}</span>
       </button>
 
       <!-- Logo: torna alla schermata principale -->
@@ -27,10 +30,13 @@
       <!-- Navigazione primaria persistente (desktop): flusso caldo, 1 click -->
       <nav class="ds-seg rep-header__nav" aria-label="Sezioni Reputazione">
         <button v-for="item in navItems" :key="item.routeName" class="ds-seg__btn"
-          :class="{ active: item.isActive }" :aria-current="item.isActive ? 'page' : undefined"
+          :class="{ active: item.isActive, coach: coachActive && item.routeName === 'facing' }"
+          :aria-current="item.isActive ? 'page' : undefined"
           @click="goTo(item.routeName)">
           <span class="ds-seg__icon" aria-hidden="true"><Icon :name="item.icon" /></span>
           {{ item.label }}
+          <!-- Coach-mark primo accesso: qui vivono le sezioni (desktop). -->
+          <span v-if="coachActive && item.routeName === 'facing'" class="coach-tag">{{ ONBOARD.coach.sections }}</span>
         </button>
       </nav>
 
@@ -55,9 +61,27 @@ import { ref, computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppDrawer from './components/AppDrawer.vue';
 import Icon from './components/Icon.vue';
+import { useStore } from './useStore.js';
+import { useUiState } from './useUiState.js';
+import { listActiveCharacters, listActiveGroups } from '../model/reputation.js';
+import { ONBOARD } from './uiCopy.js';
 
 const route = useRoute();
 const router = useRouter();
+
+const { state } = useStore();
+const ui = useUiState();
+
+// Coach-mark primo accesso: su Personaggi con un solo nome (e nessuna ricerca) o
+// su Gruppi con un solo gruppo, segnala dove sta la navigazione fra le sezioni —
+// voce "Faccia a faccia" su desktop, hamburger su mobile.
+const coachActive = computed(() => {
+  const onCharactersFirst = route.name === 'characters'
+    && listActiveCharacters(state.value).length === 1 && !ui.search;
+  const onGroupsFirst = route.name === 'groups'
+    && listActiveGroups(state.value).length === 1;
+  return onCharactersFirst || onGroupsFirst;
+});
 
 const drawerOpen = ref(false);
 const menuBtn = ref(null);

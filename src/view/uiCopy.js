@@ -26,6 +26,29 @@ export const ONBOARD = {
     body: 'I personaggi sono i nodi del tuo grafo di reputazione: PG e PNG che si giudicano a vicenda. Creane uno per cominciare.',
     cta: 'Aggiungi personaggio',
   },
+  // Un solo personaggio in elenco: il primo è stato appena creato dal flusso
+  // guidato. Punto in cui l'utente si areniva — la catena riparte qui, verso il
+  // secondo nome e verso Faccia a faccia (dove nasce il confronto e vive la nav).
+  charactersOne: {
+    title: 'Aggiungi il secondo personaggio',
+    body: 'Con un solo personaggio non c\'è ancora una relazione da leggere: la reputazione mette sempre due entità a confronto.',
+    // CTA: manda l'utente ai controlli pulsanti (coach-mark), le affordance reali.
+    cta: 'Lasciati guidare dai suggerimenti.',
+  },
+  // Elenco gruppi con un solo nome: analogo a charactersOne. A guidare sono i
+  // controlli pulsanti (coach-mark del "+" e della navigazione).
+  groupsOne: {
+    title: 'Aggiungi il secondo gruppo',
+    body: 'Con un solo gruppo non c\'è ancora una relazione da leggere: la reputazione mette sempre due entità a confronto.',
+    cta: 'Lasciati guidare dai suggerimenti.',
+  },
+  // Coach-mark del primo accesso (una sola entità): etichette ancorate ai
+  // controlli reali per segnalare dove cliccare.
+  coach: {
+    add: 'Aggiungi qui il personaggio',
+    addGroup: 'Aggiungi qui il gruppo',
+    sections: 'Spostati tra le sezioni',
+  },
   // Elenco gruppi vuoto: fazioni, città, gilde.
   groupsZero: {
     title: 'Nessun gruppo, ancora',
