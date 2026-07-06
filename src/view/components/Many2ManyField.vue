@@ -23,10 +23,10 @@
         </li>
       </ul>
       <button ref="addTrigger" type="button" class="m2m__addline"
-        :class="{ 'is-empty': !linked.length }"
-        aria-haspopup="listbox" :aria-expanded="pickerOpen" @click.stop="togglePicker">
+        :class="{ 'is-empty': !linked.length, 'is-compact': linked.length }"
+        :aria-label="addText" aria-haspopup="listbox" :aria-expanded="pickerOpen" @click.stop="togglePicker">
         <Icon name="plus" class="m2m__add-ico" />
-        <span>{{ linked.length ? addText : emptyText }}</span>
+        <span v-if="!linked.length">{{ emptyText }}</span>
       </button>
     </div>
 
@@ -187,8 +187,10 @@ onUnmounted(() => {
 .m2m__sep { flex: 0 0 auto; color: var(--text-faint); font-weight: 400; }
 .m2m__label { flex: 0 0 auto; color: var(--text-muted); line-height: 1.4; }
 .m2m__label::after { content: ':'; margin-right: .18rem; }
-.m2m__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: .3rem; }
-.m2m__tags { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; margin: 0; padding: 0; }
+/* Tag e affordance "aggiungi" sullo stesso flusso (wrap): niente riga
+   riservata sotto i badge → meno spazio verticale verso il campo seguente. */
+.m2m__body { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.m2m__tags, .m2m__tags > li { display: contents; }
 
 /* Badge: pill oro. Con navigable è cliccabile (→ naviga); altrimenti solo etichetta. */
 .m2m__tag {
@@ -219,16 +221,14 @@ onUnmounted(() => {
 
 /* Riga "aggiungi": affordance discreta che emerge all'hover dell'area. */
 .m2m__addline {
-  align-self: flex-start; display: inline-flex; align-items: center; gap: .3rem;
-  margin-left: -.4rem; padding: .22rem .4rem; cursor: pointer;
+  align-self: center; display: inline-flex; align-items: center; gap: .3rem;
+  padding: .22rem .4rem; cursor: pointer;
   font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-muted);
   background: none; border: 1px dashed transparent; border-radius: var(--radius-sm);
-  opacity: 0; transition: opacity .15s, color .15s, border-color .15s, background .15s;
+  transition: color .15s, border-color .15s, background .15s;
 }
-.m2m:hover .m2m__addline,
-.m2m:focus-within .m2m__addline,
-.m2m--picking .m2m__addline,
-.m2m__addline.is-empty { opacity: 1; }
+/* Con tag presenti: solo "+" compatto e tenue in coda ai badge (niente riga extra). */
+.m2m__addline.is-compact { color: var(--text-faint); padding: .2rem .35rem; }
 .m2m__addline:hover,
 .m2m--picking .m2m__addline { color: var(--gold-700); border-color: var(--line-gold); background: var(--accent-tint); }
 .m2m__add-ico { font-size: .9em; }
@@ -262,12 +262,14 @@ onUnmounted(() => {
 .m2m__opt--create strong { font-weight: var(--fw-semibold); }
 .m2m__opt-empty { padding: .5rem; font-size: var(--fs-sm); color: var(--text-faint); }
 
+/* m2m impilati (Gruppi → Tag): margine ridotto tra i due. */
+.m2m + .m2m { margin-top: .4rem; }
+
 @media (max-width: 520px) { .m2m { flex-direction: column; align-items: stretch; gap: .3rem; } }
 
 /* Touch: niente hover → ✕ e riga "aggiungi" sempre visibili, target più ampi. */
 @media (pointer: coarse) {
   .m2m__tag-x { color: var(--text-muted); }
-  .m2m__addline { opacity: 1; }
   .m2m__opt { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
