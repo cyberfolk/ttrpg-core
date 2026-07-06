@@ -13,8 +13,7 @@
 
       <div class="led__grid">
         <div v-for="f in fields" :key="f.key" class="led__item"
-          :class="{ 'led__item--player': f.key === 'giocatore',
-                    'led__item--wide': editingField === f.key && f.type === 'multiclass' }">
+          :class="{ 'led__item--player': f.key === 'giocatore' }">
           <span class="led__sep" aria-hidden="true">·</span>
           <span class="led__k">{{ f.label }}</span>
 
@@ -50,34 +49,38 @@
               @blur="stopField" @keydown.enter="stopField" @keydown.escape="stopField" />
           </template>
 
-          <!-- Classe: display sintetico; click apre l'editor multiclasse inline
-               (che computa il Livello). -->
+          <!-- Classe: valore sintetico come trigger; click apre un popover ricco
+               teleportato (righe livello+classe) ancorato al valore → il layout
+               della testata non si sposta mai. -->
           <template v-else-if="f.type === 'multiclass'">
-            <button v-if="editingField !== 'classe'" type="button" class="led__val led__val--edit"
-              aria-label="Modifica classe e livelli" @click.stop="startField('classe')">
+            <button type="button" class="led__val led__val--edit"
+              :class="{ 'is-open': editingField === 'classe' }"
+              aria-haspopup="dialog" :aria-expanded="editingField === 'classe'"
+              aria-label="Modifica classe e livelli" @click.stop="toggleClasse">
               <span>{{ classLabel }}</span>
               <Icon name="edit" class="led__val-ico" />
             </button>
-            <div v-else class="led__mc">
-              <div class="led__mc-rows">
-                <div v-for="(c, i) in classes" :key="i" class="led__mc-row">
-                  <InlineSelect class="led__mc-lvl" :model-value="c.level" :options="LEVELS"
-                    aria-label="Livello classe" @update:model-value="c.level = $event" />
-                  <InlineSelect class="led__mc-klass" :model-value="c.klass" :options="CLASSES"
-                    aria-label="Classe" @update:model-value="c.klass = $event" />
-                  <button v-if="classes.length > 1" type="button" class="led__mc-rm"
-                    aria-label="Rimuovi classe" @click="removeClass(i)"><Icon name="close" /></button>
+            <Teleport to="body">
+              <div v-if="editingField === 'classe'" class="led__mcpop" :style="classePopStyle"
+                role="dialog" aria-label="Classe e livelli" @click.stop>
+                <div class="led__mcpop-rows">
+                  <div v-for="(c, i) in classes" :key="i" class="led__mcpop-row">
+                    <InlineSelect class="led__mcpop-lvl" :model-value="c.level" :options="LEVELS"
+                      aria-label="Livello classe" @update:model-value="c.level = $event" />
+                    <InlineSelect :model-value="c.klass" :options="CLASSES"
+                      aria-label="Classe" @update:model-value="c.klass = $event" />
+                    <button v-if="classes.length > 1" type="button" class="led__mcpop-rm"
+                      aria-label="Rimuovi classe" @click.stop="removeClass(i)"><Icon name="close" /></button>
+                  </div>
+                </div>
+                <div class="led__mcpop-foot">
+                  <button type="button" class="led__mcpop-add" @click.stop="addClass">
+                    <Icon name="plus" /> classe
+                  </button>
+                  <span class="led__mcpop-total">Totale liv. {{ totalLevel }}</span>
                 </div>
               </div>
-              <div class="led__mc-foot">
-                <button type="button" class="led__mc-add ds-btn ds-btn--sm ds-btn--ghost" @click="addClass">
-                  <span class="ds-btn__icon"><Icon name="plus" /></span> classe
-                </button>
-                <button type="button" class="ds-btn ds-btn--sm ds-btn--ghost" @click="stopField">
-                  <span class="ds-btn__icon"><Icon name="check" /></span> Fatto
-                </button>
-              </div>
-            </div>
+            </Teleport>
           </template>
         </div>
       </div>
@@ -96,7 +99,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Icon from './Icon.vue';
 import ScoreChip from './ScoreChip.vue';
@@ -146,6 +149,54 @@ const form = reactive({
 const editingField = ref(null);
 function startField(key) { editingField.value = key; }
 function stopField() { editingField.value = null; }
+
+// Classe: popover ricco teleportato ancorato al valore (il layout non si sposta).
+const classePopStyle = ref(null);
+function anchorClasse(el) {
+  const r = el.getBoundingClientRect();
+  classePopStyle.value = {
+    position: 'fixed',
+    top: `${r.bottom + 6}px`,
+    left: `${r.left}px`,
+    minWidth: `${Math.max(r.width, 220)}px`,
+  };
+}
+function toggleClasse(e) {
+  if (editingField.value === 'classe') { stopField(); return; }
+  anchorClasse(e.currentTarget);
+  startField('classe');
+}
+// Chiude cliccando fuori / Esc / scroll di pagina. Guardia: ignora i click e lo
+// scroll dentro il popover e dentro i popover teleportati degli InlineSelect
+// (altrimenti scegliere livello/classe chiuderebbe tutto).
+function insidePopover(target) {
+  return !!(target?.closest?.('.led__mcpop') || target?.closest?.('.isel__pop'));
+}
+function onClasseDocClick(e) {
+  if (editingField.value === 'classe' && !insidePopover(e.target)) stopField();
+}
+function onClasseKey(e) {
+  if (e.key === 'Escape' && editingField.value === 'classe' && !document.querySelector('.isel__pop')) {
+    stopField();
+  }
+}
+function onClasseViewport(e) {
+  if (editingField.value !== 'classe') return;
+  if (e?.type === 'scroll' && insidePopover(e.target)) return;
+  stopField();
+}
+onMounted(() => {
+  document.addEventListener('click', onClasseDocClick);
+  document.addEventListener('keydown', onClasseKey);
+  window.addEventListener('scroll', onClasseViewport, true);
+  window.addEventListener('resize', onClasseViewport);
+});
+onUnmounted(() => {
+  document.removeEventListener('click', onClasseDocClick);
+  document.removeEventListener('keydown', onClasseKey);
+  window.removeEventListener('scroll', onClasseViewport, true);
+  window.removeEventListener('resize', onClasseViewport);
+});
 // Autofocus sul controllo appena montato all'apertura dell'edit inline.
 const vFocus = { mounted(el) { el.focus(); } };
 
@@ -300,8 +351,6 @@ const fields = computed(() => {
      il testo resta fermo passando da lettura a select. */
   margin-left: -.35rem; padding-left: .35rem;
 }
-/* Classe in modifica: la cella prende tutta la larghezza per l'editor multiclasse. */
-.led__item--wide { grid-column: 1 / -1; align-items: flex-start; }
 .led__select {
   font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-strong);
   background: var(--surface-card); border: 1px solid var(--border-strong);
@@ -312,21 +361,38 @@ const fields = computed(() => {
 }
 .led__input { padding-right: .5rem; background-image: none; cursor: text; }
 
-/* editor multiclasse: righe livello+classe impilate, con aggiungi/rimuovi. */
-.led__mc { display: flex; flex-direction: column; gap: .25rem; align-items: stretch; }
-.led__mc-rows { display: flex; flex-direction: column; gap: .35rem; }
-.led__mc-row { display: flex; align-items: center; gap: .4rem; }
-/* min-width sui trigger dell'editor: colonna livello/classe allineate. */
-.led__mc-lvl :deep(.isel__trigger) { min-width: 3rem; }
-.led__mc-klass :deep(.isel__trigger) { min-width: 7.5rem; }
-.led__mc-rm {
-  background: none; border: none; cursor: pointer; line-height: 1;
+/* Valore Classe aperto: mantiene la cornice oro del trigger. */
+.led__val--edit.is-open { background: var(--accent-tint); border-color: var(--line-gold); }
+.led__val--edit.is-open .led__val-ico { opacity: .75; }
+
+/* Popover ricco Classe: teleportato, righe livello+classe + totale. */
+.led__mcpop {
+  z-index: 1100; max-width: min(22rem, calc(100vw - 1rem));
+  background: var(--surface-card); border: 1px solid var(--line-gold);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: .5rem;
+  display: flex; flex-direction: column; gap: .45rem;
+}
+.led__mcpop-rows { display: flex; flex-direction: column; gap: .35rem; }
+.led__mcpop-row { display: flex; align-items: center; gap: .4rem; }
+.led__mcpop-lvl :deep(.isel__trigger) { min-width: 2.8rem; }
+.led__mcpop-rm {
+  margin-left: auto; background: none; border: none; cursor: pointer; line-height: 1;
   color: var(--text-faint); padding: .2rem; border-radius: var(--radius-sm);
   transition: color .15s;
 }
-.led__mc-rm:hover { color: var(--danger); }
-.led__mc-foot { display: flex; align-items: center; gap: .4rem; margin-top: .3rem; }
-.led__mc-add { align-self: flex-start; }
+.led__mcpop-rm:hover { color: var(--ember-500); }
+.led__mcpop-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: .6rem;
+  padding-top: .4rem; border-top: 1px solid var(--border-hairline);
+}
+.led__mcpop-add {
+  display: inline-flex; align-items: center; gap: .3rem; cursor: pointer;
+  font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-muted);
+  background: none; border: 1px dashed transparent; border-radius: var(--radius-sm); padding: .2rem .4rem;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.led__mcpop-add:hover { color: var(--gold-700); border-color: var(--line-gold); background: var(--accent-tint); }
+.led__mcpop-total { font-size: var(--fs-sm); color: var(--text-muted); }
 .led__select:hover { border-color: var(--gold-500); }
 .led__select:focus { outline: none; border-color: var(--gold-500); box-shadow: var(--shadow-focus); }
 
