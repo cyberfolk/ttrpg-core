@@ -13,10 +13,10 @@
     <!-- Selettori affiancati -->
     <div v-if="charCount >= 2" class="fv__pickers">
       <EntityPicker v-model="idA" label="Primo" placeholder="Cerca personaggio o gruppo…"
-        :exclude-id="idB" />
+        :exclude-id="idB" :max-results="5" allow-create browse-all />
       <span class="fv__vs" aria-hidden="true"><Icon name="facing" /></span>
       <EntityPicker v-model="idB" label="Secondo" placeholder="Cerca personaggio o gruppo…"
-        :exclude-id="idA" />
+        :exclude-id="idA" :max-results="5" allow-create browse-all />
     </div>
 
     <!-- Entrambi scelti: reputazione reciproca + registro -->
