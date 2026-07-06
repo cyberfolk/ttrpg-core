@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction, createGroup } from '../src/model/schema.js';
+import { BASE, SCHEMA_VERSION, createState, createCharacter, createTransaction, createGroup, createLookup } from '../src/model/schema.js';
 import { clampView, computeScore, addCharacter, listActiveCharacters, addTransaction, editTransaction, deleteTransaction, listTransactions, softDeleteCharacter, restoreCharacter, hardDeleteCharacter, listArchivedCharacters, averageIncomingScore, hasTransaction, addGroup, listActiveGroups, listArchivedGroups, softDeleteGroup, restoreGroup, hardDeleteGroup, addMember, removeMember, resolveNode, groupDerivedIncoming, groupDerivedOutgoing, renameGroup, setGroupType, renameCharacter } from '../src/model/reputation.js';
 
 test('BASE è 50', () => {
@@ -11,7 +11,7 @@ test('createState produce stato vuoto valido', () => {
   const s = createState();
   assert.deepEqual(s.characters, []);
   assert.deepEqual(s.transactions, []);
-  assert.equal(s.version, 2);
+  assert.equal(s.version, 3);
 });
 
 test('createCharacter genera id, name e deletedAt null', () => {
@@ -228,14 +228,14 @@ test('averageIncomingScore non considera il pg stesso come mittente', () => {
   assert.equal(averageIncomingScore(s, a.id, false), 60);
 });
 
-test('SCHEMA_VERSION è 2', () => {
-  assert.equal(SCHEMA_VERSION, 2);
+test('SCHEMA_VERSION è 3', () => {
+  assert.equal(SCHEMA_VERSION, 3);
 });
 
 test('createState include groups vuoto', () => {
   const state = createState();
   assert.deepEqual(state.groups, []);
-  assert.equal(state.version, 2);
+  assert.equal(state.version, 3);
 });
 
 test('createGroup crea gruppo con campi attesi', () => {
@@ -460,4 +460,40 @@ test('setGroupType non muta altri gruppi', () => {
   const idA = s.groups[0].id;
   s = setGroupType(s, idA, 'z');
   assert.equal(s.groups[1].type, 'y');
+});
+
+test('createState v3 include i quattro pool vuoti', () => {
+  const s = createState();
+  assert.equal(s.version, 3);
+  assert.deepEqual(s.tags, []);
+  assert.deepEqual(s.players, []);
+  assert.deepEqual(s.races, []);
+  assert.deepEqual(s.classes, []);
+});
+
+test('createCharacter inizializza i campi anagrafici ai default', () => {
+  const c = createCharacter('Aragorn');
+  assert.equal(c.isPg, false);
+  assert.equal(c.raceId, null);
+  assert.deepEqual(c.classLevels, []);
+  assert.equal(c.alignment, '');
+  assert.equal(c.playerId, null);
+  assert.deepEqual(c.tagIds, []);
+  assert.equal(c.notes, '');
+});
+
+test('createGroup inizializza i nuovi campi ai default', () => {
+  const g = createGroup('La Compagnia', 'fazione');
+  assert.equal(g.seat, '');
+  assert.equal(g.guideId, null);
+  assert.equal(g.motto, '');
+  assert.deepEqual(g.tagIds, []);
+  assert.equal(g.notes, '');
+});
+
+test('createLookup genera id e name', () => {
+  const it = createLookup('mercenario');
+  assert.equal(typeof it.id, 'string');
+  assert.ok(it.id.length > 0);
+  assert.equal(it.name, 'mercenario');
 });
