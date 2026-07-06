@@ -31,7 +31,7 @@
     </div>
 
     <Teleport to="body">
-      <div v-if="pickerOpen" class="m2m__pop" :style="pickerStyle" @click.stop>
+      <div v-if="pickerOpen" ref="pickerPop" class="m2m__pop" :style="pickerStyle" @click.stop>
         <div class="m2m__search">
           <Icon name="search" class="m2m__search-ico" />
           <input ref="searchInput" v-model="query" type="text" class="m2m__search-input"
@@ -129,6 +129,7 @@ function onNavigate(it) {
 const pickerOpen = ref(false);
 const pickerStyle = ref(null);
 const addTrigger = ref(null);
+const pickerPop = ref(null);
 const searchInput = ref(null);
 
 function anchorPicker() {
@@ -156,7 +157,13 @@ function togglePicker() {
 // @click.stop su trigger e popover → qui arrivano solo i click esterni.
 function onDocClick() { if (pickerOpen.value) closePicker(); }
 function onDocKey(e) { if (e.key === 'Escape' && pickerOpen.value) closePicker(); }
-function onViewportShift() { if (pickerOpen.value) closePicker(); }
+// Chiude su scroll/resize della pagina, ma non quando lo scroll è dentro il
+// popover (altrimenti la sua scrollbar sarebbe inutilizzabile).
+function onViewportShift(e) {
+  if (!pickerOpen.value) return;
+  if (e?.type === 'scroll' && pickerPop.value?.contains(e.target)) return;
+  closePicker();
+}
 onMounted(() => {
   document.addEventListener('click', onDocClick);
   document.addEventListener('keydown', onDocKey);

@@ -108,7 +108,12 @@ function onPopKey(e) {
 
 // @click.stop su trigger e popover -> qui arrivano solo i click esterni.
 function onDocClick() { closeMenu(); }
-function onViewportShift() { closeMenu(); }
+// Chiude su scroll/resize della pagina, ma NON quando lo scroll avviene dentro
+// il popover stesso (altrimenti la sua scrollbar sarebbe inutilizzabile).
+function onViewportShift(e) {
+  if (e?.type === 'scroll' && pop.value?.contains(e.target)) return;
+  closeMenu();
+}
 onMounted(() => {
   document.addEventListener('click', onDocClick);
   window.addEventListener('scroll', onViewportShift, true);
