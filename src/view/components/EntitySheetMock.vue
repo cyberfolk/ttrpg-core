@@ -34,10 +34,8 @@
               <span>{{ form[f.model] }}</span>
               <Icon name="edit" class="led__val-ico" />
             </button>
-            <select v-else class="led__select led__select--inline" v-model="form[f.model]" v-focus
-              :aria-label="f.label" @change="stopField" @blur="stopField" @keydown.escape="stopField">
-              <option v-for="o in f.options" :key="o" :value="o">{{ o }}</option>
-            </select>
+            <InlineSelect v-else flush auto-open :model-value="form[f.model]" :options="f.options"
+              :aria-label="f.label" @update:model-value="form[f.model] = $event" @close="stopField" />
           </template>
 
           <!-- Testo inline (Fondata) -->
@@ -63,12 +61,10 @@
             <div v-else class="led__mc">
               <div class="led__mc-rows">
                 <div v-for="(c, i) in classes" :key="i" class="led__mc-row">
-                  <select class="led__select led__mc-lvl" v-model.number="c.level" aria-label="Livello classe">
-                    <option v-for="n in LEVELS" :key="n" :value="n">{{ n }}</option>
-                  </select>
-                  <select class="led__select" v-model="c.klass" aria-label="Classe">
-                    <option v-for="cl in CLASSES" :key="cl" :value="cl">{{ cl }}</option>
-                  </select>
+                  <InlineSelect class="led__mc-lvl" :model-value="c.level" :options="LEVELS"
+                    aria-label="Livello classe" @update:model-value="c.level = $event" />
+                  <InlineSelect class="led__mc-klass" :model-value="c.klass" :options="CLASSES"
+                    aria-label="Classe" @update:model-value="c.klass = $event" />
                   <button v-if="classes.length > 1" type="button" class="led__mc-rm"
                     aria-label="Rimuovi classe" @click="removeClass(i)"><Icon name="close" /></button>
                 </div>
@@ -153,6 +149,7 @@ import { useRouter } from 'vue-router';
 import Icon from './Icon.vue';
 import ScoreChip from './ScoreChip.vue';
 import HoverTip from './HoverTip.vue';
+import InlineSelect from './InlineSelect.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const router = useRouter();
@@ -446,15 +443,11 @@ const fields = computed(() => {
 
 /* editor multiclasse: righe livello+classe impilate, con aggiungi/rimuovi. */
 .led__mc { display: flex; flex-direction: column; gap: .25rem; align-items: stretch; }
-/* Select dell'editor coerenti con quelli inline: fs-body, semibold, stessa altezza. */
-.led__mc .led__select {
-  font-size: var(--fs-body); font-weight: var(--fw-semibold);
-  box-sizing: border-box; height: 1.7rem; line-height: 1.4;
-  padding-top: 0; padding-bottom: 0;
-}
 .led__mc-rows { display: flex; flex-direction: column; gap: .35rem; }
 .led__mc-row { display: flex; align-items: center; gap: .4rem; }
-.led__mc-lvl { max-width: 4rem; }
+/* min-width sui trigger dell'editor: colonna livello/classe allineate. */
+.led__mc-lvl :deep(.isel__trigger) { min-width: 3rem; }
+.led__mc-klass :deep(.isel__trigger) { min-width: 7.5rem; }
 .led__mc-rm {
   background: none; border: none; cursor: pointer; line-height: 1;
   color: var(--text-faint); padding: .2rem; border-radius: var(--radius-sm);
