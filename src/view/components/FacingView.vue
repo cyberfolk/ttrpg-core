@@ -153,10 +153,12 @@
       </button>
     </EmptyState>
 
-    <!-- Un solo personaggio: manca il secondo per poter confrontare. -->
+    <!-- Un solo personaggio: manca il secondo per poter confrontare. Qui l'aggiunta
+         avviene in loco (dialog su questa vista): aggiungendo il secondo da Faccia
+         a faccia si resta qui, non si rimbalza sull'elenco Personaggi. -->
     <EmptyState v-else-if="charCount === 1 && (!nodeA || !nodeB)" icon="users"
       :title="ONBOARD.facingOne.title" :body="ONBOARD.facingOne.body">
-      <button type="button" class="ds-btn ds-btn--primary" @click="goCreate">
+      <button type="button" class="ds-btn ds-btn--primary" @click="openAdd">
         <Icon name="plus" /> {{ ONBOARD.facingOne.cta }}
       </button>
     </EmptyState>
@@ -168,14 +170,44 @@
     </div>
 
     <TransactionModal v-if="tx" :from-id="tx.fromId" :to-id="tx.toId" @close="tx = null" />
+
+    <!-- Aggiungi personaggio in loco (dal "serve un secondo nome"): resta su
+         Faccia a faccia. Stesso dialog dell'elenco Personaggi. -->
+    <div v-if="addOpen" class="ds-overlay" @click.self="closeAdd">
+      <div class="ds-dialog" style="max-width:420px">
+        <div class="ds-dialog__head">
+          <h3 class="ds-dialog__title">Aggiungi personaggio</h3>
+          <button class="ds-dialog__close" @click="closeAdd" aria-label="Chiudi">
+            <Icon name="close" />
+          </button>
+        </div>
+        <div class="ds-dialog__body">
+          <form class="rep-addchar" @submit.prevent="onAdd">
+            <span class="ds-field ds-field--block">
+              <label class="ds-field__label" for="fv-add-char-name">Nome del personaggio</label>
+              <span class="ds-field__wrap">
+                <input id="fv-add-char-name" ref="nameInput" class="ds-input" type="text"
+                  placeholder="Es. Aragorn" v-model="newName" />
+              </span>
+            </span>
+          </form>
+        </div>
+        <div class="ds-dialog__foot">
+          <button class="ds-btn ds-btn--ghost" @click="closeAdd">Annulla</button>
+          <button class="ds-btn ds-btn--primary" :disabled="!newName.trim()" @click="onAdd">
+            Aggiungi
+          </button>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
-import { resolveNode, computeScore, averageIncomingScore, listTransactions, listActiveCharacters, listActiveGroups } from '../../model/reputation.js';
+import { resolveNode, computeScore, averageIncomingScore, listTransactions, listActiveCharacters, listActiveGroups, addCharacter } from '../../model/reputation.js';
 import { ambiguousIds, displayName } from '../disambiguation.js';
 import { scoreColor } from '../scoreColor.js';
 import { kindIcon, entityRouteTo } from '../entityKind.js';
@@ -187,7 +219,7 @@ import TransactionModal from './TransactionModal.vue';
 import CountUp from './CountUp.vue';
 import HoverTip from './HoverTip.vue';
 
-const { state } = useStore();
+const { state, dispatch } = useStore();
 const router = useRouter();
 
 // Personaggi attivi: guida gli stati di primo accesso della schermata iniziale.
@@ -201,6 +233,30 @@ function goCreate() {
 const idA = ref(null);
 const idB = ref(null);
 const tx = ref(null);
+
+// Aggiunta personaggio in loco (dal "serve un secondo nome"): resta su Faccia a
+// faccia invece di instradare all'elenco Personaggi.
+const addOpen = ref(false);
+const newName = ref('');
+const nameInput = ref(null);
+
+async function openAdd() {
+  addOpen.value = true;
+  await nextTick();
+  nameInput.value?.focus();
+}
+
+function closeAdd() {
+  addOpen.value = false;
+  newName.value = '';
+}
+
+function onAdd() {
+  const name = newName.value.trim();
+  if (!name) return;
+  dispatch((s) => addCharacter(s, name));
+  closeAdd();
+}
 
 // Toggle globale: mostra/nasconde la reputazione complessiva (media dei giudizi
 // entranti) su entrambe le card insieme.

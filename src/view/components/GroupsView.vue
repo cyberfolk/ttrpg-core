@@ -6,7 +6,7 @@
         <span class="ds-search">
           <span class="ds-search__icon"><Icon name="search" /></span>
           <input class="ds-input ds-input--with-icon" type="search" placeholder="Cerca per nome…"
-            v-model="search" />
+            v-model="search" :disabled="searchDisabled" />
         </span>
       </div>
 
@@ -19,11 +19,13 @@
           </button>
         </HoverTip>
         <HoverTip text="Aggiungi gruppo" :tab-index="-1">
-          <button class="ds-btn ds-btn--primary ds-btn--icon" @click="openAdd"
-            aria-label="Aggiungi gruppo">
+          <button class="ds-btn ds-btn--primary ds-btn--icon" :class="{ coach: coachAdd }"
+            @click="openAdd" aria-label="Aggiungi gruppo">
             <Icon name="plus" />
           </button>
         </HoverTip>
+        <!-- Coach-mark primo accesso: indica quale bottone crea il gruppo. -->
+        <span v-if="coachAdd" class="coach-tag coach-tag--end">{{ ONBOARD.coach.addGroup }}</span>
       </div>
     </div>
 
@@ -39,6 +41,14 @@
     <!-- Ricerca senza risultati: stato secondario, tono leggero. -->
     <EmptyState v-else-if="filteredActive.length === 0" compact icon="search"
       :title="ONBOARD.noResults.title" :body="ONBOARD.noResults.body" />
+
+    <!-- Un solo gruppo (senza ricerca): analogo al primo accesso dei personaggi.
+         Stato arioso + CTA; a guidare sono il "+" pulsante (coach-mark) e la
+         navigazione pulsante. Sparisce da solo al secondo gruppo. -->
+    <EmptyState v-else-if="filteredActive.length === 1 && !search" icon="users"
+      :title="ONBOARD.groupsOne.title" :body="ONBOARD.groupsOne.body">
+      <p class="rep-onboard-cta">{{ ONBOARD.groupsOne.cta }}</p>
+    </EmptyState>
 
     <!-- Vista card -->
     <GroupGalleryView v-else-if="viewMode === 'gallery'" :groups="sortedActive" />
@@ -224,6 +234,11 @@ const activeGroups = computed(() => listActiveGroups(state.value));
 const archivedGroups = computed(() => listArchivedGroups(state.value));
 const showArchived = computed(() => ui.showArchived);
 
+// Ricerca disabilitata finché non ci sono almeno due gruppi (nulla da filtrare).
+const searchDisabled = computed(() => activeGroups.value.length < 2);
+// Coach-mark primo accesso: un solo gruppo (e nessuna ricerca) → indica il "+".
+const coachAdd = computed(() => activeGroups.value.length === 1 && !search.value);
+
 const filteredActive = computed(() => {
   const q = search.value.trim().toLowerCase();
   if (!q) {
@@ -338,6 +353,9 @@ function onHardDelete(id) {
 </script>
 
 <style scoped>
+/* Ancora del coach-tag "+": la caption è absolute rispetto a questo contenitore. */
+.rep-toolbar__actions { position: relative; }
+
 .rep-group-row {
   display: flex;
   align-items: center;

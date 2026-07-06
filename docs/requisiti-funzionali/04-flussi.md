@@ -13,6 +13,21 @@ Con dati assenti, ogni punto morto instrada al passo successivo lungo la catena
 - **Elenco personaggi / Elenco gruppi** vuoti mostrano uno stato che insegna cosa
   sono le entità e offre la creazione del primo elemento. La **ricerca senza
   risultati** è uno stato distinto e più leggero (non è primo accesso).
+- **Elenco personaggi con un solo nome** (dove il flusso guidato deposita l'utente
+  dopo aver creato il primo) non è un vicolo cieco. Al posto della galleria uno stato
+  di guida arioso (stessa resa degli altri stati vuoti: glifo, titolo, corpo — non
+  una card) spiega perché serve un secondo nome e chiude con una **CTA** che rimanda
+  ai controlli pulsanti (*«Lasciati guidare dai suggerimenti.»*). A **segnalare dove
+  cliccare** ci pensano dei coach-mark (alone dorato che pulsa verso l'esterno, senza
+  toccare il bordo del controllo, + etichetta) ancorati ai controlli reali finché i
+  personaggi restano uno — sul bottone «+» della toolbar (*«Aggiungi qui il
+  personaggio»*) e sulla navigazione fra sezioni (*«Le sezioni sono qui»*: la voce
+  «Faccia a faccia» su desktop, il menu ☰ su telefono). Stato di guida e coach-mark
+  spariscono da soli quando i personaggi diventano due.
+- **Elenco gruppi con un solo gruppo** ha lo stesso trattamento: stato di guida
+  arioso + CTA e coach-mark sul «+» (*«Aggiungi qui il gruppo»*) e sulla navigazione.
+- In entrambe le viste (Personaggi e Gruppi) la **barra di ricerca è disabilitata**
+  finché le entità non sono almeno due: con zero o una non c'è nulla da filtrare.
 - Scelte due entità ma **senza transazioni tra loro**, il registro invita a
   registrare la prima: è l'ultimo passo prima che il punteggio si muova da 50.
 
