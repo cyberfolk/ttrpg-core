@@ -19,6 +19,8 @@
               aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
           </span>
 
+          <span v-if="isArchived" class="ds-badge ds-badge--ember rep-profile__archbadge">Archiviato</span>
+
           <div v-if="editing" class="rep-profile__editactions">
             <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit">
               <span class="ds-btn__icon"><Icon name="check" /></span>
@@ -29,7 +31,7 @@
               Annulla
             </button>
           </div>
-          <ActionMenu v-else class="rep-profile__gear" label="Azioni gruppo" icon="gear">
+          <ActionMenu v-else class="rep-profile__gear" label="Azioni gruppo" icon="gear" open-on-hover>
             <template #default="{ close }">
               <button type="button" class="ds-menu__item" @click="showScores(); close()">
                 <Icon name="sliders" /> Punteggi
@@ -53,27 +55,18 @@
             </template>
           </ActionMenu>
         </div>
-
-        <!-- Reputazione complessiva, subito sotto il nome, con il badge di stato -->
-        <div class="rep-profile__meta">
-          <span class="rep-profile__synthetic">
-            <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
-              <span class="rep-profile__synthetic-inner">
-                <span class="rep-profile__synthetic-label">Reputazione<br>Complessiva</span>
-                <ScoreChip :score="synthetic" size="lg" />
-              </span>
-            </HoverTip>
-          </span>
-          <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
-        </div>
       </div>
 
-      <!-- MOCKUP scheda gruppo (dati hardcodati, non persistiti) -->
-      <EntitySheetMock kind="group" />
+      <!-- MOCKUP scheda gruppo (dati hardcodati, non persistiti).
+           reputation = dato reale, il resto è mock. -->
+      <EntitySheetMock kind="group" :reputation="synthetic" />
 
       <!-- Sezioni con tab switcher -->
       <div class="rep-gp-tabs">
         <div class="ds-seg ds-seg--underline">
+          <button class="ds-seg__btn" :class="{ active: tab === 'note' }" @click="tab = 'note'">
+            Note
+          </button>
           <button class="ds-seg__btn" :class="{ active: tab === 'in' }" @click="tab = 'in'">
             Di lui pensano
           </button>
@@ -89,6 +82,9 @@
           </button>
         </div>
       </div>
+
+      <!-- Note (mockup) -->
+      <NotesMock v-if="tab === 'note'" kind="group" />
 
       <!-- Relazioni dirette gruppo↔nodo (stesso componente dei personaggi) -->
       <RelationList v-if="tab === 'in' || tab === 'out'" :key="tab"
@@ -256,6 +252,7 @@ import HoverTip from './HoverTip.vue';
 import ActionMenu from './ActionMenu.vue';
 import ScoreChip from './ScoreChip.vue';
 import EntitySheetMock from './EntitySheetMock.vue';
+import NotesMock from './NotesMock.vue';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
 import EntityPicker from './EntityPicker.vue';
@@ -268,7 +265,7 @@ const { state, dispatch } = useStore();
 const ui = useUiState();
 const router = useRouter();
 
-const tab = ref('in');
+const tab = ref('note');
 const selectedCandidateId = ref(null);
 const activeTx = ref(null);
 
@@ -461,7 +458,6 @@ function onHardDelete() {
   font-weight: 600;
   max-width: 100%;
 }
-
 .rep-gp-tabs {
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: 0.75rem; flex-wrap: wrap; margin: 1.1rem 0 1.5rem;

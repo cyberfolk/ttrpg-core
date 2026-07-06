@@ -29,11 +29,14 @@ export function useAnchoredMenu(triggerRef, popRef, opts = {}) {
     return style;
   }
 
-  async function openMenu() {
+  // focusFirst=false: apertura passiva (hover) che non sposta il focus sulla
+  // prima voce (evita scroll/anello di focus indesiderati passando col mouse).
+  async function openMenu(focusFirst = true) {
     if (opts.onOpen) opts.onOpen();
     popStyle.value = anchorStyle();
     open.value = true;
     await nextTick();
+    if (!focusFirst) return;
     const first = popRef.value?.querySelector(focusSelector);
     if (first) first.focus();
   }

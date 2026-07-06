@@ -18,6 +18,8 @@
           <input v-else class="ds-input rep-profile__edit" type="text" v-model="editName"
             aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
 
+          <span v-if="isArchived" class="ds-badge ds-badge--ember rep-profile__archbadge">Archiviato</span>
+
           <div v-if="editing" class="rep-profile__editactions">
             <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit">
               <span class="ds-btn__icon"><Icon name="check" /></span>
@@ -28,7 +30,7 @@
               Annulla
             </button>
           </div>
-          <ActionMenu v-else class="rep-profile__gear" label="Azioni personaggio" icon="gear">
+          <ActionMenu v-else class="rep-profile__gear" label="Azioni personaggio" icon="gear" open-on-hover>
             <template #default="{ close }">
               <template v-if="isArchived === false">
                 <button type="button" class="ds-menu__item" @click="startEdit(); close()">
@@ -49,27 +51,18 @@
             </template>
           </ActionMenu>
         </div>
-
-        <!-- Reputazione complessiva, subito sotto il nome, con il badge di stato -->
-        <div class="rep-profile__meta">
-          <span class="rep-profile__synthetic">
-            <HoverTip :text="SCORE_TIP" label="Spiegazione punteggio sintetico" class-name="rep-cc__scoretip">
-              <span class="rep-profile__synthetic-inner">
-                <span class="rep-profile__synthetic-label">Reputazione<br>Complessiva</span>
-                <ScoreChip :score="synthetic" size="lg" />
-              </span>
-            </HoverTip>
-          </span>
-          <span v-if="isArchived" class="ds-badge ds-badge--ember">Archiviato</span>
-        </div>
       </div>
 
-      <!-- MOCKUP scheda anagrafica (dati hardcodati, non persistiti) -->
-      <EntitySheetMock kind="character" />
+      <!-- MOCKUP scheda anagrafica (dati hardcodati, non persistiti).
+           reputation = dato reale, il resto è mock. -->
+      <EntitySheetMock kind="character" :reputation="synthetic" />
 
       <!-- Tab switcher -->
       <div class="rep-profile__tabs">
         <div class="ds-seg ds-seg--underline">
+          <button class="ds-seg__btn" :class="{ active: tab === 'note' }" @click="tab = 'note'">
+            Note
+          </button>
           <button class="ds-seg__btn" :class="{ active: tab === 'in' }" @click="tab = 'in'">
             Di lui pensano
           </button>
@@ -82,9 +75,12 @@
         </div>
       </div>
 
+      <!-- Note (mockup) -->
+      <NotesMock v-if="tab === 'note'" kind="character" />
+
       <!-- Relations -->
       <RelationList
-        v-if="tab !== 'groups'"
+        v-if="tab === 'in' || tab === 'out'"
         :key="tab"
         :current-id="character.id"
         :direction="tab"
@@ -92,7 +88,7 @@
       />
 
       <!-- Gruppi del personaggio -->
-      <template v-else>
+      <template v-if="tab === 'groups'">
         <div class="rep-table-wrap rep-table--flush">
           <table class="rep-table">
             <thead>
@@ -206,8 +202,8 @@ import NotFound from './NotFound.vue';
 import HoverTip from './HoverTip.vue';
 import Icon from './Icon.vue';
 import ActionMenu from './ActionMenu.vue';
-import ScoreChip from './ScoreChip.vue';
 import EntitySheetMock from './EntitySheetMock.vue';
+import NotesMock from './NotesMock.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const props = defineProps({
@@ -217,7 +213,7 @@ const props = defineProps({
 const { state, dispatch } = useStore();
 const ui = useUiState();
 const router = useRouter();
-const tab = ref('in');
+const tab = ref('note');
 const tx = ref(null);
 const newGroupId = ref(null);
 // Rinomina inline del personaggio dall'header della scheda.
