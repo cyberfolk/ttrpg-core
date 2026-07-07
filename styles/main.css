@@ -239,8 +239,9 @@ a:hover { color: var(--gold-600); }
 .ds-btn--confirm:hover:not([disabled]) { background: var(--gold-300); border-color: var(--gold-500); }
 /* Coppia conferma/annulla compatta e condivisa (Salva/Fatto + Annulla): stessa
    resa in ogni punto. Padding ridotto rispetto a --sm. */
-.edit-actions { display: flex; gap: .35rem; }
-.edit-actions .ds-btn--sm { padding: .28rem .5rem; gap: .3em; }
+.edit-actions { display: flex; gap: .3rem; }
+.edit-actions .ds-btn--sm { padding: .18rem .38rem; gap: .25em; font-size: .72rem; }
+.edit-actions .ds-btn__icon { width: .9em; height: .9em; }
 .ds-btn__icon { display: inline-flex; width: 1.05em; height: 1.05em; }
 .ds-btn__icon svg { width: 100%; height: 100%; }
 
