@@ -281,10 +281,12 @@ function onCharGroups(nextIds) {
   for (const gid of removed) dispatch((s) => removeMember(s, gid, charId.value));
 }
 function onCreateGroup(name) {
-  // Crea il gruppo e iscrive subito il personaggio.
+  // Crea il gruppo e iscrive subito il personaggio. Il nuovo gruppo si
+  // identifica per id (diff prima/dopo la create), non per nome: un gruppo
+  // omonimo preesistente non deve rubare l'iscrizione.
+  const beforeIds = new Set(listActiveGroups(state.value).map((g) => g.id));
   dispatch((s) => addGroup(s, name, ''));
-  const created = listActiveGroups(state.value)
-    .find((g) => g.name === name && !g.memberIds.includes(charId.value));
+  const created = listActiveGroups(state.value).find((g) => !beforeIds.has(g.id));
   if (created) dispatch((s) => addMember(s, created.id, charId.value));
 }
 
@@ -369,7 +371,7 @@ const fields = computed(() => {
       { key: 'razza', label: 'Razza', type: 'select', pool: true, creatable: true,
         value: props.entity.raceId, display: raceLabel.value, options: races.value,
         onUpdate: onRace, onCreate: onCreateRace },
-      { key: 'classe', type: 'multiclass' },
+      { key: 'classe', label: 'Classe', type: 'multiclass' },
       { key: 'allineamento', label: 'Allineamento', type: 'select', pool: false, creatable: true,
         value: props.entity.alignment, display: props.entity.alignment || EMPTY, options: ALIGNMENTS,
         onUpdate: onAlignment, onCreate: null },
