@@ -737,21 +737,25 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
   padding-bottom: var(--space-2);
 }
 .rep-profile__titlerow {
-  display: flex; align-items: center; gap: var(--space-3);
+  display: flex; align-items: flex-start; gap: var(--space-3);
 }
 .rep-profile__head h2 {
   font-family: var(--font-display); font-size: var(--fs-h1); color: var(--text-strong);
   min-width: 0; overflow-wrap: anywhere; word-break: break-word;
 }
-/* ingranaggio azioni: spinto a destra della riga titolo */
-.rep-profile__gear { margin-left: auto; flex: none; }
+/* ingranaggio azioni: spinto a destra della riga titolo, allineato otticamente
+   alla prima riga del nome (il glifo grande ha padding: micro-offset in alto) */
+.rep-profile__gear { margin-left: auto; flex: none; margin-top: 0.15rem; }
 /* trigger nudo: niente sfondo/bordo, glifo piu' grande */
 .rep-profile__gear .ds-menu__trigger.ds-btn {
   background: transparent; border-color: transparent; box-shadow: none;
   padding: 0.2rem; font-size: 1.75rem; color: var(--text-faint); opacity: 0.6;
 }
 .rep-profile__gear .ds-menu__trigger.ds-btn:hover { background: transparent; color: var(--text-strong); opacity: 1; }
-.rep-profile__editactions { margin-left: auto; display: flex; gap: var(--space-2); flex: none; }
+/* in editing i bottoni Salva/Annulla restano centrati sull'input di rename
+   (la riga è flex-start per il gear, ma qui vince l'allineamento verticale).
+   Gap .4rem = stessa resa dei bottoni Annulla/Fatto del tab Note (.notes__actions). */
+.rep-profile__editactions { margin-left: auto; align-self: center; display: flex; gap: .4rem; flex: none; }
 /* reputazione complessiva + badge, riga sotto il nome */
 .rep-profile__meta { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 .rep-profile__synthetic-inner { display: inline-flex; align-items: center; gap: .6rem; }
