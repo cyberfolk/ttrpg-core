@@ -14,7 +14,7 @@
     </div>
 
     <textarea v-if="editing" class="ds-input notes__ta" v-model="text"
-      rows="8" aria-label="Note in markdown"
+      rows="8" aria-label="Note in markdown" @blur="done"
       placeholder="markdown: **grassetto**, *corsivo*, `codice`, - elenco"></textarea>
     <div v-else class="notes__md" v-html="rendered"></div>
   </div>
