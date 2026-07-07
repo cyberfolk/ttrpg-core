@@ -17,11 +17,11 @@
       </div>
     </template>
 
-    <div v-else class="notes__view" @click="edit">
+    <div v-else class="notes__view">
       <div v-if="rendered" class="notes__md" v-html="rendered"></div>
-      <p v-else class="notes__empty">Nessuna nota. Clicca per scrivere.</p>
+      <p v-else class="notes__empty">Nessuna nota. Usa la matita per scrivere.</p>
       <HoverTip text="Modifica" class-name="notes__pencilwrap" :tab-index="-1">
-        <button type="button" class="notes__pencil" aria-label="Modifica note" @click.stop="edit">
+        <button type="button" class="notes__pencil" aria-label="Modifica note" @click="edit">
           <Icon name="edit" />
         </button>
       </HoverTip>
@@ -112,7 +112,7 @@ const rendered = computed(() => renderMd(text.value));
 .notes { position: relative; padding-left: .7rem; }
 
 /* --- Lettura: anteprima con matita in overlay all'hover --- */
-.notes__view { position: relative; cursor: text; min-height: 3rem; border-radius: var(--radius-sm); }
+.notes__view { position: relative; min-height: 3rem; border-radius: var(--radius-sm); }
 /* Il posizionamento assoluto sta sul WRAPPER di HoverTip (non sul bottone): così
    il rect dell'anchor coincide con la matita e il tooltip si ancora all'icona,
    invece che al wrapper inline a larghezza ~0 nell'angolo. */
@@ -124,14 +124,17 @@ const rendered = computed(() => renderMd(text.value));
   font-size: 1rem; line-height: 1; border-radius: var(--radius-sm);
   transition: opacity .15s, color .15s;
 }
+/* Su hover l'icona si colora d'oro, come la matita dentro i campi (.led__val-ico). */
 .notes__view:hover .notes__pencil,
-.notes__pencil:focus-visible { opacity: 1; color: var(--text-strong); }
+.notes__pencil:focus-visible { opacity: 1; color: var(--gold-600); }
 .notes__pencil:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
 
 .notes__empty { margin: 0; color: var(--text-muted); font-style: italic; }
 
 /* --- Modifica: textarea a tutta altezza, «Annulla»/«Fatto» in overlay --- */
-.notes__ta { width: 100%; resize: vertical; min-height: 8rem; line-height: 1.5; }
+/* padding-top ampio: la prima riga parte sotto i bottoni Fatto/Annulla in overlay
+   (top .35rem + altezza bottone) e non ci finisce nascosta sotto. */
+.notes__ta { width: 100%; resize: vertical; min-height: 8rem; line-height: 1.5; padding-top: 2.4rem; }
 .notes__actions { position: absolute; top: .35rem; right: .35rem; }
 
 .notes__md {
