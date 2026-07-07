@@ -68,3 +68,64 @@ test('round-trip v3 con tag e sede', () => {
   assert.deepEqual(back.characters[0].tagIds, [tagId]);
   assert.equal(back.groups[0].seat, 'Valdûr');
 });
+
+import { validateState } from '../src/store/io.js';
+
+function baseValid() {
+  const s = {
+    version: 3,
+    characters: [{ id: 'c1', name: 'A', deletedAt: null, isPg: false, raceId: null, classLevels: [], alignment: '', playerId: null, tagIds: [], notes: '' }],
+    groups: [{ id: 'g1', name: 'G', type: 'f', memberIds: ['c1'], deletedAt: null, seat: '', guideId: null, motto: '', tagIds: [], notes: '' }],
+    transactions: [],
+    tags: [], players: [], races: [], classes: [],
+  };
+  return s;
+}
+
+test('validateState accetta uno stato v3 minimo valido', () => {
+  assert.equal(validateState(baseValid()), true);
+});
+
+test('validateState rifiuta pool con elemento senza name', () => {
+  const s = baseValid();
+  s.tags.push({ id: 'x' });
+  assert.throws(() => validateState(s), /tag|pool|name/i);
+});
+
+test('validateState rifiuta raceId che non esiste nel pool', () => {
+  const s = baseValid();
+  s.characters[0].raceId = 'ghost';
+  assert.throws(() => validateState(s), /razza|race|riferiment/i);
+});
+
+test('validateState rifiuta tagIds fuori pool sul personaggio', () => {
+  const s = baseValid();
+  s.characters[0].tagIds = ['nope'];
+  assert.throws(() => validateState(s), /tag/i);
+});
+
+test('validateState rifiuta classLevels con classId inesistente', () => {
+  const s = baseValid();
+  s.characters[0].classLevels = [{ classId: 'ghost', level: 2 }];
+  assert.throws(() => validateState(s), /class/i);
+});
+
+test('validateState rifiuta level fuori 1..20', () => {
+  const s = baseValid();
+  s.classes.push({ id: 'k1', name: 'Ladro' });
+  s.characters[0].classLevels = [{ classId: 'k1', level: 99 }];
+  assert.throws(() => validateState(s), /livello|level/i);
+});
+
+test('validateState rifiuta guideId che non è un membro', () => {
+  const s = baseValid();
+  s.groups[0].guideId = 'c1';
+  s.groups[0].memberIds = [];
+  assert.throws(() => validateState(s), /guida|guide|membro/i);
+});
+
+test('validateState accetta guideId membro valido', () => {
+  const s = baseValid();
+  s.groups[0].guideId = 'c1';
+  assert.equal(validateState(s), true);
+});

@@ -1,5 +1,18 @@
 import { SCHEMA_VERSION } from '../model/schema.js';
 
+function validatePool(list, label) {
+  if (!Array.isArray(list)) {
+    throw new Error(`Pool ${label} non valido: non è un array`);
+  }
+  for (const it of list) {
+    const validId = typeof it.id === 'string' && it.id.length > 0;
+    const validName = typeof it.name === 'string';
+    if (!validId || !validName) {
+      throw new Error(`Pool ${label} non valido: elemento con id/name errati (${JSON.stringify(it)})`);
+    }
+  }
+}
+
 export function serializeState(state) {
   const payload = {
     version: SCHEMA_VERSION,
@@ -94,6 +107,63 @@ export function validateState(data) {
       throw new Error(`Integrità referenziale rotta: transazione ${tx.id} punta a un nodo inesistente`);
     }
   }
+
+  validatePool(data.tags, 'tags');
+  validatePool(data.players, 'players');
+  validatePool(data.races, 'races');
+  validatePool(data.classes, 'classes');
+
+  const tagIdSet = new Set(data.tags.map((t) => t.id));
+  const playerIdSet = new Set(data.players.map((p) => p.id));
+  const raceIdSet = new Set(data.races.map((r) => r.id));
+  const classIdSet = new Set(data.classes.map((k) => k.id));
+
+  for (const c of data.characters) {
+    if (typeof c.isPg !== 'boolean') {
+      throw new Error(`Personaggio ${c.id}: isPg non booleano`);
+    }
+    if (c.raceId !== null && !raceIdSet.has(c.raceId)) {
+      throw new Error(`Personaggio ${c.id}: raceId punta a una razza inesistente`);
+    }
+    if (c.playerId !== null && !playerIdSet.has(c.playerId)) {
+      throw new Error(`Personaggio ${c.id}: playerId punta a un giocatore inesistente`);
+    }
+    if (typeof c.alignment !== 'string') {
+      throw new Error(`Personaggio ${c.id}: alignment non è stringa`);
+    }
+    if (typeof c.notes !== 'string') {
+      throw new Error(`Personaggio ${c.id}: notes non è stringa`);
+    }
+    if (!Array.isArray(c.tagIds) || !c.tagIds.every((tid) => tagIdSet.has(tid))) {
+      throw new Error(`Personaggio ${c.id}: tagIds contiene un tag inesistente`);
+    }
+    if (!Array.isArray(c.classLevels)) {
+      throw new Error(`Personaggio ${c.id}: classLevels non è un array`);
+    }
+    for (const cl of c.classLevels) {
+      const okClass = classIdSet.has(cl.classId);
+      const okLevel = Number.isInteger(cl.level) && cl.level >= 1 && cl.level <= 20;
+      if (!okClass) {
+        throw new Error(`Personaggio ${c.id}: classLevels punta a una classe inesistente`);
+      }
+      if (!okLevel) {
+        throw new Error(`Personaggio ${c.id}: livello di classe fuori 1..20 (${cl.level})`);
+      }
+    }
+  }
+
+  for (const g of data.groups) {
+    if (typeof g.seat !== 'string' || typeof g.motto !== 'string' || typeof g.notes !== 'string') {
+      throw new Error(`Gruppo ${g.id}: seat/motto/notes non stringa`);
+    }
+    if (g.guideId !== null && !g.memberIds.includes(g.guideId)) {
+      throw new Error(`Gruppo ${g.id}: guideId non è un membro del gruppo`);
+    }
+    if (!Array.isArray(g.tagIds) || !g.tagIds.every((tid) => tagIdSet.has(tid))) {
+      throw new Error(`Gruppo ${g.id}: tagIds contiene un tag inesistente`);
+    }
+  }
+
   const valid = true;
   return valid;
 }
