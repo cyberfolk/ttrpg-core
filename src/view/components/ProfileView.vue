@@ -325,9 +325,14 @@ function onHardDelete() {
 <style scoped>
 /* Input di rinomina inline: eredita la scala del titolo per non far saltare
    l'altezza dell'header. */
+/* Input rinomina: stessa tipografia del titolo h2 (display serif, fs-h1) così il
+   font e la dimensione non cambiano passando in modifica. */
 .rep-profile__edit {
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-semibold);
+  color: var(--text-strong);
+  line-height: var(--lh-tight);
   flex: 1 1 auto;
   min-width: 0;
   max-width: 100%;
