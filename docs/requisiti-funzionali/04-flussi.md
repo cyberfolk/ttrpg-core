@@ -35,6 +35,24 @@ Con dati assenti, ogni punto morto instrada al passo successivo lungo la catena
 
 Dal punteggio di una relazione (in una vista o in un profilo) si apre il **modale transazioni**: si aggiunge / modifica / elimina una transazione (delta + motivo). Il punteggio si **ricalcola al volo** dopo ogni operazione.
 
+## Gestire le foto (galleria e avatar)
+
+Dal tab **Galleria** di un profilo (personaggio o gruppo):
+
+- **Aggiungere** una o più foto via file picker o **drag&drop**. Ogni immagine è
+  ridimensionata lato client prima di essere salvata (byte in IndexedDB, metadati nello
+  stato). Un file non valido non interrompe il resto del caricamento.
+- **Modificare** i metadati: didascalia inline nella griglia; descrizione (markdown) e tag
+  nel **dettaglio** della foto.
+- **Eleggere ad avatar**: nel dettaglio, «Imposta come profilo» punta `avatarPhotoId` a quella
+  foto (il ritratto compare in testata). «Rimuovi dal profilo» azzera l'avatar, la foto resta.
+- **Eliminare** una foto: sparisce dalla galleria; se era l'avatar, l'avatar si azzera a
+  cascata (il byte è rimosso da IndexedDB best-effort).
+
+Aggiungere una foto la deposita sempre in galleria; l'avatar è un puntatore a una di esse,
+mai una copia: le due operazioni restano coerenti per costruzione (vedi
+[01](01-entita.md) e [ADR 0005](../ADR/0005-persistenza-binaria-photoblobstore.md)).
+
 ## Modifica della scheda anagrafica
 
 Dalla testata del profilo ogni campo si modifica **inline** (clic sul valore).
@@ -45,7 +63,7 @@ e reputazione sono derivati (sola lettura).
 ## Cancellazione
 
 - **Archiviazione (soft delete)** — reversibile. L'entità sparisce dalle liste attive; con il toggle **Mostra archiviati** si può *Ripristinare*.
-- **Eliminazione definitiva (hard delete)** — irreversibile, con conferma. Rimuove l'entità e, a cascata, le transazioni dirette da/verso di essa. Per un **personaggio** ripulisce anche i `memberIds` dei gruppi che lo contenevano. L'eliminazione di un **gruppo** non tocca i suoi membri né le loro transazioni.
+- **Eliminazione definitiva (hard delete)** — irreversibile, con conferma. Rimuove l'entità e, a cascata, le transazioni dirette da/verso di essa **e le sue foto** (metadati dallo stato, byte da IndexedDB best-effort). Per un **personaggio** ripulisce anche i `memberIds` dei gruppi che lo contenevano. L'eliminazione di un **gruppo** non tocca i suoi membri né le loro transazioni.
 
 ## Persistenza
 

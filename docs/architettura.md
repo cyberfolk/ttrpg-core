@@ -49,9 +49,12 @@ Rendering UI con componenti Vue 3. Parla **solo** con lo STORE (mai col MODEL di
 
 | File                                         | Responsabilità                                                                               |
 |----------------------------------------------|----------------------------------------------------------------------------------------------|
-| `src/model/schema.js`                        | Costanti (`BASE`, `SCHEMA_VERSION`) e costruttori dei dati (personaggi con campi anagrafici, gruppi, transazioni, voci lookup) |
-| `src/model/reputation.js`                    | Logica: `computeScore`, `clampView`, aggregati di gruppo, CRUD entità/transazioni, pool lookup e setter dei campi anagrafici |
+| `src/model/schema.js`                        | Costanti (`BASE`, `SCHEMA_VERSION`) e costruttori dei dati (personaggi con campi anagrafici, gruppi, transazioni, voci lookup, foto) |
+| `src/model/reputation.js`                    | Logica: `computeScore`, `clampView`, aggregati di gruppo, CRUD entità/transazioni, pool lookup e setter dei campi anagrafici (hard-delete cascata anche su foto) |
+| `src/model/photos.js`                        | Funzioni pure su foto e avatar: `addPhoto`/`removePhoto` (cascata avatar)/`setAvatar`/`clearAvatar`/`updatePhotoMeta`/`listPhotos` |
 | `src/store/storage.js`                       | Adattatori storage (localStorage / in-memory per i test)                                     |
+| `src/store/photoBlobStore.js`                | Blob store foto (byte): impl IndexedDB + in-memory per i test. Seam per un futuro server (ADR 0005) |
+| `src/store/prepareImage.js`                  | Ridimensionamento immagine lato client (`computeResizeDims` puro + `prepareImage` via canvas) |
 | `src/store/io.js`                            | Serializzazione, validazione, migrazione, parsing import                                     |
 | `src/store/store.js`                         | Stato, `dispatch`, `subscribe`, persistenza                                                  |
 | `src/view/main.js` · `router.js` · `App.vue` | Bootstrap Vue, rotte (history mode), layout + drawer                                         |
@@ -66,3 +69,4 @@ Questo file descrive **com'è** l'architettura; il **perché** di ogni scelta st
 - **ADR 0002** — non anticipare il backend: tenere i seam, niente async ora.
 - **ADR 0003** — stack frontend della VIEW: Vue 3 + Vite + vue-router.
 - **ADR 0004** — distribuzione: hosting su GitHub Pages, solo-link.
+- **ADR 0005** — persistenza binaria: metadati foto nello stato, byte in IndexedDB dietro `PhotoBlobStore` (seam server).
