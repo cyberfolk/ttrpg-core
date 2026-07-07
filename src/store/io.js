@@ -7,14 +7,46 @@ export function serializeState(state) {
     characters: state.characters,
     transactions: state.transactions,
     groups: state.groups,
+    tags: state.tags,
+    players: state.players,
+    races: state.races,
+    classes: state.classes,
   };
   const json = JSON.stringify(payload, null, 2);
   return json;
 }
 
+const CHARACTER_DEFAULTS = {
+  isPg: false, raceId: null, classLevels: [], alignment: '',
+  playerId: null, tagIds: [], notes: '',
+};
+const GROUP_DEFAULTS = {
+  seat: '', guideId: null, motto: '', tagIds: [], notes: '',
+};
+
+function withDefaults(obj, defaults) {
+  const filled = { ...defaults, ...obj };
+  return filled;
+}
+
 export function migrate(data) {
   const groups = Array.isArray(data.groups) ? data.groups : [];
-  const migrated = { ...data, groups, version: SCHEMA_VERSION };
+  const tags = Array.isArray(data.tags) ? data.tags : [];
+  const players = Array.isArray(data.players) ? data.players : [];
+  const races = Array.isArray(data.races) ? data.races : [];
+  const classes = Array.isArray(data.classes) ? data.classes : [];
+  const characters = (data.characters || []).map((c) => withDefaults(c, CHARACTER_DEFAULTS));
+  const migratedGroups = groups.map((g) => withDefaults(g, GROUP_DEFAULTS));
+  const migrated = {
+    ...data,
+    characters,
+    groups: migratedGroups,
+    tags,
+    players,
+    races,
+    classes,
+    version: SCHEMA_VERSION,
+  };
   return migrated;
 }
 
@@ -80,6 +112,10 @@ export function parseImport(json) {
     characters: migrated.characters,
     transactions: migrated.transactions,
     groups: migrated.groups,
+    tags: migrated.tags,
+    players: migrated.players,
+    races: migrated.races,
+    classes: migrated.classes,
   };
   return state;
 }

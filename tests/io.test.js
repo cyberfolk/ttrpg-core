@@ -57,15 +57,15 @@ test('serializeState include groups', () => {
   s = addGroup(s, 'G', 'fazione');
   const json = serializeState(s);
   const parsed = JSON.parse(json);
-  assert.equal(parsed.version, 2);
+  assert.equal(parsed.version, 3);
   assert.equal(parsed.groups.length, 1);
   assert.equal(parsed.groups[0].name, 'G');
 });
 
-test('migrate v1 aggiunge groups vuoto e porta version a 2', () => {
+test('migrate v1 aggiunge groups vuoto e porta version a 3', () => {
   const v1 = { version: 1, characters: [], transactions: [] };
   const migrated = migrate(v1);
-  assert.equal(migrated.version, 2);
+  assert.equal(migrated.version, 3);
   assert.deepEqual(migrated.groups, []);
 });
 
@@ -78,7 +78,7 @@ test('migrate non sovrascrive groups già presenti', () => {
 test('parseImport migra uno stato v1 senza groups', () => {
   const v1json = JSON.stringify({ version: 1, characters: [], transactions: [] });
   const state = parseImport(v1json);
-  assert.equal(state.version, 2);
+  assert.equal(state.version, 3);
   assert.deepEqual(state.groups, []);
 });
 
