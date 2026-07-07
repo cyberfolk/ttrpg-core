@@ -108,11 +108,14 @@ export function hardDeleteCharacter(state, id) {
     (tx) => tx.fromId !== id && tx.toId !== id,
   );
   const groups = state.groups.map((g) => {
-    if (!g.memberIds.includes(id)) {
+    const wasMember = g.memberIds.includes(id);
+    const wasGuide = g.guideId === id;
+    if (!wasMember && !wasGuide) {
       return g;
     }
     const memberIds = g.memberIds.filter((mid) => mid !== id);
-    const updated = { ...g, memberIds };
+    const guideId = wasGuide ? null : g.guideId;
+    const updated = { ...g, memberIds, guideId };
     return updated;
   });
   const next = { ...state, characters, transactions, groups };
@@ -165,6 +168,51 @@ export function setGroupType(state, id, type) {
     return updated;
   });
   const next = { ...state, groups };
+  return next;
+}
+
+function updateGroup(state, id, patch) {
+  const groups = state.groups.map((g) => {
+    if (g.id !== id) {
+      return g;
+    }
+    const updated = { ...g, ...patch };
+    return updated;
+  });
+  const next = { ...state, groups };
+  return next;
+}
+
+export function setGroupSeat(state, id, seat) {
+  const next = updateGroup(state, id, { seat });
+  return next;
+}
+
+export function setGroupGuide(state, id, guideId) {
+  const group = state.groups.find((g) => g.id === id);
+  if (!group) {
+    return state;
+  }
+  const isValid = guideId === null || group.memberIds.includes(guideId);
+  if (!isValid) {
+    return state;
+  }
+  const next = updateGroup(state, id, { guideId });
+  return next;
+}
+
+export function setGroupMotto(state, id, motto) {
+  const next = updateGroup(state, id, { motto });
+  return next;
+}
+
+export function setGroupTags(state, id, tagIds) {
+  const next = updateGroup(state, id, { tagIds });
+  return next;
+}
+
+export function setGroupNotes(state, id, notes) {
+  const next = updateGroup(state, id, { notes });
   return next;
 }
 
@@ -242,7 +290,8 @@ export function removeMember(state, groupId, charId) {
       return g;
     }
     const memberIds = g.memberIds.filter((mid) => mid !== charId);
-    const updated = { ...g, memberIds };
+    const guideId = g.guideId === charId ? null : g.guideId;
+    const updated = { ...g, memberIds, guideId };
     return updated;
   });
   const next = { ...state, groups };
