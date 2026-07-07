@@ -1,15 +1,15 @@
 <template>
-  <!-- MOCKUP: dati HARDCODATI (ref locali), non persistiti, nessun STORE/MODEL.
-       Resa "riga da registro": valori forti, label mute, inline. Nessuna scatola,
-       nessuna eyebrow oro. Serve a valutare il look nelle testate profilo. -->
+  <!-- Testata anagrafica reale: legge/scrive lo STORE (dispatch verso i setter
+       MODEL). Stessa resa "riga da registro" del mockup: valori forti, label
+       mute, inline. Nessuna scatola, nessuna eyebrow oro. -->
   <section class="led" :aria-label="title">
     <!-- Riga meta: valori inline, ognuno editabile al click sul valore.
          Niente matita globale: l'affordance è per campo (hover → cornice + icona). -->
     <div class="led__read">
       <button v-if="kind === 'character'" type="button" class="led__role"
-        :class="isPg ? 'led__role--pg' : 'led__role--png'" :aria-pressed="isPg"
+        :class="entity.isPg ? 'led__role--pg' : 'led__role--png'" :aria-pressed="entity.isPg"
         aria-label="Cambia ruolo (PG/PNG)" title="Clic: cambia PG/PNG"
-        @click="isPg = !isPg">{{ isPg ? 'PG' : 'PNG' }}</button>
+        @click="onRole">{{ entity.isPg ? 'PG' : 'PNG' }}</button>
 
       <div class="led__grid">
         <div v-for="f in fields" :key="f.key" class="led__item"
@@ -27,28 +27,31 @@
           </HoverTip>
 
           <!-- Select inline (Razza, Allineamento, Giocatore, Guida) e combo
-               ricercabile+crea (Tipo: etichetta libera). -->
-          <template v-else-if="f.type === 'select' || f.type === 'combo'">
+               ricercabile+crea (Tipo: etichetta libera). Pool-backed (oggetti
+               {id,name}) vs libera (stringhe) via f.pool. -->
+          <template v-else-if="f.type === 'select'">
             <button v-if="editingField !== f.key" type="button" class="led__val led__val--edit"
               :aria-label="`Modifica ${f.label}`" @click.stop="startField(f.key)">
-              <span>{{ form[f.model] }}</span>
+              <span>{{ f.display }}</span>
               <Icon name="edit" class="led__val-ico" />
             </button>
-            <InlineSelect v-else flush auto-open :creatable="f.type === 'combo'"
-              :model-value="form[f.model]" :options="f.options"
-              :aria-label="f.label" @update:model-value="form[f.model] = $event" @close="stopField" />
+            <InlineSelect v-else flush auto-open :creatable="f.creatable"
+              :model-value="f.value" :options="f.options"
+              :option-value="f.pool ? 'id' : ''" :option-label="f.pool ? 'name' : ''"
+              :aria-label="f.label" @update:model-value="f.onUpdate($event)"
+              @create="f.onCreate && f.onCreate($event)" @close="stopField" />
           </template>
 
-          <!-- Testo inline (Fondata) -->
+          <!-- Testo inline (Sede, Motto) -->
           <template v-else-if="f.type === 'text'">
             <button v-if="editingField !== f.key" type="button" class="led__val led__val--edit"
-              :aria-label="`Modifica ${f.label}`" @click.stop="startField(f.key)">
-              <span>{{ form[f.model] }}</span>
+              :aria-label="`Modifica ${f.label}`" @click.stop="startTextField(f.key, f.value)">
+              <span>{{ f.display }}</span>
               <Icon name="edit" class="led__val-ico" />
             </button>
             <input v-else class="led__select led__input led__select--inline" type="text"
-              v-model="form[f.model]" v-focus :aria-label="f.label"
-              @blur="stopField" @keydown.enter="stopField" @keydown.escape="stopField" />
+              v-model="textDraft" v-focus :aria-label="f.label"
+              @blur="commitText(f)" @keydown.enter="commitText(f)" @keydown.escape="commitText(f)" />
           </template>
 
           <!-- Classe: valore sintetico come trigger; click apre un popover ricco
@@ -66,17 +69,19 @@
               <div v-if="editingField === 'classe'" class="led__mcpop" :style="classePopStyle"
                 role="dialog" aria-label="Classe e livelli" @click.stop>
                 <div class="led__mcpop-rows">
-                  <div v-for="(c, i) in classes" :key="i" class="led__mcpop-row">
+                  <div v-for="(c, i) in entity.classLevels" :key="i" class="led__mcpop-row">
                     <InlineSelect class="led__mcpop-lvl" :model-value="c.level" :options="LEVELS"
-                      aria-label="Livello classe" @update:model-value="c.level = $event" />
-                    <InlineSelect :model-value="c.klass" :options="CLASSES"
-                      aria-label="Classe" @update:model-value="c.klass = $event" />
-                    <button v-if="classes.length > 1" type="button" class="led__mcpop-rm"
-                      aria-label="Rimuovi classe" @click.stop="removeClass(i)"><Icon name="close" /></button>
+                      aria-label="Livello classe" @update:model-value="setClassRow(i, { level: $event })" />
+                    <InlineSelect :model-value="c.classId" :options="classPool"
+                      option-value="id" option-label="name" creatable
+                      aria-label="Classe" @update:model-value="setClassRow(i, { classId: $event })"
+                      @create="onCreateClass(i, $event)" />
+                    <button v-if="entity.classLevels.length > 1" type="button" class="led__mcpop-rm"
+                      aria-label="Rimuovi classe" @click.stop="removeClassRow(i)"><Icon name="close" /></button>
                   </div>
                 </div>
                 <div class="led__mcpop-foot">
-                  <button type="button" class="led__mcpop-add" @click.stop="addClass">
+                  <button type="button" class="led__mcpop-add" @click.stop="addClassRow">
                     <Icon name="plus" /> classe
                   </button>
                   <span class="led__mcpop-total">Totale liv. {{ totalLevel }}</span>
@@ -89,19 +94,20 @@
     </div>
 
     <!-- Campi many2many inline (widget riusabile): badge + combobox filtrabile.
-         Gruppi solo per i personaggi; Tag per personaggi e gruppi. -->
-    <Many2ManyField v-if="kind === 'character'" label="Gruppi" v-model="groupIds"
-      :pool="GROUP_POOL" icon="users" navigable
+         Gruppi solo per i personaggi (membership reale); Tag per personaggi e gruppi. -->
+    <Many2ManyField v-if="kind === 'character'" label="Gruppi" :model-value="charGroupIds"
+      :pool="allGroups" icon="users" navigable
       add-text="aggiungi gruppo…" empty-text="Nessun gruppo · aggiungi"
-      search-placeholder="cerca gruppo…" @navigate="goToGroup" />
-    <Many2ManyField label="Tag" v-model="tagIds" :pool="TAG_POOL" icon="tag"
+      search-placeholder="cerca gruppo…" @update:model-value="onCharGroups"
+      @create="onCreateGroup" @navigate="goToGroup" />
+    <Many2ManyField label="Tag" :model-value="entity.tagIds" :pool="tagPool" icon="tag"
       add-text="aggiungi tag…" empty-text="Nessun tag · aggiungi"
-      search-placeholder="cerca tag…" />
+      search-placeholder="cerca tag…" @update:model-value="onEntityTags" @create="onCreateEntityTag" />
   </section>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Icon from './Icon.vue';
 import ScoreChip from './ScoreChip.vue';
@@ -109,48 +115,199 @@ import HoverTip from './HoverTip.vue';
 import InlineSelect from './InlineSelect.vue';
 import Many2ManyField from './Many2ManyField.vue';
 import { SCORE_TIP } from '../uiCopy.js';
+import { useStore } from '../useStore.js';
+import { createLookup } from '../../model/schema.js';
+import {
+  addLookupItem, listLookup,
+  setRole, setRace, setAlignment, setPlayer, setClassLevels,
+  setCharacterTags, characterLevel,
+  setGroupType, setGroupSeat, setGroupGuide, setGroupMotto, setGroupTags,
+  addMember, removeMember, addGroup, listActiveGroups,
+} from '../../model/reputation.js';
 
 const router = useRouter();
+const { state, dispatch } = useStore();
 
 const props = defineProps({
-  // 'character' | 'group' — decide quali campi fittizi mostrare.
+  // 'character' | 'group' — decide quali campi mostrare.
   kind: { type: String, required: true },
+  // Il personaggio o gruppo reale (record dello STORE).
+  entity: { type: Object, required: true },
   // Reputazione complessiva (dato reale dal profilo). null → pill vuota.
   reputation: { type: Number, default: null },
 });
 
 const title = computed(() => (props.kind === 'character' ? 'Scheda anagrafica' : 'Scheda del gruppo'));
 
-/* ---- Elenchi fittizi (mockup) ---- */
-const PLAYERS = ['Marco', 'Giulia', 'Andrea', 'Sara', 'Luca', 'Elena'];
-const CLASSES = ['Guerriero', 'Ladro', 'Mago', 'Chierico', 'Ranger', 'Bardo',
-  'Paladino', 'Stregone', 'Druido', 'Barbaro', 'Warlock', 'Monaco'];
-const RACES = ['Umano', 'Elfo', 'Nano', 'Halfling', 'Mezzelfo', 'Mezzorco',
-  'Tiefling', 'Gnomo', 'Dragonide', 'Goliath'];
+// Segnaposto per campo lookup non ancora impostato.
+const EMPTY = '–';
+
+/* ---- Suggerimenti locali (non pool: etichette libere) ---- */
 const LEVELS = Array.from({ length: 20 }, (_, i) => i + 1);
 const ALIGNMENTS = ['Legale Buono', 'Neutrale Buono', 'Caotico Buono',
   'Legale Neutrale', 'Neutrale', 'Caotico Neutrale',
   'Legale Malvagio', 'Neutrale Malvagio', 'Caotico Malvagio'];
 const TYPES = ['Fazione', 'Città', 'Gilda', 'Villaggio', 'Casato', 'Ordine', 'Clan'];
-// Pool della Guida: nel modello reale sarebbe l'elenco dei membri del gruppo.
-const MEMBERS = ['Gorim', 'Sara', 'Luca', 'Elwin', 'Bran'];
 
-/* ---- Stato locale hardcodato (non persistito) ---- */
-const isPg = ref(false);
-const form = reactive({
-  race: 'Mezzelfo',
-  alignment: 'Caotico Neutrale',
-  player: 'Giulia',
-  type: 'Fazione',
-  seat: 'Quartiere dei Fabbri, Valdûr',
-  guide: 'Gorim',
-  motto: "L'ombra ricorda.",
+/* ---- Pool reattivi (dallo STORE) per i picker con creazione al volo ---- */
+const races = computed(() => listLookup(state.value, 'races'));
+const players = computed(() => listLookup(state.value, 'players'));
+const classPool = computed(() => listLookup(state.value, 'classes'));
+const tagPool = computed(() => listLookup(state.value, 'tags'));
+
+// Crea una voce nel pool e ritorna il suo id (poi il chiamante applica il setter specifico).
+function createInPool(coll, name) {
+  const item = createLookup(name);
+  dispatch((s) => addLookupItem(s, coll, item));
+  return item.id;
+}
+
+function labelOf(pool, id, fallback) {
+  const found = pool.find((x) => x.id === id);
+  const label = found ? found.name : fallback;
+  return label;
+}
+
+/* ---- Personaggio ---- */
+const charId = computed(() => props.entity.id);
+const raceLabel = computed(() => labelOf(races.value, props.entity.raceId, EMPTY));
+const playerLabel = computed(() => labelOf(players.value, props.entity.playerId, EMPTY));
+
+function onRole() {
+  const nextIsPg = !props.entity.isPg;
+  dispatch((s) => setRole(s, charId.value, nextIsPg));
+}
+function onRace(raceId) { dispatch((s) => setRace(s, charId.value, raceId)); }
+function onCreateRace(name) {
+  const id = createInPool('races', name);
+  dispatch((s) => setRace(s, charId.value, id));
+}
+function onAlignment(a) { dispatch((s) => setAlignment(s, charId.value, a)); }
+function onPlayer(pid) { dispatch((s) => setPlayer(s, charId.value, pid)); }
+function onCreatePlayer(name) {
+  const id = createInPool('players', name);
+  dispatch((s) => setPlayer(s, charId.value, id));
+}
+function onCharTags(ids) { dispatch((s) => setCharacterTags(s, charId.value, ids)); }
+function onCreateCharTag(name) {
+  const id = createInPool('tags', name);
+  const nextIds = [...props.entity.tagIds, id];
+  dispatch((s) => setCharacterTags(s, charId.value, nextIds));
+}
+
+/* ---- Multiclasse: livello personaggio = somma dei livelli di classe ---- */
+function commitClassLevels(next) {
+  dispatch((s) => setClassLevels(s, charId.value, next));
+}
+function setClassRow(i, patch) {
+  const next = props.entity.classLevels.map((cl, idx) => (idx === i ? { ...cl, ...patch } : cl));
+  commitClassLevels(next);
+}
+function addClassRow() {
+  const first = classPool.value[0];
+  const classId = first ? first.id : createInPool('classes', 'Guerriero');
+  const next = [...props.entity.classLevels, { classId, level: 1 }];
+  commitClassLevels(next);
+}
+function removeClassRow(i) {
+  const next = props.entity.classLevels.filter((_, idx) => idx !== i);
+  commitClassLevels(next);
+}
+function onCreateClass(i, name) {
+  const id = createInPool('classes', name);
+  setClassRow(i, { classId: id });
+}
+const totalLevel = computed(() => characterLevel(props.entity));
+const classLabel = computed(() => {
+  const parts = props.entity.classLevels.map((cl) => {
+    const k = classPool.value.find((x) => x.id === cl.classId);
+    const name = k ? k.name : '?';
+    const part = `${cl.level} ${name}`;
+    return part;
+  });
+  const label = parts.length ? parts.join(' / ') : 'nessuna classe';
+  return label;
 });
 
-// Edit inline: un solo campo alla volta (null = tutto in lettura).
+/* ---- Gruppo ---- */
+const groupId = computed(() => props.entity.id);
+// Pool della Guida: i membri del gruppo (id→nome).
+const memberOptions = computed(() => {
+  const opts = props.entity.memberIds
+    .map((mid) => state.value.characters.find((c) => c.id === mid))
+    .filter(Boolean)
+    .map((c) => ({ id: c.id, name: c.name }));
+  return opts;
+});
+const guideLabel = computed(() => labelOf(memberOptions.value, props.entity.guideId, EMPTY));
+
+function onType(t) { dispatch((s) => setGroupType(s, groupId.value, t)); }
+function onSeat(v) { dispatch((s) => setGroupSeat(s, groupId.value, v)); }
+function onGuide(cid) { dispatch((s) => setGroupGuide(s, groupId.value, cid)); }
+function onMotto(v) { dispatch((s) => setGroupMotto(s, groupId.value, v)); }
+function onGroupTags(ids) { dispatch((s) => setGroupTags(s, groupId.value, ids)); }
+function onCreateGroupTag(name) {
+  const id = createInPool('tags', name);
+  const nextIds = [...props.entity.tagIds, id];
+  dispatch((s) => setGroupTags(s, groupId.value, nextIds));
+}
+
+/* ---- Tag: campo condiviso personaggio/gruppo ---- */
+function onEntityTags(ids) {
+  if (props.kind === 'character') onCharTags(ids);
+  else onGroupTags(ids);
+}
+function onCreateEntityTag(name) {
+  if (props.kind === 'character') onCreateCharTag(name);
+  else onCreateGroupTag(name);
+}
+
+/* ---- Gruppi del personaggio (m2m su membership reale, non un pool) ---- */
+const allGroups = computed(() => {
+  const opts = listActiveGroups(state.value).map((g) => ({ id: g.id, name: g.name }));
+  return opts;
+});
+const charGroupIds = computed(() => {
+  const ids = listActiveGroups(state.value)
+    .filter((g) => g.memberIds.includes(charId.value))
+    .map((g) => g.id);
+  return ids;
+});
+function onCharGroups(nextIds) {
+  const current = charGroupIds.value;
+  const added = nextIds.filter((id) => !current.includes(id));
+  const removed = current.filter((id) => !nextIds.includes(id));
+  for (const gid of added) dispatch((s) => addMember(s, gid, charId.value));
+  for (const gid of removed) dispatch((s) => removeMember(s, gid, charId.value));
+}
+function onCreateGroup(name) {
+  // Crea il gruppo e iscrive subito il personaggio.
+  dispatch((s) => addGroup(s, name, ''));
+  const created = listActiveGroups(state.value)
+    .find((g) => g.name === name && !g.memberIds.includes(charId.value));
+  if (created) dispatch((s) => addMember(s, created.id, charId.value));
+}
+
+function goToGroup(it) {
+  router.push({ name: 'groupProfile', params: { id: it.id } });
+}
+
+/* ---- Edit inline: un solo campo alla volta (null = tutto in lettura) ---- */
 const editingField = ref(null);
 function startField(key) { editingField.value = key; }
 function stopField() { editingField.value = null; }
+
+// Campi testo (Sede, Motto): editor su una copia locale, persistita al commit
+// (blur/invio/escape), come nel resto della testata.
+const textDraft = ref('');
+function startTextField(key, value) {
+  textDraft.value = value;
+  startField(key);
+}
+function commitText(f) {
+  f.onUpdate(textDraft.value);
+  stopField();
+}
 
 // Classe: popover ricco teleportato ancorato al valore (il layout non si sposta).
 const classePopStyle = ref(null);
@@ -172,7 +329,8 @@ function toggleClasse(e) {
 // scroll dentro il popover e dentro i popover teleportati degli InlineSelect
 // (altrimenti scegliere livello/classe chiuderebbe tutto).
 function insidePopover(target) {
-  return !!(target?.closest?.('.led__mcpop') || target?.closest?.('.isel__pop'));
+  const inside = !!(target?.closest?.('.led__mcpop') || target?.closest?.('.isel__pop'));
+  return inside;
 }
 function onClasseDocClick(e) {
   if (editingField.value === 'classe' && !insidePopover(e.target)) stopField();
@@ -202,75 +360,40 @@ onUnmounted(() => {
 // Autofocus sul controllo appena montato all'apertura dell'edit inline.
 const vFocus = { mounted(el) { el.focus(); } };
 
-// Multiclasse: lista {livello, classe}. Il livello personaggio è la somma (come D&D).
-const classes = ref([
-  { level: 3, klass: 'Barbaro' },
-  { level: 2, klass: 'Chierico' },
-  { level: 1, klass: 'Ladro' },
-]);
-const classLabel = computed(() => classes.value.map((c) => `${c.level} ${c.klass}`).join(' / '));
-const totalLevel = computed(() => classes.value.reduce((sum, c) => sum + c.level, 0));
-
-function addClass() {
-  classes.value.push({ level: 1, klass: 'Guerriero' });
-}
-function removeClass(i) {
-  if (classes.value.length > 1) classes.value.splice(i, 1);
-}
-
-/* ---- Campi many2many (Gruppi, Tag) — pool fittizi, non persistiti ---- */
-const GROUP_POOL = [
-  { id: 'g1', name: 'La Compagnia' },
-  { id: 'g2', name: "Corte d'Ombra" },
-  { id: 'g3', name: 'Gilda dei Ladri' },
-  { id: 'g4', name: 'Ordine del Sole' },
-  { id: 'g5', name: 'Mercanti di Valdûr' },
-  { id: 'g6', name: 'Guardia Cinerea' },
-  { id: 'g7', name: 'Cerchio dei Druidi' },
-  { id: 'g8', name: 'Casa Vantis' },
-];
-const groupIds = ref(['g1', 'g2', 'g6']);
-
-const TAG_POOL = [
-  { id: 't1', name: 'mercenario' },
-  { id: 't2', name: 'nobile' },
-  { id: 't3', name: 'traditore' },
-  { id: 't4', name: 'mago' },
-  { id: 't5', name: 'ricercato' },
-  { id: 't6', name: 'alleato' },
-  { id: 't7', name: 'commerciante' },
-  { id: 't8', name: 'veterano' },
-];
-const tagIds = ref(['t1', 't5']);
-
-function goToGroup() {
-  // MOCKUP: gli id sono fittizi → si va all'elenco gruppi.
-  // Nel profilo reale: router.push({ name: 'groupProfile', params: { id } }).
-  router.push('/gruppi');
-}
-
 // Descrittori dei campi meta: tipo di controllo + sorgente valore.
 // Derivati (livello, reputazione) → sola lettura; classe → editor multiclasse.
 // Il ruolo (PG/PNG) esce dai campi: è un badge sopra la griglia.
 const fields = computed(() => {
   if (props.kind === 'character') {
     const characterFields = [
-      { key: 'razza', label: 'Razza', type: 'select', model: 'race', options: RACES },
-      { key: 'classe', label: 'Classe', type: 'multiclass' },
-      { key: 'allineamento', label: 'Allineamento', type: 'select', model: 'alignment', options: ALIGNMENTS },
+      { key: 'razza', label: 'Razza', type: 'select', pool: true, creatable: true,
+        value: props.entity.raceId, display: raceLabel.value, options: races.value,
+        onUpdate: onRace, onCreate: onCreateRace },
+      { key: 'classe', type: 'multiclass' },
+      { key: 'allineamento', label: 'Allineamento', type: 'select', pool: false, creatable: true,
+        value: props.entity.alignment, display: props.entity.alignment || EMPTY, options: ALIGNMENTS,
+        onUpdate: onAlignment, onCreate: null },
       { key: 'livello', label: 'Livello', type: 'readonly', display: String(totalLevel.value) },
       { key: 'reputazione', label: 'Reputazione', type: 'score' },
     ];
-    if (isPg.value) {
-      characterFields.push({ key: 'giocatore', label: 'Giocatore', type: 'select', model: 'player', options: PLAYERS });
+    if (props.entity.isPg) {
+      characterFields.push({ key: 'giocatore', label: 'Giocatore', type: 'select', pool: true, creatable: true,
+        value: props.entity.playerId, display: playerLabel.value, options: players.value,
+        onUpdate: onPlayer, onCreate: onCreatePlayer });
     }
     return characterFields;
   }
   const groupFields = [
-    { key: 'tipo', label: 'Tipo', type: 'combo', model: 'type', options: TYPES },
-    { key: 'sede', label: 'Sede', type: 'text', model: 'seat' },
-    { key: 'guida', label: 'Guida', type: 'select', model: 'guide', options: MEMBERS },
-    { key: 'motto', label: 'Motto', type: 'text', model: 'motto' },
+    { key: 'tipo', label: 'Tipo', type: 'select', pool: false, creatable: true,
+      value: props.entity.type, display: props.entity.type || EMPTY, options: TYPES,
+      onUpdate: onType, onCreate: null },
+    { key: 'sede', label: 'Sede', type: 'text',
+      value: props.entity.seat, display: props.entity.seat || EMPTY, onUpdate: onSeat },
+    { key: 'guida', label: 'Guida', type: 'select', pool: true, creatable: false,
+      value: props.entity.guideId, display: guideLabel.value, options: memberOptions.value,
+      onUpdate: onGuide, onCreate: null },
+    { key: 'motto', label: 'Motto', type: 'text',
+      value: props.entity.motto, display: props.entity.motto || EMPTY, onUpdate: onMotto },
     { key: 'reputazione', label: 'Reputazione', type: 'score' },
   ];
   return groupFields;

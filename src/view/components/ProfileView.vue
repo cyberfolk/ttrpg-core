@@ -53,9 +53,8 @@
         </div>
       </div>
 
-      <!-- MOCKUP scheda anagrafica (dati hardcodati, non persistiti).
-           reputation = dato reale, il resto è mock. -->
-      <EntitySheetMock kind="character" :reputation="synthetic" />
+      <!-- Scheda anagrafica reale: legge/scrive lo STORE. -->
+      <EntitySheet kind="character" :entity="character" :reputation="synthetic" />
 
       <!-- Tab switcher -->
       <div class="rep-profile__tabs">
@@ -202,7 +201,7 @@ import NotFound from './NotFound.vue';
 import HoverTip from './HoverTip.vue';
 import Icon from './Icon.vue';
 import ActionMenu from './ActionMenu.vue';
-import EntitySheetMock from './EntitySheetMock.vue';
+import EntitySheet from './EntitySheet.vue';
 import NotesMock from './NotesMock.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 

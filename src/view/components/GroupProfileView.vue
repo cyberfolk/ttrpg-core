@@ -57,9 +57,8 @@
         </div>
       </div>
 
-      <!-- MOCKUP scheda gruppo (dati hardcodati, non persistiti).
-           reputation = dato reale, il resto è mock. -->
-      <EntitySheetMock kind="group" :reputation="synthetic" />
+      <!-- Scheda gruppo reale: legge/scrive lo STORE. -->
+      <EntitySheet kind="group" :entity="group" :reputation="synthetic" />
 
       <!-- Sezioni con tab switcher -->
       <div class="rep-gp-tabs">
@@ -251,7 +250,7 @@ import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import ActionMenu from './ActionMenu.vue';
 import ScoreChip from './ScoreChip.vue';
-import EntitySheetMock from './EntitySheetMock.vue';
+import EntitySheet from './EntitySheet.vue';
 import NotesMock from './NotesMock.vue';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
