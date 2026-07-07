@@ -406,7 +406,7 @@ const fields = computed(() => {
 .led {
   position: relative;
   border-top: 1px solid var(--border-hairline);
-  margin-top: var(--space-3);
+  margin-top: var(--space-2);
   padding-top: var(--space-3);
 }
 

@@ -743,12 +743,12 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
 
 /* === Profile =============================================== */
 .rep-profile { max-width: 760px; margin: 0 auto; animation: rep-rise .4s var(--ease-out) both; }
-.rep-breadcrumb { font-size: var(--fs-sm); color: var(--text-muted); margin-bottom: .75rem; overflow-wrap: anywhere; word-break: break-word; }
+.rep-breadcrumb { font-size: var(--fs-sm); color: var(--text-muted); margin-top: var(--space-4); margin-bottom: .75rem; overflow-wrap: anywhere; word-break: break-word; }
 .rep-breadcrumb a { cursor: pointer; color: var(--text-muted); }
 .rep-breadcrumb a:hover { color: var(--gold-600); }
 .rep-profile__head {
   display: flex; flex-direction: column; gap: var(--space-3);
-  padding-bottom: var(--space-2);
+  padding-bottom: 0;
 }
 .rep-profile__titlerow {
   display: flex; align-items: flex-start; gap: var(--space-3);
