@@ -1,0 +1,16 @@
+import puppeteer from 'puppeteer-core';
+const CHROME='C:/Program Files/Google/Chrome/Application/chrome.exe';
+const BASE='http://localhost:5175/ttrpg-core';
+const seed={version:2,exportedAt:0,characters:[{id:'c1',name:'Aragorn',deletedAt:null}],groups:[],transactions:[]};
+const b=await puppeteer.launch({executablePath:CHROME,headless:'new',args:['--no-sandbox']});
+const p=await b.newPage();
+await p.setViewport({width:1000,height:900});
+await p.evaluateOnNewDocument(s=>localStorage.setItem('ttrpg-reputation-state',JSON.stringify(s)),seed);
+await p.goto(`${BASE}/personaggio/c1`,{waitUntil:'networkidle0'});
+await new Promise(r=>setTimeout(r,400));
+const read=await p.evaluate(()=>{const el=[...document.querySelectorAll('.led__item')].find(i=>/Razza/.test(i.textContent)).querySelector('.led__val--edit');return getComputedStyle(el).fontSize;});
+await p.evaluate(()=>{[...document.querySelectorAll('.led__item')].find(i=>/Razza/.test(i.textContent)).querySelector('.led__val--edit').click();});
+await new Promise(r=>setTimeout(r,300));
+const edit=await p.evaluate(()=>{const el=[...document.querySelectorAll('.led__item')].find(i=>/Razza/.test(i.textContent)).querySelector('select');return {fs:getComputedStyle(el).fontSize,fsVarBody:getComputedStyle(document.documentElement).getPropertyValue('--fs-body')};});
+console.log(JSON.stringify({read,edit}));
+await b.close();

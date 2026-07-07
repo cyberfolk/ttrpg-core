@@ -1,0 +1,16 @@
+import puppeteer from 'puppeteer-core';
+const CHROME='C:/Program Files/Google/Chrome/Application/chrome.exe';
+const BASE='http://localhost:5175/ttrpg-core';
+const seed={version:2,exportedAt:0,characters:[{id:'c1',name:'Aragorn',deletedAt:null}],groups:[],transactions:[]};
+const b=await puppeteer.launch({executablePath:CHROME,headless:'new',args:['--no-sandbox']});
+const p=await b.newPage();
+await p.setViewport({width:1000,height:900});
+await p.evaluateOnNewDocument(s=>localStorage.setItem('ttrpg-reputation-state',JSON.stringify(s)),seed);
+await p.goto(`${BASE}/personaggio/c1`,{waitUntil:'networkidle0'});
+await new Promise(r=>setTimeout(r,400));
+const readX=await p.evaluate(()=>{const el=[...document.querySelectorAll('.led__item')].find(i=>/Razza/.test(i.textContent)).querySelector('.led__val--edit span');return +el.getBoundingClientRect().left.toFixed(1);});
+await p.evaluate(()=>{[...document.querySelectorAll('.led__item')].find(i=>/Razza/.test(i.textContent)).querySelector('.led__val--edit').click();});
+await new Promise(r=>setTimeout(r,300));
+const editX=await p.evaluate(()=>{const s=[...document.querySelectorAll('.led__item')].find(i=>/Razza/.test(i.textContent)).querySelector('select');const cs=getComputedStyle(s);const r=s.getBoundingClientRect();return +(r.left+parseFloat(cs.borderLeftWidth)+parseFloat(cs.paddingLeft)).toFixed(1);});
+console.log(JSON.stringify({readTextX:readX,editTextX:editX,delta:+(editX-readX).toFixed(1)}));
+await b.close();

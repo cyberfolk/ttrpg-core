@@ -1,0 +1,20 @@
+import puppeteer from 'puppeteer-core';
+const CHROME='C:/Program Files/Google/Chrome/Application/chrome.exe';
+const BASE='http://localhost:5175/ttrpg-core';
+const OUT='C:/Users/andre/cyberfolk/ttrpg-core/outputs/verify';
+const seed={version:2,exportedAt:0,characters:[{id:'c1',name:'Aragorn',deletedAt:null}],groups:[],transactions:[]};
+const b=await puppeteer.launch({executablePath:CHROME,headless:'new',args:['--no-sandbox']});
+const p=await b.newPage();
+await p.setViewport({width:1000,height:900,deviceScaleFactor:3});
+await p.evaluateOnNewDocument(s=>localStorage.setItem('ttrpg-reputation-state',JSON.stringify(s)),seed);
+await p.goto(`${BASE}/personaggio/c1`,{waitUntil:'networkidle0'});
+await new Promise(r=>setTimeout(r,500));
+const heights=()=>p.evaluate(()=>{const g=t=>{const it=[...document.querySelectorAll('.led__item')].find(i=>new RegExp(t).test(i.textContent));const r=it.getBoundingClientRect();return {h:+r.height.toFixed(1),top:+r.top.toFixed(1)};};return {razza:g('Razza'),alli:g('Allineamento')};});
+const read=await heights();
+// clic allineamento (2° campo select). Trova il bottone dentro item Allineamento
+await p.evaluate(()=>{const it=[...document.querySelectorAll('.led__item')].find(i=>/Allineamento/.test(i.textContent));it.querySelector('.led__val--edit').click();});
+await new Promise(r=>setTimeout(r,300));
+const edit=await heights();
+await p.screenshot({path:`${OUT}/a-alli-open.png`,clip:{x:0,y:300,width:520,height:130}});
+console.log(JSON.stringify({read,edit},null,1));
+await b.close();
