@@ -1,5 +1,5 @@
 export const BASE = 50;
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 export function newId() {
   const id = crypto.randomUUID();
@@ -12,6 +12,7 @@ export function createState() {
     characters: [],
     transactions: [],
     groups: [],
+    photos: [],
     tags: [],
     players: [],
     races: [],
@@ -32,6 +33,7 @@ export function createGroup(name, type = '') {
     motto: '',
     tagIds: [],
     notes: '',
+    avatarPhotoId: null,
   };
   return group;
 }
@@ -48,6 +50,7 @@ export function createCharacter(name) {
     playerId: null,
     tagIds: [],
     notes: '',
+    avatarPhotoId: null,
   };
   return character;
 }
@@ -67,4 +70,16 @@ export function createTransaction(fromId, toId, delta, name) {
     createdAt: Date.now(),
   };
   return transaction;
+}
+
+export function createPhoto(entityId, meta = {}) {
+  const photo = {
+    id: newId(),
+    entityId,
+    caption: meta.caption ?? '',
+    description: meta.description ?? '',
+    tagIds: meta.tagIds ?? [],
+    createdAt: Date.now(),
+  };
+  return photo;
 }
