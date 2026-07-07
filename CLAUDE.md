@@ -43,6 +43,13 @@ Reti di sicurezza che rinforzano le direttive sopra — reti, non blocchi: la re
 - Build di produzione: `npm run build` (genera `dist/` + `404.html` per il routing SPA su Pages);
 - Anteprima: `npm run preview`.
 
+### Dev server durante i verify
+
+L'utente tiene un **dev server sempre aperto** in un terminale dedicato (Vite, porta 5173).
+Per i verify **riusa quello**: puntati sulla porta già in ascolto, **non** avviare un tuo
+`npm run dev` in background e **non** spegnere mai un dev server. Se la 5173 non risponde,
+chiedi all'utente di avviarlo invece di accenderne uno tuo. Lo spegnimento lo decide l'utente.
+
 ## Tests
 
 MODEL/STORE/IO coperti da `node:test` (TDD). La VIEW si verifica a mano nel browser.
