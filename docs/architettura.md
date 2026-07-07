@@ -49,8 +49,8 @@ Rendering UI con componenti Vue 3. Parla **solo** con lo STORE (mai col MODEL di
 
 | File                                         | Responsabilità                                                                               |
 |----------------------------------------------|----------------------------------------------------------------------------------------------|
-| `src/model/schema.js`                        | Costanti (`BASE`, `SCHEMA_VERSION`) e costruttori dei dati (personaggi, gruppi, transazioni) |
-| `src/model/reputation.js`                    | Logica: `computeScore`, `clampView`, aggregati di gruppo, CRUD entità/transazioni            |
+| `src/model/schema.js`                        | Costanti (`BASE`, `SCHEMA_VERSION`) e costruttori dei dati (personaggi con campi anagrafici, gruppi, transazioni, voci lookup) |
+| `src/model/reputation.js`                    | Logica: `computeScore`, `clampView`, aggregati di gruppo, CRUD entità/transazioni, pool lookup e setter dei campi anagrafici |
 | `src/store/storage.js`                       | Adattatori storage (localStorage / in-memory per i test)                                     |
 | `src/store/io.js`                            | Serializzazione, validazione, migrazione, parsing import                                     |
 | `src/store/store.js`                         | Stato, `dispatch`, `subscribe`, persistenza                                                  |
