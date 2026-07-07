@@ -12,7 +12,10 @@ test('migrate v2 aggiunge i pool e i default sui campi', () => {
     transactions: [],
   };
   const m = migrate(v2);
-  assert.equal(m.version, 3);
+  assert.equal(m.version, 4);
+  assert.deepEqual(m.photos, []);
+  assert.equal(m.characters[0].avatarPhotoId, null);
+  assert.equal(m.groups[0].avatarPhotoId, null);
   assert.deepEqual(m.tags, []);
   assert.deepEqual(m.players, []);
   assert.deepEqual(m.races, []);
@@ -48,7 +51,7 @@ test('serializeState include i quattro pool', () => {
   let s = createState();
   s = addLookupItem(s, 'tags', createLookup('mercenario'));
   const parsed = JSON.parse(serializeState(s));
-  assert.equal(parsed.version, 3);
+  assert.equal(parsed.version, 4);
   assert.equal(parsed.tags[0].name, 'mercenario');
   assert.ok(Array.isArray(parsed.players));
   assert.ok(Array.isArray(parsed.races));
@@ -73,11 +76,11 @@ import { validateState } from '../src/store/io.js';
 
 function baseValid() {
   const s = {
-    version: 3,
-    characters: [{ id: 'c1', name: 'A', deletedAt: null, isPg: false, raceId: null, classLevels: [], alignment: '', playerId: null, tagIds: [], notes: '' }],
-    groups: [{ id: 'g1', name: 'G', type: 'f', memberIds: ['c1'], deletedAt: null, seat: '', guideId: null, motto: '', tagIds: [], notes: '' }],
+    version: 4,
+    characters: [{ id: 'c1', name: 'A', deletedAt: null, isPg: false, raceId: null, classLevels: [], alignment: '', playerId: null, tagIds: [], notes: '', avatarPhotoId: null }],
+    groups: [{ id: 'g1', name: 'G', type: 'f', memberIds: ['c1'], deletedAt: null, seat: '', guideId: null, motto: '', tagIds: [], notes: '', avatarPhotoId: null }],
     transactions: [],
-    tags: [], players: [], races: [], classes: [],
+    tags: [], players: [], races: [], classes: [], photos: [],
   };
   return s;
 }

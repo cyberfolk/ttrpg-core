@@ -20,6 +20,7 @@ export function serializeState(state) {
     characters: state.characters,
     transactions: state.transactions,
     groups: state.groups,
+    photos: state.photos,
     tags: state.tags,
     players: state.players,
     races: state.races,
@@ -31,10 +32,10 @@ export function serializeState(state) {
 
 const CHARACTER_DEFAULTS = {
   isPg: false, raceId: null, classLevels: [], alignment: '',
-  playerId: null, tagIds: [], notes: '',
+  playerId: null, tagIds: [], notes: '', avatarPhotoId: null,
 };
 const GROUP_DEFAULTS = {
-  seat: '', guideId: null, motto: '', tagIds: [], notes: '',
+  seat: '', guideId: null, motto: '', tagIds: [], notes: '', avatarPhotoId: null,
 };
 
 function withDefaults(obj, defaults) {
@@ -48,12 +49,14 @@ export function migrate(data) {
   const players = Array.isArray(data.players) ? data.players : [];
   const races = Array.isArray(data.races) ? data.races : [];
   const classes = Array.isArray(data.classes) ? data.classes : [];
+  const photos = Array.isArray(data.photos) ? data.photos : [];
   const characters = (data.characters || []).map((c) => withDefaults(c, CHARACTER_DEFAULTS));
   const migratedGroups = groups.map((g) => withDefaults(g, GROUP_DEFAULTS));
   const migrated = {
     ...data,
     characters,
     groups: migratedGroups,
+    photos,
     tags,
     players,
     races,
@@ -164,6 +167,44 @@ export function validateState(data) {
     }
   }
 
+  if (!Array.isArray(data.photos)) {
+    throw new Error('Stato non valido: photos mancante');
+  }
+  const photoById = new Map();
+  for (const p of data.photos) {
+    const validId = typeof p.id === 'string' && p.id.length > 0;
+    const validEntity = typeof p.entityId === 'string' && nodeIds.has(p.entityId);
+    const validCaption = typeof p.caption === 'string';
+    const validDesc = typeof p.description === 'string';
+    const validTags = Array.isArray(p.tagIds) && p.tagIds.every((tid) => tagIdSet.has(tid));
+    const validCreatedAt = typeof p.createdAt === 'number';
+    if (!validId || !validCaption || !validDesc || !validTags || !validCreatedAt) {
+      throw new Error(`Foto non valida: campi mancanti o errati (${JSON.stringify(p)})`);
+    }
+    if (!validEntity) {
+      throw new Error(`Foto ${p.id}: entityId punta a un nodo inesistente`);
+    }
+    photoById.set(p.id, p);
+  }
+  const checkAvatar = (entity) => {
+    if (entity.avatarPhotoId === null || entity.avatarPhotoId === undefined) {
+      return;
+    }
+    const photo = photoById.get(entity.avatarPhotoId);
+    if (!photo) {
+      throw new Error(`Entità ${entity.id}: avatarPhotoId punta a una foto inesistente`);
+    }
+    if (photo.entityId !== entity.id) {
+      throw new Error(`Entità ${entity.id}: avatar punta a una foto di un'altra entità`);
+    }
+  };
+  for (const c of data.characters) {
+    checkAvatar(c);
+  }
+  for (const g of data.groups) {
+    checkAvatar(g);
+  }
+
   const valid = true;
   return valid;
 }
@@ -182,6 +223,7 @@ export function parseImport(json) {
     characters: migrated.characters,
     transactions: migrated.transactions,
     groups: migrated.groups,
+    photos: migrated.photos,
     tags: migrated.tags,
     players: migrated.players,
     races: migrated.races,

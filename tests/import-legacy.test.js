@@ -35,7 +35,7 @@ const LEGACY_V1 = JSON.stringify({
 
 test('import di un file v2 legacy migra E passa la validazione (nessun throw)', () => {
   const state = parseImport(LEGACY_V2);
-  assert.equal(state.version, 3);
+  assert.equal(state.version, 4);
 });
 
 test('import v2 legacy: pool aggiunti vuoti', () => {
@@ -80,7 +80,7 @@ test('import v2 legacy: le transazioni sopravvivono e il punteggio si ricalcola'
 
 test('import di un file v1 legacy migra a v3 con groups e pool vuoti', () => {
   const state = parseImport(LEGACY_V1);
-  assert.equal(state.version, 3);
+  assert.equal(state.version, 4);
   assert.deepEqual(state.groups, []);
   assert.deepEqual(state.tags, []);
   const c1 = state.characters.find((c) => c.id === 'c1');
