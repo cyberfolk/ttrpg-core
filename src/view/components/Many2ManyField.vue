@@ -74,17 +74,12 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:modelValue', 'navigate', 'create']);
 
-// Elementi creati al volo (mock): estendono il pool ricevuto.
-const extraPool = ref([]);
-const allPool = computed(() => [...props.pool, ...extraPool.value]);
-let createdN = 0;
-
-const linked = computed(() => allPool.value.filter((it) => props.modelValue.includes(it.id)));
+const linked = computed(() => props.pool.filter((it) => props.modelValue.includes(it.id)));
 
 const query = ref('');
 const available = computed(() => {
   const q = query.value.trim().toLowerCase();
-  const pool = allPool.value.filter((it) => !props.modelValue.includes(it.id));
+  const pool = props.pool.filter((it) => !props.modelValue.includes(it.id));
   const filtered = q ? pool.filter((it) => it.name.toLowerCase().includes(q)) : pool;
   return filtered;
 });
@@ -92,7 +87,7 @@ const available = computed(() => {
 const canCreate = computed(() => {
   const q = query.value.trim();
   if (!q) return false;
-  const exists = allPool.value.some((it) => it.name.toLowerCase() === q.toLowerCase());
+  const exists = props.pool.some((it) => it.name.toLowerCase() === q.toLowerCase());
   return !exists;
 });
 
@@ -105,14 +100,12 @@ function addItem(it) {
   query.value = '';
   nextTick(() => searchInput.value?.focus());
 }
-// Crea al volo un elemento col nome digitato (mock) e lo collega subito.
+// Delega la creazione al parent: crea nel pool e collega il riferimento.
 function createItem() {
   const name = query.value.trim();
   if (!name) return;
-  const it = { id: `m2m-${createdN++}-${name}`, name };
-  extraPool.value.push(it);
-  emit('create', it);
-  addItem(it);
+  emit('create', name);
+  query.value = '';
 }
 // Enter: se c'è un match lo aggiunge, altrimenti crea col testo digitato.
 function addFirst() {

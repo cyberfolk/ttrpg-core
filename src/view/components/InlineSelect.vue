@@ -7,7 +7,7 @@
     <button ref="trigger" type="button" class="isel__trigger" :class="{ 'isel__trigger--flush': flush }"
       :aria-label="ariaLabel" aria-haspopup="listbox" :aria-expanded="open"
       @click.stop="toggle" @keydown="onTriggerKey">
-      <span class="isel__val">{{ modelValue }}</span>
+      <span class="isel__val">{{ displayLabel }}</span>
       <svg class="isel__chev" viewBox="0 0 12 12" aria-hidden="true">
         <path d="M2 4 L6 8 L10 4" fill="none" stroke="currentColor" stroke-width="1.6"
           stroke-linecap="round" stroke-linejoin="round" />
@@ -22,13 +22,13 @@
             :placeholder="searchPlaceholder" :aria-label="ariaLabel" @input="activeIndex = 0" />
         </div>
         <ul class="isel__opts" role="listbox" :aria-label="ariaLabel">
-          <li v-for="(o, i) in shown" :key="o">
+          <li v-for="(o, i) in shown" :key="optValue(o)">
             <button type="button" class="isel__opt" role="option"
-              :aria-selected="o === modelValue"
-              :class="{ 'is-sel': o === modelValue, 'is-active': i === activeIndex }"
+              :aria-selected="optValue(o) === modelValue"
+              :class="{ 'is-sel': optValue(o) === modelValue, 'is-active': i === activeIndex }"
               @click="choose(o)" @mousemove="activeIndex = i">
-              <span class="isel__opt-label">{{ o }}</span>
-              <svg v-if="o === modelValue" class="isel__opt-check" viewBox="0 0 12 12" aria-hidden="true">
+              <span class="isel__opt-label">{{ optLabel(o) }}</span>
+              <svg v-if="optValue(o) === modelValue" class="isel__opt-check" viewBox="0 0 12 12" aria-hidden="true">
                 <path d="M2.5 6.5 L5 9 L9.5 3.5" fill="none" stroke="currentColor" stroke-width="1.7"
                   stroke-linecap="round" stroke-linejoin="round" />
               </svg>
@@ -62,6 +62,9 @@ const props = defineProps({
   // Ricerca + "Crea «...»": la selezione può essere un'opzione o un valore digitato.
   creatable: { type: Boolean, default: false },
   searchPlaceholder: { type: String, default: 'cerca o crea…' },
+  // Quando le opzioni sono oggetti {id,name}: la selezione emette l'id, non la label.
+  optionValue: { type: String, default: '' }, // es. 'id' → opzione oggetto
+  optionLabel: { type: String, default: '' },  // es. 'name'
 });
 const emit = defineEmits(['update:modelValue', 'close', 'create']);
 
@@ -73,11 +76,27 @@ const trigger = ref(null);
 const pop = ref(null);
 const searchInput = ref(null);
 
+function optValue(o) {
+  const v = props.optionValue ? o[props.optionValue] : o;
+  return v;
+}
+function optLabel(o) {
+  const l = props.optionLabel ? o[props.optionLabel] : o;
+  return l;
+}
+// Con optionValue: modelValue è un id → mostra la label cercandola nel pool.
+const displayLabel = computed(() => {
+  if (!props.optionValue) return props.modelValue;
+  const found = props.options.find((o) => optValue(o) === props.modelValue);
+  const label = found ? optLabel(found) : '';
+  return label;
+});
+
 // Opzioni mostrate: filtrate per query solo in modalità creatable.
 const shown = computed(() => {
   if (!props.creatable) return props.options;
   const q = query.value.trim().toLowerCase();
-  const filtered = q ? props.options.filter((o) => String(o).toLowerCase().includes(q)) : props.options;
+  const filtered = q ? props.options.filter((o) => String(optLabel(o)).toLowerCase().includes(q)) : props.options;
   return filtered;
 });
 // "Crea …" quando c'è testo e nessuna opzione con quel nome esatto.
@@ -85,7 +104,7 @@ const canCreate = computed(() => {
   if (!props.creatable) return false;
   const q = query.value.trim();
   if (!q) return false;
-  const exists = props.options.some((o) => String(o).toLowerCase() === q.toLowerCase());
+  const exists = props.options.some((o) => String(optLabel(o)).toLowerCase() === q.toLowerCase());
   return !exists;
 });
 
@@ -100,7 +119,7 @@ function anchor() {
 }
 async function openMenu() {
   query.value = '';
-  const idx = props.options.findIndex((o) => o === props.modelValue);
+  const idx = props.options.findIndex((o) => optValue(o) === props.modelValue);
   activeIndex.value = props.creatable ? 0 : (idx >= 0 ? idx : 0);
   anchor();
   open.value = true;
@@ -119,14 +138,19 @@ function toggle() {
   else openMenu();
 }
 function choose(o) {
-  emit('update:modelValue', o);
+  emit('update:modelValue', optValue(o));
   closeMenu();
 }
 function createValue() {
   const name = query.value.trim();
   if (!name) return;
-  emit('update:modelValue', name);
-  emit('create', name);
+  if (props.optionValue) {
+    // pool-backed: il parent crea l'entità e setta il riferimento.
+    emit('create', name);
+  } else {
+    emit('update:modelValue', name);
+    emit('create', name);
+  }
   closeMenu();
 }
 function scrollActiveIntoView() {
