@@ -327,3 +327,55 @@ export function groupDerivedOutgoing(state, groupId, targetId) {
   });
   return average;
 }
+
+function updateCharacter(state, id, patch) {
+  const characters = state.characters.map((c) => {
+    if (c.id !== id) {
+      return c;
+    }
+    const updated = { ...c, ...patch };
+    return updated;
+  });
+  const next = { ...state, characters };
+  return next;
+}
+
+export function setRole(state, id, isPg) {
+  const next = updateCharacter(state, id, { isPg });
+  return next;
+}
+
+export function setRace(state, id, raceId) {
+  const next = updateCharacter(state, id, { raceId });
+  return next;
+}
+
+export function setAlignment(state, id, alignment) {
+  const next = updateCharacter(state, id, { alignment });
+  return next;
+}
+
+export function setPlayer(state, id, playerId) {
+  const next = updateCharacter(state, id, { playerId });
+  return next;
+}
+
+export function setClassLevels(state, id, classLevels) {
+  const next = updateCharacter(state, id, { classLevels });
+  return next;
+}
+
+export function setCharacterTags(state, id, tagIds) {
+  const next = updateCharacter(state, id, { tagIds });
+  return next;
+}
+
+export function setCharacterNotes(state, id, notes) {
+  const next = updateCharacter(state, id, { notes });
+  return next;
+}
+
+export function characterLevel(character) {
+  const total = character.classLevels.reduce((sum, cl) => sum + cl.level, 0);
+  return total;
+}
