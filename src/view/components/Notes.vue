@@ -7,9 +7,14 @@
       <textarea class="ds-input notes__ta" v-model="text"
         rows="8" aria-label="Note in markdown" @blur="done"
         placeholder="markdown: # titolo, **grassetto**, *corsivo*, `codice`, - elenco"></textarea>
-      <button type="button" class="ds-btn ds-btn--sm ds-btn--ghost notes__done" @mousedown.prevent @click="done">
-        <span class="ds-btn__icon"><Icon name="check" /></span> Fatto
-      </button>
+      <div class="notes__actions edit-actions">
+        <button type="button" class="ds-btn ds-btn--sm ds-btn--confirm" @mousedown.prevent @click="done">
+          <span class="ds-btn__icon"><Icon name="check" /></span> Fatto
+        </button>
+        <button type="button" class="ds-btn ds-btn--sm ds-btn--secondary" @mousedown.prevent @click="cancel">
+          <span class="ds-btn__icon"><Icon name="close" /></span> Annulla
+        </button>
+      </div>
     </template>
 
     <div v-else class="notes__view" @click="edit">
@@ -51,6 +56,13 @@ function done() {
   const value = text.value;
   if (props.kind === 'character') dispatch((s) => setCharacterNotes(s, id, value));
   else dispatch((s) => setGroupNotes(s, id, value));
+}
+/* Scarta le modifiche: ripristina il testo originale e torna in lettura, senza
+   dispatch (nessun salvataggio). Il @mousedown.prevent sul bottone evita che il
+   @blur della textarea faccia scattare done() prima del click. */
+function cancel() {
+  editing.value = false;
+  text.value = props.entity.notes || '';
 }
 
 /* Mini-renderer markdown (no dipendenze). */
@@ -118,9 +130,9 @@ const rendered = computed(() => renderMd(text.value));
 
 .notes__empty { margin: 0; color: var(--text-muted); font-style: italic; }
 
-/* --- Modifica: textarea a tutta altezza, «Fatto» in overlay --- */
+/* --- Modifica: textarea a tutta altezza, «Annulla»/«Fatto» in overlay --- */
 .notes__ta { width: 100%; resize: vertical; min-height: 8rem; line-height: 1.5; }
-.notes__done { position: absolute; top: .35rem; right: .35rem; }
+.notes__actions { position: absolute; top: .35rem; right: .35rem; }
 
 .notes__md {
   font-family: var(--font-sans); font-size: var(--fs-body);

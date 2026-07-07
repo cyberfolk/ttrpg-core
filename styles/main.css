@@ -228,6 +228,19 @@ a:hover { color: var(--gold-600); }
 }
 .ds-btn--danger:hover:not([disabled]) { background: var(--danger-tint-hover); border-color: var(--danger); color: var(--ember-700); }
 .ds-btn--danger:active:not([disabled]) { background: var(--danger-tint-active); }
+/* Conferma "morbida": oro chiaro con testo oro scuro (meno saturo del --primary
+   pieno). Usata dalle coppie conferma/annulla inline (note, rinomina). */
+.ds-btn--confirm {
+  background: var(--gold-200);
+  border-color: var(--gold-400);
+  color: var(--gold-700);
+  box-shadow: var(--shadow-xs);
+}
+.ds-btn--confirm:hover:not([disabled]) { background: var(--gold-300); border-color: var(--gold-500); }
+/* Coppia conferma/annulla compatta e condivisa (Salva/Fatto + Annulla): stessa
+   resa in ogni punto. Padding ridotto rispetto a --sm. */
+.edit-actions { display: flex; gap: .35rem; }
+.edit-actions .ds-btn--sm { padding: .28rem .5rem; gap: .3em; }
 .ds-btn__icon { display: inline-flex; width: 1.05em; height: 1.05em; }
 .ds-btn__icon svg { width: 100%; height: 100%; }
 

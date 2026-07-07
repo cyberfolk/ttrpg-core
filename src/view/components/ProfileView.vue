@@ -20,14 +20,12 @@
 
           <span v-if="isArchived" class="ds-badge ds-badge--ember rep-profile__archbadge">Archiviato</span>
 
-          <div v-if="editing" class="rep-profile__editactions">
-            <button class="ds-btn ds-btn--sm ds-btn--primary" @click="saveEdit">
-              <span class="ds-btn__icon"><Icon name="check" /></span>
-              Salva
+          <div v-if="editing" class="rep-profile__editactions edit-actions">
+            <button class="ds-btn ds-btn--sm ds-btn--confirm" @click="saveEdit">
+              <span class="ds-btn__icon"><Icon name="check" /></span> Salva
             </button>
-            <button class="ds-btn ds-btn--sm ds-btn--ghost" @click="cancelEdit">
-              <span class="ds-btn__icon"><Icon name="close" /></span>
-              Annulla
+            <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="cancelEdit">
+              <span class="ds-btn__icon"><Icon name="close" /></span> Annulla
             </button>
           </div>
           <ActionMenu v-else class="rep-profile__gear" label="Azioni personaggio" icon="gear" open-on-hover>
