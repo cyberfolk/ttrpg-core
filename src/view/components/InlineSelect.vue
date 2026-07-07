@@ -49,7 +49,9 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue';
+import { ref, computed, nextTick, onMounted } from 'vue';
+import { placeInViewport } from '../anchoring.js';
+import { useDismiss } from '../useDismiss.js';
 
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
@@ -124,6 +126,11 @@ async function openMenu() {
   anchor();
   open.value = true;
   await nextTick();
+  // Clampa/flip entro il viewport (helper condiviso): niente clipping a destra
+  // (mobile) né in basso quando il campo è in fondo alla pagina.
+  popStyle.value = placeInViewport(trigger.value, pop.value, {
+    minWidth: trigger.value.getBoundingClientRect().width,
+  });
   if (props.creatable) searchInput.value?.focus();
   else pop.value?.focus();
   scrollActiveIntoView();
@@ -181,25 +188,10 @@ function onKey(e) {
   else if (e.key === 'Escape') { e.preventDefault(); closeMenu(); }
 }
 
-// @click.stop su trigger e popover -> qui arrivano solo i click esterni.
-function onDocClick() { closeMenu(); }
-// Chiude su scroll/resize della pagina, ma NON quando lo scroll avviene dentro
-// il popover stesso (altrimenti la sua scrollbar sarebbe inutilizzabile).
-function onViewportShift(e) {
-  if (e?.type === 'scroll' && pop.value?.contains(e.target)) return;
-  closeMenu();
-}
-onMounted(() => {
-  document.addEventListener('click', onDocClick);
-  window.addEventListener('scroll', onViewportShift, true);
-  window.addEventListener('resize', onViewportShift);
-  if (props.autoOpen) openMenu();
-});
-onUnmounted(() => {
-  document.removeEventListener('click', onDocClick);
-  window.removeEventListener('scroll', onViewportShift, true);
-  window.removeEventListener('resize', onViewportShift);
-});
+// Chiusura su click esterno / scroll / resize (composable condiviso). Lo scroll
+// dentro il popover non chiude (scrollGuard). Esc è gestito localmente in onKey.
+useDismiss(() => open.value, closeMenu, { scrollGuard: pop });
+onMounted(() => { if (props.autoOpen) openMenu(); });
 </script>
 
 <style scoped>
@@ -224,7 +216,7 @@ onUnmounted(() => {
 
 .isel__pop {
   z-index: 1100; display: flex; flex-direction: column;
-  max-width: min(20rem, calc(100vw - 1rem));
+  max-width: min(20rem, calc(100vw - 1rem)); overflow: auto;
   background: var(--surface-card); border: 1px solid var(--line-gold);
   border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: .25rem;
 }

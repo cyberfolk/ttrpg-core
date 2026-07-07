@@ -61,6 +61,8 @@
 <script setup>
 import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue';
 import Icon from './Icon.vue';
+import { placeInViewport } from '../anchoring.js';
+import { useDismiss } from '../useDismiss.js';
 
 const props = defineProps({
   label: { type: String, required: true },
@@ -125,47 +127,25 @@ const addTrigger = ref(null);
 const pickerPop = ref(null);
 const searchInput = ref(null);
 
-const GAP = 6;      // stacco dal trigger
-const MARGIN = 8;   // margine minimo dai bordi del viewport
-
 // Posizione iniziale (best-guess ancorata al trigger): serve solo a far
 // renderizzare il popover, poi placePicker() lo clampa entro il viewport.
 function anchorPicker() {
   const rect = addTrigger.value.getBoundingClientRect();
   pickerStyle.value = {
     position: 'fixed',
-    top: `${rect.bottom + GAP}px`,
+    top: `${rect.bottom + 6}px`,
     left: `${rect.left}px`,
     minWidth: `${Math.max(rect.width, 220)}px`,
   };
 }
-// Clampa il popover dentro il viewport: mai tagliato a destra (mobile, «+» vicino
-// al bordo) né in basso (poco spazio → apre verso l'alto), con max-height che
-// riempie lo spazio disponibile e scroll interno.
+// Clampa il popover dentro il viewport (helper condiviso): mai tagliato a destra
+// (mobile, «+» vicino al bordo) né in basso (poco spazio → apre verso l'alto).
 function placePicker() {
-  const trg = addTrigger.value?.getBoundingClientRect();
-  if (!trg) return;
-  const vw = window.innerWidth, vh = window.innerHeight;
-  const popW = pickerPop.value ? pickerPop.value.offsetWidth : Math.max(trg.width, 220);
-  let left = Math.min(trg.left, vw - popW - MARGIN);
-  left = Math.max(MARGIN, left);
-  const spaceBelow = vh - trg.bottom - MARGIN;
-  const spaceAbove = trg.top - MARGIN;
-  const CAP = 240; // ~15rem, come il max-height CSS
-  const style = {
-    position: 'fixed',
-    left: `${left}px`,
-    minWidth: `${Math.min(Math.max(trg.width, 220), vw - 2 * MARGIN)}px`,
-  };
-  const openUp = spaceBelow < 180 && spaceAbove > spaceBelow;
-  if (openUp) {
-    style.bottom = `${vh - trg.top + GAP}px`;
-    style.maxHeight = `${Math.min(spaceAbove, CAP)}px`;
-  } else {
-    style.top = `${trg.bottom + GAP}px`;
-    style.maxHeight = `${Math.min(spaceBelow, CAP)}px`;
-  }
-  pickerStyle.value = style;
+  if (!addTrigger.value) return;
+  const w = addTrigger.value.getBoundingClientRect().width;
+  pickerStyle.value = placeInViewport(addTrigger.value, pickerPop.value, {
+    gap: 6, minWidth: Math.max(w, 220),
+  });
 }
 // Identità di questa istanza: un solo picker m2m aperto per volta. Aprendone uno
 // si notifica agli altri (evento su document) di chiudersi — serve un canale
@@ -188,30 +168,13 @@ function togglePicker() {
   else openPicker();
 }
 
-// @click.stop su trigger e popover → qui arrivano solo i click esterni.
-function onDocClick() { if (pickerOpen.value) closePicker(); }
-function onDocKey(e) { if (e.key === 'Escape' && pickerOpen.value) closePicker(); }
-// Chiude su scroll/resize della pagina, ma non quando lo scroll è dentro il
-// popover (altrimenti la sua scrollbar sarebbe inutilizzabile).
-function onViewportShift(e) {
-  if (!pickerOpen.value) return;
-  if (e?.type === 'scroll' && pickerPop.value?.contains(e.target)) return;
-  closePicker();
-}
-onMounted(() => {
-  document.addEventListener('click', onDocClick);
-  document.addEventListener('keydown', onDocKey);
-  document.addEventListener('m2m:open', onOtherOpen);
-  window.addEventListener('scroll', onViewportShift, true);
-  window.addEventListener('resize', onViewportShift);
-});
-onUnmounted(() => {
-  document.removeEventListener('click', onDocClick);
-  document.removeEventListener('keydown', onDocKey);
-  document.removeEventListener('m2m:open', onOtherOpen);
-  window.removeEventListener('scroll', onViewportShift, true);
-  window.removeEventListener('resize', onViewportShift);
-});
+// Chiusura su click esterno / scroll / resize / Esc (composable condiviso).
+// Lo scroll dentro il popover non chiude (scrollGuard).
+useDismiss(() => pickerOpen.value, closePicker, { scrollGuard: pickerPop, escape: true });
+
+// Mutual-close: un solo picker m2m aperto per volta (canale a parte dal dismiss).
+onMounted(() => document.addEventListener('m2m:open', onOtherOpen));
+onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
 </script>
 
 <style scoped>

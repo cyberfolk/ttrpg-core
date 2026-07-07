@@ -1,0 +1,20 @@
+import puppeteer from 'puppeteer-core';
+const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+const BASE = 'http://localhost:5173/ttrpg-core';
+const seed = { version:3, exportedAt:0, characters:[{id:'c1',name:'Aldric',deletedAt:null,isPg:true,raceId:null,classLevels:[],alignment:'Legale Buono',playerId:null,tagIds:[],notes:''}], groups:[],transactions:[],tags:[],players:[],races:[],classes:[] };
+const browser = await puppeteer.launch({ executablePath: CHROME, headless:'new', args:['--no-sandbox'] });
+const page = await browser.newPage();
+await page.setViewport({ width:1000, height:800 });
+await page.evaluateOnNewDocument((s)=>localStorage.setItem('ttrpg-reputation-state',JSON.stringify(s)), seed);
+await page.goto(`${BASE}/personaggio/c1`,{waitUntil:'networkidle0'});
+await new Promise(r=>setTimeout(r,400));
+const before = await page.evaluate(()=>JSON.parse(localStorage.getItem('ttrpg-reputation-state')).characters[0].alignment);
+const buttons = await page.$$('.led__val--edit');
+for (const b of buttons){ const l=await b.evaluate(el=>el.getAttribute('aria-label')||''); if(l.toLowerCase().includes('allineamento')){await b.click();break;} }
+await new Promise(r=>setTimeout(r,300));
+const opts = await page.$$('.isel__opt');
+await opts[3].click();
+await new Promise(r=>setTimeout(r,300));
+const after = await page.evaluate(()=>JSON.parse(localStorage.getItem('ttrpg-reputation-state')).characters[0].alignment);
+console.log(JSON.stringify({before, after, changed: before!==after}));
+await browser.close();
