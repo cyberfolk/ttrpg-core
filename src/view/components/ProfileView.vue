@@ -11,29 +11,24 @@
     <div class="ds-card ds-card--filament rep-profile__card">
       <!-- Profile header -->
       <div class="rep-profile__head">
-        <!-- Riga titolo: nome + ingranaggio azioni (rinomina/archivia o
-             ripristina/elimina, secondo lo stato). In editing: input + Salva/Annulla. -->
+        <!-- Riga titolo: nome (editabile inline su hover, come i campi del modulo) +
+             ingranaggio azioni (archivia o ripristina/elimina). In editing: input + Salva/Annulla. -->
         <div class="rep-profile__titlerow">
-          <h2 v-if="editing === false">{{ $name(character) }}</h2>
+          <h2 v-if="editing === false">
+            <button type="button" class="rep-profile__nameedit" @click="startEdit" aria-label="Rinomina">
+              <span>{{ $name(character) }}</span>
+              <Icon name="edit" class="rep-profile__name-ico" />
+            </button>
+          </h2>
           <input v-else class="ds-input rep-profile__edit" type="text" v-model="editName"
-            aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
+            v-focus aria-label="Nuovo nome"
+            @blur="commitName" @keydown.enter="commitName" @keydown.escape="cancelEdit" />
 
           <span v-if="isArchived" class="ds-badge ds-badge--ember rep-profile__archbadge">Archiviato</span>
 
-          <div v-if="editing" class="rep-profile__editactions edit-actions">
-            <button class="ds-btn ds-btn--sm ds-btn--confirm" @click="saveEdit">
-              <span class="ds-btn__icon"><Icon name="check" /></span> Salva
-            </button>
-            <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="cancelEdit">
-              <span class="ds-btn__icon"><Icon name="close" /></span> Annulla
-            </button>
-          </div>
-          <ActionMenu v-else class="rep-profile__gear" label="Azioni personaggio" icon="gear" open-on-hover>
+          <ActionMenu class="rep-profile__gear" label="Azioni personaggio" icon="gear" open-on-hover>
             <template #default="{ close }">
               <template v-if="isArchived === false">
-                <button type="button" class="ds-menu__item" @click="startEdit(); close()">
-                  <Icon name="edit" /> Rinomina
-                </button>
                 <button type="button" class="ds-menu__item" @click="onArchive(); close()">
                   <Icon name="archive" /> Archivia
                 </button>
@@ -280,6 +275,8 @@ function openTx(pair) {
   tx.value = pair;
 }
 
+const vFocus = { mounted(el) { el.focus(); el.select?.(); } };
+
 function startEdit() {
   if (character.value === null) return;
   editName.value = character.value.name;
@@ -297,6 +294,13 @@ function saveEdit() {
   const id = character.value.id;
   dispatch((s) => renameCharacter(s, id, name));
   cancelEdit();
+}
+
+// Commit "da campo" (blur/invio): salva se valido, altrimenti esce senza toccare.
+function commitName() {
+  const name = editName.value.trim();
+  if (name) saveEdit();
+  else cancelEdit();
 }
 
 function onArchive() {
@@ -324,6 +328,8 @@ function onHardDelete() {
 .rep-profile__edit {
   font-size: 1.3rem;
   font-weight: 600;
+  flex: 1 1 auto;
+  min-width: 0;
   max-width: 100%;
 }
 </style>

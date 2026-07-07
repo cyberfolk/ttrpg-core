@@ -11,33 +11,27 @@
     <!-- Intestazione gruppo -->
     <div class="ds-card ds-card--filament rep-profile__card">
       <div class="rep-profile__head">
-        <!-- Riga titolo: nome e ingranaggio azioni. In editing: input + Salva/Annulla. -->
+        <!-- Riga titolo: nome (editabile inline su hover come i campi del modulo:
+             commit su blur/invio, escape annulla) e ingranaggio azioni sempre presente. -->
         <div class="rep-profile__titlerow">
-          <h2 v-if="editing === false">{{ $name(group) }}</h2>
-          <span v-else class="rep-gp-edit">
-            <input class="ds-input rep-gp-edit__name" type="text" v-model="editName"
-              aria-label="Nuovo nome" @keydown.enter="saveEdit" @keydown.escape="cancelEdit" />
-          </span>
+          <h2 v-if="editing === false">
+            <button type="button" class="rep-profile__nameedit" @click="startEdit" aria-label="Rinomina">
+              <span>{{ $name(group) }}</span>
+              <Icon name="edit" class="rep-profile__name-ico" />
+            </button>
+          </h2>
+          <input v-else class="ds-input rep-profile__edit" type="text" v-model="editName"
+            v-focus aria-label="Nuovo nome"
+            @blur="commitName" @keydown.enter="commitName" @keydown.escape="cancelEdit" />
 
           <span v-if="isArchived" class="ds-badge ds-badge--ember rep-profile__archbadge">Archiviato</span>
 
-          <div v-if="editing" class="rep-profile__editactions edit-actions">
-            <button class="ds-btn ds-btn--sm ds-btn--confirm" @click="saveEdit">
-              <span class="ds-btn__icon"><Icon name="check" /></span> Salva
-            </button>
-            <button class="ds-btn ds-btn--sm ds-btn--secondary" @click="cancelEdit">
-              <span class="ds-btn__icon"><Icon name="close" /></span> Annulla
-            </button>
-          </div>
-          <ActionMenu v-else class="rep-profile__gear" label="Azioni gruppo" icon="gear" open-on-hover>
+          <ActionMenu class="rep-profile__gear" label="Azioni gruppo" icon="gear" open-on-hover>
             <template #default="{ close }">
               <button type="button" class="ds-menu__item" @click="showScores(); close()">
                 <Icon name="sliders" /> Punteggi
               </button>
               <template v-if="isArchived === false">
-                <button type="button" class="ds-menu__item" @click="startEdit(); close()">
-                  <Icon name="edit" /> Rinomina
-                </button>
                 <button type="button" class="ds-menu__item" @click="onArchive(); close()">
                   <Icon name="archive" /> Archivia
                 </button>
@@ -404,6 +398,8 @@ function openTxFromList(pair) {
   activeTx.value = pair;
 }
 
+const vFocus = { mounted(el) { el.focus(); el.select?.(); } };
+
 function startEdit() {
   if (group.value === null) return;
   editName.value = group.value.name;
@@ -413,6 +409,13 @@ function startEdit() {
 function cancelEdit() {
   editing.value = false;
   editName.value = '';
+}
+
+// Commit "da campo" (blur/invio): salva se valido, altrimenti esce senza toccare.
+function commitName() {
+  const name = editName.value.trim();
+  if (name) saveEdit();
+  else cancelEdit();
 }
 
 function saveEdit() {
@@ -443,16 +446,12 @@ function onHardDelete() {
 </script>
 
 <style scoped>
-/* Rinomina inline: nome grande come il titolo. */
-.rep-gp-edit {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-}
-.rep-gp-edit__name {
+/* Rinomina inline: input che riempie la riga fino all'ingranaggio. */
+.rep-profile__edit {
   font-size: 1.3rem;
   font-weight: 600;
+  flex: 1 1 auto;
+  min-width: 0;
   max-width: 100%;
 }
 .rep-gp-tabs {

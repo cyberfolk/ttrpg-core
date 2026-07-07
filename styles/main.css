@@ -754,8 +754,28 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
 }
 .rep-profile__head h2 {
   font-family: var(--font-display); font-size: var(--fs-h1); color: var(--text-strong);
-  min-width: 0; overflow-wrap: anywhere; word-break: break-word;
+  flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; word-break: break-word;
 }
+/* Nome editabile inline su hover: stessa logica dei campi del modulo
+   (.led__val--edit), ma eredita tipografia dell'h2 → font e dimensione del
+   titolo restano identici; a riposo è solo il titolo, su hover/focus compaiono
+   cornice oro tenue + matita. */
+.rep-profile__nameedit {
+  font: inherit; color: inherit;
+  display: inline-flex; align-items: center; gap: .4rem;
+  width: max-content; max-width: 100%; margin: -.1rem -.4rem; padding: .1rem .4rem;
+  background: none; border: 1px solid transparent; border-radius: var(--radius-sm);
+  cursor: pointer; text-align: left; overflow-wrap: anywhere; word-break: break-word;
+  transition: background .15s, border-color .15s;
+}
+.rep-profile__nameedit > span { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
+.rep-profile__nameedit:hover, .rep-profile__nameedit:focus-visible {
+  outline: none; background: var(--accent-tint); border-color: var(--line-gold);
+}
+.rep-profile__name-ico { flex: 0 0 auto; font-size: .5em; color: var(--gold-600); opacity: 0; transition: opacity .15s; }
+.rep-profile__nameedit:hover .rep-profile__name-ico,
+.rep-profile__nameedit:focus-visible .rep-profile__name-ico { opacity: .7; }
+@media (pointer: coarse) { .rep-profile__name-ico { opacity: .55; } }
 /* ingranaggio azioni: spinto a destra della riga titolo, allineato otticamente
    alla prima riga del nome (il glifo grande ha padding: micro-offset in alto) */
 .rep-profile__gear { margin-left: auto; flex: none; margin-top: 0.15rem; }
