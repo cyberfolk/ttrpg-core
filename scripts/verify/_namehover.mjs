@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-core';
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
-const BASE = 'http://localhost:5175/ttrpg-core';
+const BASE = 'http://localhost:5173/ttrpg-core';
 const OUT = 'C:/Users/andre/cyberfolk/ttrpg-core/outputs/verify';
 
 const seed = {

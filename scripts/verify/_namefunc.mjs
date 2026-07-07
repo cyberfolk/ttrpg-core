@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer-core';
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
-const BASE = 'http://localhost:5175/ttrpg-core';
+const BASE = 'http://localhost:5173/ttrpg-core';
 const seed = {
   version: 3, exportedAt: 0,
   characters: [{ id: 'c1', name: 'Aldric il Giusto', deletedAt: null,

@@ -15,9 +15,9 @@
              commit su blur/invio, escape annulla) e ingranaggio azioni sempre presente. -->
         <div class="rep-profile__titlerow">
           <h2 v-if="editing === false">
-            <button type="button" class="rep-profile__nameedit" @click="startEdit" aria-label="Rinomina">
+            <button type="button" class="rep-profile__nameedit ds-inline-edit" @click="startEdit" aria-label="Rinomina">
               <span>{{ $name(group) }}</span>
-              <Icon name="edit" class="rep-profile__name-ico" />
+              <Icon name="edit" class="ds-inline-edit__ico rep-profile__name-ico" />
             </button>
           </h2>
           <input v-else class="ds-input rep-profile__edit" type="text" v-model="editName"
@@ -397,8 +397,6 @@ function goToChar(id) {
 function openTxFromList(pair) {
   activeTx.value = pair;
 }
-
-const vFocus = { mounted(el) { el.focus(); el.select?.(); } };
 
 function startEdit() {
   if (group.value === null) return;

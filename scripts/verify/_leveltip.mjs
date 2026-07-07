@@ -14,7 +14,7 @@ await page.setViewport({ width: 900, height: 800, deviceScaleFactor: 2 });
 await page.evaluateOnNewDocument((s) => localStorage.setItem('ttrpg-reputation-state', JSON.stringify(s)), seed);
 await page.goto(`${BASE}/personaggio/c1`, { waitUntil: 'networkidle0' });
 await new Promise(r => setTimeout(r, 400));
-const tip = await page.$('.led__val--info');
+const tip = await page.$('.led__val.ds-hint');
 await tip.hover();
 await new Promise(r => setTimeout(r, 300));
 const bubble = await page.$eval('.rep-hint__bubble', el => el.textContent).catch(() => null);

@@ -17,7 +17,7 @@
           <span class="led__sep" aria-hidden="true">·</span>
           <!-- Etichetta: se il campo è derivato (livello, reputazione) il tooltip
                vive anche sul nome, non solo sul valore. -->
-          <HoverTip v-if="f.tip" :text="f.tip" :label="f.label" class-name="led__k led__k--info">
+          <HoverTip v-if="f.tip" :text="f.tip" :label="f.label" class-name="led__k ds-hint">
             {{ f.label }}
           </HoverTip>
           <span v-else class="led__k">{{ f.label }}</span>
@@ -25,7 +25,7 @@
           <!-- Livello: derivato (somma classi), sola lettura. Tooltip che spiega
                che è un campo calcolato dalla classe. -->
           <HoverTip v-if="f.type === 'readonly'" :text="f.tip"
-            :label="f.label" class-name="led__val led__val--info">
+            :label="f.label" class-name="led__val ds-hint">
             {{ f.display }}
           </HoverTip>
 
@@ -39,10 +39,10 @@
                ricercabile+crea (Tipo: etichetta libera). Pool-backed (oggetti
                {id,name}) vs libera (stringhe) via f.pool. -->
           <template v-else-if="f.type === 'select'">
-            <button v-if="editingField !== f.key" type="button" class="led__val led__val--edit"
+            <button v-if="editingField !== f.key" type="button" class="led__val ds-inline-edit led__val--edit"
               :aria-label="`Modifica ${f.label}`" @click.stop="startField(f.key)">
               <span>{{ f.display }}</span>
-              <Icon name="edit" class="led__val-ico" />
+              <Icon name="edit" class="ds-inline-edit__ico led__val-ico" />
             </button>
             <InlineSelect v-else flush auto-open :creatable="f.creatable"
               :model-value="f.value" :options="f.options"
@@ -53,10 +53,10 @@
 
           <!-- Testo inline (Sede, Motto) -->
           <template v-else-if="f.type === 'text'">
-            <button v-if="editingField !== f.key" type="button" class="led__val led__val--edit"
+            <button v-if="editingField !== f.key" type="button" class="led__val ds-inline-edit led__val--edit"
               :aria-label="`Modifica ${f.label}`" @click.stop="startTextField(f.key, f.value)">
               <span>{{ f.display }}</span>
-              <Icon name="edit" class="led__val-ico" />
+              <Icon name="edit" class="ds-inline-edit__ico led__val-ico" />
             </button>
             <input v-else class="led__select led__input led__select--inline" type="text"
               v-model="textDraft" v-focus :aria-label="f.label"
@@ -67,12 +67,12 @@
                teleportato (righe livello+classe) ancorato al valore → il layout
                della testata non si sposta mai. -->
           <template v-else-if="f.type === 'multiclass'">
-            <button type="button" class="led__val led__val--edit"
+            <button type="button" class="led__val ds-inline-edit led__val--edit"
               :class="{ 'is-open': editingField === 'classe' }"
               aria-haspopup="dialog" :aria-expanded="editingField === 'classe'"
               aria-label="Modifica classe e livelli" @click.stop="toggleClasse">
               <span>{{ classLabel }}</span>
-              <Icon name="edit" class="led__val-ico" />
+              <Icon name="edit" class="ds-inline-edit__ico led__val-ico" />
             </button>
             <Teleport to="body">
               <div v-if="editingField === 'classe'" class="led__mcpop" :style="classePopStyle"
@@ -368,8 +368,6 @@ onUnmounted(() => {
   window.removeEventListener('scroll', onClasseViewport, true);
   window.removeEventListener('resize', onClasseViewport);
 });
-// Autofocus sul controllo appena montato all'apertura dell'edit inline.
-const vFocus = { mounted(el) { el.focus(); } };
 
 // Descrittori dei campi meta: tipo di controllo + sorgente valore.
 // Derivati (livello, reputazione) → sola lettura; classe → editor multiclasse.
@@ -454,33 +452,19 @@ const fields = computed(() => {
 /* badge ruolo su riga propria sopra la griglia */
 .led__role { margin-bottom: .7rem; }
 .led__val { color: var(--text-strong); font-weight: var(--fw-semibold); overflow-wrap: anywhere; }
-/* Valore derivato con spiegazione: sottolineatura punteggiata tenue + cursore
-   help → segnala che c'è un tooltip (campo calcolato, non editabile). */
-.led__val--info { cursor: help; text-decoration: underline dotted var(--line-gold); text-underline-offset: 3px; }
 .led__sep { color: var(--text-faint); font-weight: 400; }
 .led__k { color: var(--text-muted); }
-/* Etichetta di un campo derivato: stesso affordance del valore (help + dotted). */
-.led__k--info { cursor: help; text-decoration: underline dotted var(--line-gold); text-underline-offset: 3px; }
 /* Nome campo seguito da due punti: "· Livello: 6". Un solo punto di verità.
    margin-right → piccolo respiro tra ":" e il contenuto (solo lì, non sul middot). */
 .led__k::after { content: ':'; margin-right: .18rem; }
 
-/* Valore editabile inline: a riposo sembra testo forte; su hover/focus
-   compaiono cornice oro tenue + icona matita → "cliccami per editare". */
+/* Override locali sopra .ds-inline-edit (base condivisa in main.css): tipografia
+   del valore + spaziatura/rientro specifici della riga di registro. */
 .led__val--edit {
   font: inherit; color: var(--text-strong); font-weight: var(--fw-semibold);
-  display: inline-flex; align-items: center; gap: .3rem;
-  margin: -.1rem -.35rem; padding: .1rem .35rem;
-  background: none; border: 1px solid transparent; border-radius: var(--radius-sm);
-  cursor: pointer; text-align: left; overflow-wrap: anywhere;
-  transition: background .15s, border-color .15s;
+  gap: .3rem; margin: -.1rem -.35rem; padding: .1rem .35rem;
 }
-.led__val--edit:hover, .led__val--edit:focus-visible {
-  outline: none; background: var(--accent-tint); border-color: var(--line-gold);
-}
-.led__val-ico { flex: 0 0 auto; font-size: .78em; color: var(--gold-600); opacity: 0; transition: opacity .15s; }
-.led__val--edit:hover .led__val-ico,
-.led__val--edit:focus-visible .led__val-ico { opacity: .75; }
+.led__val-ico { font-size: .78em; }
 
 /* Controllo inline (select/input): altezza ridotta per non far crescere la riga
    rispetto al valore in lettura quando si apre la selezione. */
@@ -501,10 +485,6 @@ const fields = computed(() => {
   background-repeat: no-repeat; background-position: right .45rem center; background-size: .65rem;
 }
 .led__input { padding-right: .5rem; background-image: none; cursor: text; }
-
-/* Valore Classe aperto: mantiene la cornice oro del trigger. */
-.led__val--edit.is-open { background: var(--accent-tint); border-color: var(--line-gold); }
-.led__val--edit.is-open .led__val-ico { opacity: .75; }
 
 /* Popover ricco Classe: teleportato, righe livello+classe + totale. */
 .led__mcpop {

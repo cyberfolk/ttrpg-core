@@ -15,10 +15,10 @@ await page.evaluateOnNewDocument((s) => localStorage.setItem('ttrpg-reputation-s
 await page.goto(`${BASE}/personaggio/c1`, { waitUntil: 'networkidle0' });
 await new Promise(r => setTimeout(r, 400));
 // labels with tip
-const labels = await page.$$eval('.led__k--info', els => els.map(e => e.textContent.trim()));
+const labels = await page.$$eval('.led__k.ds-hint', els => els.map(e => e.textContent.trim()));
 console.log('label-info fields:', JSON.stringify(labels));
 // hover first info label (Livello)
-const infos = await page.$$('.led__k--info');
+const infos = await page.$$('.led__k.ds-hint');
 await infos[0].hover();
 await new Promise(r => setTimeout(r, 300));
 const bubble = await page.$eval('.rep-hint__bubble', el => el.textContent).catch(() => null);

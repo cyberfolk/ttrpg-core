@@ -340,6 +340,26 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
   transition: border-color .15s, box-shadow .15s;
 }
 .ds-input--with-icon { padding-left: 2.2rem; }
+/* Affordance "campo con spiegazione": sottolineatura punteggiata tenue + cursore
+   help → segnala che c'è un tooltip (es. valore derivato non editabile). */
+.ds-hint { cursor: help; text-decoration: underline dotted var(--line-gold); text-underline-offset: 3px; }
+/* Affordance "modifica inline": a riposo è testo; su hover/focus (o .is-open)
+   cornice oro tenue e l'icona matita (.ds-inline-edit__ico) appare. Base condivisa
+   da scheda anagrafica (.led__val--edit) e rinomina profilo (.rep-profile__nameedit);
+   i singoli usi aggiungono override di tipografia/spaziatura. */
+.ds-inline-edit {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: none; border: 1px solid transparent; border-radius: var(--radius-sm);
+  cursor: pointer; text-align: left; overflow-wrap: anywhere;
+  transition: background .15s, border-color .15s;
+}
+.ds-inline-edit:hover, .ds-inline-edit:focus-visible, .ds-inline-edit.is-open {
+  outline: none; background: var(--accent-tint); border-color: var(--line-gold);
+}
+.ds-inline-edit__ico { flex: 0 0 auto; color: var(--gold-600); opacity: 0; transition: opacity .15s; }
+.ds-inline-edit:hover .ds-inline-edit__ico,
+.ds-inline-edit:focus-visible .ds-inline-edit__ico,
+.ds-inline-edit.is-open .ds-inline-edit__ico { opacity: .75; }
 /* placeholder a contrasto AA (text-muted ~5.5:1, non text-faint ~3.6:1) */
 .ds-input::placeholder { color: var(--text-muted); opacity: 1; }
 .ds-input:hover { border-color: var(--gold-500); }
@@ -761,21 +781,15 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
    (.led__val--edit), ma eredita tipografia dell'h2 → font e dimensione del
    titolo restano identici; a riposo è solo il titolo, su hover/focus compaiono
    cornice oro tenue + matita. */
+/* Override locali sopra .ds-inline-edit (base in main.css): eredita la tipografia
+   dell'h1, resta a larghezza contenuto e va a capo solo se supera la riga. */
 .rep-profile__nameedit {
-  font: inherit; color: inherit;
-  display: inline-flex; align-items: center; gap: .4rem;
+  font: inherit; color: inherit; gap: .4rem;
   width: max-content; max-width: 100%; margin: -.1rem -.4rem; padding: .1rem .4rem;
-  background: none; border: 1px solid transparent; border-radius: var(--radius-sm);
-  cursor: pointer; text-align: left; overflow-wrap: anywhere; word-break: break-word;
-  transition: background .15s, border-color .15s;
+  word-break: break-word;
 }
 .rep-profile__nameedit > span { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
-.rep-profile__nameedit:hover, .rep-profile__nameedit:focus-visible {
-  outline: none; background: var(--accent-tint); border-color: var(--line-gold);
-}
-.rep-profile__name-ico { flex: 0 0 auto; font-size: .5em; color: var(--gold-600); opacity: 0; transition: opacity .15s; }
-.rep-profile__nameedit:hover .rep-profile__name-ico,
-.rep-profile__nameedit:focus-visible .rep-profile__name-ico { opacity: .7; }
+.rep-profile__name-ico { font-size: .5em; }
 @media (pointer: coarse) { .rep-profile__name-ico { opacity: .55; } }
 /* ingranaggio azioni: spinto a destra della riga titolo, allineato otticamente
    alla prima riga del nome (il glifo grande ha padding: micro-offset in alto) */
