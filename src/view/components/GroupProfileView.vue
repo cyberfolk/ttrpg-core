@@ -446,14 +446,17 @@ function onHardDelete() {
 </script>
 
 <style scoped>
-/* Rinomina inline: stessa tipografia del titolo h2 (display serif, fs-h1) così il
-   font e la dimensione non cambiano; riempie la riga fino all'ingranaggio. */
+/* Rinomina inline: stessa tipografia del titolo h2 (display serif, fs-h1) E stesso
+   box del bottone-nome in lettura (padding .1/.4 + margin -.1/-.4) così il testo
+   non si sposta lettura↔modifica; riempie la riga fino all'ingranaggio. */
 .rep-profile__edit {
   font-family: var(--font-display);
   font-size: var(--fs-h1);
   font-weight: var(--fw-semibold);
   color: var(--text-strong);
   line-height: var(--lh-tight);
+  padding: .1rem .4rem;
+  margin: -.1rem -.4rem;
   flex: 1 1 auto;
   min-width: 0;
   max-width: 100%;
