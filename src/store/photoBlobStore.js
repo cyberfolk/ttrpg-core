@@ -39,8 +39,10 @@ function tx(db, mode, fn) {
     const transaction = db.transaction(STORE_NAME, mode);
     const objectStore = transaction.objectStore(STORE_NAME);
     const request = fn(objectStore);
-    transaction.oncomplete = () => resolve(request ? request.result : undefined);
+    transaction.oncomplete = () => resolve(request.result);
     transaction.onerror = () => reject(transaction.error);
+    // Su abort puro (senza error) la promise resterebbe pendente: rifiuta.
+    transaction.onabort = () => reject(transaction.error || new Error('IndexedDB transaction aborted'));
   });
   return promise;
 }

@@ -56,3 +56,15 @@ test('validateState rifiuta un avatar che punta a una foto di un altra entità',
   m.characters[0].avatarPhotoId = 'p1'; // p1 è del gruppo, non del personaggio
   assert.throws(() => validateState(m), /avatar/i);
 });
+
+test('validateState valida anche l avatarPhotoId dei gruppi', () => {
+  const m = migrate(v3State());
+  m.groups[0].avatarPhotoId = 'p-fantasma';
+  assert.throws(() => validateState(m), /avatar/i);
+});
+
+test('validateState rifiuta una foto con createdAt non numerico', () => {
+  const m = migrate(v3State());
+  m.photos = [{ id: 'p1', entityId: 'c1', caption: '', description: '', tagIds: [], createdAt: 'ieri' }];
+  assert.throws(() => validateState(m), /foto|photo/i);
+});

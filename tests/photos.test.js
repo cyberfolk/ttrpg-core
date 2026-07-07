@@ -123,3 +123,13 @@ test('hardDeleteGroup rimuove a cascata le foto del gruppo', () => {
   assert.equal(s.photos.length, 1);
   assert.equal(s.photos[0].entityId, charId);
 });
+
+test('removePhoto azzera a cascata anche l avatar di un gruppo', () => {
+  const { state, groupId } = withEntities();
+  let s = addPhoto(state, groupId, {});
+  const pid = s.photos[0].id;
+  s = setAvatar(s, groupId, pid);
+  s = removePhoto(s, pid);
+  assert.equal(s.photos.length, 0);
+  assert.equal(s.groups[0].avatarPhotoId, null);
+});

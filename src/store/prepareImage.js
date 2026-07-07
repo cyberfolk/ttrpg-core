@@ -25,5 +25,10 @@ export async function prepareImage(file, opts = {}) {
   const type = 'image/webp';
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, type, quality));
   const out = blob ?? await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+  // Entrambe le codifiche fallite → niente byte: meglio un errore (che fa fare
+  // rollback del metadato al chiamante) che salvare un blob vuoto/nullo.
+  if (!out) {
+    throw new Error('Impossibile codificare l\'immagine');
+  }
   return out;
 }
