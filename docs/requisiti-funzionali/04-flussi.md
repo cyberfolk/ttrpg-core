@@ -35,6 +35,13 @@ Con dati assenti, ogni punto morto instrada al passo successivo lungo la catena
 
 Dal punteggio di una relazione (in una vista o in un profilo) si apre il **modale transazioni**: si aggiunge / modifica / elimina una transazione (delta + motivo). Il punteggio si **ricalcola al volo** dopo ogni operazione.
 
+## Modifica della scheda anagrafica
+
+Dalla testata del profilo ogni campo si modifica **inline** (clic sul valore).
+I riferimenti a entità-vocabolario (razza, classe, giocatore, tag) si scelgono da
+un picker che permette anche di **creare** al volo una voce nuova nel pool. Livello
+e reputazione sono derivati (sola lettura).
+
 ## Cancellazione
 
 - **Archiviazione (soft delete)** — reversibile. L'entità sparisce dalle liste attive; con il toggle **Mostra archiviati** si può *Ripristinare*.
