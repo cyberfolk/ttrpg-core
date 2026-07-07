@@ -258,7 +258,14 @@ onUnmounted(() => {
 /* m2m impilati (Gruppi → Tag): margine ridotto tra i due. */
 .m2m + .m2m { margin-top: .4rem; }
 
-@media (max-width: 520px) { .m2m { flex-direction: column; align-items: stretch; gap: .3rem; } }
+/* Mobile: «· Label:» resta in riga con la lista; solo i tag in eccesso vanno a
+   capo DENTRO il corpo (allineati fra loro sotto il primo badge), senza impilare
+   pallino/label. align-items:flex-start perché i badge sono più alti della label:
+   la label si àncora in cima alla prima riga di badge invece di fluttuare a metà. */
+@media (max-width: 520px) {
+  .m2m { align-items: flex-start; gap: .3rem; }
+  .m2m__label { line-height: 1.5; }
+}
 
 /* Touch: niente hover → ✕ e riga "aggiungi" sempre visibili, target più ampi. */
 @media (pointer: coarse) {
