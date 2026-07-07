@@ -64,11 +64,17 @@
           <button class="ds-seg__btn" :class="{ active: tab === 'groups' }" @click="tab = 'groups'">
             Membro di
           </button>
+          <button class="ds-seg__btn" :class="{ active: tab === 'gallery' }" @click="tab = 'gallery'">
+            Galleria
+          </button>
         </div>
       </div>
 
       <!-- Note -->
       <Notes v-if="tab === 'note'" :key="character.id" kind="character" :entity="character" />
+
+      <!-- Galleria -->
+      <Gallery v-if="tab === 'gallery'" :key="character.id + '-gallery'" kind="character" :entity="character" />
 
       <!-- Relations -->
       <RelationList
@@ -196,6 +202,7 @@ import Icon from './Icon.vue';
 import ActionMenu from './ActionMenu.vue';
 import EntitySheet from './EntitySheet.vue';
 import Notes from './Notes.vue';
+import Gallery from './Gallery.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const props = defineProps({

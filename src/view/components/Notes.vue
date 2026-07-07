@@ -35,6 +35,7 @@ import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import { useStore } from '../useStore.js';
 import { setCharacterNotes, setGroupNotes } from '../../model/reputation.js';
+import { renderMarkdown } from '../markdown.js';
 
 const props = defineProps({
   kind: { type: String, required: true },
@@ -79,45 +80,7 @@ function cancel() {
   text.value = props.entity.notes || '';
 }
 
-/* Mini-renderer markdown (no dipendenze). */
-function escapeHtml(s) {
-  const out = s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  return out;
-}
-function inlineMd(s) {
-  const out = s
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/`(.+?)`/g, '<code>$1</code>');
-  return out;
-}
-function renderMd(src) {
-  const lines = escapeHtml(src).split(/\r?\n/);
-  let html = '';
-  let inList = false;
-  const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
-  for (const line of lines) {
-    const heading = /^(#{1,6})\s+(.+)$/.exec(line);
-    if (heading) {
-      closeList();
-      const level = heading[1].length;
-      html += '<h' + level + '>' + inlineMd(heading[2].trim()) + '</h' + level + '>';
-      continue;
-    }
-    const isBullet = /^\s*[-*]\s+/.test(line);
-    if (isBullet) {
-      if (!inList) { html += '<ul>'; inList = true; }
-      html += '<li>' + inlineMd(line.replace(/^\s*[-*]\s+/, '')) + '</li>';
-      continue;
-    }
-    closeList();
-    if (line.trim() === '') continue;
-    html += '<p>' + inlineMd(line) + '</p>';
-  }
-  closeList();
-  return html;
-}
-const rendered = computed(() => renderMd(text.value));
+const rendered = computed(() => renderMarkdown(text.value));
 </script>
 
 <style scoped>

@@ -3,6 +3,13 @@
        MODEL). Stessa resa "riga da registro" del mockup: valori forti, label
        mute, inline. Nessuna scatola, nessuna eyebrow oro. -->
   <section class="led" :aria-label="title">
+    <!-- Ritratto: la tavola eletta a profilo (avatarPhotoId). Assente → niente
+         medaglione, la testata resta piena larghezza. Si sceglie dalla Galleria. -->
+    <div v-if="entity.avatarPhotoId" class="led__portrait">
+      <GalleryThumb :photo-id="entity.avatarPhotoId" :alt="portraitAlt" />
+    </div>
+
+    <div class="led__body">
     <!-- Riga meta: valori inline, ognuno editabile al click sul valore.
          Niente matita globale: l'affordance è per campo (hover → cornice + icona). -->
     <div class="led__read">
@@ -112,6 +119,7 @@
     <Many2ManyField label="Tag" :model-value="entity.tagIds" :pool="tagPool" icon="tag"
       add-text="aggiungi tag…" empty-text="Nessun tag · aggiungi"
       search-placeholder="cerca tag…" @update:model-value="onEntityTags" @create="onCreateEntityTag" />
+    </div>
   </section>
 </template>
 
@@ -123,6 +131,7 @@ import ScoreChip from './ScoreChip.vue';
 import HoverTip from './HoverTip.vue';
 import InlineSelect from './InlineSelect.vue';
 import Many2ManyField from './Many2ManyField.vue';
+import GalleryThumb from './GalleryThumb.vue';
 import { SCORE_TIP, LEVEL_TIP } from '../uiCopy.js';
 import { useStore } from '../useStore.js';
 import { createLookup } from '../../model/schema.js';
@@ -147,6 +156,7 @@ const props = defineProps({
 });
 
 const title = computed(() => (props.kind === 'character' ? 'Scheda anagrafica' : 'Scheda del gruppo'));
+const portraitAlt = computed(() => `Ritratto di ${props.entity.name || 'entità'}`);
 
 // Segnaposto per campo lookup non ancora impostato.
 const EMPTY = '–';
@@ -415,6 +425,26 @@ const fields = computed(() => {
   border-top: 1px solid var(--border-hairline);
   margin-top: var(--space-2);
   padding-top: var(--space-3);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+.led__body { flex: 1 1 auto; min-width: 0; }
+
+/* Ritratto di profilo: medaglione incorniciato d'oro, come una tavola eletta. */
+.led__portrait {
+  flex: 0 0 auto;
+  width: 6.5rem;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--gold-500);
+  box-shadow: 0 0 0 3px var(--accent-tint), var(--shadow-sm);
+  background: var(--surface-panel);
+}
+@media (max-width: 520px) {
+  .led__portrait { width: 4.75rem; }
+  .led { gap: var(--space-4); }
 }
 
 /* --- meta (lettura): campi impilati su due colonne, ciascuno col "·" --- */

@@ -71,11 +71,17 @@
             @click="tab = 'punteggi'">
             Punteggi
           </button>
+          <button class="ds-seg__btn" :class="{ active: tab === 'gallery' }" @click="tab = 'gallery'">
+            Galleria
+          </button>
         </div>
       </div>
 
       <!-- Note -->
       <Notes v-if="tab === 'note'" :key="group.id" kind="group" :entity="group" />
+
+      <!-- Galleria -->
+      <Gallery v-if="tab === 'gallery'" :key="group.id + '-gallery'" kind="group" :entity="group" />
 
       <!-- Relazioni dirette gruppo↔nodo (stesso componente dei personaggi) -->
       <RelationList v-if="tab === 'in' || tab === 'out'" :key="tab"
@@ -244,6 +250,7 @@ import ActionMenu from './ActionMenu.vue';
 import ScoreChip from './ScoreChip.vue';
 import EntitySheet from './EntitySheet.vue';
 import Notes from './Notes.vue';
+import Gallery from './Gallery.vue';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
 import EntityPicker from './EntityPicker.vue';
