@@ -4,8 +4,8 @@
        la textarea occupa tutto lo spazio con «Fatto» in overlay. -->
   <div class="notes">
     <template v-if="editing">
-      <textarea class="ds-input notes__ta" v-model="text"
-        rows="8" aria-label="Note in markdown" @blur="done"
+      <textarea ref="taRef" class="ds-input notes__ta" v-model="text"
+        rows="1" aria-label="Note in markdown" @input="autosize" @blur="done"
         placeholder="markdown: # titolo, **grassetto**, *corsivo*, `codice`, - elenco"></textarea>
       <div class="notes__actions edit-actions">
         <button type="button" class="ds-btn ds-btn--sm ds-btn--confirm" @mousedown.prevent @click="done">
@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import { useStore } from '../useStore.js';
@@ -45,10 +45,24 @@ const { dispatch } = useStore();
 
 const editing = ref(false);
 const text = ref(props.entity.notes || '');
+const taRef = ref(null);
+
+// Auto-resize: la textarea cresce per contenere tutto il contenuto, senza
+// scrollbar interna. min-height (CSS) resta il pavimento per contenuti brevi.
+function autosize() {
+  const el = taRef.value;
+  if (!el) return;
+  el.style.height = 'auto';
+  // scrollHeight = contenuto+padding; con box-sizing border-box aggiungo i bordi
+  // così l'altezza contiene tutto senza clip né scrollbar.
+  const border = el.offsetHeight - el.clientHeight;
+  el.style.height = `${el.scrollHeight + border}px`;
+}
 
 function edit() {
   text.value = props.entity.notes || '';
   editing.value = true;
+  nextTick(autosize);
 }
 function done() {
   editing.value = false;
@@ -134,7 +148,9 @@ const rendered = computed(() => renderMd(text.value));
 /* --- Modifica: textarea a tutta altezza, «Annulla»/«Fatto» in overlay --- */
 /* padding-top ampio: la prima riga parte sotto i bottoni Fatto/Annulla in overlay
    (top .35rem + altezza bottone) e non ci finisce nascosta sotto. */
-.notes__ta { width: 100%; resize: vertical; min-height: 8rem; line-height: 1.5; padding-top: 2.4rem; }
+/* Autogrow: cresce col contenuto (JS setta height=scrollHeight), niente scrollbar
+   interna; min-height è il pavimento per note brevi. */
+.notes__ta { width: 100%; resize: none; overflow: hidden; min-height: 8rem; line-height: 1.5; padding-top: 2.4rem; }
 .notes__actions { position: absolute; top: .35rem; right: .35rem; }
 
 .notes__md {
