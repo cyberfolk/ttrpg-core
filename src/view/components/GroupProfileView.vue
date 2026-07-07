@@ -82,8 +82,8 @@
         </div>
       </div>
 
-      <!-- Note (mockup) -->
-      <NotesMock v-if="tab === 'note'" kind="group" />
+      <!-- Note -->
+      <Notes v-if="tab === 'note'" kind="group" :entity="group" />
 
       <!-- Relazioni dirette gruppo↔nodo (stesso componente dei personaggi) -->
       <RelationList v-if="tab === 'in' || tab === 'out'" :key="tab"
@@ -251,7 +251,7 @@ import HoverTip from './HoverTip.vue';
 import ActionMenu from './ActionMenu.vue';
 import ScoreChip from './ScoreChip.vue';
 import EntitySheet from './EntitySheet.vue';
-import NotesMock from './NotesMock.vue';
+import Notes from './Notes.vue';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
 import EntityPicker from './EntityPicker.vue';

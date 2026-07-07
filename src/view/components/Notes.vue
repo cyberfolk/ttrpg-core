@@ -1,14 +1,14 @@
 <template>
-  <!-- MOCKUP: note markdown come pannello di tab. Stato locale (ref), non
-       persistito, nessun STORE/MODEL. Matita in alto a destra: anteprima↔modifica. -->
+  <!-- Note markdown come pannello di tab, persistite nello store (MODEL: setCharacterNotes /
+       setGroupNotes). Matita in alto a destra: anteprima↔modifica. -->
   <div class="notes">
     <div class="notes__topright">
       <HoverTip v-if="!editing" text="Modifica" :tab-index="-1">
-        <button type="button" class="notes__pencil" aria-label="Modifica note" @click="editing = true">
+        <button type="button" class="notes__pencil" aria-label="Modifica note" @click="edit">
           <Icon name="edit" />
         </button>
       </HoverTip>
-      <button v-else type="button" class="ds-btn ds-btn--sm ds-btn--ghost" @click="editing = false">
+      <button v-else type="button" class="ds-btn ds-btn--sm ds-btn--ghost" @click="done">
         <span class="ds-btn__icon"><Icon name="check" /></span> Fatto
       </button>
     </div>
@@ -24,17 +24,32 @@
 import { ref, computed } from 'vue';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
+import { useStore } from '../useStore.js';
+import { setCharacterNotes, setGroupNotes } from '../../model/reputation.js';
 
 const props = defineProps({
   kind: { type: String, required: true },
+  entity: { type: Object, required: true },
 });
 
-const editing = ref(false);
-const text = ref(props.kind === 'character'
-  ? 'Mercenario riservato, con un debito verso la **Gilda dei Velati**.\n\n- Fedele a chi paga\n- Odia i *nobiluomini di Valdûr*\n- Insegue la spada `Fendinube`'
-  : 'Fondata dopo la **Caduta di Emberfall**.\n\n- Controlla i moli del porto\n- Alleata dei *Mercanti d\'Ottone*\n- Riscuote il pedaggio `del Ponte Nero`');
+const { dispatch } = useStore();
 
-/* Mini-renderer markdown (mockup, no dipendenze). */
+const editing = ref(false);
+const text = ref(props.entity.notes || '');
+
+function edit() {
+  text.value = props.entity.notes || '';
+  editing.value = true;
+}
+function done() {
+  editing.value = false;
+  const id = props.entity.id;
+  const value = text.value;
+  if (props.kind === 'character') dispatch((s) => setCharacterNotes(s, id, value));
+  else dispatch((s) => setGroupNotes(s, id, value));
+}
+
+/* Mini-renderer markdown (no dipendenze). */
 function escapeHtml(s) {
   const out = s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   return out;

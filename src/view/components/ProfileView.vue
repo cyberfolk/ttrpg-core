@@ -74,8 +74,8 @@
         </div>
       </div>
 
-      <!-- Note (mockup) -->
-      <NotesMock v-if="tab === 'note'" kind="character" />
+      <!-- Note -->
+      <Notes v-if="tab === 'note'" kind="character" :entity="character" />
 
       <!-- Relations -->
       <RelationList
@@ -202,7 +202,7 @@ import HoverTip from './HoverTip.vue';
 import Icon from './Icon.vue';
 import ActionMenu from './ActionMenu.vue';
 import EntitySheet from './EntitySheet.vue';
-import NotesMock from './NotesMock.vue';
+import Notes from './Notes.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
 const props = defineProps({
