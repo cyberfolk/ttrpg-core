@@ -54,7 +54,7 @@
       </div>
 
       <!-- Scheda anagrafica reale: legge/scrive lo STORE. -->
-      <EntitySheet kind="character" :entity="character" :reputation="synthetic" />
+      <EntitySheet :key="character.id" kind="character" :entity="character" :reputation="synthetic" />
 
       <!-- Tab switcher -->
       <div class="rep-profile__tabs">
@@ -75,7 +75,7 @@
       </div>
 
       <!-- Note -->
-      <Notes v-if="tab === 'note'" kind="character" :entity="character" />
+      <Notes v-if="tab === 'note'" :key="character.id" kind="character" :entity="character" />
 
       <!-- Relations -->
       <RelationList

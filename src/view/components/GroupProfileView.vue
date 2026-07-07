@@ -58,7 +58,7 @@
       </div>
 
       <!-- Scheda gruppo reale: legge/scrive lo STORE. -->
-      <EntitySheet kind="group" :entity="group" :reputation="synthetic" />
+      <EntitySheet :key="group.id" kind="group" :entity="group" :reputation="synthetic" />
 
       <!-- Sezioni con tab switcher -->
       <div class="rep-gp-tabs">
@@ -83,7 +83,7 @@
       </div>
 
       <!-- Note -->
-      <Notes v-if="tab === 'note'" kind="group" :entity="group" />
+      <Notes v-if="tab === 'note'" :key="group.id" kind="group" :entity="group" />
 
       <!-- Relazioni dirette gruppo↔nodo (stesso componente dei personaggi) -->
       <RelationList v-if="tab === 'in' || tab === 'out'" :key="tab"
