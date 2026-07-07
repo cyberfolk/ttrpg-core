@@ -192,6 +192,8 @@ import {
   averageIncomingScore, listActiveGroups, addMember, removeMember,
   renameCharacter, softDeleteCharacter, restoreCharacter, hardDeleteCharacter,
 } from '../../model/reputation.js';
+import { listPhotos } from '../../model/photos.js';
+import { photoBlobStore } from '../photoStore.js';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
 import EntityPicker from './EntityPicker.vue';
@@ -322,6 +324,10 @@ function onHardDelete() {
   const confirmed = window.confirm('Eliminazione DEFINITIVA e irreversibile. Confermi?');
   if (!confirmed) return;
   const id = character.value.id;
+  // Byte delle foto: pulizia best-effort da IndexedDB prima che il MODEL scarti i
+  // metadati a cascata. Un blob orfano è tollerato, non blocca la cancellazione.
+  const photoIds = listPhotos(state.value, id).map((p) => p.id);
+  for (const pid of photoIds) photoBlobStore.delete(pid).catch(() => {});
   dispatch((s) => hardDeleteCharacter(s, id));
   router.push({ name: 'characters' });
 }

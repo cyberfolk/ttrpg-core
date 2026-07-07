@@ -118,7 +118,10 @@ export function hardDeleteCharacter(state, id) {
     const updated = { ...g, memberIds, guideId };
     return updated;
   });
-  const next = { ...state, characters, transactions, groups };
+  // Le foto del personaggio spariscono con lui: altrimenti resterebbero con un
+  // entityId dangling (che validateState rifiuterebbe al re-import).
+  const photos = state.photos.filter((p) => p.entityId !== id);
+  const next = { ...state, characters, transactions, groups, photos };
   return next;
 }
 
@@ -261,7 +264,9 @@ export function hardDeleteGroup(state, id) {
   const transactions = state.transactions.filter(
     (tx) => tx.fromId !== id && tx.toId !== id,
   );
-  const next = { ...state, groups, transactions };
+  // Le foto del gruppo spariscono con esso (niente entityId dangling).
+  const photos = state.photos.filter((p) => p.entityId !== id);
+  const next = { ...state, groups, transactions, photos };
   return next;
 }
 

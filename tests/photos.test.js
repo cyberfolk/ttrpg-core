@@ -103,3 +103,23 @@ test('listPhotos ritorna solo le foto dell entità ordinate per createdAt', () =
   assert.equal(only.length, 1);
   assert.equal(only[0].caption, 'x');
 });
+
+import { hardDeleteCharacter, hardDeleteGroup } from '../src/model/reputation.js';
+
+test('hardDeleteCharacter rimuove a cascata le foto del personaggio', () => {
+  const { state, charId, groupId } = withEntities();
+  let s = addPhoto(state, charId, { caption: 'del pg' });
+  s = addPhoto(s, groupId, { caption: 'del gruppo' });
+  s = hardDeleteCharacter(s, charId);
+  assert.equal(s.photos.length, 1);
+  assert.equal(s.photos[0].entityId, groupId);
+});
+
+test('hardDeleteGroup rimuove a cascata le foto del gruppo', () => {
+  const { state, charId, groupId } = withEntities();
+  let s = addPhoto(state, charId, { caption: 'del pg' });
+  s = addPhoto(s, groupId, { caption: 'del gruppo' });
+  s = hardDeleteGroup(s, groupId);
+  assert.equal(s.photos.length, 1);
+  assert.equal(s.photos[0].entityId, charId);
+});

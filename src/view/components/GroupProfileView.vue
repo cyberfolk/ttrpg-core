@@ -241,6 +241,8 @@ import {
   restoreGroup,
   hardDeleteGroup,
 } from '../../model/reputation.js';
+import { listPhotos } from '../../model/photos.js';
+import { photoBlobStore } from '../photoStore.js';
 import { SCORE_TIP } from '../uiCopy.js';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
@@ -445,6 +447,9 @@ function onHardDelete() {
   const confirmed = window.confirm('Eliminare definitivamente il gruppo? Questa operazione non è reversibile.');
   if (!confirmed) return;
   const id = group.value.id;
+  // Byte delle foto: pulizia best-effort da IndexedDB (i metadati li scarta il MODEL a cascata).
+  const photoIds = listPhotos(state.value, id).map((p) => p.id);
+  for (const pid of photoIds) photoBlobStore.delete(pid).catch(() => {});
   dispatch((s) => hardDeleteGroup(s, id));
   router.push({ name: 'groups' });
 }
