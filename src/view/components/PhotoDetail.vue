@@ -23,7 +23,7 @@
             <textarea :id="descId" ref="descRef" class="ds-input gphoto__desc" rows="3"
               v-model="descDraft" @input="autosize" @blur="commitDesc"
               placeholder="markdown: **grassetto**, *corsivo*, - elenco"></textarea>
-            <div v-if="descHtml" class="gphoto__preview notes__md" v-html="descHtml"></div>
+            <div v-if="descHtml" class="gphoto__preview" v-html="descHtml"></div>
 
             <Many2ManyField class="gphoto__tags" label="Tag" :model-value="photo.tagIds"
               :pool="tagPool" icon="tag" add-text="aggiungi tag…" empty-text="Nessun tag · aggiungi"
@@ -150,7 +150,13 @@ function removeAsAvatar() {
 async function doDelete() {
   const id = props.photoId;
   dispatch((s) => removePhoto(s, id));
-  await photoBlobStore.delete(id);
+  // Il metadato è la fonte di verità: se la cancellazione del blob fallisce resta
+  // solo un byte orfano in IndexedDB, non un errore da propagare all'utente.
+  try {
+    await photoBlobStore.delete(id);
+  } catch (err) {
+    /* best-effort: blob orfano tollerato */
+  }
   emit('deleted', id);
 }
 
@@ -203,9 +209,27 @@ nextTick(autosize);
   color: var(--text-body, var(--text-strong)); line-height: 1.5;
   padding: .4rem .1rem; border-top: 1px solid var(--border-hairline);
 }
+.gphoto__preview :deep(h1),
+.gphoto__preview :deep(h2),
+.gphoto__preview :deep(h3),
+.gphoto__preview :deep(h4),
+.gphoto__preview :deep(h5),
+.gphoto__preview :deep(h6) {
+  font-family: var(--font-display); color: var(--text-strong);
+  font-weight: var(--fw-semibold); line-height: 1.2; margin: .5rem 0 .25rem;
+}
+.gphoto__preview :deep(h1:first-child),
+.gphoto__preview :deep(h2:first-child),
+.gphoto__preview :deep(h3:first-child) { margin-top: 0; }
+.gphoto__preview :deep(h1) { font-size: 1.3em; }
+.gphoto__preview :deep(h2) { font-size: 1.15em; }
+.gphoto__preview :deep(h3) { font-size: 1.05em; }
 .gphoto__preview :deep(p) { margin: 0 0 .4rem; }
 .gphoto__preview :deep(p:last-child) { margin-bottom: 0; }
-.gphoto__preview :deep(strong) { color: var(--text-strong); }
+.gphoto__preview :deep(ul) { margin: .2rem 0 .4rem; padding-left: 1.2rem; }
+.gphoto__preview :deep(li) { margin: .1rem 0; }
+.gphoto__preview :deep(strong) { color: var(--text-strong); font-weight: var(--fw-semibold); }
+.gphoto__preview :deep(em) { font-style: italic; }
 .gphoto__preview :deep(code) {
   font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .88em;
   padding: .05rem .3rem; background: var(--accent-tint); color: var(--gold-700);

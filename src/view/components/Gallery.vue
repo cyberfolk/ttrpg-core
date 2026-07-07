@@ -54,6 +54,8 @@
       </p>
     </div>
 
+    <p v-if="uploadError" class="gallery__err" role="alert">{{ uploadError }}</p>
+
     <div class="gallery__foot">
       <label class="ds-btn ds-btn--primary ds-btn--sm gallery__upload">
         <input type="file" accept="image/*" multiple hidden @change="onPick" />
@@ -73,7 +75,7 @@ import { computed, ref } from 'vue';
 import { useStore } from '../useStore.js';
 import { photoBlobStore } from '../photoStore.js';
 import { prepareImage } from '../../store/prepareImage.js';
-import { addPhoto, updatePhotoMeta, listPhotos } from '../../model/photos.js';
+import { addPhoto, removePhoto, updatePhotoMeta, listPhotos } from '../../model/photos.js';
 import { displayName } from '../disambiguation.js';
 import Icon from './Icon.vue';
 import GalleryThumb from './GalleryThumb.vue';
@@ -93,6 +95,7 @@ const entityName = computed(() => displayName(props.entity));
 const detailId = ref(null);
 const busy = ref(false);
 const dragActive = ref(false);
+const uploadError = ref('');
 
 function openDetail(id) {
   detailId.value = id;
@@ -102,15 +105,23 @@ function setCaption(photoId, caption) {
   dispatch((s) => updatePhotoMeta(s, photoId, { caption }));
 }
 
-// Crea il metadato, recupera l'id appena nato (diff prima/dopo), salva il blob con quell'id.
+// Prepara l'immagine, crea il metadato, recupera l'id appena nato (diff prima/dopo),
+// salva il blob con quell'id. Se la scrittura del blob fallisce, fa rollback del
+// metadato per non lasciare una Photo orfana (senza byte) nello STORE.
 async function ingestFile(file) {
   const blob = await prepareImage(file);
   const before = new Set(getState().photos.map((p) => p.id));
   const entityId = props.entity.id;
   dispatch((s) => addPhoto(s, entityId, {}));
   const created = getState().photos.find((p) => !before.has(p.id));
-  if (created) {
+  if (!created) {
+    return;
+  }
+  try {
     await photoBlobStore.put(created.id, blob);
+  } catch (err) {
+    dispatch((s) => removePhoto(s, created.id));
+    throw err;
   }
 }
 
@@ -120,12 +131,21 @@ async function ingestFiles(fileList) {
     return;
   }
   busy.value = true;
-  try {
-    for (const file of files) {
+  uploadError.value = '';
+  let failed = 0;
+  // Un file corrotto non deve interrompere il batch: isola ogni ingest.
+  for (const file of files) {
+    try {
       await ingestFile(file);
+    } catch (err) {
+      failed += 1;
     }
-  } finally {
-    busy.value = false;
+  }
+  busy.value = false;
+  if (failed > 0) {
+    uploadError.value = failed === 1
+      ? 'Una tavola non è stata caricata (file non valido).'
+      : `${failed} tavole non sono state caricate (file non validi).`;
   }
 }
 
@@ -255,6 +275,15 @@ async function onDrop(e) {
 }
 .gallery__upload { cursor: pointer; }
 .gallery__hint { color: var(--text-faint); font-size: var(--fs-sm); }
+
+.gallery__err {
+  margin: var(--space-3) 0 0;
+  color: var(--ember-700);
+  background: var(--ember-100);
+  border: 1px solid var(--ember-300);
+  border-radius: var(--radius-sm);
+  padding: .5rem .7rem; font-size: var(--fs-sm);
+}
 
 /* Feedback drag: la galleria si "accende" come area di rilascio. */
 .gallery--drag { }
