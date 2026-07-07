@@ -15,13 +15,22 @@
         <div v-for="f in fields" :key="f.key" class="led__item"
           :class="{ 'led__item--player': f.key === 'giocatore' }">
           <span class="led__sep" aria-hidden="true">·</span>
-          <span class="led__k">{{ f.label }}</span>
+          <!-- Etichetta: se il campo è derivato (livello, reputazione) il tooltip
+               vive anche sul nome, non solo sul valore. -->
+          <HoverTip v-if="f.tip" :text="f.tip" :label="f.label" class-name="led__k led__k--info">
+            {{ f.label }}
+          </HoverTip>
+          <span v-else class="led__k">{{ f.label }}</span>
 
-          <!-- Livello: derivato (somma classi), sola lettura -->
-          <span v-if="f.type === 'readonly'" class="led__val">{{ f.display }}</span>
+          <!-- Livello: derivato (somma classi), sola lettura. Tooltip che spiega
+               che è un campo calcolato dalla classe. -->
+          <HoverTip v-if="f.type === 'readonly'" :text="f.tip"
+            :label="f.label" class-name="led__val led__val--info">
+            {{ f.display }}
+          </HoverTip>
 
           <!-- Reputazione: derivata dalle transazioni, sola lettura -->
-          <HoverTip v-else-if="f.type === 'score'" :text="SCORE_TIP"
+          <HoverTip v-else-if="f.type === 'score'" :text="f.tip"
             label="Spiegazione punteggio sintetico" class-name="led__repchip">
             <ScoreChip :score="reputation" size="sm" />
           </HoverTip>
@@ -114,7 +123,7 @@ import ScoreChip from './ScoreChip.vue';
 import HoverTip from './HoverTip.vue';
 import InlineSelect from './InlineSelect.vue';
 import Many2ManyField from './Many2ManyField.vue';
-import { SCORE_TIP } from '../uiCopy.js';
+import { SCORE_TIP, LEVEL_TIP } from '../uiCopy.js';
 import { useStore } from '../useStore.js';
 import { createLookup } from '../../model/schema.js';
 import {
@@ -375,8 +384,8 @@ const fields = computed(() => {
       { key: 'allineamento', label: 'Allineamento', type: 'select', pool: false, creatable: true,
         value: props.entity.alignment, display: props.entity.alignment || EMPTY, options: ALIGNMENTS,
         onUpdate: onAlignment, onCreate: null },
-      { key: 'livello', label: 'Livello', type: 'readonly', display: String(totalLevel.value) },
-      { key: 'reputazione', label: 'Reputazione', type: 'score' },
+      { key: 'livello', label: 'Livello', type: 'readonly', display: String(totalLevel.value), tip: LEVEL_TIP },
+      { key: 'reputazione', label: 'Reputazione', type: 'score', tip: SCORE_TIP },
     ];
     if (props.entity.isPg) {
       characterFields.push({ key: 'giocatore', label: 'Giocatore', type: 'select', pool: true, creatable: true,
@@ -396,7 +405,7 @@ const fields = computed(() => {
       onUpdate: onGuide, onCreate: null },
     { key: 'motto', label: 'Motto', type: 'text',
       value: props.entity.motto, display: props.entity.motto || EMPTY, onUpdate: onMotto },
-    { key: 'reputazione', label: 'Reputazione', type: 'score' },
+    { key: 'reputazione', label: 'Reputazione', type: 'score', tip: SCORE_TIP },
   ];
   return groupFields;
 });
@@ -445,8 +454,13 @@ const fields = computed(() => {
 /* badge ruolo su riga propria sopra la griglia */
 .led__role { margin-bottom: .7rem; }
 .led__val { color: var(--text-strong); font-weight: var(--fw-semibold); overflow-wrap: anywhere; }
+/* Valore derivato con spiegazione: sottolineatura punteggiata tenue + cursore
+   help → segnala che c'è un tooltip (campo calcolato, non editabile). */
+.led__val--info { cursor: help; text-decoration: underline dotted var(--line-gold); text-underline-offset: 3px; }
 .led__sep { color: var(--text-faint); font-weight: 400; }
 .led__k { color: var(--text-muted); }
+/* Etichetta di un campo derivato: stesso affordance del valore (help + dotted). */
+.led__k--info { cursor: help; text-decoration: underline dotted var(--line-gold); text-underline-offset: 3px; }
 /* Nome campo seguito da due punti: "· Livello: 6". Un solo punto di verità.
    margin-right → piccolo respiro tra ":" e il contenuto (solo lì, non sul middot). */
 .led__k::after { content: ':'; margin-right: .18rem; }
