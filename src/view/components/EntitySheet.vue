@@ -5,7 +5,8 @@
   <section class="led" :aria-label="title">
     <!-- Ritratto: la tavola eletta a profilo (avatarPhotoId). Assente → niente
          medaglione, la testata resta piena larghezza. Si sceglie dalla Galleria. -->
-    <div v-if="entity.avatarPhotoId" class="led__portrait">
+    <div v-if="entity.avatarPhotoId" class="led__portrait"
+      :class="{ 'led__portrait--char': kind === 'character' }">
       <GalleryThumb :photo-id="entity.avatarPhotoId" :focus="avatarFocus" :alt="portraitAlt" />
     </div>
 
@@ -13,11 +14,6 @@
     <!-- Riga meta: valori inline, ognuno editabile al click sul valore.
          Niente matita globale: l'affordance è per campo (hover → cornice + icona). -->
     <div class="led__read">
-      <button v-if="kind === 'character'" type="button" class="led__role"
-        :class="entity.isPg ? 'led__role--pg' : 'led__role--png'" :aria-pressed="entity.isPg"
-        aria-label="Cambia ruolo (PG/PNG)" title="Clic: cambia PG/PNG"
-        @click="onRole">{{ entity.isPg ? 'PG' : 'PNG' }}</button>
-
       <!-- Due colonne indipendenti (non una griglia a righe condivise): se un campo
            va a capo, la colonna accanto resta invariata. Distribuzione a parità di
            indice → stesso accoppiamento di righe della griglia precedente. -->
@@ -45,6 +41,12 @@
             label="Spiegazione punteggio sintetico" class-name="led__repchip">
             <ScoreChip :score="reputation" size="sm" />
           </HoverTip>
+
+          <!-- Ruolo PG/PNG: toggle inline (primo campo della scheda personaggio). -->
+          <button v-else-if="f.type === 'role'" type="button"
+            class="led__roleval" :class="entity.isPg ? 'is-pg' : 'is-png'"
+            :aria-pressed="entity.isPg" aria-label="Cambia ruolo (PG/PNG)"
+            title="Clic: cambia PG/PNG" @click.stop="onRole">{{ f.display }}</button>
 
           <!-- Select inline (Razza, Allineamento, Giocatore, Guida) e combo
                ricercabile+crea (Tipo: etichetta libera). Pool-backed (oggetti
@@ -480,6 +482,7 @@ onUnmounted(() => {
 const fields = computed(() => {
   if (props.kind === 'character') {
     const characterFields = [
+      { key: 'ruolo', label: 'Ruolo', type: 'role', display: props.entity.isPg ? 'PG' : 'PNG' },
       { key: 'razza', label: 'Razza', type: 'select', pool: true, creatable: true,
         value: props.entity.raceId, display: raceLabel.value, options: races.value,
         onUpdate: onRace, onCreate: onCreateRace,
@@ -566,6 +569,8 @@ const metaCols = computed(() => {
 @media (max-width: 520px) {
   .led__portrait { width: 4.75rem; }
   .led { gap: var(--space-4); }
+  /* Avatar del personaggio nascosto su telefono: la testata resta compatta. */
+  .led__portrait--char { display: none; }
 }
 
 /* --- meta (lettura): campi impilati su due colonne, ciascuno col "·" --- */
@@ -589,24 +594,21 @@ const metaCols = computed(() => {
 .led__repchip :deep(.ds-score--empty) { padding-top: .3em; padding-bottom: .14em; }
 @media (max-width: 520px) { .led__cols { grid-template-columns: 1fr; } }
 
-/* Ruolo: badge-toggle. Default PNG (grigio), clic → PG (oro tenue).
-   Larghezza fissa: PG e PNG occupano la stessa pill (testo centrato). */
-.led__role {
+/* Ruolo PG/PNG: primo campo meta, valore-toggle a pill. Default PNG (grigio),
+   clic → PG (oro tenue). */
+.led__roleval {
   font-family: var(--font-display); font-size: var(--fs-label);
   font-weight: var(--fw-semibold); letter-spacing: var(--ls-caps); text-transform: uppercase;
-  border-radius: var(--radius-pill); padding: .3rem .55rem; line-height: 1;
-  min-width: 3.6rem; text-align: center;
+  border-radius: var(--radius-pill); padding: .1rem .5rem; line-height: 1.15;
   border: 1px solid; cursor: pointer;
   transition: background .15s, color .15s, border-color .15s, transform .1s;
 }
-.led__role:active { transform: translateY(1px); }
-.led__role:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
-.led__role--pg { background: var(--accent-tint); color: var(--gold-700); border-color: var(--line-gold); }
-.led__role--pg:hover { border-color: var(--gold-500); }
-.led__role--png { background: var(--surface-panel); color: var(--text-muted); border-color: var(--border-hairline); }
-.led__role--png:hover { color: var(--text-strong); border-color: var(--border-strong); }
-/* badge ruolo su riga propria sopra la griglia */
-.led__role { margin-bottom: .7rem; }
+.led__roleval:active { transform: translateY(1px); }
+.led__roleval:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+.led__roleval.is-pg { background: var(--accent-tint); color: var(--gold-700); border-color: var(--line-gold); }
+.led__roleval.is-pg:hover { border-color: var(--gold-500); }
+.led__roleval.is-png { background: var(--surface-panel); color: var(--text-muted); border-color: var(--border-hairline); }
+.led__roleval.is-png:hover { color: var(--text-strong); border-color: var(--border-strong); }
 .led__val { color: var(--text-strong); font-weight: var(--fw-semibold); overflow-wrap: anywhere; }
 .led__sep { color: var(--text-faint); font-weight: 400; }
 .led__k { color: var(--text-muted); }

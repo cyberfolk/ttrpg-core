@@ -12,9 +12,14 @@ const portraitUrls = import.meta.glob(
   '../../assets/personaggi/*.{jpg,jpeg,png,webp}',
   { eager: true, query: '?url', import: 'default' },
 );
+const symbolUrls = import.meta.glob(
+  '../../assets/gruppi/*.{jpg,jpeg,png,webp}',
+  { eager: true, query: '?url', import: 'default' },
+);
+const assetUrls = { ...portraitUrls, ...symbolUrls };
 
-// Personaggio (id stabile del dataset FR) → slug del file ritratto.
-const CHAR_PORTRAIT_SLUG = {
+// Entità (id stabile del dataset FR) → slug del file (ritratto o simbolo).
+const ENTITY_ASSET_SLUG = {
   'd0000000-0000-4000-8000-000000000001': 'drizzt',
   'd0000000-0000-4000-8000-000000000002': 'bruenor',
   'd0000000-0000-4000-8000-000000000003': 'catti-brie',
@@ -30,10 +35,15 @@ const CHAR_PORTRAIT_SLUG = {
   'd0000000-0000-4000-8000-00000000000d': 'szass-tam',
   'd0000000-0000-4000-8000-00000000000e': 'volo',
   'd0000000-0000-4000-8000-00000000000f': 'minsc',
+  '60000000-0000-4000-8000-000000000001': 'compagni',
+  '60000000-0000-4000-8000-000000000002': 'bregan',
+  '60000000-0000-4000-8000-000000000003': 'arpisti',
+  '60000000-0000-4000-8000-000000000004': 'zhentarim',
+  '60000000-0000-4000-8000-000000000005': 'thay',
 };
 
 function urlForSlug(slug) {
-  const entry = Object.entries(portraitUrls).find(([path]) => {
+  const entry = Object.entries(assetUrls).find(([path]) => {
     const file = path.split('/').pop() || '';
     const base = file.replace(/\.(jpg|jpeg|png|webp)$/i, '');
     const match = base === slug;
@@ -49,7 +59,7 @@ export async function seedSamplePhotos(state, blobStore) {
   const result = { ok: 0, skipped: 0 };
   const photos = Array.isArray(state.photos) ? state.photos : [];
   for (const photo of photos) {
-    const slug = CHAR_PORTRAIT_SLUG[photo.entityId];
+    const slug = ENTITY_ASSET_SLUG[photo.entityId];
     const url = slug ? urlForSlug(slug) : null;
     if (!url) {
       result.skipped += 1;

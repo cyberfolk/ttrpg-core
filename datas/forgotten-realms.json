@@ -361,7 +361,7 @@
         "7a600000-0000-4000-8000-000000000005"
       ],
       "notes": "I **Compagni del Pozzo** (*Companions of the Hall*): Drizzt, Bruenor, Catti-brie, Wulfgar e Regis. La famiglia scelta oltre il sangue e la razza.",
-      "avatarPhotoId": null,
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000011",
       "confirmedEmpty": [
         "motto"
       ]
@@ -383,7 +383,7 @@
         "7a600000-0000-4000-8000-000000000004"
       ],
       "notes": "**Bregan D'aerthe**, banda mercenaria di drow senza Casa fondata da Jarlaxle. Opera nell'ombra fra Menzoberranzan e la superficie.",
-      "avatarPhotoId": null,
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000012",
       "confirmedEmpty": [
         "motto"
       ]
@@ -406,7 +406,7 @@
         "7a600000-0000-4000-8000-000000000003"
       ],
       "notes": "Gli **Arpisti** (*Those Who Harp*): rete semisegreta che preserva il sapere, tutela gli innocenti e contrasta i tiranni del Nord. In guerra silenziosa con gli Zhentarim.",
-      "avatarPhotoId": null,
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000013",
       "confirmedEmpty": [
         "guideId",
         "motto"
@@ -429,7 +429,7 @@
         "7a600000-0000-4000-8000-000000000006"
       ],
       "notes": "Gli **Zhentarim**, la Rete Nera: mercenari, spie, assassini e maghi al servizio del potere. Nemici storici degli Arpisti.",
-      "avatarPhotoId": null,
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000014",
       "confirmedEmpty": [
         "motto"
       ]
@@ -450,7 +450,7 @@
         "7a600000-0000-4000-8000-000000000007"
       ],
       "notes": "Il consiglio degli **Zulkir**, i maghi rossi che governano **Thay**. Dominato dal lich Szass Tam.",
-      "avatarPhotoId": null,
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000015",
       "confirmedEmpty": [
         "motto"
       ]
@@ -930,6 +930,66 @@
       "description": "",
       "tagIds": [],
       "createdAt": 1749150840000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000011",
+      "entityId": "60000000-0000-4000-8000-000000000001",
+      "caption": "Simbolo di Compagni del Pozzo",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749160000000,
+      "focus": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000012",
+      "entityId": "60000000-0000-4000-8000-000000000002",
+      "caption": "Simbolo di Bregan D'aerthe",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749160060000,
+      "focus": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000013",
+      "entityId": "60000000-0000-4000-8000-000000000003",
+      "caption": "Simbolo di Arpisti",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749160120000,
+      "focus": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000014",
+      "entityId": "60000000-0000-4000-8000-000000000004",
+      "caption": "Simbolo di Zhentarim",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749160180000,
+      "focus": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000015",
+      "entityId": "60000000-0000-4000-8000-000000000005",
+      "caption": "Simbolo di Reggenti di Thay",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749160240000,
+      "focus": {
+        "x": 50,
+        "y": 50
+      }
     }
   ],
   "tags": [
