@@ -119,7 +119,9 @@ import { useUiState } from '../useUiState.js';
 import { useDialog } from '../useDialog.js';
 import { createState } from '../../model/schema.js';
 import { serializeState, parseImport } from '../../store/io.js';
-import sampleStoryJson from '../../../datas/sample-story.json?raw';
+import sampleStoryJson from '../../../datas/forgotten-realms.json?raw';
+import { seedSamplePhotos } from '../sampleAssets.js';
+import { photoBlobStore } from '../photoStore.js';
 import Icon from './Icon.vue';
 
 const props = defineProps({
@@ -196,11 +198,15 @@ function onExport() {
   URL.revokeObjectURL(url);
 }
 
-function onLoadSample() {
+async function onLoadSample() {
   try {
     const state = parseImport(sampleStoryJson);
     if (!window.confirm('Caricare i dati d\'esempio sovrascrive i dati correnti. Procedere?')) return;
     replaceState(state);
+    // I metadati foto sono nel dataset; i byte dei ritratti vivono in assets/ e
+    // vanno seminati in IndexedDB (l'export JSON non li porta). Best-effort: un
+    // file mancante non blocca il caricamento.
+    await seedSamplePhotos(state, photoBlobStore);
     emit('close');
   } catch (err) {
     window.alert(`Caricamento esempio fallito: ${err.message}`);

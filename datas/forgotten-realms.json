@@ -1,0 +1,1126 @@
+{
+  "version": 5,
+  "exportedAt": 1749200000000,
+  "characters": [
+    {
+      "id": "d0000000-0000-4000-8000-000000000001",
+      "name": "Drizzt Do'Urden",
+      "deletedAt": null,
+      "isPg": true,
+      "raceId": "9ace0000-0000-4000-8000-000000000004",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-00000000000a",
+          "level": 16
+        }
+      ],
+      "alignment": "Caotico Buono",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000001",
+        "7a600000-0000-4000-8000-000000000002",
+        "7a600000-0000-4000-8000-000000000005"
+      ],
+      "notes": "# Drizzt Do'Urden\n\nRanger drow che ha rinnegato Menzoberranzan e le sue Case. Vaga sulla superficie con le scimitarre gemelle *Icingdeath* e *Twinkle* e la pantera Guenhwyvar.\n\n- Cuore dei **Compagni del Pozzo**.\n- Nemico giurato di **Artemis Entreri**.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000001",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-000000000002",
+      "name": "Bruenor Battlehammer",
+      "deletedAt": null,
+      "isPg": true,
+      "raceId": "9ace0000-0000-4000-8000-000000000002",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000006",
+          "level": 16
+        }
+      ],
+      "alignment": "Legale Buono",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000001",
+        "7a600000-0000-4000-8000-000000000005"
+      ],
+      "notes": "# Bruenor Battlehammer\n\nRe nano del clan Battlehammer, signore di **Mithral Hall**. Burbero, leale, pronto a menare l'ascia per la sua famiglia adottiva.\n\n> «Per Moradin e per Mithral Hall!»",
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000002",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-000000000003",
+      "name": "Catti-brie",
+      "deletedAt": null,
+      "isPg": true,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000006",
+          "level": 10
+        },
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000008",
+          "level": 5
+        }
+      ],
+      "alignment": "Caotico Buono",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000005"
+      ],
+      "notes": "Figlia adottiva di Bruenor, guerriera e poi maga. Amore di **Drizzt**. Un tempo promessa a Wulfgar.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000003",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-000000000004",
+      "name": "Wulfgar",
+      "deletedAt": null,
+      "isPg": true,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000001",
+          "level": 15
+        }
+      ],
+      "alignment": "Caotico Buono",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000005"
+      ],
+      "notes": "Barbaro delle tribù della Piana del Ghiaccio. Cresciuto da Bruenor, brandisce il martello *Aegis-fang*.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000004",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-000000000005",
+      "name": "Regis",
+      "deletedAt": null,
+      "isPg": true,
+      "raceId": "9ace0000-0000-4000-8000-000000000006",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000007",
+          "level": 12
+        }
+      ],
+      "alignment": "Neutrale Buono",
+      "playerId": null,
+      "tagIds": [],
+      "notes": "Halfling pigro e furbo, ex ladro di Calimport. Amico fedele dei Compagni, porta un rubino incantato dal potere persuasivo.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000005",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-000000000006",
+      "name": "Jarlaxle Baenre",
+      "deletedAt": null,
+      "isPg": false,
+      "raceId": "9ace0000-0000-4000-8000-000000000004",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000006",
+          "level": 15
+        },
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000007",
+          "level": 3
+        }
+      ],
+      "alignment": "Caotico Neutrale",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000001",
+        "7a600000-0000-4000-8000-000000000002",
+        "7a600000-0000-4000-8000-000000000004"
+      ],
+      "notes": "# Jarlaxle Baenre\n\nMercenario drow senza Casa, capo carismatico di **Bregan D'aerthe**. Cappello piumato, mille trucchi, nessuna lealtà se non a se stesso — e forse a Drizzt, che lo affascina.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000006",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-000000000007",
+      "name": "Artemis Entreri",
+      "deletedAt": null,
+      "isPg": false,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000006",
+          "level": 13
+        },
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000007",
+          "level": 4
+        }
+      ],
+      "alignment": "Legale Malvagio",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000001",
+        "7a600000-0000-4000-8000-000000000006",
+        "7a600000-0000-4000-8000-000000000004"
+      ],
+      "notes": "# Artemis Entreri\n\nAssassino di Calimport, il migliore della sua arte. Ossessionato dal battere **Drizzt** per provare a se stesso di essere la lama superiore. Alleato riluttante di Jarlaxle.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000007",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-000000000008",
+      "name": "Elminster Aumar",
+      "deletedAt": null,
+      "isPg": false,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000008",
+          "level": 20
+        }
+      ],
+      "alignment": "Caotico Buono",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000001",
+        "7a600000-0000-4000-8000-000000000003",
+        "7a600000-0000-4000-8000-00000000000a"
+      ],
+      "notes": "# Elminster il Saggio\n\nArcimago di Shadowdale, Prescelto di **Mystra**. Millenni di magia dietro una pipa e un sorriso beffardo. Occhio segreto degli **Arpisti** nel Nord.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000008",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-000000000009",
+      "name": "Khelben \"Blackstaff\" Arunsun",
+      "deletedAt": null,
+      "isPg": false,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000008",
+          "level": 20
+        }
+      ],
+      "alignment": "Legale Neutrale",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000003",
+        "7a600000-0000-4000-8000-00000000000a"
+      ],
+      "notes": "Arcimago di **Waterdeep**, custode della Torre di Blackstaff. Rigido, riservato, disposto a metodi discutibili per il bene degli Arpisti. Compagno di Laeral.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-000000000009",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-00000000000a",
+      "name": "Laeral Silverhand",
+      "deletedAt": null,
+      "isPg": false,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000008",
+          "level": 18
+        }
+      ],
+      "alignment": "Caotico Buono",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000003",
+        "7a600000-0000-4000-8000-00000000000a"
+      ],
+      "notes": "Una delle **Sette Sorelle**, figlia di Mystra. Maga potentissima e Arpista. Amore di Khelben Blackstaff.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-00000000000a",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-00000000000b",
+      "name": "Manshoon",
+      "deletedAt": null,
+      "isPg": false,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000008",
+          "level": 18
+        }
+      ],
+      "alignment": "Legale Malvagio",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000003",
+        "7a600000-0000-4000-8000-000000000006"
+      ],
+      "notes": "# Manshoon\n\nFondatore degli **Zhentarim**, la Rete Nera. Arcimago paranoico che sopravvive tramite cloni. Spodestato dal potere della Rete da Fzoul, non lo perdona.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-00000000000b",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-00000000000c",
+      "name": "Fzoul Chembryl",
+      "deletedAt": null,
+      "isPg": false,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000004",
+          "level": 17
+        }
+      ],
+      "alignment": "Legale Malvagio",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000006"
+      ],
+      "notes": "Tiranno-sacerdote di **Bane**, guida di fatto degli Zhentarim. Ha strappato la Rete Nera dalle mani di Manshoon.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-00000000000c",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-00000000000d",
+      "name": "Szass Tam",
+      "deletedAt": null,
+      "isPg": false,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000008",
+          "level": 20
+        }
+      ],
+      "alignment": "Neutrale Malvagio",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000003",
+        "7a600000-0000-4000-8000-000000000007"
+      ],
+      "notes": "# Szass Tam\n\nLich, il più potente degli **Zulkir** di **Thay**. Nigromante che punta al dominio assoluto sulla terra dei maghi rossi.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-00000000000d",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-00000000000e",
+      "name": "Volothamp Geddarm",
+      "deletedAt": null,
+      "isPg": false,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-000000000008",
+          "level": 8
+        }
+      ],
+      "alignment": "Caotico Buono",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000008"
+      ],
+      "notes": "«Volo» per gli amici. Cronista viaggiatore e millantatore, autore delle celebri *Guide di Volo*. Fonte (poco affidabile) su chiunque conti nel Faerûn.",
+      "avatarPhotoId": "ph000000-0000-4000-8000-00000000000e",
+      "confirmedEmpty": []
+    },
+    {
+      "id": "d0000000-0000-4000-8000-00000000000f",
+      "name": "Minsc",
+      "deletedAt": null,
+      "isPg": false,
+      "raceId": "9ace0000-0000-4000-8000-000000000001",
+      "classLevels": [
+        {
+          "classId": "c1a50000-0000-4000-8000-00000000000a",
+          "level": 10
+        }
+      ],
+      "alignment": "Caotico Buono",
+      "playerId": null,
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000005"
+      ],
+      "notes": "Ranger rashemi dal cuore grande e dalla testa dura, accompagnato dal criceto miniaturizzato **Boo**.\n\n> «Calci nel didietro per la giustizia!»",
+      "avatarPhotoId": "ph000000-0000-4000-8000-00000000000f",
+      "confirmedEmpty": []
+    }
+  ],
+  "groups": [
+    {
+      "id": "60000000-0000-4000-8000-000000000001",
+      "name": "Compagni del Pozzo",
+      "type": "Compagnia",
+      "memberIds": [
+        "d0000000-0000-4000-8000-000000000001",
+        "d0000000-0000-4000-8000-000000000002",
+        "d0000000-0000-4000-8000-000000000003",
+        "d0000000-0000-4000-8000-000000000004",
+        "d0000000-0000-4000-8000-000000000005"
+      ],
+      "deletedAt": null,
+      "seat": "Mithral Hall",
+      "guideId": "d0000000-0000-4000-8000-000000000002",
+      "motto": "",
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000005"
+      ],
+      "notes": "I **Compagni del Pozzo** (*Companions of the Hall*): Drizzt, Bruenor, Catti-brie, Wulfgar e Regis. La famiglia scelta oltre il sangue e la razza.",
+      "avatarPhotoId": null,
+      "confirmedEmpty": [
+        "motto"
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000002",
+      "name": "Bregan D'aerthe",
+      "type": "Mercenari",
+      "memberIds": [
+        "d0000000-0000-4000-8000-000000000006",
+        "d0000000-0000-4000-8000-000000000007"
+      ],
+      "deletedAt": null,
+      "seat": "Menzoberranzan",
+      "guideId": "d0000000-0000-4000-8000-000000000006",
+      "motto": "",
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000002",
+        "7a600000-0000-4000-8000-000000000004"
+      ],
+      "notes": "**Bregan D'aerthe**, banda mercenaria di drow senza Casa fondata da Jarlaxle. Opera nell'ombra fra Menzoberranzan e la superficie.",
+      "avatarPhotoId": null,
+      "confirmedEmpty": [
+        "motto"
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000003",
+      "name": "Arpisti",
+      "type": "Rete segreta",
+      "memberIds": [
+        "d0000000-0000-4000-8000-000000000008",
+        "d0000000-0000-4000-8000-000000000009",
+        "d0000000-0000-4000-8000-00000000000a"
+      ],
+      "deletedAt": null,
+      "seat": "Twilight Hall (Berdusk)",
+      "guideId": null,
+      "motto": "",
+      "tagIds": [
+        "7a600000-0000-4000-8000-00000000000a",
+        "7a600000-0000-4000-8000-000000000003"
+      ],
+      "notes": "Gli **Arpisti** (*Those Who Harp*): rete semisegreta che preserva il sapere, tutela gli innocenti e contrasta i tiranni del Nord. In guerra silenziosa con gli Zhentarim.",
+      "avatarPhotoId": null,
+      "confirmedEmpty": [
+        "guideId",
+        "motto"
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000004",
+      "name": "Zhentarim",
+      "type": "Rete Nera",
+      "memberIds": [
+        "d0000000-0000-4000-8000-00000000000b",
+        "d0000000-0000-4000-8000-00000000000c"
+      ],
+      "deletedAt": null,
+      "seat": "Roccaforte di Zhentil",
+      "guideId": "d0000000-0000-4000-8000-00000000000c",
+      "motto": "",
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000004",
+        "7a600000-0000-4000-8000-000000000006"
+      ],
+      "notes": "Gli **Zhentarim**, la Rete Nera: mercenari, spie, assassini e maghi al servizio del potere. Nemici storici degli Arpisti.",
+      "avatarPhotoId": null,
+      "confirmedEmpty": [
+        "motto"
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000005",
+      "name": "Reggenti di Thay",
+      "type": "Consiglio arcano",
+      "memberIds": [
+        "d0000000-0000-4000-8000-00000000000d"
+      ],
+      "deletedAt": null,
+      "seat": "Eltabbar",
+      "guideId": "d0000000-0000-4000-8000-00000000000d",
+      "motto": "",
+      "tagIds": [
+        "7a600000-0000-4000-8000-000000000003",
+        "7a600000-0000-4000-8000-000000000007"
+      ],
+      "notes": "Il consiglio degli **Zulkir**, i maghi rossi che governano **Thay**. Dominato dal lich Szass Tam.",
+      "avatarPhotoId": null,
+      "confirmedEmpty": [
+        "motto"
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "id": "70000000-0000-4000-8000-000000000001",
+      "fromId": "d0000000-0000-4000-8000-000000000001",
+      "toId": "d0000000-0000-4000-8000-000000000002",
+      "delta": 30,
+      "name": "Bruenor mi ha accolto quando il mondo mi voltava le spalle",
+      "createdAt": 1749100000000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000002",
+      "fromId": "d0000000-0000-4000-8000-000000000002",
+      "toId": "d0000000-0000-4000-8000-000000000001",
+      "delta": 30,
+      "name": "L'elfo scuro vale piu di un intero clan",
+      "createdAt": 1749103600000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000003",
+      "fromId": "d0000000-0000-4000-8000-000000000001",
+      "toId": "d0000000-0000-4000-8000-000000000003",
+      "delta": 40,
+      "name": "Catti-brie e il mio cuore, in battaglia e fuori",
+      "createdAt": 1749107200000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000004",
+      "fromId": "d0000000-0000-4000-8000-000000000003",
+      "toId": "d0000000-0000-4000-8000-000000000001",
+      "delta": 40,
+      "name": "Amo Drizzt oltre ogni codice e ogni razza",
+      "createdAt": 1749110800000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000005",
+      "fromId": "d0000000-0000-4000-8000-000000000002",
+      "toId": "d0000000-0000-4000-8000-000000000003",
+      "delta": 35,
+      "name": "Catti-brie e la figlia che gli dei mi hanno donato",
+      "createdAt": 1749114400000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000006",
+      "fromId": "d0000000-0000-4000-8000-000000000003",
+      "toId": "d0000000-0000-4000-8000-000000000002",
+      "delta": 30,
+      "name": "Bruenor mi ha cresciuta: gli devo tutto",
+      "createdAt": 1749118000000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000007",
+      "fromId": "d0000000-0000-4000-8000-000000000002",
+      "toId": "d0000000-0000-4000-8000-000000000004",
+      "delta": 30,
+      "name": "Ho forgiato Aegis-fang per il mio figlio adottivo",
+      "createdAt": 1749121600000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000008",
+      "fromId": "d0000000-0000-4000-8000-000000000004",
+      "toId": "d0000000-0000-4000-8000-000000000002",
+      "delta": 28,
+      "name": "Bruenor mi ha reso un uomo, non solo un guerriero",
+      "createdAt": 1749125200000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000009",
+      "fromId": "d0000000-0000-4000-8000-000000000003",
+      "toId": "d0000000-0000-4000-8000-000000000004",
+      "delta": 10,
+      "name": "Cio che c'era tra me e Wulfgar e passato, resta l'affetto",
+      "createdAt": 1749128800000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000000a",
+      "fromId": "d0000000-0000-4000-8000-000000000004",
+      "toId": "d0000000-0000-4000-8000-000000000003",
+      "delta": 12,
+      "name": "Catti-brie ha scelto Drizzt; ho imparato a rispettarlo",
+      "createdAt": 1749132400000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000000b",
+      "fromId": "d0000000-0000-4000-8000-000000000005",
+      "toId": "d0000000-0000-4000-8000-000000000002",
+      "delta": 20,
+      "name": "Con Bruenor si mangia bene e si combatte meglio",
+      "createdAt": 1749136000000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000000c",
+      "fromId": "d0000000-0000-4000-8000-000000000001",
+      "toId": "d0000000-0000-4000-8000-000000000005",
+      "delta": 22,
+      "name": "Regis e piu coraggioso di quanto il suo panzone lasci credere",
+      "createdAt": 1749139600000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000000d",
+      "fromId": "d0000000-0000-4000-8000-000000000005",
+      "toId": "d0000000-0000-4000-8000-000000000001",
+      "delta": 25,
+      "name": "Drizzt mi ha salvato la pelle piu volte di quante ne ricordi",
+      "createdAt": 1749143200000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000000e",
+      "fromId": "d0000000-0000-4000-8000-000000000007",
+      "toId": "d0000000-0000-4000-8000-000000000001",
+      "delta": -45,
+      "name": "Dimostrero di essere la lama migliore",
+      "createdAt": 1749146800000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000000f",
+      "fromId": "d0000000-0000-4000-8000-000000000001",
+      "toId": "d0000000-0000-4000-8000-000000000007",
+      "delta": -35,
+      "name": "Entreri e tutto cio che rifiuto di diventare",
+      "createdAt": 1749150400000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000010",
+      "fromId": "d0000000-0000-4000-8000-000000000006",
+      "toId": "d0000000-0000-4000-8000-000000000001",
+      "delta": 20,
+      "name": "Drizzt mi affascina: un drow che ha scelto la superficie",
+      "createdAt": 1749154000000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000011",
+      "fromId": "d0000000-0000-4000-8000-000000000001",
+      "toId": "d0000000-0000-4000-8000-000000000006",
+      "delta": -10,
+      "name": "Di Jarlaxle non mi fido: sorride mentre trama",
+      "createdAt": 1749157600000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000012",
+      "fromId": "d0000000-0000-4000-8000-000000000006",
+      "toId": "d0000000-0000-4000-8000-000000000007",
+      "delta": 18,
+      "name": "Entreri e lo strumento piu affilato che abbia reclutato",
+      "createdAt": 1749161200000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000013",
+      "fromId": "d0000000-0000-4000-8000-000000000007",
+      "toId": "d0000000-0000-4000-8000-000000000006",
+      "delta": -12,
+      "name": "Jarlaxle mi manovra: resto solo finche mi conviene",
+      "createdAt": 1749164800000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000014",
+      "fromId": "d0000000-0000-4000-8000-000000000008",
+      "toId": "d0000000-0000-4000-8000-000000000009",
+      "delta": 18,
+      "name": "Blackstaff e rigido ma leale alla causa degli Arpisti",
+      "createdAt": 1749168400000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000015",
+      "fromId": "d0000000-0000-4000-8000-000000000009",
+      "toId": "d0000000-0000-4000-8000-000000000008",
+      "delta": 12,
+      "name": "Elminster e geniale e insopportabile in egual misura",
+      "createdAt": 1749172000000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000016",
+      "fromId": "d0000000-0000-4000-8000-00000000000a",
+      "toId": "d0000000-0000-4000-8000-000000000009",
+      "delta": 30,
+      "name": "Khelben e il mio amore e la mia ancora",
+      "createdAt": 1749175600000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000017",
+      "fromId": "d0000000-0000-4000-8000-000000000009",
+      "toId": "d0000000-0000-4000-8000-00000000000a",
+      "delta": 30,
+      "name": "Con Laeral divido la Torre e il fardello",
+      "createdAt": 1749179200000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000018",
+      "fromId": "d0000000-0000-4000-8000-000000000008",
+      "toId": "d0000000-0000-4000-8000-00000000000a",
+      "delta": 20,
+      "name": "Una delle Sette Sorelle: Mystra vegli su di lei",
+      "createdAt": 1749182800000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000019",
+      "fromId": "d0000000-0000-4000-8000-00000000000c",
+      "toId": "d0000000-0000-4000-8000-00000000000b",
+      "delta": -15,
+      "name": "Manshoon crede ancora di comandare: si sbaglia",
+      "createdAt": 1749186400000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000001a",
+      "fromId": "d0000000-0000-4000-8000-00000000000b",
+      "toId": "d0000000-0000-4000-8000-00000000000c",
+      "delta": -18,
+      "name": "Fzoul mi ha usurpato la Rete: non lo dimentico",
+      "createdAt": 1749190000000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000001b",
+      "fromId": "d0000000-0000-4000-8000-000000000008",
+      "toId": "d0000000-0000-4000-8000-00000000000b",
+      "delta": -30,
+      "name": "Manshoon avvelena il Nord da un secolo",
+      "createdAt": 1749193600000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000001c",
+      "fromId": "d0000000-0000-4000-8000-00000000000b",
+      "toId": "d0000000-0000-4000-8000-000000000008",
+      "delta": -30,
+      "name": "Il vecchio impiccione degli Arpisti mi ostacola sempre",
+      "createdAt": 1749197200000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000001d",
+      "fromId": "d0000000-0000-4000-8000-00000000000b",
+      "toId": "d0000000-0000-4000-8000-00000000000d",
+      "delta": -20,
+      "name": "Szass Tam e un lich ambizioso: rivale, mai alleato",
+      "createdAt": 1749200800000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000001e",
+      "fromId": "d0000000-0000-4000-8000-00000000000d",
+      "toId": "d0000000-0000-4000-8000-00000000000b",
+      "delta": -15,
+      "name": "Manshoon e utile finche serve, poi cenere",
+      "createdAt": 1749204400000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000001f",
+      "fromId": "d0000000-0000-4000-8000-00000000000d",
+      "toId": "d0000000-0000-4000-8000-000000000008",
+      "delta": -25,
+      "name": "Elminster e l'ostacolo tra Thay e il potere assoluto",
+      "createdAt": 1749208000000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000020",
+      "fromId": "d0000000-0000-4000-8000-00000000000e",
+      "toId": "d0000000-0000-4000-8000-000000000008",
+      "delta": 25,
+      "name": "Elminster e la mia fonte piu preziosa (e piu pericolosa)",
+      "createdAt": 1749211600000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000021",
+      "fromId": "d0000000-0000-4000-8000-000000000008",
+      "toId": "d0000000-0000-4000-8000-00000000000e",
+      "delta": 8,
+      "name": "Volo esagera ogni mia impresa, ma mi diverte",
+      "createdAt": 1749215200000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000022",
+      "fromId": "d0000000-0000-4000-8000-00000000000e",
+      "toId": "d0000000-0000-4000-8000-000000000001",
+      "delta": 20,
+      "name": "Ho reso le gesta di Drizzt leggenda in ogni taverna",
+      "createdAt": 1749218800000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000023",
+      "fromId": "d0000000-0000-4000-8000-00000000000f",
+      "toId": "d0000000-0000-4000-8000-000000000001",
+      "delta": 22,
+      "name": "Un eroe riconosce un eroe! Boo approva l'elfo scuro",
+      "createdAt": 1749222400000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000024",
+      "fromId": "d0000000-0000-4000-8000-00000000000f",
+      "toId": "d0000000-0000-4000-8000-000000000007",
+      "delta": -25,
+      "name": "Il male sara preso a calci nel didietro, dice Boo!",
+      "createdAt": 1749226000000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000025",
+      "fromId": "60000000-0000-4000-8000-000000000002",
+      "toId": "60000000-0000-4000-8000-000000000001",
+      "delta": -20,
+      "name": "I mercenari drow tramano attorno a Mithral Hall",
+      "createdAt": 1749229600000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000026",
+      "fromId": "60000000-0000-4000-8000-000000000001",
+      "toId": "60000000-0000-4000-8000-000000000002",
+      "delta": -18,
+      "name": "Diffidiamo di ogni ombra che arriva da Menzoberranzan",
+      "createdAt": 1749233200000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000027",
+      "fromId": "60000000-0000-4000-8000-000000000003",
+      "toId": "60000000-0000-4000-8000-000000000004",
+      "delta": -40,
+      "name": "Guerra segreta: gli Arpisti contrastano la Rete Nera",
+      "createdAt": 1749236800000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000028",
+      "fromId": "60000000-0000-4000-8000-000000000004",
+      "toId": "60000000-0000-4000-8000-000000000003",
+      "delta": -40,
+      "name": "Gli Arpisti sabotano ogni nostra mira sul Nord",
+      "createdAt": 1749240400000
+    },
+    {
+      "id": "70000000-0000-4000-8000-000000000029",
+      "fromId": "60000000-0000-4000-8000-000000000005",
+      "toId": "60000000-0000-4000-8000-000000000004",
+      "delta": -15,
+      "name": "Thay tollera gli Zhentarim solo come pedine",
+      "createdAt": 1749244000000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000002a",
+      "fromId": "d0000000-0000-4000-8000-000000000001",
+      "toId": "60000000-0000-4000-8000-000000000001",
+      "delta": 30,
+      "name": "I Compagni del Pozzo sono la mia vera casa",
+      "createdAt": 1749247600000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000002b",
+      "fromId": "d0000000-0000-4000-8000-000000000006",
+      "toId": "60000000-0000-4000-8000-000000000002",
+      "delta": 25,
+      "name": "Bregan D'aerthe e la mia creatura: leale a me solo",
+      "createdAt": 1749251200000
+    },
+    {
+      "id": "70000000-0000-4000-8000-00000000002c",
+      "fromId": "d0000000-0000-4000-8000-00000000000c",
+      "toId": "60000000-0000-4000-8000-000000000004",
+      "delta": 20,
+      "name": "La Rete Nera e mia: la piego alla mia fede",
+      "createdAt": 1749254800000
+    }
+  ],
+  "photos": [
+    {
+      "id": "ph000000-0000-4000-8000-000000000001",
+      "entityId": "d0000000-0000-4000-8000-000000000001",
+      "caption": "Ritratto di Drizzt Do'Urden",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150000000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000002",
+      "entityId": "d0000000-0000-4000-8000-000000000002",
+      "caption": "Ritratto di Bruenor Battlehammer",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150060000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000003",
+      "entityId": "d0000000-0000-4000-8000-000000000003",
+      "caption": "Ritratto di Catti-brie",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150120000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000004",
+      "entityId": "d0000000-0000-4000-8000-000000000004",
+      "caption": "Ritratto di Wulfgar",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150180000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000005",
+      "entityId": "d0000000-0000-4000-8000-000000000005",
+      "caption": "Ritratto di Regis",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150240000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000006",
+      "entityId": "d0000000-0000-4000-8000-000000000006",
+      "caption": "Ritratto di Jarlaxle Baenre",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150300000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000007",
+      "entityId": "d0000000-0000-4000-8000-000000000007",
+      "caption": "Ritratto di Artemis Entreri",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150360000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000008",
+      "entityId": "d0000000-0000-4000-8000-000000000008",
+      "caption": "Ritratto di Elminster Aumar",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150420000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-000000000009",
+      "entityId": "d0000000-0000-4000-8000-000000000009",
+      "caption": "Ritratto di Khelben \"Blackstaff\" Arunsun",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150480000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-00000000000a",
+      "entityId": "d0000000-0000-4000-8000-00000000000a",
+      "caption": "Ritratto di Laeral Silverhand",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150540000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-00000000000b",
+      "entityId": "d0000000-0000-4000-8000-00000000000b",
+      "caption": "Ritratto di Manshoon",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150600000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-00000000000c",
+      "entityId": "d0000000-0000-4000-8000-00000000000c",
+      "caption": "Ritratto di Fzoul Chembryl",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150660000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-00000000000d",
+      "entityId": "d0000000-0000-4000-8000-00000000000d",
+      "caption": "Ritratto di Szass Tam",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150720000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-00000000000e",
+      "entityId": "d0000000-0000-4000-8000-00000000000e",
+      "caption": "Ritratto di Volothamp Geddarm",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150780000
+    },
+    {
+      "id": "ph000000-0000-4000-8000-00000000000f",
+      "entityId": "d0000000-0000-4000-8000-00000000000f",
+      "caption": "Ritratto di Minsc",
+      "description": "",
+      "tagIds": [],
+      "createdAt": 1749150840000
+    }
+  ],
+  "tags": [
+    {
+      "id": "7a600000-0000-4000-8000-000000000001",
+      "name": "iconico"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000002",
+      "name": "drow"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000003",
+      "name": "arcano"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000004",
+      "name": "mercenario"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000005",
+      "name": "eroe"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000006",
+      "name": "faida"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000007",
+      "name": "non-morto"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000008",
+      "name": "cronista"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000009",
+      "name": "nobile"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-00000000000a",
+      "name": "arpista"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-00000000000b",
+      "name": "capitano"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-00000000000c",
+      "name": "spia"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-00000000000d",
+      "name": "criminale"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-00000000000e",
+      "name": "guaritore"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-00000000000f",
+      "name": "mercante"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000010",
+      "name": "religioso"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000011",
+      "name": "guaritore"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000012",
+      "name": "ricercato"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000013",
+      "name": "veterano"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000014",
+      "name": "recluta"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000015",
+      "name": "straniero"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000016",
+      "name": "corte"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000017",
+      "name": "artigiano"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000018",
+      "name": "eremita"
+    },
+    {
+      "id": "7a600000-0000-4000-8000-000000000019",
+      "name": "redento"
+    }
+  ],
+  "players": [],
+  "races": [
+    {
+      "id": "9ace0000-0000-4000-8000-000000000001",
+      "name": "Umano"
+    },
+    {
+      "id": "9ace0000-0000-4000-8000-000000000002",
+      "name": "Nano"
+    },
+    {
+      "id": "9ace0000-0000-4000-8000-000000000003",
+      "name": "Elfo"
+    },
+    {
+      "id": "9ace0000-0000-4000-8000-000000000004",
+      "name": "Elfo scuro (Drow)"
+    },
+    {
+      "id": "9ace0000-0000-4000-8000-000000000005",
+      "name": "Mezzelfo"
+    },
+    {
+      "id": "9ace0000-0000-4000-8000-000000000006",
+      "name": "Halfling"
+    },
+    {
+      "id": "9ace0000-0000-4000-8000-000000000007",
+      "name": "Mezzorco"
+    },
+    {
+      "id": "9ace0000-0000-4000-8000-000000000008",
+      "name": "Tiefling"
+    },
+    {
+      "id": "9ace0000-0000-4000-8000-000000000009",
+      "name": "Gnomo"
+    },
+    {
+      "id": "9ace0000-0000-4000-8000-00000000000a",
+      "name": "Orco"
+    }
+  ],
+  "classes": [
+    {
+      "id": "c1a50000-0000-4000-8000-000000000001",
+      "name": "Barbaro"
+    },
+    {
+      "id": "c1a50000-0000-4000-8000-000000000002",
+      "name": "Bardo"
+    },
+    {
+      "id": "c1a50000-0000-4000-8000-000000000003",
+      "name": "Paladino"
+    },
+    {
+      "id": "c1a50000-0000-4000-8000-000000000004",
+      "name": "Chierico"
+    },
+    {
+      "id": "c1a50000-0000-4000-8000-000000000005",
+      "name": "Druido"
+    },
+    {
+      "id": "c1a50000-0000-4000-8000-000000000006",
+      "name": "Guerriero"
+    },
+    {
+      "id": "c1a50000-0000-4000-8000-000000000007",
+      "name": "Ladro"
+    },
+    {
+      "id": "c1a50000-0000-4000-8000-000000000008",
+      "name": "Mago"
+    },
+    {
+      "id": "c1a50000-0000-4000-8000-000000000009",
+      "name": "Monaco"
+    },
+    {
+      "id": "c1a50000-0000-4000-8000-00000000000a",
+      "name": "Ranger"
+    },
+    {
+      "id": "c1a50000-0000-4000-8000-00000000000b",
+      "name": "Stregone"
+    }
+  ]
+}

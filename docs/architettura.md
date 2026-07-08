@@ -58,6 +58,7 @@ Rendering UI con componenti Vue 3. Parla **solo** con lo STORE (mai col MODEL di
 | `src/store/io.js`                            | Serializzazione, validazione, migrazione, parsing import                                     |
 | `src/store/store.js`                         | Stato, `dispatch`, `subscribe`, persistenza                                                  |
 | `src/view/main.js` · `router.js` · `App.vue` | Bootstrap Vue, rotte (history mode), layout + drawer                                         |
+| `src/view/sampleAssets.js`                   | Seed dei ritratti del dataset d'esempio: byte da `assets/personaggi/` → `PhotoBlobStore` (IndexedDB) al «Carica dati d'esempio» |
 | `src/view/components/*.vue`                  | Viste e componenti (faccia-a-faccia, galleria, lista, profili, modale)                       |
 | `src/view/use*.js`                           | Composables: accesso allo STORE, stato UI, entità visualizzate                               |
 
