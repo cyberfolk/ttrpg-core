@@ -3,6 +3,7 @@ import App from './App.vue';
 import { router } from './router.js';
 import { vActivate } from './activate.js';
 import { vFocus } from './focus.js';
+import { vScrollCue } from './scrollCue.js';
 import { displayName } from './disambiguation.js';
 import '../../styles/main.css';
 
@@ -10,6 +11,7 @@ const app = createApp(App);
 app.use(router);
 app.directive('activate', vActivate);
 app.directive('focus', vFocus);
+app.directive('scroll-cue', vScrollCue);
 // Helper globale nei template: nome entità con segnaposto se vuoto.
 app.config.globalProperties.$name = displayName;
 app.mount('#app');

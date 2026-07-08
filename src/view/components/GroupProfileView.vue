@@ -54,7 +54,7 @@
 
       <!-- Sezioni con tab switcher -->
       <div class="rep-gp-tabs">
-        <div class="ds-seg ds-seg--underline">
+        <div class="ds-seg ds-seg--underline" v-scroll-cue>
           <button class="ds-seg__btn" :class="{ active: tab === 'note' }" @click="tab = 'note'">
             Note
           </button>
