@@ -282,10 +282,14 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
   font-weight: var(--fw-semibold);
   letter-spacing: var(--ls-caps);
   text-transform: uppercase;
-  padding: .22rem .55rem;
+  /* Cinzel tutto-maiuscolo: i glifi non hanno discendenti ma le metriche del
+     font riservano lo spazio sotto la baseline, spingendo l'inchiostro alto
+     nella pill. Padding verticale asimmetrico (più sopra, meno sotto) per
+     centrare otticamente il testo senza cambiare l'altezza del badge. */
+  padding: .37rem .55rem .09rem;
   border-radius: var(--radius-pill);
   border: 1px solid transparent;
-  line-height: 1.1;
+  line-height: 1;
 }
 .ds-badge--neutral { background: var(--surface-panel); color: var(--text-muted); border-color: var(--border-hairline); }
 .ds-badge--gold    { background: var(--accent-tint); color: var(--gold-700); border-color: var(--line-gold); }
