@@ -61,6 +61,9 @@
           <button class="ds-seg__btn" :class="{ active: tab === 'out' }" @click="tab = 'out'">
             Lui pensa
           </button>
+          <button class="ds-seg__btn" :class="{ active: tab === 'groups' }" @click="tab = 'groups'">
+            Membro di
+          </button>
           <button class="ds-seg__btn" :class="{ active: tab === 'gallery' }" @click="tab = 'gallery'">
             Galleria
           </button>
@@ -81,6 +84,76 @@
         :direction="tab"
         @open-tx="openTx"
       />
+
+      <!-- Gruppi del personaggio -->
+      <template v-if="tab === 'groups'">
+        <div class="rep-table-wrap rep-table--flush">
+          <table class="rep-table">
+            <thead>
+              <tr>
+                <th class="rep-table__num">#</th>
+                <th>Nome</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="memberGroups.length === 0">
+                <td colspan="3" class="rep-empty">Non è membro di alcun gruppo.</td>
+              </tr>
+              <tr v-for="(group, i) in memberGroups" :key="group.id"
+                class="rep-table__row--clickable" role="button" tabindex="0"
+                @click="goToGroup(group.id)" v-activate>
+
+                <td class="rep-table__num">{{ i + 1 }}</td>
+                <td>
+                  <span class="rep-table__name" @click.stop="goToGroup(group.id)">
+                    {{ $name(group) }}
+                    <Icon name="goto" />
+                  </span>
+                </td>
+                <td @click.stop>
+                  <div class="rep-table__actions">
+                    <template v-if="confirmUnlinkId === group.id">
+                      <button class="ds-btn ds-btn--sm ds-btn--danger"
+                        type="button" @click="confirmUnlink(group.id)">Sgancia</button>
+                      <button class="ds-btn ds-btn--sm ds-btn--ghost"
+                        type="button" @click="confirmUnlinkId = null">Annulla</button>
+                    </template>
+                    <HoverTip v-else text="Sgancia dal gruppo" label="Sgancia dal gruppo" :tab-index="-1">
+                      <button class="ds-btn ds-btn--sm ds-btn--danger ds-btn--icon"
+                        type="button" aria-label="Sgancia dal gruppo" @click="confirmUnlinkId = group.id">
+                        <Icon name="unlink" />
+                      </button>
+                    </HoverTip>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="rep-addrow">
+                <td class="rep-table__num"></td>
+                <td>
+                  <EntityPicker
+                    v-model="newGroupId"
+                    :only="availableGroupIds"
+                    label="Gruppo da aggiungere"
+                    placeholder="Scegli un gruppo…"
+                    hide-label />
+                </td>
+                <td>
+                  <HoverTip text="Aggiungi al gruppo" label="Aggiungi al gruppo" :tab-index="-1">
+                    <button class="ds-btn ds-btn--primary ds-btn--sm ds-btn--icon"
+                      type="button" :disabled="!newGroupId" aria-label="Aggiungi al gruppo"
+                      @click="onAddGroup">
+                      <Icon name="plus" />
+                    </button>
+                  </HoverTip>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </template>
 
       <!-- Ornament -->
       <div class="rep-profile__orn">
@@ -110,19 +183,20 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
 import { useUiState } from '../useUiState.js';
 import { useDisplayedCharacters } from '../useDisplayedCharacters.js';
 import {
-  averageIncomingScore,
+  averageIncomingScore, listActiveGroups, addMember, removeMember,
   renameCharacter, softDeleteCharacter, restoreCharacter, hardDeleteCharacter,
 } from '../../model/reputation.js';
 import { listPhotos } from '../../model/photos.js';
 import { photoBlobStore } from '../photoStore.js';
 import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
+import EntityPicker from './EntityPicker.vue';
 import TransactionModal from './TransactionModal.vue';
 import NotFound from './NotFound.vue';
 import HoverTip from './HoverTip.vue';
@@ -142,9 +216,14 @@ const ui = useUiState();
 const router = useRouter();
 const tab = ref('note');
 const tx = ref(null);
+const newGroupId = ref(null);
 // Rinomina inline del personaggio dall'header della scheda.
 const editing = ref(false);
 const editName = ref('');
+// Sgancio gruppo: conferma inline a due passi (niente delete silenzioso).
+const confirmUnlinkId = ref(null);
+// Cambio tab azzera una conferma di sgancio in sospeso.
+watch(tab, () => { confirmUnlinkId.value = null; });
 
 // Lista ordinata dei personaggi (stesso ordine della vista lista) per il pager prev/next.
 const { all: displayedCharacters } = useDisplayedCharacters();
@@ -162,6 +241,44 @@ const synthetic = computed(() => {
   if (character.value === null) return null;
   return averageIncomingScore(state.value, character.value.id, ui.showArchived);
 });
+
+const memberGroups = computed(() => {
+  if (character.value === null) return [];
+  const charId = character.value.id;
+  const groups = listActiveGroups(state.value).filter((g) => g.memberIds.includes(charId));
+  return groups;
+});
+
+// Gruppi attivi a cui il personaggio non appartiene ancora (assegnabili).
+const availableGroups = computed(() => {
+  if (character.value === null) return [];
+  const charId = character.value.id;
+  const groups = listActiveGroups(state.value).filter((g) => !g.memberIds.includes(charId));
+  return groups;
+});
+
+const availableGroupIds = computed(() => {
+  const ids = availableGroups.value.map((g) => g.id);
+  return ids;
+});
+
+function confirmUnlink(groupId) {
+  const charId = character.value.id;
+  dispatch((s) => removeMember(s, groupId, charId));
+  confirmUnlinkId.value = null;
+}
+
+function onAddGroup() {
+  if (!newGroupId.value) return;
+  const charId = character.value.id;
+  const groupId = newGroupId.value;
+  dispatch((s) => addMember(s, groupId, charId));
+  newGroupId.value = null;
+}
+
+function goToGroup(id) {
+  router.push({ name: 'groupProfile', params: { id } });
+}
 
 function openTx(pair) {
   tx.value = pair;

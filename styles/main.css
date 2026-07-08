@@ -978,6 +978,22 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 /* Spaziature profilo: dalla scala --space-*, niente valori inline arbitrari */
 .rep-profile__card { padding: var(--space-6) var(--space-7) var(--space-7); }
 .rep-profile__tabs { margin: var(--space-5) 0 var(--space-6); }
+/* Telefono: le barre tab (personaggio e gruppo) diventano una striscia
+   scrollabile in orizzontale, con sfumatura sul bordo destro a segnalare che
+   continua → nessun tab (es. «Galleria») resta fuori/nascosto. */
+@media (max-width: 520px) {
+  .rep-profile__tabs .ds-seg--underline,
+  .rep-gp-tabs .ds-seg--underline {
+    overflow-x: auto; overflow-y: hidden; max-width: 100%;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
+  }
+  .rep-profile__tabs .ds-seg--underline::-webkit-scrollbar,
+  .rep-gp-tabs .ds-seg--underline::-webkit-scrollbar { display: none; }
+  .rep-profile__tabs .ds-seg__btn,
+  .rep-gp-tabs .ds-seg__btn { flex: 0 0 auto; white-space: nowrap; }
+}
 .rep-profile__orn  { margin-top: var(--space-6); }
 
 /* Smartphone: nelle liste dentro le schede (RelationList, Membri, Membro di)
