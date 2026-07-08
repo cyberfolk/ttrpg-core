@@ -1,12 +1,13 @@
 <template>
   <section v-if="group" class="rep-profile">
-    <nav class="rep-breadcrumb">
-      <router-link to="/gruppi">Gruppi</router-link>
-      <span> / {{ $name(group) }}</span>
-    </nav>
-
-    <RecordPager v-if="recordIndex >= 0" :index="recordIndex" :total="recordIds.length"
-      @update:index="goToIndex" />
+    <div class="rep-profile__topbar">
+      <nav class="rep-breadcrumb">
+        <router-link to="/gruppi">Gruppi</router-link>
+        <span> / {{ $name(group) }}</span>
+      </nav>
+      <RecordPager v-if="recordIndex >= 0" :index="recordIndex" :total="recordIds.length"
+        @update:index="goToIndex" />
+    </div>
 
     <!-- Intestazione gruppo -->
     <div class="ds-card ds-card--filament rep-profile__card">

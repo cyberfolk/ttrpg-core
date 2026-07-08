@@ -1,12 +1,13 @@
 <template>
   <section v-if="character" class="rep-profile">
-    <nav class="rep-breadcrumb">
-      <router-link to="/personaggi">Personaggi</router-link>
-      <span> / {{ $name(character) }}</span>
-    </nav>
-
-    <RecordPager v-if="recordIndex >= 0" :index="recordIndex" :total="recordIds.length"
-      @update:index="goToIndex" />
+    <div class="rep-profile__topbar">
+      <nav class="rep-breadcrumb">
+        <router-link to="/personaggi">Personaggi</router-link>
+        <span> / {{ $name(character) }}</span>
+      </nav>
+      <RecordPager v-if="recordIndex >= 0" :index="recordIndex" :total="recordIds.length"
+        @update:index="goToIndex" />
+    </div>
 
     <div class="ds-card ds-card--filament rep-profile__card">
       <!-- Profile header -->
