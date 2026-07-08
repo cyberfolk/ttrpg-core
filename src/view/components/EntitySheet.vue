@@ -59,13 +59,13 @@
                 :option-value="f.pool ? 'id' : ''" :option-label="f.pool ? 'name' : ''"
                 :aria-label="f.label" @update:model-value="f.onUpdate($event)"
                 @create="f.onCreate && f.onCreate($event)" @close="stopField" />
-              <HoverTip v-if="f.emptyable" text="Svuota il campo → «da definire»"
+              <HoverTip v-if="f.emptyable" text="da definire"
                 :tab-index="-1" class-name="led__none-tip">
                 <button type="button" class="led__none-btn"
                   :aria-label="`Svuota ${f.label} (da definire)`"
                   @mousedown.prevent="clearField(f)"><Icon name="minus" /></button>
               </HoverTip>
-              <HoverTip v-if="f.emptyable" text="Segna come «nessuno» (confermato vuoto)"
+              <HoverTip v-if="f.emptyable" text="nessuno"
                 :tab-index="-1" class-name="led__none-tip">
                 <button type="button" class="led__none-btn"
                   :aria-label="`Segna ${f.label} come nessuno`"
@@ -87,13 +87,13 @@
               <input class="led__select led__input led__select--inline" type="text"
                 v-model="textDraft" v-focus :aria-label="f.label"
                 @blur="commitText(f)" @keydown.enter="commitText(f)" @keydown.escape="commitText(f)" />
-              <HoverTip v-if="f.emptyable" text="Svuota il campo → «da definire»"
+              <HoverTip v-if="f.emptyable" text="da definire"
                 :tab-index="-1" class-name="led__none-tip">
                 <button type="button" class="led__none-btn"
                   :aria-label="`Svuota ${f.label} (da definire)`"
                   @mousedown.prevent="clearField(f)"><Icon name="minus" /></button>
               </HoverTip>
-              <HoverTip v-if="f.emptyable" text="Segna come «nessuno» (confermato vuoto)"
+              <HoverTip v-if="f.emptyable" text="nessuno"
                 :tab-index="-1" class-name="led__none-tip">
                 <button type="button" class="led__none-btn"
                   :aria-label="`Segna ${f.label} come nessuno`"
