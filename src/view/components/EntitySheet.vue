@@ -59,12 +59,18 @@
                 :option-value="f.pool ? 'id' : ''" :option-label="f.pool ? 'name' : ''"
                 :aria-label="f.label" @update:model-value="f.onUpdate($event)"
                 @create="f.onCreate && f.onCreate($event)" @close="stopField" />
-              <button v-if="f.emptyable" type="button" class="led__none-btn"
-                :aria-label="`Svuota ${f.label} (da definire)`" title="Vuoto — da definire"
-                @mousedown.prevent="clearField(f)"><Icon name="minus" /></button>
-              <button v-if="f.emptyable" type="button" class="led__none-btn"
-                :aria-label="`Segna ${f.label} come nessuno`" title="Nessuno"
-                @mousedown.prevent="markFieldNone(f)"><Icon name="ban" /></button>
+              <HoverTip v-if="f.emptyable" text="Svuota il campo → «da definire»"
+                :tab-index="-1" class-name="led__none-tip">
+                <button type="button" class="led__none-btn"
+                  :aria-label="`Svuota ${f.label} (da definire)`"
+                  @mousedown.prevent="clearField(f)"><Icon name="minus" /></button>
+              </HoverTip>
+              <HoverTip v-if="f.emptyable" text="Segna come «nessuno» (confermato vuoto)"
+                :tab-index="-1" class-name="led__none-tip">
+                <button type="button" class="led__none-btn"
+                  :aria-label="`Segna ${f.label} come nessuno`"
+                  @mousedown.prevent="markFieldNone(f)"><Icon name="ban" /></button>
+              </HoverTip>
             </span>
           </template>
 
@@ -81,12 +87,18 @@
               <input class="led__select led__input led__select--inline" type="text"
                 v-model="textDraft" v-focus :aria-label="f.label"
                 @blur="commitText(f)" @keydown.enter="commitText(f)" @keydown.escape="commitText(f)" />
-              <button v-if="f.emptyable" type="button" class="led__none-btn"
-                :aria-label="`Svuota ${f.label} (da definire)`" title="Vuoto — da definire"
-                @mousedown.prevent="clearField(f)"><Icon name="minus" /></button>
-              <button v-if="f.emptyable" type="button" class="led__none-btn"
-                :aria-label="`Segna ${f.label} come nessuno`" title="Nessuno"
-                @mousedown.prevent="markFieldNone(f)"><Icon name="ban" /></button>
+              <HoverTip v-if="f.emptyable" text="Svuota il campo → «da definire»"
+                :tab-index="-1" class-name="led__none-tip">
+                <button type="button" class="led__none-btn"
+                  :aria-label="`Svuota ${f.label} (da definire)`"
+                  @mousedown.prevent="clearField(f)"><Icon name="minus" /></button>
+              </HoverTip>
+              <HoverTip v-if="f.emptyable" text="Segna come «nessuno» (confermato vuoto)"
+                :tab-index="-1" class-name="led__none-tip">
+                <button type="button" class="led__none-btn"
+                  :aria-label="`Segna ${f.label} come nessuno`"
+                  @mousedown.prevent="markFieldNone(f)"><Icon name="ban" /></button>
+              </HoverTip>
             </span>
           </template>
 
@@ -612,6 +624,7 @@ const fields = computed(() => {
    iconcine restano sempre dentro la cella, senza sforare sulla colonna a lato. */
 .led__editwrap { display: inline-flex; align-items: center; gap: .3rem; min-width: 0; max-width: 100%; }
 .led__editwrap :deep(.isel) { flex: 1 1 auto; min-width: 0; }
+.led__none-tip { display: inline-flex; flex: 0 0 auto; }
 .led__none-btn {
   flex: 0 0 auto; display: inline-grid; place-items: center; cursor: pointer;
   width: 1.5rem; height: 1.5rem; padding: 0; font-size: .82rem;
