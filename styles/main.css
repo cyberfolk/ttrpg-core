@@ -342,7 +342,7 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
 .ds-input--with-icon { padding-left: 2.2rem; }
 /* Affordance "campo con spiegazione": sottolineatura punteggiata tenue + cursore
    help → segnala che c'è un tooltip (es. valore derivato non editabile). */
-.ds-hint { cursor: help; text-decoration: underline dotted var(--line-gold); text-underline-offset: 3px; }
+.ds-hint { cursor: help; }
 /* Affordance "modifica inline": a riposo è testo; su hover/focus (o .is-open)
    cornice oro tenue e l'icona matita (.ds-inline-edit__ico) appare. Base condivisa
    da scheda anagrafica (.led__val--edit) e rinomina profilo (.rep-profile__nameedit);

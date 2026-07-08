@@ -60,11 +60,11 @@
                 :aria-label="f.label" @update:model-value="f.onUpdate($event)"
                 @create="f.onCreate && f.onCreate($event)" @close="stopField" />
               <button v-if="f.emptyable" type="button" class="led__none-btn"
-                :aria-label="`Svuota ${f.label}`" title="Da definire (vuoto)"
-                @mousedown.prevent="clearField(f)">vuoto</button>
+                :aria-label="`Svuota ${f.label} (da definire)`" title="Vuoto — da definire"
+                @mousedown.prevent="clearField(f)"><Icon name="minus" /></button>
               <button v-if="f.emptyable" type="button" class="led__none-btn"
                 :aria-label="`Segna ${f.label} come nessuno`" title="Nessuno"
-                @mousedown.prevent="markFieldNone(f)">nessuno</button>
+                @mousedown.prevent="markFieldNone(f)"><Icon name="ban" /></button>
             </span>
           </template>
 
@@ -82,11 +82,11 @@
                 v-model="textDraft" v-focus :aria-label="f.label"
                 @blur="commitText(f)" @keydown.enter="commitText(f)" @keydown.escape="commitText(f)" />
               <button v-if="f.emptyable" type="button" class="led__none-btn"
-                :aria-label="`Svuota ${f.label}`" title="Da definire (vuoto)"
-                @mousedown.prevent="clearField(f)">vuoto</button>
+                :aria-label="`Svuota ${f.label} (da definire)`" title="Vuoto — da definire"
+                @mousedown.prevent="clearField(f)"><Icon name="minus" /></button>
               <button v-if="f.emptyable" type="button" class="led__none-btn"
                 :aria-label="`Segna ${f.label} come nessuno`" title="Nessuno"
-                @mousedown.prevent="markFieldNone(f)">nessuno</button>
+                @mousedown.prevent="markFieldNone(f)"><Icon name="ban" /></button>
             </span>
           </template>
 
@@ -607,14 +607,16 @@ const fields = computed(() => {
 .led__val--absent:hover .led__val-ico,
 .led__val--none:hover .led__val-ico { opacity: .6; }
 
-/* Editor + azione "nessuno" affiancata. */
-.led__editwrap { display: inline-flex; align-items: center; gap: .35rem; min-width: 0; }
+/* Editor + azioni compatte «vuoto»/«nessuno» affiancate. Il select può
+   restringersi (min-width:0 → il valore lungo tronca con ellissi) così le
+   iconcine restano sempre dentro la cella, senza sforare sulla colonna a lato. */
+.led__editwrap { display: inline-flex; align-items: center; gap: .3rem; min-width: 0; max-width: 100%; }
+.led__editwrap :deep(.isel) { flex: 1 1 auto; min-width: 0; }
 .led__none-btn {
-  flex: 0 0 auto; cursor: pointer; white-space: nowrap;
-  font-family: var(--font-sans); font-size: var(--fs-sm); font-style: italic;
+  flex: 0 0 auto; display: inline-grid; place-items: center; cursor: pointer;
+  width: 1.5rem; height: 1.5rem; padding: 0; font-size: .82rem;
   color: var(--text-muted); background: none;
-  border: 1px dashed var(--border-hairline); border-radius: var(--radius-sm);
-  padding: .15rem .4rem; line-height: 1.2;
+  border: 1px solid var(--border-hairline); border-radius: var(--radius-sm);
   transition: color .15s, border-color .15s, background .15s;
 }
 .led__none-btn:hover { color: var(--gold-700); border-color: var(--line-gold); background: var(--accent-tint); }

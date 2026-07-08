@@ -37,7 +37,7 @@
             title="Clic o trascina sul punto da mostrare"
             @pointerdown="onReframe($event, p.id)" @pointermove="onReframe($event, p.id)">
             <span class="gallery__reframe-dot"
-              :style="{ left: (p.focus ? p.focus.x : 50) + '%', top: (p.focus ? p.focus.y : 50) + '%' }"></span>
+              :style="{ left: (p.focus ? p.focus.x : 50) + '%', top: (100 - (p.focus ? p.focus.y : 50)) + '%' }"></span>
           </div>
         </div>
 
@@ -133,7 +133,9 @@ function onReframe(e, id) {
   }
   const rect = e.currentTarget.getBoundingClientRect();
   const x = ((e.clientX - rect.left) / rect.width) * 100;
-  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  // Asse Y invertito: trascinare in su rivela la parte opposta (object-position
+  // cresce), coerente col gesto di spostare l'immagine.
+  const y = (1 - (e.clientY - rect.top) / rect.height) * 100;
   dispatch((s) => setPhotoFocus(s, id, { x, y }));
 }
 
@@ -238,7 +240,6 @@ async function onDrop(e) {
 .gallery__frame:hover {
   border-color: var(--line-gold);
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
 }
 .gallery__frame:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
 
