@@ -993,6 +993,14 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
   .rep-gp-tabs .ds-seg--underline::-webkit-scrollbar { display: none; }
   .rep-profile__tabs .ds-seg__btn,
   .rep-gp-tabs .ds-seg__btn { flex: 0 0 auto; white-space: nowrap; }
+  /* Chevron sul bordo destro, sopra la sfumatura: indica che la striscia continua. */
+  .rep-profile__tabs, .rep-gp-tabs { position: relative; }
+  .rep-profile__tabs::after, .rep-gp-tabs::after {
+    content: '\203A'; position: absolute; right: .1rem; top: 50%;
+    transform: translateY(-50%); pointer-events: none;
+    font-family: var(--font-sans); font-size: 1.3rem; font-weight: 700;
+    line-height: 1; color: var(--gold-600);
+  }
 }
 .rep-profile__orn  { margin-top: var(--space-6); }
 
