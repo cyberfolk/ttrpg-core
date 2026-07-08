@@ -69,6 +69,21 @@ export function updatePhotoMeta(state, photoId, patch) {
   return next;
 }
 
+// Imposta il punto focale (0..100%) usato per l'inquadratura in object-fit: cover.
+export function setPhotoFocus(state, photoId, focus) {
+  const clamp = (v) => Math.max(0, Math.min(100, Math.round(v)));
+  const safe = { x: clamp(focus.x), y: clamp(focus.y) };
+  const photos = state.photos.map((p) => {
+    if (p.id !== photoId) {
+      return p;
+    }
+    const updated = { ...p, focus: safe };
+    return updated;
+  });
+  const next = { ...state, photos };
+  return next;
+}
+
 export function listPhotos(state, entityId) {
   const list = state.photos
     .filter((p) => p.entityId === entityId)

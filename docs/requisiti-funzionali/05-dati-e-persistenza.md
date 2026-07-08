@@ -49,7 +49,8 @@ del dataset d'esempio compaiono davvero, pur restando i byte fuori dall'export J
   ],
   "photos": [
     { "id": "ph1", "entityId": "c1", "caption": "Ritratto",
-      "description": "", "tagIds": ["tg1"], "createdAt": 1749150000000 }
+      "description": "", "tagIds": ["tg1"], "createdAt": 1749150000000,
+      "focus": { "x": 50, "y": 50 } }
   ],
   "tags": [{ "id": "tg1", "name": "ricercato" }],
   "players": [{ "id": "p1", "name": "Giulia" }],
@@ -63,4 +64,5 @@ la v1→v2 aggiunge `groups`, la v2→v3 aggiunge i quattro pool lookup
 (`tags`/`players`/`races`/`classes`) e fa il backfill dei campi anagrafici, la v3→v4
 aggiunge `photos[]` e fa il backfill di `avatarPhotoId: null` su personaggi e gruppi,
 la v4→v5 fa il backfill di `confirmedEmpty: []` (tri-stato dei campi opzionali, vedi
-[01](01-entita.md#tri-stato-dei-campi-opzionali)) su personaggi e gruppi.
+[01](01-entita.md#tri-stato-dei-campi-opzionali)) su personaggi e gruppi e di
+`focus: {x:50,y:50}` (punto focale) sulle foto prive.

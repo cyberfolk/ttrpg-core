@@ -1,5 +1,6 @@
 <template>
-  <img v-if="url" :src="url" :alt="alt" class="gthumb" :class="{ 'gthumb--cover': cover }" />
+  <img v-if="url" :src="url" :alt="alt" class="gthumb" :class="{ 'gthumb--cover': cover }"
+    :style="cover ? focusStyle : null" />
   <span v-else class="gthumb gthumb--empty" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
       stroke-linecap="round" stroke-linejoin="round">
@@ -11,7 +12,7 @@
 </template>
 
 <script setup>
-import { toRef } from 'vue';
+import { toRef, computed } from 'vue';
 import { usePhotoUrl } from '../usePhotoUrl.js';
 
 const props = defineProps({
@@ -19,9 +20,21 @@ const props = defineProps({
   alt: { type: String, default: '' },
   // cover: riempi il riquadro (griglia/avatar); false → contain (dettaglio).
   cover: { type: Boolean, default: true },
+  // Punto focale {x,y} in 0..100: dove ancorare l'immagine in object-fit: cover.
+  focus: { type: Object, default: null },
 });
 
 const url = usePhotoUrl(toRef(() => props.photoId));
+
+// object-position dal punto focale: sposta il soggetto dentro il riquadro (evita
+// la testa tagliata). null → centro (default del browser).
+const focusStyle = computed(() => {
+  if (!props.focus) {
+    return null;
+  }
+  const style = { objectPosition: `${props.focus.x}% ${props.focus.y}%` };
+  return style;
+});
 </script>
 
 <style scoped>

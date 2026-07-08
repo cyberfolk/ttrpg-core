@@ -23,6 +23,8 @@ Il tab **Galleria** (personaggio e gruppo) mostra le foto dell'entità come grig
 tavole: caricamento (file picker + drag&drop), didascalia inline, e apertura di una foto in
 un **dettaglio** dove si modificano descrizione (markdown) e tag e si sceglie **«Imposta come
 profilo»** / **«Rimuovi dal profilo»** o si elimina la foto. La tavola-profilo è marcata; il
-ritratto in testata riflette la scelta.
+ritratto in testata riflette la scelta. Ogni tavola ha un controllo **«reinquadra»**: attivo,
+clic o trascinamento sull'anteprima sposta il **punto focale** (evita, ad es., la testa
+tagliata di un ritratto alto); l'avatar in testata segue la stessa inquadratura.
 
 La rotta `/` reindirizza a **faccia a faccia**. Rotte sconosciute → pagina *not found*.

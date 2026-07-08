@@ -6,7 +6,7 @@
     <!-- Ritratto: la tavola eletta a profilo (avatarPhotoId). Assente → niente
          medaglione, la testata resta piena larghezza. Si sceglie dalla Galleria. -->
     <div v-if="entity.avatarPhotoId" class="led__portrait">
-      <GalleryThumb :photo-id="entity.avatarPhotoId" :alt="portraitAlt" />
+      <GalleryThumb :photo-id="entity.avatarPhotoId" :focus="avatarFocus" :alt="portraitAlt" />
     </div>
 
     <div class="led__body">
@@ -50,7 +50,7 @@
               :class="stateClass(f)" :aria-label="`Modifica ${f.label}`" @click.stop="startField(f.key)">
               <span v-if="!f.emptyable || f.state === 'filled'">{{ f.display }}</span>
               <span v-else-if="f.state === 'none'" class="led__none-word">{{ f.noneLabel }}</span>
-              <span v-else class="led__todo" aria-label="Da definire">––</span>
+              <span v-else class="led__todo" aria-label="Da definire">–</span>
               <Icon name="edit" class="ds-inline-edit__ico led__val-ico" />
             </button>
             <span v-else class="led__editwrap">
@@ -71,7 +71,7 @@
               :class="stateClass(f)" :aria-label="`Modifica ${f.label}`" @click.stop="startTextField(f.key, f.value)">
               <span v-if="!f.emptyable || f.state === 'filled'">{{ f.display }}</span>
               <span v-else-if="f.state === 'none'" class="led__none-word">{{ f.noneLabel }}</span>
-              <span v-else class="led__todo" aria-label="Da definire">––</span>
+              <span v-else class="led__todo" aria-label="Da definire">–</span>
               <Icon name="edit" class="ds-inline-edit__ico led__val-ico" />
             </button>
             <span v-else class="led__editwrap">
@@ -172,6 +172,16 @@ const props = defineProps({
 
 const title = computed(() => (props.kind === 'character' ? 'Scheda anagrafica' : 'Scheda del gruppo'));
 const portraitAlt = computed(() => `Ritratto di ${props.entity.name || 'entità'}`);
+// Punto focale dell'avatar: il medaglione in testata segue la reinquadratura scelta.
+const avatarFocus = computed(() => {
+  const id = props.entity.avatarPhotoId;
+  if (!id) {
+    return null;
+  }
+  const photo = state.value.photos.find((p) => p.id === id);
+  const focus = photo ? photo.focus : null;
+  return focus;
+});
 
 // Segnaposto per campo lookup non ancora impostato.
 const EMPTY = '–';

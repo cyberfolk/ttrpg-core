@@ -44,6 +44,9 @@ Dal tab **Galleria** di un profilo (personaggio o gruppo):
   stato). Un file non valido non interrompe il resto del caricamento.
 - **Modificare** i metadati: didascalia inline nella griglia; descrizione (markdown) e tag
   nel **dettaglio** della foto.
+- **Reinquadrare**: il controllo «reinquadra» su una tavola attiva la scelta del **punto
+  focale** (clic/trascina sull'anteprima); corregge i ritagli `object-fit: cover` senza
+  toccare i byte. L'avatar in testata segue.
 - **Eleggere ad avatar**: nel dettaglio, «Imposta come profilo» punta `avatarPhotoId` a quella
   foto (il ritratto compare in testata). «Rimuovi dal profilo» azzera l'avatar, la foto resta.
 - **Eliminare** una foto: sparisce dalla galleria; se era l'avatar, l'avatar si azzera a

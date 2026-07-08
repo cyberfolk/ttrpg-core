@@ -44,7 +44,11 @@ sono, e `resolveNode` resta invariato.
 ## Foto (galleria)
 
 Ogni personaggio e gruppo ha una **galleria** di foto. Una foto è
-`{id, entityId, caption, description, tagIds, createdAt}`:
+`{id, entityId, caption, description, tagIds, createdAt, focus}`:
+
+- `focus` è il **punto focale** `{x, y}` in 0..100% per l'inquadratura in
+  `object-fit: cover` (avatar e anteprime). Default centro `{50, 50}`; regolabile
+  dalla galleria per non tagliare il soggetto (es. la testa di un ritratto alto).
 
 - **Metadati** (didascalia, descrizione markdown, tag dal pool esistente, data) sono dati
   piani nello stato, in un array top-level `photos` (come `transactions`); `entityId` fa da

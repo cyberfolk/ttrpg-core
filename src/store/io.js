@@ -61,7 +61,9 @@ export function migrate(data) {
   const players = Array.isArray(data.players) ? data.players : [];
   const races = Array.isArray(data.races) ? data.races : [];
   const classes = Array.isArray(data.classes) ? data.classes : [];
-  const photos = Array.isArray(data.photos) ? data.photos : [];
+  // Backfill del punto focale (default centro) sulle foto prive.
+  const rawPhotos = Array.isArray(data.photos) ? data.photos : [];
+  const photos = rawPhotos.map((p) => ({ focus: { x: 50, y: 50 }, ...p }));
   const characters = (data.characters || []).map((c) => withDefaults(c, CHARACTER_DEFAULTS));
   const migratedGroups = groups.map((g) => withDefaults(g, GROUP_DEFAULTS));
   const migrated = {
@@ -197,6 +199,14 @@ export function validateState(data) {
     }
     if (!validEntity) {
       throw new Error(`Foto ${p.id}: entityId punta a un nodo inesistente`);
+    }
+    if (p.focus !== undefined) {
+      const f = p.focus;
+      const okFocus = f && typeof f.x === 'number' && typeof f.y === 'number'
+        && f.x >= 0 && f.x <= 100 && f.y >= 0 && f.y <= 100;
+      if (!okFocus) {
+        throw new Error(`Foto ${p.id}: focus deve avere x/y numerici in 0..100`);
+      }
     }
     photoById.set(p.id, p);
   }

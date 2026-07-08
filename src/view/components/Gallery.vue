@@ -11,16 +11,35 @@
 
     <ul v-if="photos.length || busy" class="gallery__grid">
       <li v-for="p in photos" :key="p.id" class="gallery__plate"
-        :class="{ 'gallery__plate--avatar': p.id === entity.avatarPhotoId }">
-        <button type="button" class="gallery__frame"
-          :aria-label="p.caption ? `Apri «${p.caption}»` : 'Apri tavola'"
-          @click="openDetail(p.id)">
-          <GalleryThumb :photo-id="p.id" :alt="p.caption" />
-          <span v-if="p.id === entity.avatarPhotoId" class="gallery__seal"
-            aria-label="Tavola di profilo" title="Tavola di profilo">
-            <Icon name="check" />
-          </span>
-        </button>
+        :class="{ 'gallery__plate--avatar': p.id === entity.avatarPhotoId, 'gallery__plate--framing': framingId === p.id }">
+        <div class="gallery__framewrap">
+          <button type="button" class="gallery__frame"
+            :aria-label="p.caption ? `Apri «${p.caption}»` : 'Apri tavola'"
+            :disabled="framingId === p.id"
+            @click="openDetail(p.id)">
+            <GalleryThumb :photo-id="p.id" :alt="p.caption" :focus="p.focus" />
+            <span v-if="p.id === entity.avatarPhotoId" class="gallery__seal"
+              aria-label="Tavola di profilo" title="Tavola di profilo">
+              <Icon name="check" />
+            </span>
+          </button>
+
+          <!-- Reinquadra: sposta il punto focale (per i ritratti tagliati male).
+               Attivo → clic/trascina sull'immagine sceglie il punto da mostrare. -->
+          <button type="button" class="gallery__reframe"
+            :class="{ 'is-on': framingId === p.id }" :aria-pressed="framingId === p.id"
+            :title="framingId === p.id ? 'Fine reinquadratura' : 'Reinquadra'"
+            aria-label="Reinquadra la tavola" @click.stop="toggleFraming(p.id)">
+            <Icon :name="framingId === p.id ? 'check' : 'crosshair'" />
+          </button>
+
+          <div v-if="framingId === p.id" class="gallery__reframe-surf"
+            title="Clic o trascina sul punto da mostrare"
+            @pointerdown="onReframe($event, p.id)" @pointermove="onReframe($event, p.id)">
+            <span class="gallery__reframe-dot"
+              :style="{ left: (p.focus ? p.focus.x : 50) + '%', top: (p.focus ? p.focus.y : 50) + '%' }"></span>
+          </div>
+        </div>
 
         <div class="gallery__cap">
           <input class="gallery__cap-input" type="text" :value="p.caption"
@@ -75,7 +94,7 @@ import { computed, ref } from 'vue';
 import { useStore } from '../useStore.js';
 import { photoBlobStore } from '../photoStore.js';
 import { prepareImage } from '../../store/prepareImage.js';
-import { addPhoto, removePhoto, updatePhotoMeta, listPhotos } from '../../model/photos.js';
+import { addPhoto, removePhoto, updatePhotoMeta, listPhotos, setPhotoFocus } from '../../model/photos.js';
 import { displayName } from '../disambiguation.js';
 import Icon from './Icon.vue';
 import GalleryThumb from './GalleryThumb.vue';
@@ -99,6 +118,23 @@ const uploadError = ref('');
 
 function openDetail(id) {
   detailId.value = id;
+}
+
+// Reinquadratura: attiva/disattiva la modalità per una tavola; mentre è attiva,
+// clic o trascinamento sull'immagine sceglie il punto focale (object-position).
+const framingId = ref(null);
+function toggleFraming(id) {
+  framingId.value = framingId.value === id ? null : id;
+}
+function onReframe(e, id) {
+  // pointermove senza pulsante premuto: ignora (solo hover).
+  if (e.type === 'pointermove' && e.buttons === 0) {
+    return;
+  }
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  dispatch((s) => setPhotoFocus(s, id, { x, y }));
 }
 
 function setCaption(photoId, caption) {
@@ -221,6 +257,45 @@ async function onDrop(e) {
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-sm);
   font-size: .85rem;
+}
+
+/* Wrapper della cornice: ancora i controlli sovrapposti (reinquadra). */
+.gallery__framewrap { position: relative; }
+
+/* Bottone «reinquadra»: pallino d'angolo, compare all'hover della tavola. */
+.gallery__reframe {
+  position: absolute; top: .4rem; left: .4rem; z-index: 2;
+  display: grid; place-items: center;
+  width: 1.6rem; height: 1.6rem; padding: 0; cursor: pointer;
+  color: var(--text-strong); background: var(--surface-card);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm); font-size: .8rem;
+  opacity: 0; transition: opacity .15s, color .15s, border-color .15s, background .15s;
+}
+.gallery__plate:hover .gallery__reframe,
+.gallery__reframe:focus-visible,
+.gallery__reframe.is-on { opacity: 1; }
+.gallery__reframe:hover { color: var(--gold-700); border-color: var(--gold-500); }
+.gallery__reframe:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+.gallery__reframe.is-on {
+  color: var(--on-accent); border-color: var(--gold-500);
+  background: linear-gradient(180deg, var(--gold-300), var(--gold-500));
+}
+@media (pointer: coarse) { .gallery__reframe { opacity: 1; } }
+
+/* Superficie di reinquadratura: cattura clic/trascinamento sopra l'immagine
+   (la cornice è disabilitata mentre è attiva) e mostra il punto focale scelto. */
+.gallery__reframe-surf {
+  position: absolute; inset: 0; z-index: 1; cursor: crosshair;
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 2px var(--gold-500), inset 0 0 0 6px var(--accent-tint);
+  touch-action: none;
+}
+.gallery__reframe-dot {
+  position: absolute; width: .95rem; height: .95rem;
+  transform: translate(-50%, -50%); pointer-events: none;
+  border: 2px solid var(--gold-300); border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, .25); box-shadow: 0 0 0 1px rgba(0, 0, 0, .35);
 }
 
 /* Didascalia inline sotto la tavola: modificabile al volo, discreta. */

@@ -85,6 +85,8 @@ export function createPhoto(entityId, meta = {}) {
     description: meta.description ?? '',
     tagIds: meta.tagIds ?? [],
     createdAt: Date.now(),
+    // Punto focale per l'inquadratura in object-fit: cover (0..100%). 50/50 = centro.
+    focus: meta.focus ?? { x: 50, y: 50 },
   };
   return photo;
 }
