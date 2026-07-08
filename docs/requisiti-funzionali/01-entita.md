@@ -11,7 +11,8 @@ Un PG o PNG della campagna.
   (`[{classId, level}]`, la multiclasse), `alignment` (stringa libera),
   `playerId` (→ pool giocatori | null, significativo solo se PG),
   `tagIds` (→ pool tag), `notes` (markdown),
-  `avatarPhotoId` (→ una foto della galleria | null, la foto di profilo).
+  `avatarPhotoId` (→ una foto della galleria | null, la foto di profilo),
+  `confirmedEmpty` (→ vedi *Tri-stato dei campi opzionali*).
 - **Livello** = somma dei `level` di `classLevels`: derivato, mai salvato.
 - La reputazione resta derivata dalle transazioni (vedi [02](02-modello-reputazione.md)).
 
@@ -22,7 +23,8 @@ Contenitore generico che rappresenta fazioni e centri abitati di **qualsiasi sca
 - Campi: `id`, `name`, `type` (etichetta libera), `memberIds`, `deletedAt`,
   `seat` (sede, stringa libera), `guideId` (→ un `charId` ∈ `memberIds` | null),
   `motto`, `tagIds` (→ pool tag), `notes` (markdown),
-  `avatarPhotoId` (→ una foto della galleria | null, la foto di profilo).
+  `avatarPhotoId` (→ una foto della galleria | null, la foto di profilo),
+  `confirmedEmpty` (→ vedi *Tri-stato dei campi opzionali*).
 - La **guida** è sempre uno dei membri: rimuovere quel membro (o eliminarlo)
   azzera la guida.
 - **Tipo unico generico.** Paesino, megalopoli e fazione condividono la stessa struttura: cambia solo l'etichetta `type`. Nessun campo specializzato per tipo (YAGNI; se domani serve, si aggiunge come campo opzionale).
@@ -55,6 +57,31 @@ Ogni personaggio e gruppo ha una **galleria** di foto. Una foto è
   - Impostare una foto come profilo = setta `avatarPhotoId`.
   - Rimuovere l'avatar = azzera `avatarPhotoId`; la foto **resta** in galleria.
   - Eliminare la foto puntata dall'avatar azzera `avatarPhotoId` **a cascata**.
+
+## Tri-stato dei campi opzionali
+
+Un campo anagrafico opzionale (per il gruppo: `type`, `seat`, `guideId`, `motto`;
+per il personaggio: `raceId`, `alignment`, `playerId`) può trovarsi in **tre** stati,
+non due:
+
+- **valorizzato** — ha un valore.
+- **da definire (assente)** — non ancora deciso: il valore è vuoto (`null` per i
+  riferimenti, `""` per i testi) **e** la chiave **non** è in `confirmedEmpty`.
+- **confermato vuoto** — si è deciso che non c'è (es. un gruppo davvero senza guida
+  o senza motto): il valore è vuoto **e** la chiave del campo è elencata in
+  `confirmedEmpty`.
+
+`confirmedEmpty` è un array di **nomi di campo** (`["motto", "guideId"]`) presente su
+ogni personaggio e gruppo. Regole:
+
+- Impostare un valore rimuove la chiave da `confirmedEmpty` (torna *valorizzato*).
+- **Svuotare** un campo lo riporta a *da definire*, **non** a *confermato vuoto*:
+  quest'ultimo richiede il gesto esplicito «segna come nessuno».
+- Il tri-stato è **puro nel MODEL** (`fieldState(entity, field)` in
+  `src/model/reputation.js`); la sua resa visiva sta in [03](03-viste-e-navigazione.md).
+
+La **guida** resta comunque vincolata a essere un membro (o `null`); marcarla
+«confermato vuoto» la azzera e la elenca in `confirmedEmpty`.
 
 ## Nodo polimorfo
 

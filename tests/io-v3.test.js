@@ -12,7 +12,7 @@ test('migrate v2 aggiunge i pool e i default sui campi', () => {
     transactions: [],
   };
   const m = migrate(v2);
-  assert.equal(m.version, 4);
+  assert.equal(m.version, 5);
   assert.deepEqual(m.photos, []);
   assert.equal(m.characters[0].avatarPhotoId, null);
   assert.equal(m.groups[0].avatarPhotoId, null);
@@ -51,7 +51,7 @@ test('serializeState include i quattro pool', () => {
   let s = createState();
   s = addLookupItem(s, 'tags', createLookup('mercenario'));
   const parsed = JSON.parse(serializeState(s));
-  assert.equal(parsed.version, 4);
+  assert.equal(parsed.version, 5);
   assert.equal(parsed.tags[0].name, 'mercenario');
   assert.ok(Array.isArray(parsed.players));
   assert.ok(Array.isArray(parsed.races));

@@ -11,6 +11,14 @@ La funzione attiva è **Reputazione**; altre funzioni sono predisposte come "soo
 - **Gruppi** (`/gruppi`) — elenco dei gruppi: creazione, rinomina, modifica `type`, gestione membri, archivia/ripristina.
 - **Profilo gruppo** (`/gruppo/:id`) — testata **scheda anagrafica con editing inline per campo** (tipo, sede, guida, motto, tag; reputazione derivata, sola lettura), con il **ritratto** (avatar) come medaglione quando impostato, seguito da membri + i punteggi diretto/aggregato per ogni coppia rilevante; reciprocamente un gruppo appare nel profilo dei suoi membri. Le **note** (markdown) si modificano nel tab *Note*; le foto nel tab *Galleria*.
 
+Nella **scheda anagrafica** (testata di entrambi i profili) i campi opzionali
+distinguono tre stati (vedi [01 · Tri-stato](01-entita.md#tri-stato-dei-campi-opzionali)):
+un campo **da definire** appare come trattino oro `––` con sottolineatura punteggiata
+(un invito a compilare), un campo **confermato vuoto** come parola faint in corsivo
+(«nessuno/a», stato chiuso), un campo **valorizzato** col suo valore forte. Aprendo
+l'editor inline di un campo opzionale compare l'azione **«nessuno»** che lo marca
+confermato vuoto; svuotarlo e basta lo lascia invece «da definire».
+
 Il tab **Galleria** (personaggio e gruppo) mostra le foto dell'entità come griglia di
 tavole: caricamento (file picker + drag&drop), didascalia inline, e apertura di una foto in
 un **dettaglio** dove si modificano descrizione (markdown) e tag e si sceglie **«Imposta come

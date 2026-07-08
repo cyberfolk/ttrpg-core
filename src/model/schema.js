@@ -1,5 +1,5 @@
 export const BASE = 50;
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
 
 export function newId() {
   const id = crypto.randomUUID();
@@ -34,6 +34,9 @@ export function createGroup(name, type = '') {
     tagIds: [],
     notes: '',
     avatarPhotoId: null,
+    // Campi opzionali marcati "confermato vuoto" (vs "da definire"): vedi
+    // fieldState in reputation.js. Es. ['motto', 'guideId'].
+    confirmedEmpty: [],
   };
   return group;
 }
@@ -51,6 +54,8 @@ export function createCharacter(name) {
     tagIds: [],
     notes: '',
     avatarPhotoId: null,
+    // Campi opzionali marcati "confermato vuoto" (vs "da definire").
+    confirmedEmpty: [],
   };
   return character;
 }

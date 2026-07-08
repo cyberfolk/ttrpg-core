@@ -18,6 +18,49 @@ export function computeScore(state, fromId, toId) {
   return score;
 }
 
+/* ---- Tri-stato dei campi opzionali: valorizzato / confermato vuoto / assente ----
+   Un campo opzionale (motto, sede, guida, razza, giocatore, tipo…) può dire tre
+   cose distinte. `confirmedEmpty` è l'array delle chiavi che l'utente ha marcato
+   come "confermato vuoto"; il valore resta null (riferimenti) o '' (testi). */
+
+// I campi-riferimento hanno forma vuota null; i campi testo hanno forma vuota ''.
+const REF_FIELDS = new Set(['guideId', 'raceId', 'playerId', 'avatarPhotoId']);
+
+function emptyFormOf(field) {
+  const empty = REF_FIELDS.has(field) ? null : '';
+  return empty;
+}
+
+function addConfirmedEmpty(entity, field) {
+  const current = Array.isArray(entity.confirmedEmpty) ? entity.confirmedEmpty : [];
+  const set = current.includes(field) ? current : [...current, field];
+  return set;
+}
+
+function dropConfirmedEmpty(entity, field) {
+  const current = Array.isArray(entity.confirmedEmpty) ? entity.confirmedEmpty : [];
+  const set = current.filter((f) => f !== field);
+  return set;
+}
+
+// Stato di un campo opzionale: 'filled' (ha valore) | 'none' (confermato vuoto)
+// | 'absent' (da definire). Svuotare un campo lo riporta ad 'absent', non 'none':
+// "confermato vuoto" richiede il gesto esplicito (confirm*FieldEmpty).
+export function fieldState(entity, field) {
+  const raw = entity[field];
+  const hasValue = raw !== null && raw !== undefined && raw !== '';
+  const confirmed = Array.isArray(entity.confirmedEmpty) && entity.confirmedEmpty.includes(field);
+  let result;
+  if (hasValue) {
+    result = 'filled';
+  } else if (confirmed) {
+    result = 'none';
+  } else {
+    result = 'absent';
+  }
+  return result;
+}
+
 export function addCharacter(state, name) {
   const character = createCharacter(name);
   const next = {
@@ -163,14 +206,12 @@ export function renameGroup(state, id, name) {
 }
 
 export function setGroupType(state, id, type) {
-  const groups = state.groups.map((g) => {
-    if (g.id !== id) {
-      return g;
-    }
-    const updated = { ...g, type };
-    return updated;
-  });
-  const next = { ...state, groups };
+  const group = state.groups.find((g) => g.id === id);
+  if (!group) {
+    return state;
+  }
+  const patch = { type, confirmedEmpty: dropConfirmedEmpty(group, 'type') };
+  const next = updateGroup(state, id, patch);
   return next;
 }
 
@@ -187,7 +228,12 @@ function updateGroup(state, id, patch) {
 }
 
 export function setGroupSeat(state, id, seat) {
-  const next = updateGroup(state, id, { seat });
+  const group = state.groups.find((g) => g.id === id);
+  if (!group) {
+    return state;
+  }
+  const patch = { seat, confirmedEmpty: dropConfirmedEmpty(group, 'seat') };
+  const next = updateGroup(state, id, patch);
   return next;
 }
 
@@ -200,17 +246,35 @@ export function setGroupGuide(state, id, guideId) {
   if (!isValid) {
     return state;
   }
-  const next = updateGroup(state, id, { guideId });
+  const patch = { guideId, confirmedEmpty: dropConfirmedEmpty(group, 'guideId') };
+  const next = updateGroup(state, id, patch);
   return next;
 }
 
 export function setGroupMotto(state, id, motto) {
-  const next = updateGroup(state, id, { motto });
+  const group = state.groups.find((g) => g.id === id);
+  if (!group) {
+    return state;
+  }
+  const patch = { motto, confirmedEmpty: dropConfirmedEmpty(group, 'motto') };
+  const next = updateGroup(state, id, patch);
   return next;
 }
 
 export function setGroupTags(state, id, tagIds) {
   const next = updateGroup(state, id, { tagIds });
+  return next;
+}
+
+// Marca un campo del gruppo come "confermato vuoto": azzera il valore (null per i
+// riferimenti, '' per i testi) e aggiunge la chiave a confirmedEmpty.
+export function confirmGroupFieldEmpty(state, id, field) {
+  const group = state.groups.find((g) => g.id === id);
+  if (!group) {
+    return state;
+  }
+  const patch = { [field]: emptyFormOf(field), confirmedEmpty: addConfirmedEmpty(group, field) };
+  const next = updateGroup(state, id, patch);
   return next;
 }
 
@@ -400,17 +464,43 @@ export function setRole(state, id, isPg) {
 }
 
 export function setRace(state, id, raceId) {
-  const next = updateCharacter(state, id, { raceId });
+  const character = state.characters.find((c) => c.id === id);
+  if (!character) {
+    return state;
+  }
+  const patch = { raceId, confirmedEmpty: dropConfirmedEmpty(character, 'raceId') };
+  const next = updateCharacter(state, id, patch);
   return next;
 }
 
 export function setAlignment(state, id, alignment) {
-  const next = updateCharacter(state, id, { alignment });
+  const character = state.characters.find((c) => c.id === id);
+  if (!character) {
+    return state;
+  }
+  const patch = { alignment, confirmedEmpty: dropConfirmedEmpty(character, 'alignment') };
+  const next = updateCharacter(state, id, patch);
   return next;
 }
 
 export function setPlayer(state, id, playerId) {
-  const next = updateCharacter(state, id, { playerId });
+  const character = state.characters.find((c) => c.id === id);
+  if (!character) {
+    return state;
+  }
+  const patch = { playerId, confirmedEmpty: dropConfirmedEmpty(character, 'playerId') };
+  const next = updateCharacter(state, id, patch);
+  return next;
+}
+
+// Marca un campo del personaggio come "confermato vuoto" (vedi confirmGroupFieldEmpty).
+export function confirmCharacterFieldEmpty(state, id, field) {
+  const character = state.characters.find((c) => c.id === id);
+  if (!character) {
+    return state;
+  }
+  const patch = { [field]: emptyFormOf(field), confirmedEmpty: addConfirmedEmpty(character, field) };
+  const next = updateCharacter(state, id, patch);
   return next;
 }
 

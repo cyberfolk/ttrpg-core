@@ -47,27 +47,41 @@
                {id,name}) vs libera (stringhe) via f.pool. -->
           <template v-else-if="f.type === 'select'">
             <button v-if="editingField !== f.key" type="button" class="led__val ds-inline-edit led__val--edit"
-              :aria-label="`Modifica ${f.label}`" @click.stop="startField(f.key)">
-              <span>{{ f.display }}</span>
+              :class="stateClass(f)" :aria-label="`Modifica ${f.label}`" @click.stop="startField(f.key)">
+              <span v-if="!f.emptyable || f.state === 'filled'">{{ f.display }}</span>
+              <span v-else-if="f.state === 'none'" class="led__none-word">{{ f.noneLabel }}</span>
+              <span v-else class="led__todo" aria-label="Da definire">––</span>
               <Icon name="edit" class="ds-inline-edit__ico led__val-ico" />
             </button>
-            <InlineSelect v-else flush auto-open :creatable="f.creatable"
-              :model-value="f.value" :options="f.options"
-              :option-value="f.pool ? 'id' : ''" :option-label="f.pool ? 'name' : ''"
-              :aria-label="f.label" @update:model-value="f.onUpdate($event)"
-              @create="f.onCreate && f.onCreate($event)" @close="stopField" />
+            <span v-else class="led__editwrap">
+              <InlineSelect flush auto-open :creatable="f.creatable"
+                :model-value="f.value" :options="f.options"
+                :option-value="f.pool ? 'id' : ''" :option-label="f.pool ? 'name' : ''"
+                :aria-label="f.label" @update:model-value="f.onUpdate($event)"
+                @create="f.onCreate && f.onCreate($event)" @close="stopField" />
+              <button v-if="f.emptyable" type="button" class="led__none-btn"
+                :aria-label="`Segna ${f.label} come nessuno`" title="Nessuno"
+                @mousedown.prevent @click="markFieldNone(f)">nessuno</button>
+            </span>
           </template>
 
           <!-- Testo inline (Sede, Motto) -->
           <template v-else-if="f.type === 'text'">
             <button v-if="editingField !== f.key" type="button" class="led__val ds-inline-edit led__val--edit"
-              :aria-label="`Modifica ${f.label}`" @click.stop="startTextField(f.key, f.value)">
-              <span>{{ f.display }}</span>
+              :class="stateClass(f)" :aria-label="`Modifica ${f.label}`" @click.stop="startTextField(f.key, f.value)">
+              <span v-if="!f.emptyable || f.state === 'filled'">{{ f.display }}</span>
+              <span v-else-if="f.state === 'none'" class="led__none-word">{{ f.noneLabel }}</span>
+              <span v-else class="led__todo" aria-label="Da definire">––</span>
               <Icon name="edit" class="ds-inline-edit__ico led__val-ico" />
             </button>
-            <input v-else class="led__select led__input led__select--inline" type="text"
-              v-model="textDraft" v-focus :aria-label="f.label"
-              @blur="commitText(f)" @keydown.enter="commitText(f)" @keydown.escape="commitText(f)" />
+            <span v-else class="led__editwrap">
+              <input class="led__select led__input led__select--inline" type="text"
+                v-model="textDraft" v-focus :aria-label="f.label"
+                @blur="commitText(f)" @keydown.enter="commitText(f)" @keydown.escape="commitText(f)" />
+              <button v-if="f.emptyable" type="button" class="led__none-btn"
+                :aria-label="`Segna ${f.label} come nessuno`" title="Nessuno"
+                @mousedown.prevent @click="markFieldNone(f)">nessuno</button>
+            </span>
           </template>
 
           <!-- Classe: valore sintetico come trigger; click apre un popover ricco
@@ -141,6 +155,7 @@ import {
   setCharacterTags, characterLevel,
   setGroupType, setGroupSeat, setGroupGuide, setGroupMotto, setGroupTags,
   addMember, removeMember, addGroup, listActiveGroups,
+  fieldState, confirmCharacterFieldEmpty, confirmGroupFieldEmpty,
 } from '../../model/reputation.js';
 
 const router = useRouter();
@@ -325,9 +340,42 @@ function startTextField(key, value) {
   textDraft.value = value;
   startField(key);
 }
+// Guard: quando si marca "nessuno" da un campo testo, il click sul bottone fa
+// perdere il focus all'input → commitText scatterebbe riscrivendo la bozza (e
+// scancellando il "confermato vuoto"). Il flag lo neutralizza.
+const marking = ref(false);
 function commitText(f) {
+  if (marking.value) {
+    stopField();
+    return;
+  }
   f.onUpdate(textDraft.value);
   stopField();
+}
+
+// "Segna come «nessuno»": conferma il campo vuoto (confirmedEmpty) invece di
+// lasciarlo "da definire". Vale per i campi opzionali (f.emptyable).
+function confirmEmpty(field) {
+  if (props.kind === 'character') {
+    dispatch((s) => confirmCharacterFieldEmpty(s, charId.value, field));
+  } else {
+    dispatch((s) => confirmGroupFieldEmpty(s, groupId.value, field));
+  }
+}
+function markFieldNone(f) {
+  marking.value = true;
+  confirmEmpty(f.dataField);
+  stopField();
+  marking.value = false;
+}
+
+// Classi-modificatore del valore in lettura secondo il tri-stato del campo.
+function stateClass(f) {
+  const cls = {
+    'led__val--absent': f.emptyable && f.state === 'absent',
+    'led__val--none': f.emptyable && f.state === 'none',
+  };
+  return cls;
 }
 
 // Classe: popover ricco teleportato ancorato al valore (il layout non si sposta).
@@ -387,32 +435,46 @@ const fields = computed(() => {
     const characterFields = [
       { key: 'razza', label: 'Razza', type: 'select', pool: true, creatable: true,
         value: props.entity.raceId, display: raceLabel.value, options: races.value,
-        onUpdate: onRace, onCreate: onCreateRace },
+        onUpdate: onRace, onCreate: onCreateRace,
+        emptyable: true, dataField: 'raceId', noneLabel: 'nessuna',
+        state: fieldState(props.entity, 'raceId') },
       { key: 'classe', label: 'Classe', type: 'multiclass' },
       { key: 'allineamento', label: 'Allineamento', type: 'select', pool: false, creatable: true,
         value: props.entity.alignment, display: props.entity.alignment || EMPTY, options: ALIGNMENTS,
-        onUpdate: onAlignment, onCreate: null },
+        onUpdate: onAlignment, onCreate: null,
+        emptyable: true, dataField: 'alignment', noneLabel: 'nessuno',
+        state: fieldState(props.entity, 'alignment') },
       { key: 'livello', label: 'Livello', type: 'readonly', display: String(totalLevel.value), tip: LEVEL_TIP },
       { key: 'reputazione', label: 'Reputazione', type: 'score', tip: SCORE_TIP },
     ];
     if (props.entity.isPg) {
       characterFields.push({ key: 'giocatore', label: 'Giocatore', type: 'select', pool: true, creatable: true,
         value: props.entity.playerId, display: playerLabel.value, options: players.value,
-        onUpdate: onPlayer, onCreate: onCreatePlayer });
+        onUpdate: onPlayer, onCreate: onCreatePlayer,
+        emptyable: true, dataField: 'playerId', noneLabel: 'nessuno',
+        state: fieldState(props.entity, 'playerId') });
     }
     return characterFields;
   }
   const groupFields = [
     { key: 'tipo', label: 'Tipo', type: 'select', pool: false, creatable: true,
       value: props.entity.type, display: props.entity.type || EMPTY, options: TYPES,
-      onUpdate: onType, onCreate: null },
+      onUpdate: onType, onCreate: null,
+      emptyable: true, dataField: 'type', noneLabel: 'nessuno',
+      state: fieldState(props.entity, 'type') },
     { key: 'sede', label: 'Sede', type: 'text',
-      value: props.entity.seat, display: props.entity.seat || EMPTY, onUpdate: onSeat },
+      value: props.entity.seat, display: props.entity.seat || EMPTY, onUpdate: onSeat,
+      emptyable: true, dataField: 'seat', noneLabel: 'nessuna',
+      state: fieldState(props.entity, 'seat') },
     { key: 'guida', label: 'Guida', type: 'select', pool: true, creatable: false,
       value: props.entity.guideId, display: guideLabel.value, options: memberOptions.value,
-      onUpdate: onGuide, onCreate: null },
+      onUpdate: onGuide, onCreate: null,
+      emptyable: true, dataField: 'guideId', noneLabel: 'nessuna',
+      state: fieldState(props.entity, 'guideId') },
     { key: 'motto', label: 'Motto', type: 'text',
-      value: props.entity.motto, display: props.entity.motto || EMPTY, onUpdate: onMotto },
+      value: props.entity.motto, display: props.entity.motto || EMPTY, onUpdate: onMotto,
+      emptyable: true, dataField: 'motto', noneLabel: 'nessuno',
+      state: fieldState(props.entity, 'motto') },
     { key: 'reputazione', label: 'Reputazione', type: 'score', tip: SCORE_TIP },
   ];
   return groupFields;
@@ -495,6 +557,37 @@ const fields = computed(() => {
   gap: .3rem; margin: -.1rem -.35rem; padding: .1rem .35rem;
 }
 .led__val-ico { font-size: .78em; }
+
+/* --- Tri-stato del campo opzionale ---
+   "Da definire" (assente): trattino oro con sottolineatura punteggiata → summons,
+   c'è lavoro qui. "nessuno/a" (confermato vuoto): parola faint corsivo → stato
+   chiuso, vuoto per scelta. Entrambi restano cliccabili per modificare. */
+.led__todo {
+  color: var(--gold-600); font-weight: var(--fw-semibold);
+  letter-spacing: .05em;
+  text-decoration: underline dotted var(--gold-400); text-underline-offset: .22em;
+}
+.led__none-word {
+  color: var(--text-faint); font-weight: 400; font-style: italic;
+}
+/* Sul valore assente/confermato la matita è più discreta (non è un dato forte). */
+.led__val--absent .led__val-ico,
+.led__val--none .led__val-ico { opacity: 0; }
+.led__val--absent:hover .led__val-ico,
+.led__val--none:hover .led__val-ico { opacity: .6; }
+
+/* Editor + azione "nessuno" affiancata. */
+.led__editwrap { display: inline-flex; align-items: center; gap: .35rem; min-width: 0; }
+.led__none-btn {
+  flex: 0 0 auto; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-sans); font-size: var(--fs-sm); font-style: italic;
+  color: var(--text-muted); background: none;
+  border: 1px dashed var(--border-hairline); border-radius: var(--radius-sm);
+  padding: .15rem .4rem; line-height: 1.2;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.led__none-btn:hover { color: var(--gold-700); border-color: var(--line-gold); background: var(--accent-tint); }
+.led__none-btn:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
 
 /* Controllo inline (select/input): altezza ridotta per non far crescere la riga
    rispetto al valore in lettura quando si apre la selezione. */

@@ -11,7 +11,7 @@ test('createState produce stato vuoto valido', () => {
   const s = createState();
   assert.deepEqual(s.characters, []);
   assert.deepEqual(s.transactions, []);
-  assert.equal(s.version, 4);
+  assert.equal(s.version, 5);
 });
 
 test('createCharacter genera id, name e deletedAt null', () => {
@@ -228,14 +228,14 @@ test('averageIncomingScore non considera il pg stesso come mittente', () => {
   assert.equal(averageIncomingScore(s, a.id, false), 60);
 });
 
-test('SCHEMA_VERSION è 4', () => {
-  assert.equal(SCHEMA_VERSION, 4);
+test('SCHEMA_VERSION è 5', () => {
+  assert.equal(SCHEMA_VERSION, 5);
 });
 
 test('createState include groups vuoto', () => {
   const state = createState();
   assert.deepEqual(state.groups, []);
-  assert.equal(state.version, 4);
+  assert.equal(state.version, 5);
 });
 
 test('createGroup crea gruppo con campi attesi', () => {
@@ -464,7 +464,7 @@ test('setGroupType non muta altri gruppi', () => {
 
 test('createState v3 include i quattro pool vuoti', () => {
   const s = createState();
-  assert.equal(s.version, 4);
+  assert.equal(s.version, 5);
   assert.deepEqual(s.tags, []);
   assert.deepEqual(s.players, []);
   assert.deepEqual(s.races, []);

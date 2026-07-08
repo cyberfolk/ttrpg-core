@@ -16,7 +16,7 @@ function v3State() {
 
 test('migrate v3→v4 aggiunge photos e avatarPhotoId, bumpa la versione', () => {
   const m = migrate(v3State());
-  assert.equal(m.version, 4);
+  assert.equal(m.version, 5);
   assert.deepEqual(m.photos, []);
   assert.equal(m.characters[0].avatarPhotoId, null);
   assert.equal(m.groups[0].avatarPhotoId, null);

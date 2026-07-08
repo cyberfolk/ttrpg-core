@@ -1,5 +1,16 @@
 import { SCHEMA_VERSION } from '../model/schema.js';
 
+function validateConfirmedEmpty(entity, label) {
+  if (entity.confirmedEmpty === undefined) {
+    return;
+  }
+  const ok = Array.isArray(entity.confirmedEmpty)
+    && entity.confirmedEmpty.every((f) => typeof f === 'string');
+  if (!ok) {
+    throw new Error(`${label} ${entity.id}: confirmedEmpty deve essere un array di stringhe`);
+  }
+}
+
 function validatePool(list, label) {
   if (!Array.isArray(list)) {
     throw new Error(`Pool ${label} non valido: non è un array`);
@@ -32,10 +43,11 @@ export function serializeState(state) {
 
 const CHARACTER_DEFAULTS = {
   isPg: false, raceId: null, classLevels: [], alignment: '',
-  playerId: null, tagIds: [], notes: '', avatarPhotoId: null,
+  playerId: null, tagIds: [], notes: '', avatarPhotoId: null, confirmedEmpty: [],
 };
 const GROUP_DEFAULTS = {
   seat: '', guideId: null, motto: '', tagIds: [], notes: '', avatarPhotoId: null,
+  confirmedEmpty: [],
 };
 
 function withDefaults(obj, defaults) {
@@ -140,6 +152,7 @@ export function validateState(data) {
     if (!Array.isArray(c.tagIds) || !c.tagIds.every((tid) => tagIdSet.has(tid))) {
       throw new Error(`Personaggio ${c.id}: tagIds contiene un tag inesistente`);
     }
+    validateConfirmedEmpty(c, 'Personaggio');
     if (!Array.isArray(c.classLevels)) {
       throw new Error(`Personaggio ${c.id}: classLevels non è un array`);
     }
@@ -165,6 +178,7 @@ export function validateState(data) {
     if (!Array.isArray(g.tagIds) || !g.tagIds.every((tid) => tagIdSet.has(tid))) {
       throw new Error(`Gruppo ${g.id}: tagIds contiene un tag inesistente`);
     }
+    validateConfirmedEmpty(g, 'Gruppo');
   }
 
   if (!Array.isArray(data.photos)) {

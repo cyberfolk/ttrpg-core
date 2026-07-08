@@ -4,8 +4,8 @@ import {
   SCHEMA_VERSION, createState, createPhoto, createCharacter, createGroup,
 } from '../src/model/schema.js';
 
-test('SCHEMA_VERSION è 4', () => {
-  assert.equal(SCHEMA_VERSION, 4);
+test('SCHEMA_VERSION è 5', () => {
+  assert.equal(SCHEMA_VERSION, 5);
 });
 
 test('createState ha photos vuoto', () => {
