@@ -125,10 +125,6 @@
                   </button>
                   <span class="led__mcpop-total">Totale liv. {{ totalLevel }}</span>
                 </div>
-                <div class="led__mcpop-clear">
-                  <button type="button" class="led__none-btn" @click.stop="clearClasse">vuoto</button>
-                  <button type="button" class="led__none-btn" @click.stop="noneClasse">nessuno</button>
-                </div>
               </div>
             </Teleport>
           </template>
@@ -402,16 +398,6 @@ function clearField(f) {
   stopField();
 }
 
-// Classe (multiclasse): «vuoto» = nessuna classe / da definire ([]); «nessuno» =
-// confermato vuoto.
-function clearClasse() {
-  commitClassLevels([]);
-  stopField();
-}
-function noneClasse() {
-  confirmEmpty('classLevels');
-  stopField();
-}
 
 // Classi-modificatore del valore in lettura secondo il tri-stato del campo.
 function stateClass(f) {
@@ -683,7 +669,6 @@ const fields = computed(() => {
 .led__mcpop-add:hover { color: var(--gold-700); border-color: var(--line-gold); background: var(--accent-tint); }
 .led__mcpop-total { font-size: var(--fs-sm); color: var(--text-muted); }
 .led__mcpop-vuoto { margin: .1rem 0; font-size: var(--fs-sm); color: var(--text-muted); font-style: italic; }
-.led__mcpop-clear { display: flex; gap: .4rem; padding-top: .4rem; margin-top: .1rem; border-top: 1px solid var(--border-hairline); }
 .led__select:hover { border-color: var(--gold-500); }
 .led__select:focus { outline: none; border-color: var(--gold-500); box-shadow: var(--shadow-focus); }
 

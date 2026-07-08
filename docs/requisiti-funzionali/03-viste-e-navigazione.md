@@ -17,9 +17,9 @@ un campo **da definire** appare come trattino oro `––` con sottolineatura pu
 (un invito a compilare), un campo **confermato vuoto** come parola faint in corsivo
 («nessuno/a», stato chiuso), un campo **valorizzato** col suo valore forte. Aprendo
 l'editor inline di un campo opzionale compaiono le azioni **«vuoto»** (azzera →
-«da definire») e **«nessuno»** (marca «confermato vuoto»). Vale anche per la
-**classe/livelli**: si può rimuovere anche l'unica classe (→ «da definire») o
-sceglierla «nessuno».
+«da definire») e **«nessuno»** (marca «confermato vuoto»). Per la **classe/livelli**
+si rimuove ogni riga con la **×** (anche l'unica): a zero classi il campo torna
+«da definire».
 
 Il tab **Galleria** (personaggio e gruppo) mostra le foto dell'entità come griglia di
 tavole: caricamento (file picker + drag&drop), didascalia inline, e apertura di una foto in
