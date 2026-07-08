@@ -187,10 +187,13 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
 .m2m__sep { flex: 0 0 auto; color: var(--text-faint); font-weight: 400; }
 .m2m__label { flex: 0 0 auto; color: var(--text-muted); line-height: 1.4; }
 .m2m__label::after { content: ':'; margin-right: .18rem; }
-/* Tag e affordance "aggiungi" sullo stesso flusso (wrap): niente riga
-   riservata sotto i badge → meno spazio verticale verso il campo seguente. */
-.m2m__body { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
-.m2m__tags, .m2m__tags > li { display: contents; }
+/* Body in due blocchi affiancati (nowrap): la lista dei chip (che wrappa al suo
+   interno) e il «+». Tenere il «+» FUORI dal wrap dei chip fa sì che non vada mai
+   a capo da solo: con un chip largo su mobile resta inline in coda, non salta sotto. */
+.m2m__body { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: nowrap; align-items: flex-end; gap: .4rem; }
+/* I chip wrappano tra loro qui dentro; min-width:0 così il blocco cede spazio al «+». */
+.m2m__tags { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; list-style: none; margin: 0; padding: 0; }
+.m2m__tags > li { display: contents; }
 
 /* Badge: pill oro. Con navigable è cliccabile (→ naviga); altrimenti solo etichetta. */
 .m2m__tag {
@@ -230,7 +233,8 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
 
 /* Riga "aggiungi": affordance discreta che emerge all'hover dell'area. */
 .m2m__addline {
-  align-self: center; display: inline-flex; align-items: center; gap: .3rem;
+  /* flex-end: con i chip su più righe il «+» siede in fondo, in coda all'ultimo. */
+  align-self: flex-end; display: inline-flex; align-items: center; gap: .3rem;
   padding: .22rem .4rem; cursor: pointer;
   font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-muted);
   background: none; border: 1px dashed transparent; border-radius: var(--radius-sm);
