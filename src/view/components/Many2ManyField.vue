@@ -9,6 +9,7 @@
       <ul v-if="linked.length" class="m2m__tags">
         <li v-for="it in linked" :key="it.id">
           <span class="m2m__tag ds-badge ds-badge--gold" :class="{ 'm2m__tag--nav': navigable }"
+            :title="it.name"
             :role="navigable ? 'link' : undefined" :tabindex="navigable ? 0 : undefined"
             :aria-label="navigable ? `Vai a ${it.name}` : undefined"
             @click="navigable && onNavigate(it)" @keydown.enter="navigable && onNavigate(it)">
@@ -193,6 +194,10 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
 
 /* Badge: pill oro. Con navigable è cliccabile (→ naviga); altrimenti solo etichetta. */
 .m2m__tag {
+  /* Shrinkabile: quando chip + «+» non entrano nella riga il badge cede spazio
+     (nome con ellissi, title col nome intero) invece di spingere il «+» a capo.
+     Con più chip il flex-wrap normale resta: ognuno entra da solo, nessun taglio. */
+  flex: 0 1 auto; min-width: 0; max-width: 100%;
   gap: .3em; padding: .2rem .48rem .09rem .5rem; padding-right: .35rem;
   font-size: calc(var(--fs-label) * 0.92);
   /* Il maiuscoletto Cinzel siede alto nella riga: più padding sopra, meno sotto
@@ -203,13 +208,15 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
 .m2m__tag--nav:hover { background: var(--gold-100); border-color: var(--gold-500); box-shadow: var(--shadow-xs); }
 .m2m__tag--nav:active { transform: translateY(1px); }
 .m2m__tag--nav:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
-.m2m__tag-ico { font-size: .82em; opacity: .65; }
-.m2m__tag-name { line-height: 1.1; }
+.m2m__tag-ico { flex: 0 0 auto; font-size: .82em; opacity: .65; }
+/* Nome: tronca con ellissi quando il badge è costretto a stringersi (→ «+» inline). */
+.m2m__tag-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.1; }
 
 /* ✕: sempre visibile (larghezza fissa, il badge non cambia mai dimensione).
    A riposo tenue; badge in hover la accende; ✕ in hover vira all'arancione
    (effetto distinto dal badge) per dire "premi qui per rimuovere". */
 .m2m__tag-x {
+  flex: 0 0 auto;
   display: inline-flex; align-items: center; justify-content: center;
   width: 1.2em; height: 1.2em; margin-left: .15rem;
   border: none; background: none; padding: 0; cursor: pointer;
