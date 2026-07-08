@@ -193,7 +193,8 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
 
 /* Badge: pill oro. Con navigable è cliccabile (→ naviga); altrimenti solo etichetta. */
 .m2m__tag {
-  gap: .32em; padding-right: .4rem;
+  gap: .3em; padding: .14rem .48rem .14rem .5rem; padding-right: .35rem;
+  font-size: calc(var(--fs-label) * 0.92);
   transition: background .15s, border-color .15s, box-shadow .15s, transform .1s;
 }
 .m2m__tag--nav { cursor: pointer; }

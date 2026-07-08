@@ -18,8 +18,12 @@
         aria-label="Cambia ruolo (PG/PNG)" title="Clic: cambia PG/PNG"
         @click="onRole">{{ entity.isPg ? 'PG' : 'PNG' }}</button>
 
-      <div class="led__grid">
-        <div v-for="f in fields" :key="f.key" class="led__item"
+      <!-- Due colonne indipendenti (non una griglia a righe condivise): se un campo
+           va a capo, la colonna accanto resta invariata. Distribuzione a parità di
+           indice → stesso accoppiamento di righe della griglia precedente. -->
+      <div class="led__cols">
+        <div v-for="(col, ci) in metaCols" :key="ci" class="led__col">
+        <div v-for="f in col" :key="f.key" class="led__item"
           :class="{ 'led__item--player': f.key === 'giocatore' }">
           <span class="led__sep" aria-hidden="true">·</span>
           <!-- Etichetta: se il campo è derivato (livello, reputazione) il tooltip
@@ -140,6 +144,7 @@
               </div>
             </Teleport>
           </template>
+        </div>
         </div>
       </div>
     </div>
@@ -523,6 +528,16 @@ const fields = computed(() => {
   ];
   return groupFields;
 });
+
+// Due colonne a parità di indice: [pari] a sinistra, [dispari] a destra. Ogni
+// colonna impila i propri campi in modo indipendente (vedi .led__col).
+const metaCols = computed(() => {
+  const all = fields.value;
+  const left = all.filter((_, i) => i % 2 === 0);
+  const right = all.filter((_, i) => i % 2 === 1);
+  const cols = [left, right];
+  return cols;
+});
 </script>
 
 <style scoped>
@@ -555,11 +570,14 @@ const fields = computed(() => {
 
 /* --- meta (lettura): campi impilati su due colonne, ciascuno col "·" --- */
 .led__read { position: relative; }
-.led__grid {
+/* Due colonne come contenitori flex indipendenti: le altezze non si accoppiano
+   riga per riga, così un campo che va a capo non aggiunge spazio all'altra colonna. */
+.led__cols {
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .4rem 1.5rem;
+  gap: 0 1.5rem;
   font-family: var(--font-sans); font-size: var(--fs-body); line-height: 1.4;
 }
+.led__col { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
 /* min-height riserva lo spazio del controllo di modifica: aprendo il select
    la riga non cresce e le righe restano allineate (lettura ed edit stessa altezza). */
 /* align-items: flex-start → con un valore su più righe l'etichetta resta in alto
@@ -569,7 +587,7 @@ const fields = computed(() => {
 /* Chip vuoto "–": il glifo trattino siede alto nella pill → sembra avere più
    padding sotto. Ricentro il glifo dentro la pill (solo qui, non nel DS). */
 .led__repchip :deep(.ds-score--empty) { padding-top: .3em; padding-bottom: .14em; }
-@media (max-width: 520px) { .led__grid { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .led__cols { grid-template-columns: 1fr; } }
 
 /* Ruolo: badge-toggle. Default PNG (grigio), clic → PG (oro tenue).
    Larghezza fissa: PG e PNG occupano la stessa pill (testo centrato). */

@@ -793,7 +793,9 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
 @media (pointer: coarse) { .rep-profile__name-ico { opacity: .55; } }
 /* ingranaggio azioni: spinto a destra della riga titolo, allineato otticamente
    alla prima riga del nome (il glifo grande ha padding: micro-offset in alto) */
-.rep-profile__gear { margin-left: auto; flex: none; margin-top: 0.15rem; }
+/* margin-right compensa il padding .2rem del trigger: il glifo resta flush col
+   bordo del pannello, simmetrico al rientro (flush) del nome a sinistra. */
+.rep-profile__gear { margin-left: auto; flex: none; margin-top: 0.15rem; margin-right: -0.2rem; }
 /* trigger nudo: niente sfondo/bordo, glifo piu' grande */
 .rep-profile__gear .ds-menu__trigger.ds-btn {
   background: transparent; border-color: transparent; box-shadow: none;
