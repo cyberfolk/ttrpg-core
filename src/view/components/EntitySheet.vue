@@ -61,7 +61,7 @@
                 @create="f.onCreate && f.onCreate($event)" @close="stopField" />
               <button v-if="f.emptyable" type="button" class="led__none-btn"
                 :aria-label="`Segna ${f.label} come nessuno`" title="Nessuno"
-                @mousedown.prevent @click="markFieldNone(f)">nessuno</button>
+                @mousedown.prevent="markFieldNone(f)">nessuno</button>
             </span>
           </template>
 
@@ -80,7 +80,7 @@
                 @blur="commitText(f)" @keydown.enter="commitText(f)" @keydown.escape="commitText(f)" />
               <button v-if="f.emptyable" type="button" class="led__none-btn"
                 :aria-label="`Segna ${f.label} come nessuno`" title="Nessuno"
-                @mousedown.prevent @click="markFieldNone(f)">nessuno</button>
+                @mousedown.prevent="markFieldNone(f)">nessuno</button>
             </span>
           </template>
 
@@ -330,7 +330,7 @@ function goToGroup(it) {
 
 /* ---- Edit inline: un solo campo alla volta (null = tutto in lettura) ---- */
 const editingField = ref(null);
-function startField(key) { editingField.value = key; }
+function startField(key) { marking.value = false; editingField.value = key; }
 function stopField() { editingField.value = null; }
 
 // Campi testo (Sede, Motto): editor su una copia locale, persistita al commit
@@ -363,10 +363,11 @@ function confirmEmpty(field) {
   }
 }
 function markFieldNone(f) {
+  // Resta true fino al prossimo edit (startField/startTextField): così il blur
+  // di commit dell'input smontato non riscrive il valore, sconfermando il campo.
   marking.value = true;
   confirmEmpty(f.dataField);
   stopField();
-  marking.value = false;
 }
 
 // Classi-modificatore del valore in lettura secondo il tri-stato del campo.
@@ -563,9 +564,8 @@ const fields = computed(() => {
    c'è lavoro qui. "nessuno/a" (confermato vuoto): parola faint corsivo → stato
    chiuso, vuoto per scelta. Entrambi restano cliccabili per modificare. */
 .led__todo {
-  color: var(--gold-600); font-weight: var(--fw-semibold);
+  color: var(--text-muted); font-weight: var(--fw-semibold);
   letter-spacing: .05em;
-  text-decoration: underline dotted var(--gold-400); text-underline-offset: .22em;
 }
 .led__none-word {
   color: var(--text-faint); font-weight: 400; font-style: italic;

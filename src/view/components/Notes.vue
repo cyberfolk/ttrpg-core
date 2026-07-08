@@ -149,4 +149,11 @@ const rendered = computed(() => renderMarkdown(text.value));
   font-size: .88em; padding: .05rem .3rem;
   background: var(--accent-tint); color: var(--gold-700); border-radius: var(--radius-sm);
 }
+.notes__md :deep(blockquote) {
+  margin: .5rem 0; padding: .4rem .75rem;
+  background: var(--accent-tint); border-radius: var(--radius-sm);
+  color: var(--text-body); font-style: italic;
+}
+.notes__md :deep(blockquote:first-child) { margin-top: 0; }
+.notes__md :deep(blockquote:last-child) { margin-bottom: 0; }
 </style>
