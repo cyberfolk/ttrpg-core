@@ -5,8 +5,7 @@
   <section class="led" :aria-label="title">
     <!-- Ritratto: la tavola eletta a profilo (avatarPhotoId). Assente → niente
          medaglione, la testata resta piena larghezza. Si sceglie dalla Galleria. -->
-    <div v-if="entity.avatarPhotoId" class="led__portrait"
-      :class="{ 'led__portrait--char': kind === 'character' }">
+    <div v-if="entity.avatarPhotoId" class="led__portrait">
       <GalleryThumb :photo-id="entity.avatarPhotoId" :focus="avatarFocus" :alt="portraitAlt" />
     </div>
 
@@ -567,10 +566,9 @@ const metaCols = computed(() => {
   background: var(--surface-panel);
 }
 @media (max-width: 520px) {
-  .led__portrait { width: 4.75rem; }
   .led { gap: var(--space-4); }
-  /* Avatar del personaggio nascosto su telefono: la testata resta compatta. */
-  .led__portrait--char { display: none; }
+  /* Avatar nascosto su telefono (personaggio e gruppo): testata compatta. */
+  .led__portrait { display: none; }
 }
 
 /* --- meta (lettura): campi impilati su due colonne, ciascuno col "·" --- */

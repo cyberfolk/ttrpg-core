@@ -475,6 +475,17 @@ function onHardDelete() {
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: 0.75rem; flex-wrap: wrap; margin: 1.1rem 0 1.5rem;
 }
+/* Telefono: i tab del gruppo (fino a 6) non entrano → striscia scrollabile in
+   orizzontale, così anche «Galleria» resta raggiungibile. */
+@media (max-width: 520px) {
+  .rep-gp-tabs { flex-wrap: nowrap; }
+  .rep-gp-tabs .ds-seg--underline {
+    overflow-x: auto; overflow-y: hidden; max-width: 100%;
+    scrollbar-width: none;
+  }
+  .rep-gp-tabs .ds-seg--underline::-webkit-scrollbar { display: none; }
+  .rep-gp-tabs .ds-seg__btn { flex: 0 0 auto; white-space: nowrap; }
+}
 .rep-group-scores {
   border-bottom: 1px solid var(--ds-border, rgba(255,255,255,0.08));
   padding: 0.75rem 0;
