@@ -16,8 +16,10 @@ distinguono tre stati (vedi [01 · Tri-stato](01-entita.md#tri-stato-dei-campi-o
 un campo **da definire** appare come trattino oro `––` con sottolineatura punteggiata
 (un invito a compilare), un campo **confermato vuoto** come parola faint in corsivo
 («nessuno/a», stato chiuso), un campo **valorizzato** col suo valore forte. Aprendo
-l'editor inline di un campo opzionale compare l'azione **«nessuno»** che lo marca
-confermato vuoto; svuotarlo e basta lo lascia invece «da definire».
+l'editor inline di un campo opzionale compaiono le azioni **«vuoto»** (azzera →
+«da definire») e **«nessuno»** (marca «confermato vuoto»). Vale anche per la
+**classe/livelli**: si può rimuovere anche l'unica classe (→ «da definire») o
+sceglierla «nessuno».
 
 Il tab **Galleria** (personaggio e gruppo) mostra le foto dell'entità come griglia di
 tavole: caricamento (file picker + drag&drop), didascalia inline, e apertura di una foto in

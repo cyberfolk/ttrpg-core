@@ -65,12 +65,13 @@ Ogni personaggio e gruppo ha una **galleria** di foto. Una foto è
 ## Tri-stato dei campi opzionali
 
 Un campo anagrafico opzionale (per il gruppo: `type`, `seat`, `guideId`, `motto`;
-per il personaggio: `raceId`, `alignment`, `playerId`) può trovarsi in **tre** stati,
-non due:
+per il personaggio: `raceId`, `alignment`, `playerId`, `classLevels`) può trovarsi
+in **tre** stati, non due:
 
 - **valorizzato** — ha un valore.
 - **da definire (assente)** — non ancora deciso: il valore è vuoto (`null` per i
-  riferimenti, `""` per i testi) **e** la chiave **non** è in `confirmedEmpty`.
+  riferimenti, `""` per i testi, `[]` per la multiclasse `classLevels`) **e** la
+  chiave **non** è in `confirmedEmpty`.
 - **confermato vuoto** — si è deciso che non c'è (es. un gruppo davvero senza guida
   o senza motto): il valore è vuoto **e** la chiave del campo è elencata in
   `confirmedEmpty`.

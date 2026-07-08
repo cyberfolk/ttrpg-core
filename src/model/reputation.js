@@ -23,10 +23,16 @@ export function computeScore(state, fromId, toId) {
    cose distinte. `confirmedEmpty` è l'array delle chiavi che l'utente ha marcato
    come "confermato vuoto"; il valore resta null (riferimenti) o '' (testi). */
 
-// I campi-riferimento hanno forma vuota null; i campi testo hanno forma vuota ''.
+// Forma vuota per tipo di campo: riferimenti → null, array (multiclasse) → [],
+// testi → ''.
 const REF_FIELDS = new Set(['guideId', 'raceId', 'playerId', 'avatarPhotoId']);
+const ARRAY_FIELDS = new Set(['classLevels']);
 
 function emptyFormOf(field) {
+  if (ARRAY_FIELDS.has(field)) {
+    const emptyArray = [];
+    return emptyArray;
+  }
   const empty = REF_FIELDS.has(field) ? null : '';
   return empty;
 }
@@ -48,7 +54,8 @@ function dropConfirmedEmpty(entity, field) {
 // "confermato vuoto" richiede il gesto esplicito (confirm*FieldEmpty).
 export function fieldState(entity, field) {
   const raw = entity[field];
-  const hasValue = raw !== null && raw !== undefined && raw !== '';
+  const emptyArray = Array.isArray(raw) && raw.length === 0;
+  const hasValue = raw !== null && raw !== undefined && raw !== '' && !emptyArray;
   const confirmed = Array.isArray(entity.confirmedEmpty) && entity.confirmedEmpty.includes(field);
   let result;
   if (hasValue) {
@@ -505,7 +512,12 @@ export function confirmCharacterFieldEmpty(state, id, field) {
 }
 
 export function setClassLevels(state, id, classLevels) {
-  const next = updateCharacter(state, id, { classLevels });
+  const character = state.characters.find((c) => c.id === id);
+  if (!character) {
+    return state;
+  }
+  const patch = { classLevels, confirmedEmpty: dropConfirmedEmpty(character, 'classLevels') };
+  const next = updateCharacter(state, id, patch);
   return next;
 }
 

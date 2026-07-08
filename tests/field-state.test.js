@@ -5,7 +5,7 @@ import {
   fieldState,
   confirmGroupFieldEmpty, confirmCharacterFieldEmpty,
   setGroupMotto, setGroupGuide, setGroupSeat, addGroup, addMember,
-  setRace, setAlignment,
+  setRace, setAlignment, setClassLevels,
 } from '../src/model/reputation.js';
 import { migrate, validateState, parseImport, serializeState } from '../src/store/io.js';
 
@@ -84,6 +84,26 @@ test('confirmCharacterFieldEmpty marca razza e la azzera', () => {
   s = { ...s, races: [{ id: 'r1', name: 'Umano' }] };
   s = setRace(s, c.id, 'r1');
   assert.equal(fieldState(s.characters[0], 'raceId'), 'filled');
+});
+
+test('classLevels: array vuoto → absent, poi confermabile → none', () => {
+  let s = createState();
+  const c = createCharacter('A');
+  s = { ...s, characters: [c] };
+  assert.equal(fieldState(s.characters[0], 'classLevels'), 'absent');
+  s = confirmCharacterFieldEmpty(s, c.id, 'classLevels');
+  assert.deepEqual(s.characters[0].classLevels, []);
+  assert.equal(fieldState(s.characters[0], 'classLevels'), 'none');
+});
+
+test('impostare classLevels sconferma il campo (torna filled)', () => {
+  let s = createState();
+  const c = createCharacter('A');
+  s = { ...s, characters: [c], classes: [{ id: 'k1', name: 'Mago' }] };
+  s = confirmCharacterFieldEmpty(s, c.id, 'classLevels');
+  s = setClassLevels(s, c.id, [{ classId: 'k1', level: 5 }]);
+  assert.equal(fieldState(s.characters[0], 'classLevels'), 'filled');
+  assert.ok(!s.characters[0].confirmedEmpty.includes('classLevels'));
 });
 
 test('migrate v4→v5 fa il backfill di confirmedEmpty vuoto', () => {

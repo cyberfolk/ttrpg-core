@@ -60,6 +60,9 @@
                 :aria-label="f.label" @update:model-value="f.onUpdate($event)"
                 @create="f.onCreate && f.onCreate($event)" @close="stopField" />
               <button v-if="f.emptyable" type="button" class="led__none-btn"
+                :aria-label="`Svuota ${f.label}`" title="Da definire (vuoto)"
+                @mousedown.prevent="clearField(f)">vuoto</button>
+              <button v-if="f.emptyable" type="button" class="led__none-btn"
                 :aria-label="`Segna ${f.label} come nessuno`" title="Nessuno"
                 @mousedown.prevent="markFieldNone(f)">nessuno</button>
             </span>
@@ -79,6 +82,9 @@
                 v-model="textDraft" v-focus :aria-label="f.label"
                 @blur="commitText(f)" @keydown.enter="commitText(f)" @keydown.escape="commitText(f)" />
               <button v-if="f.emptyable" type="button" class="led__none-btn"
+                :aria-label="`Svuota ${f.label}`" title="Da definire (vuoto)"
+                @mousedown.prevent="clearField(f)">vuoto</button>
+              <button v-if="f.emptyable" type="button" class="led__none-btn"
                 :aria-label="`Segna ${f.label} come nessuno`" title="Nessuno"
                 @mousedown.prevent="markFieldNone(f)">nessuno</button>
             </span>
@@ -89,10 +95,12 @@
                della testata non si sposta mai. -->
           <template v-else-if="f.type === 'multiclass'">
             <button type="button" class="led__val ds-inline-edit led__val--edit"
-              :class="{ 'is-open': editingField === 'classe' }"
+              :class="[{ 'is-open': editingField === 'classe' }, stateClass(f)]"
               aria-haspopup="dialog" :aria-expanded="editingField === 'classe'"
               aria-label="Modifica classe e livelli" @click.stop="toggleClasse">
-              <span>{{ classLabel }}</span>
+              <span v-if="f.state === 'filled'">{{ classLabel }}</span>
+              <span v-else-if="f.state === 'none'" class="led__none-word">{{ f.noneLabel }}</span>
+              <span v-else class="led__todo" aria-label="Da definire">–</span>
               <Icon name="edit" class="ds-inline-edit__ico led__val-ico" />
             </button>
             <Teleport to="body">
@@ -106,15 +114,20 @@
                       option-value="id" option-label="name" creatable
                       aria-label="Classe" @update:model-value="setClassRow(i, { classId: $event })"
                       @create="onCreateClass(i, $event)" />
-                    <button v-if="entity.classLevels.length > 1" type="button" class="led__mcpop-rm"
+                    <button type="button" class="led__mcpop-rm"
                       aria-label="Rimuovi classe" @click.stop="removeClassRow(i)"><Icon name="close" /></button>
                   </div>
+                  <p v-if="!entity.classLevels.length" class="led__mcpop-vuoto">Nessuna classe.</p>
                 </div>
                 <div class="led__mcpop-foot">
                   <button type="button" class="led__mcpop-add" @click.stop="addClassRow">
                     <Icon name="plus" /> classe
                   </button>
                   <span class="led__mcpop-total">Totale liv. {{ totalLevel }}</span>
+                </div>
+                <div class="led__mcpop-clear">
+                  <button type="button" class="led__none-btn" @click.stop="clearClasse">vuoto</button>
+                  <button type="button" class="led__none-btn" @click.stop="noneClasse">nessuno</button>
                 </div>
               </div>
             </Teleport>
@@ -380,6 +393,26 @@ function markFieldNone(f) {
   stopField();
 }
 
+// Svuota il campo → "da definire" (–): azzera il valore (null per i riferimenti,
+// '' per i testi) senza confermarlo vuoto.
+function clearField(f) {
+  marking.value = true;
+  const empty = f.pool ? null : '';
+  f.onUpdate(empty);
+  stopField();
+}
+
+// Classe (multiclasse): «vuoto» = nessuna classe / da definire ([]); «nessuno» =
+// confermato vuoto.
+function clearClasse() {
+  commitClassLevels([]);
+  stopField();
+}
+function noneClasse() {
+  confirmEmpty('classLevels');
+  stopField();
+}
+
 // Classi-modificatore del valore in lettura secondo il tri-stato del campo.
 function stateClass(f) {
   const cls = {
@@ -449,7 +482,9 @@ const fields = computed(() => {
         onUpdate: onRace, onCreate: onCreateRace,
         emptyable: true, dataField: 'raceId', noneLabel: 'nessuna',
         state: fieldState(props.entity, 'raceId') },
-      { key: 'classe', label: 'Classe', type: 'multiclass' },
+      { key: 'classe', label: 'Classe', type: 'multiclass',
+        emptyable: true, dataField: 'classLevels', noneLabel: 'nessuna',
+        state: fieldState(props.entity, 'classLevels') },
       { key: 'allineamento', label: 'Allineamento', type: 'select', pool: false, creatable: true,
         value: props.entity.alignment, display: props.entity.alignment || EMPTY, options: ALIGNMENTS,
         onUpdate: onAlignment, onCreate: null,
@@ -647,6 +682,8 @@ const fields = computed(() => {
 }
 .led__mcpop-add:hover { color: var(--gold-700); border-color: var(--line-gold); background: var(--accent-tint); }
 .led__mcpop-total { font-size: var(--fs-sm); color: var(--text-muted); }
+.led__mcpop-vuoto { margin: .1rem 0; font-size: var(--fs-sm); color: var(--text-muted); font-style: italic; }
+.led__mcpop-clear { display: flex; gap: .4rem; padding-top: .4rem; margin-top: .1rem; border-top: 1px solid var(--border-hairline); }
 .led__select:hover { border-color: var(--gold-500); }
 .led__select:focus { outline: none; border-color: var(--gold-500); box-shadow: var(--shadow-focus); }
 
