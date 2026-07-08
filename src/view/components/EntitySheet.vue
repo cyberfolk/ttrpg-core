@@ -20,7 +20,7 @@
       <div class="led__cols">
         <div v-for="(col, ci) in metaCols" :key="ci" class="led__col">
         <div v-for="f in col" :key="f.key" class="led__item"
-          :class="{ 'led__item--player': f.key === 'giocatore' }">
+          :class="{ 'led__item--player': f.key === 'giocatore', 'led__item--role': f.key === 'ruolo' }">
           <span class="led__sep" aria-hidden="true">·</span>
           <!-- Etichetta: se il campo è derivato (livello, reputazione) il tooltip
                vive anche sul nome, non solo sul valore. -->
@@ -588,6 +588,8 @@ const metaCols = computed(() => {
 /* align-items: flex-start → con un valore su più righe l'etichetta resta in alto
    (allineata alla prima riga), non centrata verticalmente sul blocco. */
 .led__item { display: flex; align-items: flex-start; gap: .4rem; min-width: 0; min-height: 1.7rem; }
+/* Ruolo (pill, non va mai a capo): baseline → il badge PG/PNG allinea al nome campo. */
+.led__item--role { align-items: baseline; }
 .led__repchip { display: inline-flex; }
 /* Chip vuoto "–": il glifo trattino siede alto nella pill → sembra avere più
    padding sotto. Ricentro il glifo dentro la pill (solo qui, non nel DS). */
