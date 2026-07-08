@@ -21,7 +21,7 @@
         "7a600000-0000-4000-8000-000000000002",
         "7a600000-0000-4000-8000-000000000005"
       ],
-      "notes": "# Drizzt Do'Urden\n\nRanger drow che ha rinnegato Menzoberranzan e le sue Case. Vaga sulla superficie con le scimitarre gemelle *Icingdeath* e *Twinkle* e la pantera Guenhwyvar.\n\n- Cuore dei **Compagni del Pozzo**.\n- Nemico giurato di **Artemis Entreri**.",
+      "notes": "Ranger drow che ha rinnegato Menzoberranzan e le sue Case. Vaga sulla superficie con le scimitarre gemelle *Icingdeath* e *Twinkle* e la pantera Guenhwyvar.\n\n- Cuore dei **Compagni del Pozzo**.\n- Nemico giurato di **Artemis Entreri**.",
       "avatarPhotoId": "ph000000-0000-4000-8000-000000000001",
       "confirmedEmpty": []
     },
@@ -43,7 +43,7 @@
         "7a600000-0000-4000-8000-000000000001",
         "7a600000-0000-4000-8000-000000000005"
       ],
-      "notes": "# Bruenor Battlehammer\n\nRe nano del clan Battlehammer, signore di **Mithral Hall**. Burbero, leale, pronto a menare l'ascia per la sua famiglia adottiva.\n\n> «Per Moradin e per Mithral Hall!»",
+      "notes": "Re nano del clan Battlehammer, signore di **Mithral Hall**. Burbero, leale, pronto a menare l'ascia per la sua famiglia adottiva.\n\n> «Per Moradin e per Mithral Hall!»",
       "avatarPhotoId": "ph000000-0000-4000-8000-000000000002",
       "confirmedEmpty": []
     },
@@ -135,7 +135,7 @@
         "7a600000-0000-4000-8000-000000000002",
         "7a600000-0000-4000-8000-000000000004"
       ],
-      "notes": "# Jarlaxle Baenre\n\nMercenario drow senza Casa, capo carismatico di **Bregan D'aerthe**. Cappello piumato, mille trucchi, nessuna lealtà se non a se stesso — e forse a Drizzt, che lo affascina.",
+      "notes": "Mercenario drow senza Casa, capo carismatico di **Bregan D'aerthe**. Cappello piumato, mille trucchi, nessuna lealtà se non a se stesso — e forse a Drizzt, che lo affascina.",
       "avatarPhotoId": "ph000000-0000-4000-8000-000000000006",
       "confirmedEmpty": []
     },
@@ -162,7 +162,7 @@
         "7a600000-0000-4000-8000-000000000006",
         "7a600000-0000-4000-8000-000000000004"
       ],
-      "notes": "# Artemis Entreri\n\nAssassino di Calimport, il migliore della sua arte. Ossessionato dal battere **Drizzt** per provare a se stesso di essere la lama superiore. Alleato riluttante di Jarlaxle.",
+      "notes": "Assassino di Calimport, il migliore della sua arte. Ossessionato dal battere **Drizzt** per provare a se stesso di essere la lama superiore. Alleato riluttante di Jarlaxle.",
       "avatarPhotoId": "ph000000-0000-4000-8000-000000000007",
       "confirmedEmpty": []
     },
@@ -185,7 +185,7 @@
         "7a600000-0000-4000-8000-000000000003",
         "7a600000-0000-4000-8000-00000000000a"
       ],
-      "notes": "# Elminster il Saggio\n\nArcimago di Shadowdale, Prescelto di **Mystra**. Millenni di magia dietro una pipa e un sorriso beffardo. Occhio segreto degli **Arpisti** nel Nord.",
+      "notes": "Arcimago di Shadowdale, Prescelto di **Mystra**. Millenni di magia dietro una pipa e un sorriso beffardo. Occhio segreto degli **Arpisti** nel Nord.",
       "avatarPhotoId": "ph000000-0000-4000-8000-000000000008",
       "confirmedEmpty": []
     },
@@ -251,7 +251,7 @@
         "7a600000-0000-4000-8000-000000000003",
         "7a600000-0000-4000-8000-000000000006"
       ],
-      "notes": "# Manshoon\n\nFondatore degli **Zhentarim**, la Rete Nera. Arcimago paranoico che sopravvive tramite cloni. Spodestato dal potere della Rete da Fzoul, non lo perdona.",
+      "notes": "Fondatore degli **Zhentarim**, la Rete Nera. Arcimago paranoico che sopravvive tramite cloni. Spodestato dal potere della Rete da Fzoul, non lo perdona.",
       "avatarPhotoId": "ph000000-0000-4000-8000-00000000000b",
       "confirmedEmpty": []
     },
@@ -294,7 +294,7 @@
         "7a600000-0000-4000-8000-000000000003",
         "7a600000-0000-4000-8000-000000000007"
       ],
-      "notes": "# Szass Tam\n\nLich, il più potente degli **Zulkir** di **Thay**. Nigromante che punta al dominio assoluto sulla terra dei maghi rossi.",
+      "notes": "Lich, il più potente degli **Zulkir** di **Thay**. Nigromante che punta al dominio assoluto sulla terra dei maghi rossi.",
       "avatarPhotoId": "ph000000-0000-4000-8000-00000000000d",
       "confirmedEmpty": []
     },
