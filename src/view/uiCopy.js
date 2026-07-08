@@ -3,7 +3,7 @@ export const SCORE_TIP = "Media dei voti ricevuti dagli altri. Conta solo chi ha
 
 export const LEVEL_TIP = "Campo calcolato: somma dei livelli delle classi. Non si modifica a mano.";
 
-export const REPUTATION_HELP = "Ogni personaggio ha un'opinione su ogni altro, da 1 a 100 (di base 50). Le relazioni sono asimmetriche: ciò che A pensa di B è indipendente da ciò che B pensa di A. Ogni transazione, un evento positivo o negativo, alza o abbassa il punteggio. Il punteggio sintetico mostrato è la media dei voti che un personaggio riceve dagli altri.";
+export const REPUTATION_HELP = "Ogni entità parte da 50 verso ogni altra. Le relazioni sono asimmetriche: ciò che A pensa di B è indipendente da ciò che B pensa di A. Ogni transazione, positiva o negativa, sposta quel punteggio. Il numero mostrato è 50 più la somma delle transazioni in quella direzione (tra 1 e 100): non si imposta a mano.";
 
 // --- Onboarding / stati vuoti -------------------------------------------------
 // Testi del flusso di primo accesso: ogni punto morto instrada al passo dopo,
