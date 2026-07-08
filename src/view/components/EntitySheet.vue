@@ -562,7 +562,9 @@ const fields = computed(() => {
 }
 /* min-height riserva lo spazio del controllo di modifica: aprendo il select
    la riga non cresce e le righe restano allineate (lettura ed edit stessa altezza). */
-.led__item { display: flex; align-items: center; gap: .4rem; min-width: 0; min-height: 1.7rem; }
+/* align-items: flex-start → con un valore su più righe l'etichetta resta in alto
+   (allineata alla prima riga), non centrata verticalmente sul blocco. */
+.led__item { display: flex; align-items: flex-start; gap: .4rem; min-width: 0; min-height: 1.7rem; }
 .led__repchip { display: inline-flex; }
 /* Chip vuoto "–": il glifo trattino siede alto nella pill → sembra avere più
    padding sotto. Ricentro il glifo dentro la pill (solo qui, non nel DS). */
