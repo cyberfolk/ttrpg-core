@@ -5,13 +5,18 @@
   <div class="notes">
     <template v-if="editing">
       <textarea ref="taRef" class="ds-input notes__ta" v-model="text"
-        rows="1" aria-label="Note in markdown" @input="autosize" @blur="done"
+        rows="1" aria-label="Note in markdown" @input="autosize" @blur="onBlur"
+        @keydown.escape.prevent="cancel"
         placeholder="markdown: # titolo, **grassetto**, *corsivo*, `codice`, - elenco"></textarea>
-      <div class="notes__actions edit-actions">
-        <button type="button" class="ds-btn ds-btn--sm ds-btn--confirm" @mousedown.prevent @click="done">
+      <!-- @mousedown.prevent: sopprime il blur del mouse (il click arriva comunque).
+           Il caso tastiera lo copre onBlur, che guarda dove sta andando il focus. -->
+      <div ref="actionsEl" class="notes__actions edit-actions">
+        <button type="button" class="ds-btn ds-btn--sm ds-btn--confirm"
+          @mousedown.prevent @click="done">
           <span class="ds-btn__icon"><Icon name="check" /></span> Fatto
         </button>
-        <button type="button" class="ds-btn ds-btn--sm ds-btn--secondary" @mousedown.prevent @click="cancel">
+        <button type="button" class="ds-btn ds-btn--sm ds-btn--secondary"
+          @mousedown.prevent @click="cancel">
           <span class="ds-btn__icon"><Icon name="close" /></span> Annulla
         </button>
       </div>
@@ -47,6 +52,7 @@ const { dispatch } = useStore();
 const editing = ref(false);
 const text = ref(props.entity.notes || '');
 const taRef = ref(null);
+const actionsEl = ref(null);
 
 // Auto-resize: la textarea cresce per contenere tutto il contenuto, senza
 // scrollbar interna. min-height (CSS) resta il pavimento per contenuti brevi.
@@ -72,9 +78,20 @@ function done() {
   if (props.kind === 'character') dispatch((s) => setCharacterNotes(s, id, value));
   else dispatch((s) => setGroupNotes(s, id, value));
 }
+
+/* Uscendo dalla textarea si salva — ma non quando il focus sta andando su uno dei
+   due bottoni: prima si aspetta di sapere QUALE. Prima questo era un
+   @mousedown.prevent sui bottoni, che funziona solo col mouse: da tastiera il Tab
+   faceva scattare done() e smontava i bottoni, quindi «Annulla» era irraggiungibile
+   e si usciva sempre salvando. */
+function onBlur(e) {
+  const to = e.relatedTarget;
+  if (to instanceof Node && actionsEl.value?.contains(to)) return;
+  done();
+}
+
 /* Scarta le modifiche: ripristina il testo originale e torna in lettura, senza
-   dispatch (nessun salvataggio). Il @mousedown.prevent sul bottone evita che il
-   @blur della textarea faccia scattare done() prima del click. */
+   dispatch (nessun salvataggio). Raggiungibile col bottone e con Escape. */
 function cancel() {
   editing.value = false;
   text.value = props.entity.notes || '';
@@ -105,6 +122,20 @@ const rendered = computed(() => renderMarkdown(text.value));
 .notes__view:hover .notes__pencil,
 .notes__pencil:focus-visible { opacity: 1; color: var(--gold-600); }
 .notes__pencil:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+
+/* Touch: niente hover. Con `opacity: 0` l'unico modo per scrivere una nota
+   sarebbe un bottone invisibile — e lo stato vuoto invita proprio a «usare la
+   matita». Qui resta visibile e diventa un bersaglio da 44px; il testo le lascia
+   spazio a destra invece di scorrerle sotto. Stessa scelta di .led__val-ico. */
+@media (pointer: coarse) {
+  .notes__pencil {
+    opacity: .75;
+    display: grid; place-items: center;
+    width: 44px; height: 44px; padding: 0;
+  }
+  .notes__pencilwrap { top: 0; right: 0; }
+  .notes__view { padding-right: 44px; }
+}
 
 .notes__empty { margin: 0; color: var(--text-muted); font-style: italic; }
 

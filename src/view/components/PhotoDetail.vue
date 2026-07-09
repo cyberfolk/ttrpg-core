@@ -1,7 +1,8 @@
 <template>
   <Teleport to="body">
     <div class="ds-overlay" @click.self="emit('close')">
-      <div class="ds-dialog gphoto" role="dialog" aria-label="Dettaglio tavola">
+      <div ref="dialogEl" class="ds-dialog ds-dialog--lg gphoto" role="dialog" aria-modal="true"
+        aria-label="Dettaglio tavola">
         <button class="ds-dialog__close ds-dialog__close--corner" @click="emit('close')" aria-label="Chiudi">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
@@ -82,7 +83,19 @@ const emit = defineEmits(['close', 'deleted']);
 
 const { state, dispatch } = useStore();
 
-useDialog({ onClose: () => emit('close') });
+const dialogEl = ref(null);
+
+// Escape gerarchico: la conferma di eliminazione si smonta per prima; solo a
+// dialog "pulito" Escape chiude il dettaglio.
+useDialog({
+  container: dialogEl,
+  onClose: () => emit('close'),
+  onEscape: () => {
+    if (!confirmDelete.value) return false;
+    confirmDelete.value = false;
+    return true;
+  },
+});
 
 const photo = computed(() => state.value.photos.find((p) => p.id === props.photoId) || null);
 const isAvatar = computed(() => props.entity.avatarPhotoId === props.photoId);
@@ -164,12 +177,12 @@ nextTick(autosize);
 </script>
 
 <style scoped>
-/* Dettaglio a due colonne: palco immagine + colonna metadati. Su mobile impila. */
+/* Dettaglio a due colonne: palco immagine + colonna metadati. Su mobile impila.
+   La larghezza la dà `.ds-dialog--lg` (il padding dell'overlay fa il resto). */
 .gphoto {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(15rem, 1fr);
   gap: 0;
-  max-width: min(56rem, calc(100vw - 2rem));
   width: 100%;
   padding: 0;
   overflow: hidden;
@@ -193,9 +206,12 @@ nextTick(autosize);
   max-height: 78vh;
 }
 
+/* Didascalia: font di corpo. Cinzel è un display serif — su un campo di input è
+   un titolo travestito da dato, e il DS lo vieta su label/input/dati. La gerarchia
+   la porta la dimensione (fs-lg), non il carattere. */
 .gphoto__caption {
-  font-family: var(--font-display); font-size: var(--fs-lg);
-  color: var(--text-strong);
+  font-family: var(--font-sans); font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold); color: var(--text-strong);
 }
 .gphoto__lbl {
   font-family: var(--font-display); font-size: var(--fs-label);
@@ -247,10 +263,20 @@ nextTick(autosize);
 }
 .gphoto__del { margin-left: auto; }
 
+/* Telefono: le due colonne si impilano. Con `overflow: hidden` sul dialog e
+   `overflow-y: auto` sulla colonna metadati nascevano DUE superfici di
+   scorrimento annidate: le azioni («Imposta come profilo», «Elimina») finivano
+   sotto un fold interno senza alcun indizio che ci fosse altro da vedere.
+   Impilato, ne serve una sola — quella del dialog, che è anche quella che il dito
+   trova per prima. `overflow: hidden` qui vinceva su `.ds-dialog { overflow: auto }`
+   perché lo scoped ha specificità maggiore: va annullato esplicitamente. */
 @media (max-width: 640px) {
-  .gphoto { grid-template-columns: 1fr; }
+  .gphoto { grid-template-columns: 1fr; overflow: auto; }
   .gphoto__stage { max-height: 42vh; }
   .gphoto__stage :deep(img) { max-height: 40vh; }
-  .gphoto__side { border-left: none; border-top: 1px solid var(--border-hairline); max-height: none; }
+  .gphoto__side {
+    border-left: none; border-top: 1px solid var(--border-hairline);
+    max-height: none; overflow-y: visible;
+  }
 }
 </style>

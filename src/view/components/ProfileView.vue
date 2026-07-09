@@ -178,6 +178,12 @@
       :to-id="tx.toId"
       @close="tx = null"
     />
+
+    <ConfirmDialog v-if="confirmDeleteOpen" title="Elimina definitivamente"
+      confirm-text="Elimina" @confirm="doHardDelete" @cancel="confirmDeleteOpen = false">
+      Elimina <strong>{{ $name(character) }}</strong>, le sue transazioni e le sue foto.
+      L'operazione è <strong>irreversibile</strong>.
+    </ConfirmDialog>
   </section>
 
   <NotFound v-else />
@@ -199,6 +205,7 @@ import RecordPager from './RecordPager.vue';
 import RelationList from './RelationList.vue';
 import EntityPicker from './EntityPicker.vue';
 import TransactionModal from './TransactionModal.vue';
+import ConfirmDialog from './ConfirmDialog.vue';
 import NotFound from './NotFound.vue';
 import HoverTip from './HoverTip.vue';
 import Icon from './Icon.vue';
@@ -223,6 +230,8 @@ const editing = ref(false);
 const editName = ref('');
 // Sgancio gruppo: conferma inline a due passi (niente delete silenzioso).
 const confirmUnlinkId = ref(null);
+// Eliminazione definitiva: conferma nel dialog del DS, non in window.confirm.
+const confirmDeleteOpen = ref(false);
 // Cambio tab azzera una conferma di sgancio in sospeso.
 watch(tab, () => { confirmUnlinkId.value = null; });
 
@@ -322,8 +331,11 @@ function onRestore() {
 }
 
 function onHardDelete() {
-  const confirmed = window.confirm('Eliminazione DEFINITIVA e irreversibile. Confermi?');
-  if (!confirmed) return;
+  confirmDeleteOpen.value = true;
+}
+
+function doHardDelete() {
+  confirmDeleteOpen.value = false;
   const id = character.value.id;
   // Byte delle foto: pulizia best-effort da IndexedDB prima che il MODEL scarti i
   // metadati a cascata. Un blob orfano è tollerato, non blocca la cancellazione.

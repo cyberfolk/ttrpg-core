@@ -87,4 +87,11 @@ function onCommit(e) {
 .rep-recpager__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .rep-recpager__input { -moz-appearance: textfield; appearance: textfield; }
 .rep-recpager__sep { color: var(--text-muted); }
+
+/* Touch: il pager vive nella topbar del profilo, dove il pollice lo cerca per
+   sfogliare i record. Frecce 27×27 e numero 19×27 erano bersagli da mouse. */
+@media (pointer: coarse) {
+  .rep-recpager .ds-btn { min-width: 44px; min-height: 44px; }
+  .rep-recpager__value { min-width: 44px; min-height: 44px; }
+}
 </style>

@@ -19,7 +19,7 @@
         @click.stop @keydown="onKey">
         <div v-if="creatable" class="isel__search">
           <input ref="searchInput" v-model="query" type="text" class="isel__search-input"
-            :placeholder="searchPlaceholder" :aria-label="ariaLabel" @input="activeIndex = 0" />
+            :placeholder="searchPlaceholder" :aria-label="ariaLabel" @input="reset()" />
         </div>
         <ul class="isel__opts" role="listbox" :aria-label="ariaLabel">
           <li v-for="(o, i) in shown" :key="optValue(o)">
@@ -52,6 +52,7 @@
 import { ref, computed, nextTick, onMounted } from 'vue';
 import { placeInViewport } from '../anchoring.js';
 import { useDismiss } from '../useDismiss.js';
+import { useListNav } from '../useListNav.js';
 
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
@@ -71,7 +72,6 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'close', 'create']);
 
 const open = ref(false);
-const activeIndex = ref(-1);
 const query = ref('');
 const popStyle = ref(null);
 const trigger = ref(null);
@@ -110,6 +110,18 @@ const canCreate = computed(() => {
   return !exists;
 });
 
+// Navigazione da tastiera (frecce + Invio) dal composable condiviso: la voce
+// "Crea «…»" siede in coda alle opzioni mostrate, quindi ha indice `shown.length`.
+const { activeIndex, reset, scrollActiveIntoView, onKeydown: onListKey } = useListNav({
+  count: () => shown.value.length + (canCreate.value ? 1 : 0),
+  onPick: (index) => {
+    if (canCreate.value && index === shown.value.length) createValue();
+    else choose(shown.value[index]);
+  },
+  container: pop,
+  itemSelector: '.isel__opt',
+});
+
 function anchor() {
   const rect = trigger.value.getBoundingClientRect();
   popStyle.value = {
@@ -122,7 +134,7 @@ function anchor() {
 async function openMenu() {
   query.value = '';
   const idx = props.options.findIndex((o) => optValue(o) === props.modelValue);
-  activeIndex.value = props.creatable ? 0 : (idx >= 0 ? idx : 0);
+  reset(props.creatable ? 0 : Math.max(idx, 0));
   anchor();
   open.value = true;
   await nextTick();
@@ -135,18 +147,22 @@ async function openMenu() {
   else pop.value?.focus();
   scrollActiveIntoView();
 }
-function closeMenu() {
+// `restoreFocus`: chiusura intenzionale (Esc, scelta, toggle) → il focus torna al
+// trigger. Chiusura passiva (click esterno, scroll) → il focus resta dov'è andato.
+function closeMenu(restoreFocus = false) {
   if (!open.value) return;
   open.value = false;
+  if (restoreFocus) trigger.value?.focus();
   emit('close');
 }
 function toggle() {
-  if (open.value) closeMenu();
+  if (open.value) closeMenu(true);
   else openMenu();
 }
 function choose(o) {
+  if (o == null) return;
   emit('update:modelValue', optValue(o));
-  closeMenu();
+  closeMenu(true);
 }
 function createValue() {
   const name = query.value.trim();
@@ -158,22 +174,7 @@ function createValue() {
     emit('update:modelValue', name);
     emit('create', name);
   }
-  closeMenu();
-}
-function scrollActiveIntoView() {
-  const el = pop.value?.querySelectorAll('.isel__opt')[activeIndex.value];
-  el?.scrollIntoView({ block: 'nearest' });
-}
-function move(delta) {
-  const total = shown.value.length + (canCreate.value ? 1 : 0);
-  if (!total) return;
-  activeIndex.value = (activeIndex.value + delta + total) % total;
-  scrollActiveIntoView();
-}
-function pick() {
-  if (canCreate.value && activeIndex.value === shown.value.length) { createValue(); return; }
-  const o = shown.value[activeIndex.value];
-  if (o != null) choose(o);
+  closeMenu(true);
 }
 function onTriggerKey(e) {
   if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) {
@@ -182,15 +183,14 @@ function onTriggerKey(e) {
   }
 }
 function onKey(e) {
-  if (e.key === 'ArrowDown') { e.preventDefault(); move(1); }
-  else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
-  else if (e.key === 'Enter') { e.preventDefault(); pick(); }
-  else if (e.key === 'Escape') { e.preventDefault(); closeMenu(); }
+  if (onListKey(e)) return;
+  if (e.key === 'Escape') { e.preventDefault(); closeMenu(true); }
 }
 
 // Chiusura su click esterno / scroll / resize (composable condiviso). Lo scroll
 // dentro il popover non chiude (scrollGuard). Esc è gestito localmente in onKey.
-useDismiss(() => open.value, closeMenu, { scrollGuard: pop });
+// Chiusura passiva: niente focus restore (il focus è già andato dove voleva).
+useDismiss(() => open.value, () => closeMenu(false), { scrollGuard: pop });
 onMounted(() => { if (props.autoOpen) openMenu(); });
 </script>
 
@@ -215,7 +215,7 @@ onMounted(() => { if (props.autoOpen) openMenu(); });
 .isel--open .isel__chev { transform: rotate(180deg); }
 
 .isel__pop {
-  z-index: 1100; display: flex; flex-direction: column;
+  z-index: var(--z-popover); display: flex; flex-direction: column;
   max-width: min(20rem, calc(100vw - 1rem)); overflow: auto;
   background: var(--surface-card); border: 1px solid var(--line-gold);
   border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: .25rem;
@@ -243,7 +243,13 @@ onMounted(() => { if (props.autoOpen) openMenu(); });
 .isel__opt--create strong { font-weight: var(--fw-semibold); }
 .isel__opt-empty { padding: .5rem; font-size: var(--fs-sm); color: var(--text-faint); }
 
-@media (pointer: coarse) { .isel__opt { min-height: 44px; } }
+/* Touch: le VOCI erano già a 44px, il TRIGGER che le apre no (h 1.7rem ≈ 27px).
+   `min-height` batte `height` senza toccarla, così la resa desktop non si muove. */
+@media (pointer: coarse) {
+  .isel__opt { min-height: 44px; }
+  .isel__trigger { min-height: 44px; }
+  .isel__search-input { min-height: 44px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .isel__chev { transition: none; }
   .isel__opt { transition: none; }

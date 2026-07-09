@@ -17,8 +17,12 @@
 export function placeInViewport(triggerEl, popEl, opts = {}) {
   const { gap = 4, margin = 8, cap = 240, align = 'left', minWidth = null } = opts;
   const trg = triggerEl.getBoundingClientRect();
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  // Riferimento = viewport SENZA barre di scorrimento: è il blocco contenitore di
+  // `position: fixed`, ed è lo stesso spazio in cui vive getBoundingClientRect.
+  // `window.innerWidth` include invece la scrollbar classica, e un popover allineato
+  // a destra finiva sfalsato della sua larghezza (~10px su Windows).
+  const vw = document.documentElement.clientWidth;
+  const vh = document.documentElement.clientHeight;
   const popW = popEl ? popEl.offsetWidth : trg.width;
   const style = { position: 'fixed' };
 
@@ -47,4 +51,33 @@ export function placeInViewport(triggerEl, popEl, opts = {}) {
     style.maxHeight = `${Math.min(spaceBelow, cap)}px`;
   }
   return style;
+}
+
+// Un evento `resize` non ha lo stesso significato su desktop e su telefono.
+// Col mouse è sempre l'utente che ridimensiona la finestra: il popover ancorato
+// si scollega dal trigger e va chiuso. Su telefono la causa più frequente è la
+// **tastiera software**, che accorcia il viewport senza che nulla si sia mosso —
+// e chiudere lì significa chiudere il popover nell'istante esatto in cui il suo
+// campo di ricerca prende il focus, cioè renderlo inutilizzabile.
+//
+// La discriminante è la LARGHEZZA: la tastiera cambia solo l'altezza; un vero
+// ridimensionamento (o una rotazione) cambia anche la larghezza. La factory tiene
+// la larghezza vista all'ultimo controllo, quindi serve **un'istanza per
+// listener** (chiamarla dentro il setup del componente, non a livello di modulo).
+export function createStructuralResize() {
+  let lastWidth = document.documentElement.clientWidth;
+  return function isStructuralResize() {
+    const width = document.documentElement.clientWidth;
+    const structural = width !== lastWidth;
+    lastWidth = width;
+    return structural;
+  };
+}
+
+// Il focus è dentro `el`? Un popover che ospita il campo a fuoco non va mai
+// chiuso da uno spostamento del viewport: quello spostamento l'ha causato lui.
+export function containsFocus(el) {
+  const active = document.activeElement;
+  const inside = !!(el && active && el.contains(active));
+  return inside;
 }

@@ -54,6 +54,10 @@ typography:
     fontSize: "0.72rem"
     fontWeight: 600
     letterSpacing: "0.08em"
+  code:
+    fontFamily: "ui-monospace, Menlo, Consolas, monospace"
+    fontSize: "0.88em"
+    fontWeight: 400
 rounded:
   sm: "6px"
   md: "10px"
@@ -194,6 +198,13 @@ markup né i corpi delle regole.
   delta di reputazione **positivo** nel modale transazioni (`--delta-pos`); il negativo usa ember
   (`--delta-neg`). Non è un accento decorativo: è semantica di direzione del punteggio.
 
+### Sopra l'immagine
+- **Punto Focale** (`--overlay-dot`, rgba(0,0,0,.25) + `--overlay-dot-ring`, rgba(0,0,0,.35)):
+  il pallino di reinquadratura della galleria. È l'unico colore del sistema che si posa su una
+  **fotografia arbitraria** invece che su una superficie del tema: l'oro sparirebbe su un
+  ritratto chiaro, l'inchiostro su uno scuro. Un nero traslucido con anello più denso regge su
+  qualunque immagine. Non usarlo altrove: fuori da un'immagine non ha giustificazione.
+
 ### Neutral
 - **Avorio** (`paper-50`, #faf7f1): sfondo dell'app. La carta del tomo.
 - **Pergamena** (`paper-100`/`200`/`300`): pannelli, superfici sollevate, divisori; la rampa
@@ -218,6 +229,10 @@ grigio slavato su avorio "per eleganza": è la causa numero uno di testo illeggi
 **Body Font:** Source Sans 3 (fallback ui-sans-serif, system-ui, sans-serif)
 **Label:** Cinzel maiuscolo (stesso font display, `text-transform: uppercase` +
 letter-spacing) — vedi §Gerarchia. Sistema a **due font**: nessun terzo font serif.
+**Code:** stack monospace di sistema (`ui-monospace, Menlo, Consolas, monospace`), usato solo
+dal `<code>` reso dal markdown (note, descrizioni delle foto). Non è un terzo carattere di
+identità: è il font che dice «questo è testo letterale» e nessuna proporzionale può dirlo.
+Non compare mai in etichette, bottoni o dati.
 
 **Character:** Cinzel è un'epigrafica romana: maiuscole incise, autorevole, da frontespizio.
 Source Sans 3 è una humanist sans neutra e leggibile, perfetta per dati e numeri tabellari

@@ -15,9 +15,11 @@
             @click="navigable && onNavigate(it)" @keydown.enter="navigable && onNavigate(it)">
             <Icon :name="icon" class="m2m__tag-ico" />
             <span class="m2m__tag-name">{{ it.name }}</span>
-            <button type="button" class="m2m__tag-x" tabindex="-1"
+            <!-- Raggiungibile col Tab: era `tabindex="-1"`, e scollegare un tag o un
+                 gruppo restava impossibile senza mouse. -->
+            <button type="button" class="m2m__tag-x"
               :aria-label="`Rimuovi ${it.name}`"
-              @click.stop="unlink(it)" @keydown.enter.stop="unlink(it)">
+              @click.stop="unlink(it)">
               <Icon name="close" />
             </button>
           </span>
@@ -37,17 +39,22 @@
           <Icon name="search" class="m2m__search-ico" />
           <input ref="searchInput" v-model="query" type="text" class="m2m__search-input"
             :placeholder="searchPlaceholder" :aria-label="searchPlaceholder"
-            @keydown.escape="closePicker" @keydown.enter.prevent="addFirst" />
+            @input="reset()" @keydown.escape="closePicker" @keydown="onSearchKey" />
         </div>
-        <ul class="m2m__opts" role="listbox" :aria-label="label">
-          <li v-for="it in available" :key="it.id">
-            <button type="button" class="m2m__opt" role="option" @click="addItem(it)">
+        <ul ref="optsEl" class="m2m__opts" role="listbox" :aria-label="label">
+          <li v-for="(it, i) in available" :key="it.id">
+            <button type="button" class="m2m__opt" role="option"
+              :aria-selected="i === activeIndex" :class="{ 'is-active': i === activeIndex }"
+              @click="addItem(it)" @mousemove="activeIndex = i">
               <Icon :name="icon" class="m2m__opt-ico" />
               <span class="m2m__opt-label">{{ it.name }}</span>
             </button>
           </li>
           <li v-if="canCreate">
-            <button type="button" class="m2m__opt m2m__opt--create" role="option" @click="createItem">
+            <button type="button" class="m2m__opt m2m__opt--create" role="option"
+              :aria-selected="activeIndex === available.length"
+              :class="{ 'is-active': activeIndex === available.length }"
+              @click="createItem" @mousemove="activeIndex = available.length">
               <Icon name="plus" class="m2m__opt-ico" />
               <span>Crea «<strong>{{ query.trim() }}</strong>»</span>
             </button>
@@ -64,6 +71,7 @@ import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue';
 import Icon from './Icon.vue';
 import { placeInViewport } from '../anchoring.js';
 import { useDismiss } from '../useDismiss.js';
+import { useListNav } from '../useListNav.js';
 
 const props = defineProps({
   label: { type: String, required: true },
@@ -101,6 +109,7 @@ function unlink(it) {
 function addItem(it) {
   emit('update:modelValue', [...props.modelValue, it.id]);
   query.value = '';
+  reset();
   nextTick(() => searchInput.value?.focus());
 }
 // Delega la creazione al parent: crea nel pool e collega il riferimento.
@@ -109,12 +118,26 @@ function createItem() {
   if (!name) return;
   emit('create', name);
   query.value = '';
+  reset();
 }
-// Enter: se c'è un match lo aggiunge, altrimenti crea col testo digitato.
-function addFirst() {
-  const first = available.value[0];
-  if (first) addItem(first);
-  else if (canCreate.value) createItem();
+
+// Navigazione da tastiera delle opzioni (frecce + Invio), dallo stesso composable
+// di InlineSelect ed EntityPicker: prima qui c'erano solo Esc e un Invio che
+// significava "prendi il primo match", e la stessa lista si comportava in due
+// modi diversi a due righe di distanza nella scheda.
+const optsEl = ref(null);
+const { activeIndex, reset, onKeydown: onListKey } = useListNav({
+  count: () => available.value.length + (canCreate.value ? 1 : 0),
+  onPick: (index) => {
+    if (index === available.value.length) createItem();
+    else addItem(available.value[index]);
+  },
+  container: optsEl,
+  itemSelector: '.m2m__opt',
+});
+
+function onSearchKey(e) {
+  onListKey(e);
 }
 function onNavigate(it) {
   emit('navigate', it);
@@ -157,6 +180,7 @@ function onOtherOpen(e) { if (e.detail !== instanceId && pickerOpen.value) close
 async function openPicker() {
   document.dispatchEvent(new CustomEvent('m2m:open', { detail: instanceId }));
   query.value = '';
+  reset();
   anchorPicker();
   pickerOpen.value = true;
   await nextTick();
@@ -248,7 +272,7 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
 
 /* Combobox teleportato su <body>. */
 .m2m__pop {
-  z-index: 1100; max-width: min(20rem, calc(100vw - 1rem)); max-height: 15rem; overflow: auto;
+  z-index: var(--z-popover); max-width: min(20rem, calc(100vw - 1rem)); max-height: 15rem; overflow: auto;
   background: var(--surface-card); border: 1px solid var(--line-gold);
   border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: .3rem;
 }
@@ -267,6 +291,7 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
   transition: background .12s, color .12s;
 }
 .m2m__opt:hover,
+.m2m__opt.is-active,
 .m2m__opt:focus-visible { outline: none; background: var(--accent-tint); color: var(--gold-700); }
 .m2m__opt-ico { flex: 0 0 auto; color: var(--text-faint); font-size: .9em; }
 /* Etichetta opzione su una riga con ellissi (come InlineSelect): i nomi lunghi
@@ -294,6 +319,27 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
 @media (pointer: coarse) {
   .m2m__tag-x { color: var(--text-muted); }
   .m2m__opt { min-height: 44px; }
+
+  /* Il chip diventa alto abbastanza da contenere un bersaglio da 44px: senza,
+     ✕ (12px!) e navigazione al gruppo cadono sotto lo stesso polpastrello. */
+  .m2m__tag { min-height: 44px; }
+  /* ✕ resta piccola all'occhio (il chip non deve gonfiarsi) ma riceve un'area di
+     tocco estesa via ::before: piena altezza del chip, 32px di larghezza. Non 44
+     in larghezza di proposito — a 44 l'area sfonderebbe nel chip accanto (gap
+     .4rem) e nel nome. Con 32px separati, un tocco sbagliato cade sulla
+     navigazione (reversibile), non sulla rimozione (distruttiva). */
+  .m2m__tag-x { position: relative; }
+  .m2m__tag-x::before {
+    content: ""; position: absolute; top: 50%; left: 50%;
+    width: 32px; height: 44px; transform: translate(-50%, -50%);
+  }
+  /* Il «+» in coda ai chip: stesso trattamento, area piena senza crescere. */
+  .m2m__addline { position: relative; }
+  .m2m__addline::before {
+    content: ""; position: absolute; top: 50%; left: 50%;
+    min-width: 44px; min-height: 44px; width: 100%; height: 100%;
+    transform: translate(-50%, -50%);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .m2m__tag, .m2m__tag-x, .m2m__addline, .m2m__opt { transition: none; }

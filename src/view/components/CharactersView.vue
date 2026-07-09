@@ -59,9 +59,10 @@
 
     <!-- Add character dialog -->
     <div v-if="addOpen" class="ds-overlay" @click.self="closeAdd">
-      <div class="ds-dialog" style="max-width:420px">
+      <div ref="addDialogEl" class="ds-dialog ds-dialog--sm" role="dialog" aria-modal="true"
+        aria-labelledby="add-char-title">
         <div class="ds-dialog__head">
-          <h3 class="ds-dialog__title">Aggiungi personaggio</h3>
+          <h3 class="ds-dialog__title" id="add-char-title">Aggiungi personaggio</h3>
           <button class="ds-dialog__close" @click="closeAdd" aria-label="Chiudi">
             <Icon name="close" />
           </button>
@@ -89,11 +90,12 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useUiState } from '../useUiState.js';
 import { useStore } from '../useStore.js';
 import { useDisplayedCharacters } from '../useDisplayedCharacters.js';
+import { useDialog } from '../useDialog.js';
 import { addCharacter, listActiveCharacters } from '../../model/reputation.js';
 import { ONBOARD } from '../uiCopy.js';
 import GalleryView from './GalleryView.vue';
@@ -114,6 +116,16 @@ const searchDisabled = computed(() => listActiveCharacters(state.value).length <
 const newName = ref('');
 const addOpen = ref(false);
 const nameInput = ref(null);
+const addDialogEl = ref(null);
+
+// Dialog "aggiungi personaggio": Escape chiude, apertura mette a fuoco il nome,
+// il focus resta intrappolato nel dialog e torna al «+» alla chiusura.
+useDialog({
+  isOpen: () => addOpen.value,
+  onClose: closeAdd,
+  container: addDialogEl,
+  onOpen: () => nameInput.value?.focus(),
+});
 
 // Coach-mark primo accesso: attivo con un solo personaggio (e nessuna ricerca),
 // stesso stato che mostra il pannello guida. Indica il "+" che crea il secondo.
@@ -125,10 +137,9 @@ function toggleView() {
   ui.activeView = isList.value ? 'gallery' : 'list';
 }
 
-async function openAdd() {
+// Il focus sul campo nome lo mette `useDialog` (onOpen), dopo il nextTick.
+function openAdd() {
   addOpen.value = true;
-  await nextTick();
-  nameInput.value?.focus();
 }
 
 // Arrivo da "Crea il primo personaggio" (faccia a faccia): apri subito il dialog

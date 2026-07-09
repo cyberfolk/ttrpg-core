@@ -216,6 +216,12 @@
       :to-id="activeTx.toId"
       @close="activeTx = null"
     />
+
+    <ConfirmDialog v-if="confirmDeleteOpen" title="Elimina definitivamente"
+      confirm-text="Elimina" @confirm="doHardDelete" @cancel="confirmDeleteOpen = false">
+      Elimina <strong>{{ $name(group) }}</strong>, le transazioni che lo riguardano e le sue foto.
+      I membri restano. L'operazione è <strong>irreversibile</strong>.
+    </ConfirmDialog>
   </section>
 
   <NotFound v-else />
@@ -246,6 +252,7 @@ import { listPhotos } from '../../model/photos.js';
 import { photoBlobStore } from '../photoStore.js';
 import { SCORE_TIP } from '../uiCopy.js';
 import TransactionModal from './TransactionModal.vue';
+import ConfirmDialog from './ConfirmDialog.vue';
 import NotFound from './NotFound.vue';
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
@@ -269,6 +276,8 @@ const router = useRouter();
 const tab = ref('note');
 const selectedCandidateId = ref(null);
 const activeTx = ref(null);
+// Eliminazione definitiva: conferma nel dialog del DS, non in window.confirm.
+const confirmDeleteOpen = ref(false);
 
 // Navigazione scheda-per-scheda tra gruppi (come i personaggi). Ordine = default
 // della lista gruppi (nome asc); archiviati in coda solo se showArchived è attivo.
@@ -445,8 +454,11 @@ function onRestore() {
 }
 
 function onHardDelete() {
-  const confirmed = window.confirm('Eliminare definitivamente il gruppo? Questa operazione non è reversibile.');
-  if (!confirmed) return;
+  confirmDeleteOpen.value = true;
+}
+
+function doHardDelete() {
+  confirmDeleteOpen.value = false;
   const id = group.value.id;
   // Byte delle foto: pulizia best-effort da IndexedDB (i metadati li scarta il MODEL a cascata).
   const photoIds = listPhotos(state.value, id).map((p) => p.id);

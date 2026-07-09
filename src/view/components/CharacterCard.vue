@@ -64,6 +64,12 @@
         </template>
       </ActionMenu>
     </div>
+
+    <ConfirmDialog v-if="confirmDeleteOpen" title="Elimina definitivamente"
+      confirm-text="Elimina" @confirm="doHardDelete" @cancel="confirmDeleteOpen = false">
+      Elimina <strong>{{ $name(char) }}</strong>, le sue transazioni e le sue foto.
+      L'operazione è <strong>irreversibile</strong>.
+    </ConfirmDialog>
   </div>
 </template>
 
@@ -75,6 +81,7 @@ import { softDeleteCharacter, restoreCharacter, hardDeleteCharacter, renameChara
 import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import ActionMenu from './ActionMenu.vue';
+import ConfirmDialog from './ConfirmDialog.vue';
 import ScoreChip from './ScoreChip.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
@@ -89,6 +96,7 @@ const router = useRouter();
 const editing = ref(false);
 const editName = ref('');
 const nameInput = ref(null);
+const confirmDeleteOpen = ref(false);
 
 const isArchived = computed(() => props.char.deletedAt !== null);
 // Card navigabile solo se attiva e non in modifica.
@@ -130,9 +138,13 @@ function onRestore() {
   dispatch((s) => restoreCharacter(s, props.char.id));
 }
 
+// Eliminazione definitiva: conferma nel dialog del DS, non in window.confirm.
 function onHardDelete() {
-  if (window.confirm('Eliminazione DEFINITIVA e irreversibile. Confermi?')) {
-    dispatch((s) => hardDeleteCharacter(s, props.char.id));
-  }
+  confirmDeleteOpen.value = true;
+}
+
+function doHardDelete() {
+  confirmDeleteOpen.value = false;
+  dispatch((s) => hardDeleteCharacter(s, props.char.id));
 }
 </script>

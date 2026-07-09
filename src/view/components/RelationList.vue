@@ -23,16 +23,19 @@
           class="rep-col-opts__menu rep-col-opts__menu--float" role="group"
           aria-label="Filtri" :style="optsStyle"
           @click.stop @focusout="onOptsFocusout">
-          <label class="rep-col-opts__item">
-            <input type="checkbox" v-model="hideEmpty" />
+          <label class="ds-check">
+            <input class="ds-check__input" type="checkbox" v-model="hideEmpty" />
+            <span class="ds-check__box" aria-hidden="true"></span>
             <span>Nascondi righe senza interazioni</span>
           </label>
-          <label class="rep-col-opts__item">
-            <input type="checkbox" v-model="hideCharacters" />
+          <label class="ds-check">
+            <input class="ds-check__input" type="checkbox" v-model="hideCharacters" />
+            <span class="ds-check__box" aria-hidden="true"></span>
             <span>Nascondi personaggi</span>
           </label>
-          <label class="rep-col-opts__item">
-            <input type="checkbox" v-model="hideGroups" />
+          <label class="ds-check">
+            <input class="ds-check__input" type="checkbox" v-model="hideGroups" />
+            <span class="ds-check__box" aria-hidden="true"></span>
             <span>Nascondi gruppi</span>
           </label>
         </div>
@@ -252,8 +255,7 @@ function emitTx(otherId) {
   min-width: 0;
   color: var(--text-muted);
 }
-/* placeholder piu' tenue in questa searchbar (il globale resta AA altrove) */
-.rep-search .ds-input::placeholder { color: var(--text-faint); }
+/* Nessun override del placeholder: vale il globale (--text-muted, AA). */
 
 /* Bottone filtri: vive nella searchbar, a destra dell'input. Icon-button bordato
    accoppiato all'input (stesso bordo/raggio/altezza) → ricerca + filtro leggono
@@ -299,8 +301,8 @@ function emitTx(otherId) {
   background: var(--accent);
   box-shadow: 0 0 0 2px var(--surface-card);
 }
-/* NB: gli stili del popover (.rep-col-opts__menu e .rep-col-opts__item) sono in
-   main.css (globali): il menu e' in Teleport su <body>, fuori dallo scope del
+/* NB: lo stile del popover (.rep-col-opts__menu) e delle sue voci (.ds-check) sta
+   in main.css (globale): il menu e' in Teleport su <body>, fuori dallo scope del
    componente, quindi lo stile scoped non lo raggiungerebbe. */
 
 /* tap target adeguato su touch/stylus (44px raccomandati) */

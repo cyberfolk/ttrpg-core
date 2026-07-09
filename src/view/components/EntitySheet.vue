@@ -18,7 +18,10 @@
            indice → stesso accoppiamento di righe della griglia precedente. -->
       <div class="led__cols">
         <div v-for="(col, ci) in metaCols" :key="ci" class="led__col">
-        <div v-for="f in col" :key="f.key" class="led__item"
+        <!-- `--ord` = posizione del campo in `fields`. Serve solo a una colonna
+             (telefono), dove le colonne si sciolgono e l'ordine del DOM
+             (colonna1 poi colonna2) non è l'ordine d'autore. Vedi .led__item. -->
+        <div v-for="f in col" :key="f.key" class="led__item" :style="{ '--ord': f.ord }"
           :class="{ 'led__item--player': f.key === 'giocatore', 'led__item--role': f.key === 'ruolo' }">
           <span class="led__sep" aria-hidden="true">·</span>
           <!-- Etichetta: se il campo è derivato (livello, reputazione) il tooltip
@@ -64,17 +67,22 @@
                 :option-value="f.pool ? 'id' : ''" :option-label="f.pool ? 'name' : ''"
                 :aria-label="f.label" @update:model-value="f.onUpdate($event)"
                 @create="f.onCreate && f.onCreate($event)" @close="stopField" />
+              <!-- L'azione sta su @click (non su @mousedown): Invio e Spazio su un
+                   <button> emettono `click`, mai `mousedown`, e da tastiera le due
+                   azioni erano irraggiungibili. Il @mousedown.prevent resta come sola
+                   guardia: impedisce che il campo perda il focus e committi la bozza
+                   prima che il click arrivi. -->
               <HoverTip v-if="f.emptyable" text="da definire"
                 :tab-index="-1" class-name="led__none-tip">
                 <button type="button" class="led__none-btn"
                   :aria-label="`Svuota ${f.label} (da definire)`"
-                  @mousedown.prevent="clearField(f)"><Icon name="minus" /></button>
+                  @mousedown.prevent @click="clearField(f)"><Icon name="minus" /></button>
               </HoverTip>
               <HoverTip v-if="f.emptyable" text="nessuno"
                 :tab-index="-1" class-name="led__none-tip">
                 <button type="button" class="led__none-btn"
                   :aria-label="`Segna ${f.label} come nessuno`"
-                  @mousedown.prevent="markFieldNone(f)"><Icon name="ban" /></button>
+                  @mousedown.prevent @click="markFieldNone(f)"><Icon name="ban" /></button>
               </HoverTip>
             </span>
           </template>
@@ -92,17 +100,22 @@
               <input class="led__select led__input led__select--inline" type="text"
                 v-model="textDraft" v-focus :aria-label="f.label"
                 @blur="commitText(f)" @keydown.enter="commitText(f)" @keydown.escape="commitText(f)" />
+              <!-- L'azione sta su @click (non su @mousedown): Invio e Spazio su un
+                   <button> emettono `click`, mai `mousedown`, e da tastiera le due
+                   azioni erano irraggiungibili. Il @mousedown.prevent resta come sola
+                   guardia: impedisce che il campo perda il focus e committi la bozza
+                   prima che il click arrivi. -->
               <HoverTip v-if="f.emptyable" text="da definire"
                 :tab-index="-1" class-name="led__none-tip">
                 <button type="button" class="led__none-btn"
                   :aria-label="`Svuota ${f.label} (da definire)`"
-                  @mousedown.prevent="clearField(f)"><Icon name="minus" /></button>
+                  @mousedown.prevent @click="clearField(f)"><Icon name="minus" /></button>
               </HoverTip>
               <HoverTip v-if="f.emptyable" text="nessuno"
                 :tab-index="-1" class-name="led__none-tip">
                 <button type="button" class="led__none-btn"
                   :aria-label="`Segna ${f.label} come nessuno`"
-                  @mousedown.prevent="markFieldNone(f)"><Icon name="ban" /></button>
+                  @mousedown.prevent @click="markFieldNone(f)"><Icon name="ban" /></button>
               </HoverTip>
             </span>
           </template>
@@ -121,8 +134,13 @@
               <Icon name="edit" class="ds-inline-edit__ico led__val-ico" />
             </button>
             <Teleport to="body">
-              <div v-if="editingField === 'classe'" class="led__mcpop" :style="classePopStyle"
-                role="dialog" aria-label="Classe e livelli" @click.stop>
+              <!-- Function ref: l'elemento sta dentro un v-for, e un `ref` statico lì
+                   diventa un array — `mcpopEl.value.focus()` non esisterebbe. Il
+                   popover aperto è sempre uno solo (editingField === 'classe'). -->
+              <div v-if="editingField === 'classe'" :ref="(el) => (mcpopEl = el)" tabindex="-1"
+                class="led__mcpop" :style="classePopStyle"
+                role="dialog" aria-modal="true" aria-label="Classe e livelli"
+                @click.stop @keydown="onMcpopKey">
                 <div class="led__mcpop-rows">
                   <div v-for="(c, i) in entity.classLevels" :key="i" class="led__mcpop-row">
                     <InlineSelect class="led__mcpop-lvl" :model-value="c.level" :options="LEVELS"
@@ -165,7 +183,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Icon from './Icon.vue';
 import ScoreChip from './ScoreChip.vue';
@@ -173,6 +191,7 @@ import HoverTip from './HoverTip.vue';
 import InlineSelect from './InlineSelect.vue';
 import Many2ManyField from './Many2ManyField.vue';
 import GalleryThumb from './GalleryThumb.vue';
+import { placeInViewport, createStructuralResize } from '../anchoring.js';
 import { SCORE_TIP, LEVEL_TIP } from '../uiCopy.js';
 import { useStore } from '../useStore.js';
 import { createLookup } from '../../model/schema.js';
@@ -428,6 +447,13 @@ function stateClass(f) {
 
 // Classe: popover ricco teleportato ancorato al valore (il layout non si sposta).
 const classePopStyle = ref(null);
+// Nodo del popover Classe, assegnato da una function ref (vedi template).
+let mcpopEl = null;
+// Il trigger che ha aperto il popover: gli si restituisce il focus alla chiusura.
+let classeTrigger = null;
+
+// Posizione provvisoria: il popover non è ancora montato, non se ne conosce la
+// larghezza reale. Subito dopo il mount `placeClasse()` lo clampa nel viewport.
 function anchorClasse(el) {
   const r = el.getBoundingClientRect();
   classePopStyle.value = {
@@ -437,10 +463,61 @@ function anchorClasse(el) {
     minWidth: `${Math.max(r.width, 220)}px`,
   };
 }
-function toggleClasse(e) {
-  if (editingField.value === 'classe') { stopField(); return; }
-  anchorClasse(e.currentTarget);
+// Clamp orizzontale + flip verticale (helper condiviso): su telefono il valore
+// «Classe» sta spesso nella metà bassa della testata, e un popover ancorato solo
+// a `top: bottom+6` uscirebbe dal fondo senza modo di raggiungerlo.
+function placeClasse() {
+  if (!classeTrigger || !mcpopEl) return;
+  const width = classeTrigger.getBoundingClientRect().width;
+  classePopStyle.value = placeInViewport(classeTrigger, mcpopEl, {
+    gap: 6, cap: 320, minWidth: Math.max(width, 220),
+  });
+}
+async function toggleClasse(e) {
+  if (editingField.value === 'classe') { closeClasse(); return; }
+  classeTrigger = e.currentTarget;
+  anchorClasse(classeTrigger);
   startField('classe');
+  // Il popover è teleportato in coda a <body>: senza portare il focus dentro, il
+  // Tab successivo salterebbe al campo dopo della scheda e l'editor multiclasse
+  // resterebbe irraggiungibile da tastiera. Stessa mossa di InlineSelect.
+  await nextTick();
+  placeClasse();
+  mcpopEl?.focus();
+}
+
+function closeClasse() {
+  stopField();
+  classeTrigger?.focus();
+  classeTrigger = null;
+}
+
+const FOCUSABLE_MCPOP = 'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+// Tab ciclico entro il popover + Escape: l'editor si comporta come un dialog.
+// Escape con un InlineSelect aperto lo lascia gestire a lui (chiude solo il select).
+function onMcpopKey(e) {
+  if (e.key === 'Escape') {
+    if (document.querySelector('.isel__pop')) return;
+    e.preventDefault();
+    closeClasse();
+    return;
+  }
+  if (e.key !== 'Tab') return;
+  const root = mcpopEl;
+  if (!root) return;
+  const items = [...root.querySelectorAll(FOCUSABLE_MCPOP)];
+  if (!items.length) return;
+  const first = items[0];
+  const last = items[items.length - 1];
+  const current = document.activeElement;
+  if (e.shiftKey && (current === first || current === root)) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && current === last) {
+    e.preventDefault();
+    first.focus();
+  }
 }
 // Chiude cliccando fuori / Esc / scroll di pagina. Guardia: ignora i click e lo
 // scroll dentro il popover e dentro i popover teleportati degli InlineSelect
@@ -452,14 +529,31 @@ function insidePopover(target) {
 function onClasseDocClick(e) {
   if (editingField.value === 'classe' && !insidePopover(e.target)) stopField();
 }
+// Escape con il focus FUORI dal popover (il keydown locale copre il caso dentro).
 function onClasseKey(e) {
   if (e.key === 'Escape' && editingField.value === 'classe' && !document.querySelector('.isel__pop')) {
-    stopField();
+    closeClasse();
   }
 }
+// Il focus vive dentro il popover Classe o dentro un InlineSelect che lui ha
+// aperto (teleportato altrove, quindi non contenuto in `.led__mcpop`).
+function focusInsidePopover() {
+  const inside = insidePopover(document.activeElement);
+  return inside;
+}
+// Uno spostamento del viewport scollega il popover `fixed` dal trigger → chiudi.
+// Ma su telefono la causa è quasi sempre la tastiera software aperta da un campo
+// DENTRO il popover (la ricerca «crea classe»): lì si riancora, non si chiude —
+// altrimenti il campo si smonterebbe nel momento in cui prende il focus.
+const isStructuralResize = createStructuralResize();
 function onClasseViewport(e) {
   if (editingField.value !== 'classe') return;
   if (e?.type === 'scroll' && insidePopover(e.target)) return;
+  if (focusInsidePopover()) {
+    if (e?.type === 'resize' && isStructuralResize()) { stopField(); return; }
+    placeClasse();
+    return;
+  }
   stopField();
 }
 onMounted(() => {
@@ -533,8 +627,10 @@ const fields = computed(() => {
 
 // Due colonne a parità di indice: [pari] a sinistra, [dispari] a destra. Ogni
 // colonna impila i propri campi in modo indipendente (vedi .led__col).
+// Ogni campo porta con sé `ord`, la sua posizione nell'ordine d'autore: a una
+// colonna (telefono) le colonne si sciolgono e serve a rimettere i campi in fila.
 const metaCols = computed(() => {
-  const all = fields.value;
+  const all = fields.value.map((f, i) => ({ ...f, ord: i }));
   const left = all.filter((_, i) => i % 2 === 0);
   const right = all.filter((_, i) => i % 2 === 1);
   const cols = [left, right];
@@ -567,8 +663,11 @@ const metaCols = computed(() => {
 }
 @media (max-width: 520px) {
   .led { gap: var(--space-4); }
-  /* Avatar nascosto su telefono (personaggio e gruppo): testata compatta. */
-  .led__portrait { display: none; }
+  /* Telefono: il medaglione si stringe, non sparisce. È il dato d'identità che
+     si legge al tavolo, ed è l'unico effetto visibile di «imposta come profilo»:
+     nasconderlo rendeva la galleria una funzione senza esito su mobile. A 3.25rem
+     resta un ritratto riconoscibile e lascia la riga di registro leggibile. */
+  .led__portrait { width: 3.25rem; }
 }
 
 /* --- meta (lettura): campi impilati su due colonne, ciascuno col "·" --- */
@@ -592,7 +691,18 @@ const metaCols = computed(() => {
 /* Chip vuoto "–": il glifo trattino siede alto nella pill → sembra avere più
    padding sotto. Ricentro il glifo dentro la pill (solo qui, non nel DS). */
 .led__repchip :deep(.ds-score--empty) { padding-top: .3em; padding-bottom: .14em; }
-@media (max-width: 520px) { .led__cols { grid-template-columns: 1fr; } }
+/* Telefono: una colonna sola. `display: contents` scioglie i due contenitori di
+   colonna, così i campi tornano figli diretti della griglia; `order: var(--ord)`
+   li rimette nell'ordine d'autore (ruolo, razza, classe, allineamento, giocatore).
+   Il solo `display: contents` non basterebbe: l'ordine visivo di una griglia segue
+   quello del DOM, cioè colonna1 intera e poi colonna2 — razza finiva dopo
+   giocatore. La lettura verticale, che su telefono è la lettura primaria, usciva
+   rimescolata. La logica JS resta quella delle due colonne desktop. */
+@media (max-width: 520px) {
+  .led__cols { grid-template-columns: 1fr; gap: .4rem; }
+  .led__col { display: contents; }
+  .led__item { order: var(--ord); }
+}
 
 /* Ruolo PG/PNG: primo campo meta, valore-toggle a pill. Default PNG (grigio),
    clic → PG (oro tenue). */
@@ -679,11 +789,14 @@ const metaCols = computed(() => {
 
 /* Popover ricco Classe: teleportato, righe livello+classe + totale. */
 .led__mcpop {
-  z-index: 1100; max-width: min(22rem, calc(100vw - 1rem));
+  z-index: var(--z-popover); max-width: min(22rem, calc(100vw - 1rem));
   background: var(--surface-card); border: 1px solid var(--line-gold);
   border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: .5rem;
   display: flex; flex-direction: column; gap: .45rem;
 }
+/* Il popover riceve il focus all'apertura (contenitore, non un controllo): niente
+   anello, l'evidenza visiva è la sua stessa comparsa. */
+.led__mcpop:focus { outline: none; }
 .led__mcpop-rows { display: flex; flex-direction: column; gap: .35rem; }
 .led__mcpop-row { display: flex; align-items: center; gap: .4rem; }
 .led__mcpop-lvl :deep(.isel__trigger) { min-width: 2.8rem; }
@@ -712,9 +825,22 @@ const metaCols = computed(() => {
 /* Giocatore (solo PG): valore oro per distinguerlo. */
 .led__item--player .led__val { color: var(--gold-600); font-weight: var(--fw-semibold); }
 
-/* Touch: niente hover → l'icona matita dei valori resta visibile. */
+/* Touch: niente hover → l'icona matita dei valori resta visibile, e ogni trigger
+   della scheda arriva a 44px. `.led__val--edit` eredita il min-height da
+   `.ds-inline-edit` (main.css, stesso @media): qui bastano i controlli propri. */
 @media (pointer: coarse) {
   .led__val-ico { opacity: .75; }
+  /* Pill PG/PNG: 37×18px a riposo. Cresce in altezza senza diventare un bottone
+     (resta una pill di valore, non un'azione che urla). */
+  .led__roleval { min-height: 44px; padding-inline: .8rem; }
+  /* «vuoto» / «nessuno» e la ✕ che rimuove una classe: 24px scarsi. */
+  .led__none-btn { width: 44px; height: 44px; font-size: 1rem; }
+  .led__mcpop-rm { min-width: 44px; min-height: 44px; }
+  .led__mcpop-add { min-height: 44px; padding-inline: .6rem; }
+  /* La riga di registro deve poter contenere il controllo cresciuto. L'allineamento
+     resta `flex-start` (base): con un valore su più righe l'etichetta va tenuta
+     in cima, non centrata sul blocco. */
+  .led__item { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .led__val--edit, .led__val-ico { transition: none; }

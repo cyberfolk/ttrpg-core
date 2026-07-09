@@ -174,9 +174,10 @@
     <!-- Aggiungi personaggio in loco (dal "serve un secondo nome"): resta su
          Faccia a faccia. Stesso dialog dell'elenco Personaggi. -->
     <div v-if="addOpen" class="ds-overlay" @click.self="closeAdd">
-      <div class="ds-dialog" style="max-width:420px">
+      <div ref="addDialogEl" class="ds-dialog ds-dialog--sm" role="dialog" aria-modal="true"
+        aria-labelledby="fv-add-char-title">
         <div class="ds-dialog__head">
-          <h3 class="ds-dialog__title">Aggiungi personaggio</h3>
+          <h3 class="ds-dialog__title" id="fv-add-char-title">Aggiungi personaggio</h3>
           <button class="ds-dialog__close" @click="closeAdd" aria-label="Chiudi">
             <Icon name="close" />
           </button>
@@ -204,9 +205,10 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../useStore.js';
+import { useDialog } from '../useDialog.js';
 import { resolveNode, computeScore, averageIncomingScore, listTransactions, listActiveCharacters, listActiveGroups, addCharacter } from '../../model/reputation.js';
 import { ambiguousIds, displayName } from '../disambiguation.js';
 import { scoreColor } from '../scoreColor.js';
@@ -239,17 +241,26 @@ const tx = ref(null);
 const addOpen = ref(false);
 const newName = ref('');
 const nameInput = ref(null);
+const addDialogEl = ref(null);
 
-async function openAdd() {
+// Il focus sul campo nome lo mette `useDialog` (onOpen), dopo il nextTick.
+function openAdd() {
   addOpen.value = true;
-  await nextTick();
-  nameInput.value?.focus();
 }
 
 function closeAdd() {
   addOpen.value = false;
   newName.value = '';
 }
+
+// Dialog "aggiungi personaggio": Escape chiude, focus intrappolato nel dialog e
+// restituito al controllo che l'ha aperto.
+useDialog({
+  isOpen: () => addOpen.value,
+  onClose: closeAdd,
+  container: addDialogEl,
+  onOpen: () => nameInput.value?.focus(),
+});
 
 function onAdd() {
   const name = newName.value.trim();

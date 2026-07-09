@@ -80,7 +80,7 @@
          crea e seleziona subito la nuova entità nel picker. -->
     <Teleport to="body">
       <div v-if="createOpen" class="ds-overlay" @click.self="closeCreate">
-        <div class="ds-dialog" style="max-width:420px" role="dialog" aria-modal="true">
+        <div ref="createDialogEl" class="ds-dialog ds-dialog--sm" role="dialog" aria-modal="true">
           <div class="ds-dialog__head">
             <h3 class="ds-dialog__title">{{ createKind === 'group' ? 'Aggiungi gruppo' : 'Aggiungi personaggio' }}</h3>
             <button class="ds-dialog__close" @click="closeCreate" aria-label="Chiudi">
@@ -122,7 +122,7 @@
          5 in evidenza non bastano. -->
     <Teleport to="body">
       <div v-if="browseOpen" class="ds-overlay" @click.self="closeBrowse">
-        <div class="ds-dialog ep-browse" style="max-width:520px" role="dialog" aria-modal="true"
+        <div ref="browseDialogEl" class="ds-dialog ds-dialog--md ep-browse" role="dialog" aria-modal="true"
           :aria-label="`Scegli ${label.toLowerCase()}`">
           <div class="ds-dialog__head">
             <h3 class="ds-dialog__title">Scegli {{ label.toLowerCase() }}</h3>
@@ -161,6 +161,8 @@ import { listActiveCharacters, listActiveGroups, resolveNode, addCharacter, addG
 import { ambiguousIds } from '../disambiguation.js';
 import { kindIcon, kindLabel } from '../entityKind.js';
 import { useDialog } from '../useDialog.js';
+import { useListNav } from '../useListNav.js';
+import { placeInViewport } from '../anchoring.js';
 import Icon from './Icon.vue';
 
 // Selettore riusabile di UNA entità (personaggio o gruppo) su tutti gli attivi.
@@ -189,10 +191,11 @@ const listId = `${uid}-list`;
 
 const query = ref('');
 const open = ref(false);
-const activeIndex = ref(0);
 const inputEl = ref(null);
 const listEl = ref(null);
 const listStyle = ref({});
+const createDialogEl = ref(null);
+const browseDialogEl = ref(null);
 
 // Allowlist di id: null = nessun vincolo (tutte le entità attive).
 const onlySet = computed(() => (props.only ? new Set(props.only) : null));
@@ -272,6 +275,15 @@ function itemKey(item, i) {
   return key;
 }
 
+// Frecce + Invio dal composable condiviso con InlineSelect e Many2ManyField:
+// una sola grammatica di tastiera per tutte le liste di opzioni dell'app.
+const { activeIndex, reset, onKeydown: onListKey } = useListNav({
+  count: () => items.value.length,
+  onPick: (index) => activate(items.value[index]),
+  container: listEl,
+  itemSelector: '.ep__opt',
+});
+
 const selected = computed(() => {
   if (!props.modelValue) return null;
   const node = resolveNode(state.value, props.modelValue);
@@ -339,6 +351,7 @@ function confirmCreate() {
 useDialog({
   isOpen: () => createOpen.value,
   onClose: closeCreate,
+  container: createDialogEl,
   onOpen: () => createNameInput.value?.focus(),
 });
 
@@ -367,39 +380,30 @@ function chooseFromBrowse(node) {
 useDialog({
   isOpen: () => browseOpen.value,
   onClose: closeBrowse,
+  container: browseDialogEl,
   onOpen: () => browseInput.value?.focus(),
 });
 
-// Al focus (specie mobile) la tastiera copre il fondo del viewport: porto
-// l'input verso l'alto così la lista sottostante resta visibile. Il ritardo
-// dà tempo alla tastiera di comparire e ridurre l'area utile.
+// Su puntatore grossolano la tastiera software copre il fondo del viewport: porto
+// l'input verso l'alto così la lista sottostante resta visibile, e il ritardo dà
+// tempo alla tastiera di comparire. Col mouse non esiste nessuna tastiera da
+// schivare: lo scroll automatico strapperebbe solo la pagina sotto al cursore,
+// 300ms dopo, mentre l'utente sta già digitando.
 function onFocus() {
   open.value = true;
   const el = inputEl.value;
   if (!el) return;
+  if (!window.matchMedia('(pointer: coarse)').matches) return;
   const scrollIntoView = () => el.scrollIntoView({ block: 'start', behavior: 'smooth' });
   setTimeout(scrollIntoView, 300);
 }
 
 function onKeydown(e) {
-  const count = items.value.length;
-  if (e.key === 'ArrowDown') {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') open.value = true;
+  if (onListKey(e)) return;
+  if (e.key === 'Escape' && open.value) {
     e.preventDefault();
-    open.value = true;
-    if (count) activeIndex.value = (activeIndex.value + 1) % count;
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    open.value = true;
-    if (count) activeIndex.value = (activeIndex.value - 1 + count) % count;
-  } else if (e.key === 'Enter') {
-    e.preventDefault();
-    const item = items.value[activeIndex.value];
-    if (item) activate(item);
-  } else if (e.key === 'Escape') {
-    if (open.value) {
-      e.preventDefault();
-      open.value = false;
-    }
+    open.value = false;
   }
 }
 
@@ -413,22 +417,25 @@ function onFocusout(e) {
 // La query che cambia riporta l'evidenziazione in testa alla lista e, cambiando
 // l'altezza del popup, ne aggiorna la posizione (per l'apertura verso l'alto).
 watch(query, async () => {
-  activeIndex.value = 0;
+  reset();
   if (open.value) { await nextTick(); positionList(); }
 });
 
-// Popup teleportato a body: posizione `fixed` calcolata dal box dell'input.
-// Apre verso il basso; se sotto non c'è spazio sufficiente, apre verso l'alto.
+// Popup teleportato a body: posizione `fixed` ancorata all'input, dallo stesso
+// helper degli altri popover (clamp orizzontale + flip verticale). La lista è
+// larga esattamente quanto l'input: `minWidth` = larghezza del campo, e il CSS
+// non le lascia superare quella misura.
 const LIST_MAX = 320; // ~20rem, coerente con max-height del CSS
 function positionList() {
   const el = inputEl.value;
   if (!el) return;
   const rect = el.getBoundingClientRect();
-  const spaceBelow = window.innerHeight - rect.bottom;
-  const openUp = spaceBelow < LIST_MAX && rect.top > spaceBelow;
-  const style = { left: `${rect.left}px`, width: `${rect.width}px` };
-  if (openUp) style.bottom = `${window.innerHeight - rect.top + 4}px`;
-  else style.top = `${rect.bottom + 4}px`;
+  const style = placeInViewport(el, listEl.value, {
+    gap: 4, cap: LIST_MAX, minWidth: rect.width,
+  });
+  // La lista resta larga quanto il campo (non si allarga sui nomi lunghi: quelli
+  // vanno in ellissi). `minWidth` dall'helper è già clampata al viewport.
+  style.width = style.minWidth;
   listStyle.value = style;
 }
 
@@ -478,7 +485,7 @@ onBeforeUnmount(() => {
 
 .ep__list {
   position: fixed;
-  z-index: 1000;
+  z-index: var(--z-popover);
   margin: 0;
   padding: var(--space-1);
   list-style: none;

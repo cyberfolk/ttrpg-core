@@ -82,30 +82,11 @@
     </aside>
 
     <!-- Conferma pulizia dati: azione distruttiva e irreversibile. -->
-    <div v-if="wipeOpen" class="ds-overlay" @click.self="closeWipe">
-      <div class="ds-dialog" style="max-width:420px" role="alertdialog" aria-modal="true"
-        aria-labelledby="wipe-title" aria-describedby="wipe-desc">
-        <div class="ds-dialog__head">
-          <h3 class="ds-dialog__title" id="wipe-title">Pulisci tutti i dati</h3>
-          <button class="ds-dialog__close" @click="closeWipe" aria-label="Chiudi">
-            <Icon name="close" />
-          </button>
-        </div>
-        <div class="ds-dialog__body">
-          <p id="wipe-desc" style="margin:0">
-            Elimina <strong>tutti</strong> i personaggi, i gruppi e le transazioni.
-            L'operazione è <strong>irreversibile</strong>: scarica prima i dati se vuoi conservarli.
-          </p>
-        </div>
-        <div class="ds-dialog__foot">
-          <button ref="wipeCancelBtn" class="ds-btn ds-btn--ghost" @click="closeWipe">Annulla</button>
-          <button class="ds-btn ds-btn--danger" @click="confirmWipe">
-            <span class="ds-btn__icon"><Icon name="trash" /></span>
-            Elimina tutto
-          </button>
-        </div>
-      </div>
-    </div>
+    <ConfirmDialog v-if="wipeOpen" title="Pulisci tutti i dati" confirm-text="Elimina tutto"
+      @confirm="confirmWipe" @cancel="closeWipe">
+      Elimina <strong>tutti</strong> i personaggi, i gruppi e le transazioni.
+      L'operazione è <strong>irreversibile</strong>: scarica prima i dati se vuoi conservarli.
+    </ConfirmDialog>
   </div>
 </template>
 
@@ -122,6 +103,7 @@ import { serializeState, parseImport } from '../../store/io.js';
 import sampleStoryJson from '../../../datas/forgotten-realms.json?raw';
 import { seedSamplePhotos } from '../sampleAssets.js';
 import { photoBlobStore } from '../photoStore.js';
+import ConfirmDialog from './ConfirmDialog.vue';
 import Icon from './Icon.vue';
 
 const props = defineProps({
@@ -160,11 +142,10 @@ const closeBtn = ref(null);
 
 // Pulizia dati: conferma esplicita perché è distruttiva e irreversibile.
 const wipeOpen = ref(false);
-const wipeCancelBtn = ref(null);
 
 function openWipe() {
-  // Chiudi il drawer (z-index 1600, sopra l'overlay 1000) così la conferma di
-  // pulizia si vede in chiaro invece di restare coperta.
+  // Chiudi il drawer (--z-drawer, sopra --z-scrim) così la conferma di pulizia
+  // si vede in chiaro invece di restare coperta.
   emit('close');
   wipeOpen.value = true;
 }
@@ -231,20 +212,15 @@ function onImportFile(event) {
 }
 
 // Drawer persistente pilotato dalla prop `open`: Escape chiude, apertura porta
-// il focus sul bottone di chiusura. Mentre la conferma di pulizia è aperta il
-// drawer si considera "non aperto" ai fini di Escape/focus, così Escape chiude
-// solo la conferma (dialog annidato) e non anche il drawer.
+// il focus sul bottone di chiusura, chiusura lo restituisce all'hamburger.
+// Mentre la conferma di pulizia è aperta il drawer si considera "non aperto" ai
+// fini di Escape, così Escape chiude solo la conferma (che ha il suo useDialog,
+// dentro ConfirmDialog) e non anche il drawer.
+// Nessun `container`: il drawer non è teleportato e la sua modalità (trap/inert)
+// è materia della prospettiva mobile, dove il drawer è la superficie primaria.
 useDialog({
   isOpen: () => props.open && !wipeOpen.value,
   onClose: () => emit('close'),
   onOpen: () => closeBtn.value?.focus(),
-});
-
-// Conferma pulizia: Escape annulla, apertura mette a fuoco "Annulla" (mai
-// l'azione distruttiva, per non cancellare con un Invio involontario).
-useDialog({
-  isOpen: () => wipeOpen.value,
-  onClose: closeWipe,
-  onOpen: () => wipeCancelBtn.value?.focus(),
 });
 </script>

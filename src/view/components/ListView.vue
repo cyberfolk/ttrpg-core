@@ -89,6 +89,12 @@
       </tr>
     </tbody>
   </table>
+
+  <ConfirmDialog v-if="pendingDelete" title="Elimina definitivamente"
+    confirm-text="Elimina" @confirm="doHardDelete" @cancel="pendingDelete = null">
+    Elimina <strong>{{ pendingDelete.name }}</strong>, le sue transazioni e le sue foto.
+    L'operazione è <strong>irreversibile</strong>.
+  </ConfirmDialog>
   </div>
 </template>
 
@@ -103,10 +109,11 @@ import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import SortableTh from './SortableTh.vue';
 import ActionMenu from './ActionMenu.vue';
+import ConfirmDialog from './ConfirmDialog.vue';
 import ScoreChip from './ScoreChip.vue';
 import { SCORE_TIP } from '../uiCopy.js';
 
-defineProps({
+const props = defineProps({
   items: { type: Array, required: true },
 });
 
@@ -116,6 +123,7 @@ const router = useRouter();
 
 const editingId = ref(null);
 const editName = ref('');
+const pendingDelete = ref(null);
 
 // Ordinamento colonne: lo stato vive in ui.sort (globale), la lista si riordina
 // in useDisplayedCharacters. Il toggle scrive lì tramite un model writable.
@@ -168,10 +176,17 @@ function onRestore(id) {
   dispatch((s) => restoreCharacter(s, id));
 }
 
+// Eliminazione definitiva: conferma nel dialog del DS, non in window.confirm.
+// Si tiene il personaggio intero, così il dialog lo nomina.
 function onHardDelete(id) {
-  if (window.confirm('Eliminazione DEFINITIVA e irreversibile. Confermi?')) {
-    dispatch((s) => hardDeleteCharacter(s, id));
-  }
+  const found = props.items.find((it) => it.char.id === id);
+  pendingDelete.value = found ? found.char : null;
+}
+
+function doHardDelete() {
+  const id = pendingDelete.value.id;
+  dispatch((s) => hardDeleteCharacter(s, id));
+  pendingDelete.value = null;
 }
 </script>
 

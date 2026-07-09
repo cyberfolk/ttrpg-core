@@ -5,7 +5,8 @@
        ancora sempre al viewport. Stessa scelta di ActionMenu/HoverTip. -->
   <Teleport to="body">
     <div class="ds-overlay" @click.self="emit('close')">
-    <div class="ds-dialog">
+    <div ref="dialogEl" class="ds-dialog ds-dialog--md" role="dialog" aria-modal="true"
+      aria-label="Transazioni della relazione">
       <div class="ds-dialog__head">
         <h3 class="ds-dialog__title">
           <span class="rep-tx-title">
@@ -82,6 +83,15 @@
                         </svg>
                       </button>
                     </HoverTip>
+                    <!-- Eliminazione: conferma inline a due passi, come nella
+                         galleria. La transazione è l'unica fonte di verità del
+                         punteggio e non c'è undo: un clic solo non basta. -->
+                    <template v-else-if="confirmDeleteId === t.id">
+                      <button class="ds-btn ds-btn--sm ds-btn--danger"
+                        type="button" @click="confirmDelete(t.id)">Elimina</button>
+                      <button class="ds-btn ds-btn--sm ds-btn--ghost"
+                        type="button" @click="confirmDeleteId = null">Annulla</button>
+                    </template>
                     <template v-else>
                       <HoverTip text="Modifica" label="Modifica transazione" :tab-index="-1">
                         <button class="ds-btn ds-btn--sm ds-btn--secondary ds-btn--icon"
@@ -94,7 +104,7 @@
                       </HoverTip>
                       <HoverTip text="Elimina" label="Elimina transazione" :tab-index="-1">
                         <button class="ds-btn ds-btn--sm ds-btn--danger ds-btn--icon rep-tx__del"
-                          type="button" aria-label="Elimina transazione" @click="onDelete(t.id)">
+                          type="button" aria-label="Elimina transazione" @click="confirmDeleteId = t.id">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em">
                             <path d="M3 6h18"/>
@@ -116,12 +126,19 @@
                 </td>
                 <td colspan="2">
                   <input class="ds-input" type="text" placeholder="Es. salvato in battaglia"
-                    aria-label="Motivo" v-model="newReason" @keyup.enter="onAdd" />
+                    aria-label="Motivo" :aria-describedby="canAdd ? undefined : hintId"
+                    v-model="newReason" @keyup.enter="onAdd" />
+                  <!-- Il motivo è obbligatorio: senza, il punteggio si muoverebbe
+                       senza una causa leggibile nello storico. Lo diciamo invece
+                       di scartare l'aggiunta in silenzio. -->
+                  <p v-if="!canAdd" :id="hintId" class="rep-tx__hint">
+                    Scrivi il motivo per registrare la transazione.
+                  </p>
                 </td>
                 <td class="rep-tx-addrow__btncell">
                   <HoverTip text="Aggiungi" label="Aggiungi transazione" :tab-index="-1">
                     <button class="ds-btn ds-btn--primary ds-btn--sm ds-btn--icon"
-                      type="button" @click="onAdd" aria-label="Aggiungi transazione">
+                      type="button" :disabled="!canAdd" @click="onAdd" aria-label="Aggiungi transazione">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 12h14"/><path d="M12 5v14"/>
@@ -135,7 +152,7 @@
               <tr class="rep-tx-addrow rep-tx-addrow--btnrow">
                 <td colspan="4">
                   <button class="ds-btn ds-btn--primary rep-tx-addrow__btn-wide"
-                    type="button" @click="onAdd">
+                    type="button" :disabled="!canAdd" @click="onAdd">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                       stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em">
                       <path d="M5 12h14"/><path d="M12 5v14"/>
@@ -154,7 +171,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, useId } from 'vue';
 import { useStore } from '../useStore.js';
 import { computeScore, listTransactions, addTransaction, editTransaction, deleteTransaction } from '../../model/reputation.js';
 import { displayName } from '../disambiguation.js';
@@ -173,11 +190,34 @@ const { state, dispatch } = useStore();
 const newDelta  = ref(0);
 const newReason = ref('');
 const deltaInput = ref(null);
+const dialogEl = ref(null);
 const editingId = ref(null);
+// Eliminazione a due passi: id della transazione in attesa di conferma.
+const confirmDeleteId = ref(null);
 
-// Modale montata solo da aperta: Escape chiude, apertura seleziona il delta.
+const hintId = `${useId()}-tx-hint`;
+
+// Il motivo è obbligatorio (il delta no: 0 è un valore lecito, se raro).
+const canAdd = computed(() => newReason.value.trim().length > 0);
+
+// Modale montata solo da aperta: Escape chiude, apertura seleziona il delta, il
+// focus resta dentro il dialog e torna al chip che l'ha aperto.
 useDialog({
+  container: dialogEl,
   onClose: () => emit('close'),
+  // Escape gerarchico: prima smonta lo stato interno (riga in modifica, conferma
+  // di eliminazione), e solo a modale "pulita" chiude il dialog.
+  onEscape: () => {
+    if (confirmDeleteId.value !== null) {
+      confirmDeleteId.value = null;
+      return true;
+    }
+    if (editingId.value !== null) {
+      stopEdit();
+      return true;
+    }
+    return false;
+  },
   onOpen: () => {
     // Su touch niente auto-focus: scatenerebbe tastiera + scroll dell'input in
     // fondo (add-row) dentro la vista, aprendo il dialog storto/tagliato. Da
@@ -206,8 +246,9 @@ const total = computed(() => transactions.value.length);
 
 const fmtDay = (ts) => new Date(ts).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
 
-function onDelete(txId) {
+function confirmDelete(txId) {
   dispatch((s) => deleteTransaction(s, txId));
+  confirmDeleteId.value = null;
 }
 
 function startEdit(txId) {
@@ -231,9 +272,10 @@ function onEditReason(txId, e) {
 }
 
 function onAdd() {
+  if (!canAdd.value) return;
   const delta = Math.round(Number(newDelta.value));
   const reason = newReason.value.trim();
-  if (Number.isNaN(delta) || !reason) return;
+  if (Number.isNaN(delta)) return;
   dispatch((s) => addTransaction(s, props.fromId, props.toId, delta, reason));
   newDelta.value = 0;
   newReason.value = '';

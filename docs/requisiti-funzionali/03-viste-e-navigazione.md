@@ -21,6 +21,13 @@ l'editor inline di un campo opzionale compaiono le azioni **«vuoto»** (azzera 
 si rimuove ogni riga con la **×** (anche l'unica): a zero classi il campo torna
 «da definire».
 
+Su **schermo stretto** (telefono) la scheda anagrafica passa a **una colonna**: i campi si
+impilano nello stesso ordine in cui la scheda li dichiara (per il personaggio: ruolo, razza,
+classe, allineamento, livello, reputazione, giocatore), non concatenando le due colonne del
+desktop. Il **medaglione** del ritratto si stringe, ma resta — è il dato d'identità che si legge
+al tavolo, e l'unico esito visibile di «imposta come profilo». Il telefono è un cittadino di
+prima classe: nessuna vista perde funzioni, solo densità di layout.
+
 Il tab **Galleria** (personaggio e gruppo) mostra le foto dell'entità come griglia di
 tavole: caricamento (file picker + drag&drop), didascalia inline, e apertura di una foto in
 un **dettaglio** dove si modificano descrizione (markdown) e tag e si sceglie **«Imposta come

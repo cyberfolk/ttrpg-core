@@ -158,15 +158,16 @@
 
     <!-- Add group dialog -->
     <div v-if="addOpen" class="ds-overlay" @click.self="closeAdd">
-      <div class="ds-dialog" style="max-width:440px">
+      <div ref="addDialogEl" class="ds-dialog ds-dialog--sm" role="dialog" aria-modal="true"
+        aria-labelledby="add-group-title">
         <div class="ds-dialog__head">
-          <h3 class="ds-dialog__title">Aggiungi gruppo</h3>
+          <h3 class="ds-dialog__title" id="add-group-title">Aggiungi gruppo</h3>
           <button class="ds-dialog__close" @click="closeAdd" aria-label="Chiudi">
             <Icon name="close" />
           </button>
         </div>
         <div class="ds-dialog__body">
-          <form class="rep-addchar" @submit.prevent="onAdd" style="display:flex;flex-direction:column;gap:0.75rem">
+          <form class="rep-addchar" @submit.prevent="onAdd">
             <span class="ds-field ds-field--block">
               <label class="ds-field__label" for="add-group-name">Nome del gruppo</label>
               <span class="ds-field__wrap">
@@ -184,6 +185,12 @@
         </div>
       </div>
     </div>
+
+    <ConfirmDialog v-if="pendingDelete" title="Elimina definitivamente"
+      confirm-text="Elimina" @confirm="doHardDelete" @cancel="pendingDelete = null">
+      Elimina <strong>{{ pendingDelete.name }}</strong> e le transazioni che lo riguardano.
+      I membri restano. L'operazione è <strong>irreversibile</strong>.
+    </ConfirmDialog>
   </section>
 </template>
 
@@ -210,6 +217,7 @@ import Icon from './Icon.vue';
 import HoverTip from './HoverTip.vue';
 import SortableTh from './SortableTh.vue';
 import ActionMenu from './ActionMenu.vue';
+import ConfirmDialog from './ConfirmDialog.vue';
 import ScoreChip from './ScoreChip.vue';
 import GroupGalleryView from './GroupGalleryView.vue';
 
@@ -226,6 +234,7 @@ const search = ref('');
 const addOpen = ref(false);
 const newName = ref('');
 const nameInput = ref(null);
+const addDialogEl = ref(null);
 
 const editingId = ref(null);
 const editName = ref('');
@@ -302,10 +311,12 @@ function closeAdd() {
   newName.value = '';
 }
 
-// Dialog "aggiungi gruppo": Escape chiude, apertura mette a fuoco il nome.
+// Dialog "aggiungi gruppo": Escape chiude, apertura mette a fuoco il nome,
+// il focus resta intrappolato nel dialog e torna al «+» alla chiusura.
 useDialog({
   isOpen: () => addOpen.value,
   onClose: closeAdd,
+  container: addDialogEl,
   onOpen: () => nameInput.value?.focus(),
 });
 
@@ -345,10 +356,20 @@ function onRestore(id) {
   dispatch((s) => restoreGroup(s, id));
 }
 
+// Eliminazione definitiva: conferma nel dialog del DS, non in window.confirm.
+// Il gruppo in attesa di conferma è tenuto per intero, così il dialog ne può
+// nominare il nome invece di chiedere una conferma anonima.
+const pendingDelete = ref(null);
+
 function onHardDelete(id) {
-  const confirmed = window.confirm('Eliminare definitivamente il gruppo? Questa operazione non è reversibile.');
-  if (!confirmed) return;
+  const group = [...activeGroups.value, ...archivedGroups.value].find((g) => g.id === id) || null;
+  pendingDelete.value = group;
+}
+
+function doHardDelete() {
+  const id = pendingDelete.value.id;
   dispatch((s) => hardDeleteGroup(s, id));
+  pendingDelete.value = null;
 }
 </script>
 

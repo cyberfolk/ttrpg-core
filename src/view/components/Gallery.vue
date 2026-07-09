@@ -282,7 +282,11 @@ async function onDrop(e) {
   color: var(--on-accent); border-color: var(--gold-500);
   background: linear-gradient(180deg, var(--gold-300), var(--gold-500));
 }
-@media (pointer: coarse) { .gallery__reframe { opacity: 1; } }
+/* Touch: niente hover → «reinquadra» resta visibile, e cresce a un bersaglio
+   vero. Resta un pallino d'angolo (2.75rem), non un bottone che copre la tavola. */
+@media (pointer: coarse) {
+  .gallery__reframe { opacity: 1; width: 2.75rem; height: 2.75rem; font-size: 1rem; }
+}
 
 /* Superficie di reinquadratura: cattura clic/trascinamento sopra l'immagine
    (la cornice è disabilitata mentre è attiva) e mostra il punto focale scelto. */
@@ -296,7 +300,7 @@ async function onDrop(e) {
   position: absolute; width: .95rem; height: .95rem;
   transform: translate(-50%, -50%); pointer-events: none;
   border: 2px solid var(--gold-300); border-radius: var(--radius-pill);
-  background: rgba(0, 0, 0, .25); box-shadow: 0 0 0 1px rgba(0, 0, 0, .35);
+  background: var(--overlay-dot); box-shadow: 0 0 0 1px var(--overlay-dot-ring);
 }
 
 /* Didascalia inline sotto la tavola: modificabile al volo, discreta. */
@@ -307,10 +311,21 @@ async function onDrop(e) {
   padding: .15rem .1rem; border-radius: 0;
   transition: border-color .15s;
 }
-.gallery__cap-input::placeholder { color: var(--text-faint); font-style: italic; }
+/* Placeholder a --text-muted: è testo a tutti gli effetti e regge il 4.5:1
+   (--text-faint su carta pura sta a ~3.6:1, sotto AA). */
+.gallery__cap-input::placeholder { color: var(--text-muted); font-style: italic; }
 .gallery__cap-input:hover { border-bottom-color: var(--border-hairline); }
-.gallery__cap-input:focus {
-  outline: none; border-bottom-color: var(--gold-500); color: var(--text-strong);
+/* Focus: l'anello del DS. Un bordo inferiore da 1px, dentro una griglia di
+   tavole, non si vede. */
+.gallery__cap-input:focus-visible {
+  outline: none; border-bottom-color: var(--gold-500);
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-focus);
+}
+.gallery__cap-input:focus { outline: none; border-bottom-color: var(--gold-500); }
+/* Touch: la didascalia non usa `.ds-input` (è un filo, non un campo incorniciato)
+   e quindi non eredita il min-height del contratto touch. Glielo diamo qui. */
+@media (pointer: coarse) {
+  .gallery__cap-input { min-height: 44px; }
 }
 
 /* Tavola "in preparazione": stessa impronta, contenuto di attesa. */
