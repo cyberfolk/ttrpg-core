@@ -825,22 +825,26 @@ const metaCols = computed(() => {
 /* Giocatore (solo PG): valore oro per distinguerlo. */
 .led__item--player .led__val { color: var(--gold-600); font-weight: var(--fw-semibold); }
 
-/* Touch: niente hover → l'icona matita dei valori resta visibile, e ogni trigger
-   della scheda arriva a 44px. `.led__val--edit` eredita il min-height da
-   `.ds-inline-edit` (main.css, stesso @media): qui bastano i controlli propri. */
+/* Touch: niente hover → l'icona matita dei valori resta visibile, e i controlli
+   veri (bottoni) arrivano a 44px. I *valori* della scheda restano testo in flusso:
+   imporre un `min-height` a un valore lo centra dentro il proprio box e lo fa
+   scendere sotto la sua etichetta, che è allineata in cima. Il dito ci arriva
+   grazie al padding di `.ds-inline-edit` (main.css) e al respiro fra le righe. */
 @media (pointer: coarse) {
   .led__val-ico { opacity: .75; }
-  /* Pill PG/PNG: 37×18px a riposo. Cresce in altezza senza diventare un bottone
-     (resta una pill di valore, non un'azione che urla). */
-  .led__roleval { min-height: 44px; padding-inline: .8rem; }
-  /* «vuoto» / «nessuno» e la ✕ che rimuove una classe: 24px scarsi. */
+  /* Più aria fra le righe: separa i bersagli senza allungare ogni singolo campo.
+     A ≤520px le colonne sono `display: contents`, quindi il passo verticale lo
+     detta la griglia; sopra, i due contenitori di colonna. Servono entrambi. */
+  .led__col { gap: .55rem; }
+  .led__cols { row-gap: .55rem; }
+  /* Pill PG/PNG: 37×18px a riposo. Cresce quanto basta a essere toccabile senza
+     diventare un bottone (resta una pill di valore, non un'azione che urla). */
+  .led__roleval { min-height: 2rem; padding-inline: 1rem; }
+  /* «vuoto» / «nessuno» e la ✕ che rimuove una classe: 24px scarsi. Questi sono
+     bottoni: 44px pieni, e vivono nell'editor aperto, non nella riga a riposo. */
   .led__none-btn { width: 44px; height: 44px; font-size: 1rem; }
   .led__mcpop-rm { min-width: 44px; min-height: 44px; }
   .led__mcpop-add { min-height: 44px; padding-inline: .6rem; }
-  /* La riga di registro deve poter contenere il controllo cresciuto. L'allineamento
-     resta `flex-start` (base): con un valore su più righe l'etichetta va tenuta
-     in cima, non centrata sul blocco. */
-  .led__item { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .led__val--edit, .led__val-ico { transition: none; }

@@ -871,9 +871,12 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
   font: inherit; color: inherit; gap: .4rem;
   width: max-content; max-width: 100%; margin: -.1rem -.4rem; padding: .1rem .4rem;
   word-break: break-word;
+  /* Un nome lungo va a capo: la matita centrata sul blocco resterebbe sospesa a
+     mezz'aria accanto alla seconda riga. Si allinea alla prima. */
+  align-items: flex-start;
 }
 .rep-profile__nameedit > span { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
-.rep-profile__name-ico { font-size: .5em; }
+.rep-profile__name-ico { font-size: .5em; margin-top: .35em; }
 @media (pointer: coarse) { .rep-profile__name-ico { opacity: .55; } }
 /* ingranaggio azioni: spinto a destra della riga titolo, allineato otticamente
    alla prima riga del nome (il glifo grande ha padding: micro-offset in alto) */
@@ -1538,11 +1541,15 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
   .ds-dialog__close--corner { width: 3.5rem; height: 3.5rem; padding: .42rem .46rem 0 0; }
   .ds-dialog__head:has(.ds-dialog__close--corner) { padding-right: 2.75rem; }
 
-  /* Tab del profilo, righe a spunta del popover "Filtri", valori editabili
-     inline: tutti trigger, tutti sotto i 32px a riposo. */
+  /* Tab del profilo e righe a spunta del popover "Filtri": sono controlli veri,
+     44px pieni. */
   .ds-seg__btn { min-height: 44px; }
   .ds-check { min-height: 44px; }
-  .ds-inline-edit { min-height: 44px; }
+  /* Il valore editabile inline NON prende un min-height: è testo in flusso accanto
+     alla sua etichetta, e un box alto 44px centra il testo al proprio interno,
+     facendolo scendere sotto l'etichetta (allineata in cima). Il dito ci arriva
+     col padding, che cresce il bersaglio senza spostare la riga di lettura. */
+  .ds-inline-edit { padding-block: .4rem; padding-inline: .3rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

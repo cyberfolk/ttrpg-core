@@ -320,9 +320,12 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
   .m2m__tag-x { color: var(--text-muted); }
   .m2m__opt { min-height: 44px; }
 
-  /* Il chip diventa alto abbastanza da contenere un bersaglio da 44px: senza,
-     ✕ (12px!) e navigazione al gruppo cadono sotto lo stesso polpastrello. */
-  .m2m__tag { min-height: 44px; }
+  /* Il chip è un'etichetta, non un bottone: conserva la sua altezza naturale. Il
+     bersaglio da rendere toccabile è la ✕ (12px!), che riceve la sua area qui
+     sotto senza gonfiare il chip. Alzare il chip a 44px allargava l'intera riga
+     di tag e gruppi senza ingrandire di un pixel il controllo che serviva. */
+  /* Le righe di chip prendono aria, così le aree di tocco non si accavallano. */
+  .m2m__tags { row-gap: .5rem; }
   /* ✕ resta piccola all'occhio (il chip non deve gonfiarsi) ma riceve un'area di
      tocco estesa via ::before: piena altezza del chip, 32px di larghezza. Non 44
      in larghezza di proposito — a 44 l'area sfonderebbe nel chip accanto (gap
@@ -331,7 +334,7 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
   .m2m__tag-x { position: relative; }
   .m2m__tag-x::before {
     content: ""; position: absolute; top: 50%; left: 50%;
-    width: 32px; height: 44px; transform: translate(-50%, -50%);
+    width: 32px; height: 40px; transform: translate(-50%, -50%);
   }
   /* Il «+» in coda ai chip: stesso trattamento, area piena senza crescere. */
   .m2m__addline { position: relative; }

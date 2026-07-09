@@ -89,9 +89,12 @@ function onCommit(e) {
 .rep-recpager__sep { color: var(--text-muted); }
 
 /* Touch: il pager vive nella topbar del profilo, dove il pollice lo cerca per
-   sfogliare i record. Frecce 27×27 e numero 19×27 erano bersagli da mouse. */
+   sfogliare i record. Frecce 27×27 e numero 19×27 erano bersagli da mouse.
+   L'altezza sale a 44px (verticale non costa nulla), la larghezza si ferma a 40:
+   a 44 il pager non stava più accanto al breadcrumb e gli andava a capo sotto. */
 @media (pointer: coarse) {
-  .rep-recpager .ds-btn { min-width: 44px; min-height: 44px; }
-  .rep-recpager__value { min-width: 44px; min-height: 44px; }
+  .rep-recpager { gap: 6px; }
+  .rep-recpager .ds-btn { min-width: 2.5rem; min-height: 44px; }
+  .rep-recpager__value { min-width: 2.5rem; min-height: 44px; }
 }
 </style>
