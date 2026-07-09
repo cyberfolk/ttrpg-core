@@ -3,6 +3,14 @@
        MODEL). Stessa resa "riga da registro" del mockup: valori forti, label
        mute, inline. Nessuna scatola, nessuna eyebrow oro. -->
   <section class="led" :aria-label="title">
+    <!-- Ritratto: la tavola eletta a profilo (avatarPhotoId). Assente → niente
+         medaglione, la testata resta piena larghezza. Si sceglie dalla Galleria.
+         Su telefono sparisce: lì la scheda è già a una colonna e il medaglione
+         rubava larghezza alla riga di registro, che è il dato da leggere. -->
+    <div v-if="entity.avatarPhotoId" class="led__portrait">
+      <GalleryThumb :photo-id="entity.avatarPhotoId" :focus="avatarFocus" :alt="portraitAlt" />
+    </div>
+
     <div class="led__body">
     <!-- Riga meta: valori inline, ognuno editabile al click sul valore.
          Niente matita globale: l'affordance è per campo (hover → cornice + icona). -->
@@ -184,6 +192,7 @@ import ScoreChip from './ScoreChip.vue';
 import HoverTip from './HoverTip.vue';
 import InlineSelect from './InlineSelect.vue';
 import Many2ManyField from './Many2ManyField.vue';
+import GalleryThumb from './GalleryThumb.vue';
 import { placeInViewport, createStructuralResize } from '../anchoring.js';
 import { SCORE_TIP, LEVEL_TIP } from '../uiCopy.js';
 import { useStore } from '../useStore.js';
@@ -210,6 +219,17 @@ const props = defineProps({
 });
 
 const title = computed(() => (props.kind === 'character' ? 'Scheda anagrafica' : 'Scheda del gruppo'));
+const portraitAlt = computed(() => `Ritratto di ${props.entity.name || 'entità'}`);
+// Punto focale dell'avatar: il medaglione in testata segue la reinquadratura scelta.
+const avatarFocus = computed(() => {
+  const id = props.entity.avatarPhotoId;
+  if (!id) {
+    return null;
+  }
+  const photo = state.value.photos.find((p) => p.id === id);
+  const focus = photo ? photo.focus : null;
+  return focus;
+});
 
 // Segnaposto per campo lookup non ancora impostato.
 const EMPTY = '–';
@@ -632,8 +652,23 @@ const metaCols = computed(() => {
 }
 .led__body { flex: 1 1 auto; min-width: 0; }
 
+/* Ritratto di profilo: medaglione incorniciato d'oro, come una tavola eletta. */
+.led__portrait {
+  flex: 0 0 auto;
+  width: 6.5rem;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--gold-500);
+  box-shadow: 0 0 0 3px var(--accent-tint), var(--shadow-sm);
+  background: var(--surface-panel);
+}
 @media (max-width: 520px) {
   .led { gap: var(--space-4); }
+  /* Telefono: testata compatta. La scheda è già a una colonna e il medaglione
+     stringeva la riga di registro, che è il dato da leggere al tavolo. L'avatar
+     resta visibile nel tab Galleria. */
+  .led__portrait { display: none; }
 }
 
 /* --- meta (lettura): campi impilati su due colonne, ciascuno col "·" --- */
