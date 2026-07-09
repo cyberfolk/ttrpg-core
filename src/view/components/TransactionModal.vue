@@ -118,47 +118,48 @@
                 </td>
               </tr>
             </tbody>
+            <!-- Un solo piede, una sola cella: dentro, un contenitore che il CSS
+                 dispone in riga (desktop: delta | motivo | «+») o su due livelli
+                 (telefono: motivo sopra, delta e bottone sotto). Il layout non
+                 passa più dalle colonne della tabella — che, essendo dimensionate
+                 dal registro, strozzavano gli input. -->
             <tfoot>
               <tr class="rep-tx-addrow">
-                <td class="rep-tx__delta-col">
-                  <input ref="deltaInput" class="ds-input" type="number" step="1" placeholder="-5"
-                    aria-label="Delta" v-model.number="newDelta" @keyup.enter="onAdd" />
-                </td>
-                <td colspan="2">
-                  <input class="ds-input" type="text" placeholder="Es. salvato in battaglia"
-                    aria-label="Motivo" :aria-describedby="canAdd ? undefined : hintId"
-                    v-model="newReason" @keyup.enter="onAdd" />
-                  <!-- Il motivo è obbligatorio: senza, il punteggio si muoverebbe
-                       senza una causa leggibile nello storico. Lo diciamo invece
-                       di scartare l'aggiunta in silenzio. -->
-                  <p v-if="!canAdd" :id="hintId" class="rep-tx__hint">
-                    Scrivi il motivo per registrare la transazione.
-                  </p>
-                </td>
-                <td class="rep-tx-addrow__btncell">
-                  <HoverTip text="Aggiungi" label="Aggiungi transazione" :tab-index="-1">
-                    <button class="ds-btn ds-btn--primary ds-btn--sm ds-btn--icon"
-                      type="button" :disabled="!canAdd" @click="onAdd" aria-label="Aggiungi transazione">
+                <td colspan="4">
+                  <div class="rep-tx-add">
+                    <input ref="deltaInput" class="ds-input rep-tx-add__delta" type="number" step="1"
+                      placeholder="-5" aria-label="Delta" v-model.number="newDelta" @keyup.enter="onAdd" />
+                    <div class="rep-tx-add__reason">
+                      <input class="ds-input" type="text" placeholder="Es. salvato in battaglia"
+                        aria-label="Motivo" :aria-describedby="canAdd ? undefined : hintId"
+                        v-model="newReason" @keyup.enter="onAdd" />
+                      <!-- Il motivo è obbligatorio: senza, il punteggio si muoverebbe
+                           senza una causa leggibile nello storico. Lo diciamo invece
+                           di scartare l'aggiunta in silenzio. -->
+                      <p v-if="!canAdd" :id="hintId" class="rep-tx__hint">
+                        Scrivi il motivo per registrare la transazione.
+                      </p>
+                    </div>
+                    <HoverTip text="Aggiungi" label="Aggiungi transazione" :tab-index="-1"
+                      class-name="rep-tx-add__btn-icon">
+                      <button class="ds-btn ds-btn--primary ds-btn--sm ds-btn--icon"
+                        type="button" :disabled="!canAdd" @click="onAdd" aria-label="Aggiungi transazione">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M5 12h14"/><path d="M12 5v14"/>
+                        </svg>
+                      </button>
+                    </HoverTip>
+                    <!-- Telefono: bottone con etichetta, il «+» nudo non basta. -->
+                    <button class="ds-btn ds-btn--primary rep-tx-add__btn-wide"
+                      type="button" :disabled="!canAdd" @click="onAdd">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                        stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em">
                         <path d="M5 12h14"/><path d="M12 5v14"/>
                       </svg>
+                      Aggiungi transazione
                     </button>
-                  </HoverTip>
-                </td>
-              </tr>
-              <!-- Solo smartphone: bottone Aggiungi a tutta larghezza su riga propria
-                   (colspan), per non incastrare il "+" accanto agli input stretti. -->
-              <tr class="rep-tx-addrow rep-tx-addrow--btnrow">
-                <td colspan="4">
-                  <button class="ds-btn ds-btn--primary rep-tx-addrow__btn-wide"
-                    type="button" :disabled="!canAdd" @click="onAdd">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em">
-                      <path d="M5 12h14"/><path d="M12 5v14"/>
-                    </svg>
-                    Aggiungi transazione
-                  </button>
+                  </div>
                 </td>
               </tr>
             </tfoot>

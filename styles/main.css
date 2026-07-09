@@ -453,6 +453,15 @@ button.ds-score { appearance: none; -webkit-appearance: none; border: 0; font: i
   box-shadow: var(--shadow-lg);
   animation: ds-rise .22s var(--ease-out) both;
 }
+/* Schermo stretto: il dialog parte dall'alto invece di stare centrato. Centrato,
+   quando compare la tastiera software il contenuto salta; ancorato in alto resta
+   fermo e si limita a scorrere. `dvh` è l'altezza che la tastiera riduce davvero
+   (`vh` no: misura il layout viewport, che la tastiera non tocca). */
+@media (max-width: 560px) {
+  .ds-overlay { align-items: flex-start; padding-block: var(--space-3); }
+  .ds-dialog { max-height: 90dvh; }
+}
+
 /* Taglie del dialog: tre gradini, niente `style=` inline dai chiamanti.
    Valgono solo da 560px in su — sotto, il dialog resta alla larghezza piena
    concessa dal padding dell'overlay (schermo piccolo = niente da stringere). */
@@ -963,6 +972,15 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 
 /* Riga di aggiunta inline nel tfoot */
 .rep-tx-addrow td { background: var(--paper-50); border-top: 1px solid var(--line-gold); border-bottom: none; }
+/* Desktop: delta stretto, motivo elastico, «+» in coda. Il contenitore è un flex
+   e non le colonne della tabella: quelle sono dimensionate dal registro sopra e
+   strozzavano gli input. `align-items: start` tiene i campi allineati in alto
+   quando l'hint compare sotto il motivo. */
+.rep-tx-add { display: flex; align-items: start; gap: var(--space-3); text-align: left; }
+.rep-tx-add__delta { width: 4.5rem; flex: none; }
+.rep-tx-add__reason { flex: 1 1 auto; min-width: 0; }
+.rep-tx-add .rep-tx-add__btn-icon { flex: none; }
+.rep-tx-add .rep-tx-add__btn-wide { display: none; }
 /* Il motivo è obbligatorio: hint sotto il campo finché manca, così il bottone
    disabilitato non resta un mistero. Non è un errore (l'utente non ha sbagliato
    nulla, deve solo finire): tono muto, niente ember. */
@@ -970,9 +988,6 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
   margin: .3rem 0 0; padding: 0;
   font-size: var(--fs-xs); color: var(--text-muted); line-height: 1.3;
 }
-/* bottone "+" largo quanto la colonna azioni (= i due bottoni delle righe sopra) */
-.rep-tx-addrow td:last-child .rep-tip { display: block; }
-.rep-tx-addrow td:last-child .ds-btn { width: 100%; justify-content: center; }
 /* delete-tx button: quiet red */
 .ds-btn--danger.rep-tx__del {
   flex: none;
@@ -1017,8 +1032,6 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
 .rep-tx-table .rep-tx__delta { font-size: var(--fs-sm); font-weight: 800; }
 .rep-tx-table .rep-tx__when { text-align: left; }
 
-/* Riga bottone "Aggiungi" a tutta larghezza: solo smartphone (vedi media query) */
-.rep-tx-addrow--btnrow { display: none; }
 
 /* Smartphone: nel popup transazione cade solo la colonna Data (il registro è
    ordinato per data: il giorno esatto è contesto, non azione). Modifica ed
@@ -1045,22 +1058,38 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
   .rep-tx-table .rep-table__actions { flex-wrap: nowrap; justify-content: flex-end; }
   .rep-tx-table .rep-table__actions .ds-btn { flex: 0 0 auto; }
 
-  /* Bottone "+" minuscolo incastrato accanto agli input → sparisce, e passa a
-     una riga propria (colspan, così resta dentro il layout tabella) con
-     bottone primario a tutta larghezza ed etichetta testuale. */
-  .rep-tx-addrow .rep-tx-addrow__btncell { display: none; }
-  .rep-tx-addrow--btnrow { display: table-row; }
-  .rep-tx-addrow--btnrow td {
-    background: var(--paper-50); border-top: none;
-    padding: 0 var(--space-5) var(--space-4);
+  /* Riga di aggiunta a due livelli: il motivo (campo lungo) prende tutta la
+     larghezza; sotto, il delta accanto al bottone. Prima il delta era una casella
+     schiacciata accanto al motivo, e il «+» un glifo minuscolo incastrato in coda:
+     il numero che muove il punteggio sembrava un segnaposto. */
+  .rep-tx-add {
+    display: grid; grid-template-columns: 5rem 1fr;
+    gap: var(--space-2) var(--space-3); align-items: start;
   }
-  .rep-tx-addrow__btn-wide { width: 100%; }
+  /* Righe esplicite: il delta viene prima nel DOM (è la prima colonna su desktop),
+     ma qui deve stare sotto il motivo. Senza `grid-row` la griglia seguirebbe
+     l'ordine del markup e lo metterebbe in cima. */
+  .rep-tx-add .rep-tx-add__reason { grid-column: 1 / -1; grid-row: 1; }
+  .rep-tx-add .rep-tx-add__delta { grid-column: 1; grid-row: 2; width: 100%; }
+  /* Il «+» nudo esce di scena: sul telefono parla il bottone con l'etichetta. */
+  .rep-tx-add .rep-tx-add__btn-icon { display: none; }
+  .rep-tx-add .rep-tx-add__btn-wide {
+    display: inline-flex; justify-content: center;
+    grid-column: 2; grid-row: 2; width: 100%;
+  }
 
   /* Header transazioni su smartphone: via il badge "Totale" e le frecce.
      Restano solo le label "Cosa"/"Pensa di"; il box freccia mantiene la
      larghezza fissa così i nomi restano allineati a sinistra. */
   .rep-tx-headscore { display: none; }
   .rep-tx-row .rep-rel-arrow__glyph { display: none; }
+
+  /* Testata compatta: il dialog vive sopra la tastiera software, e ogni riga di
+     titolo è spazio tolto al registro. Nome più piccolo e gronda dell'etichetta
+     più stretta — la direzione A→B resta esplicita, che è il requisito. */
+  .ds-dialog__head { padding-block: var(--space-3) var(--space-2); }
+  .rep-tx-title__name { font-size: var(--fs-lg); }
+  .rep-tx-row .rep-rel-arrow { width: 3.4rem; min-width: 3.4rem; }
 }
 .rep-rel-arrow { display: inline-flex; flex-direction: column; align-items: stretch; line-height: 1; min-width: 4rem; margin-inline: 6px; flex: none; }
 .rep-rel-arrow__label {
@@ -1157,6 +1186,23 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
    la colonna "#" numero riga ruba spazio al nome → via su schermi stretti. */
 @media (max-width: 560px) {
   .rep-profile .rep-table__num { display: none; }
+}
+
+/* === Popover teleportati: telefono ========================= */
+/* I picker (entità, select inline, tag/gruppi, multiclasse) sono teleportati su
+   <body> e posizionati da `placeInViewport`, che scrive left/width inline. Su uno
+   schermo stretto ancorarli al trigger li lascia sottili e con poche opzioni per
+   schermata: qui si allargano da bordo a bordo. Il `top` resta quello calcolato
+   dal JS (flip sopra/sotto, clamp verticale), che è la parte che serve davvero.
+   `!important` è necessario: si sta sovrascrivendo uno stile inline. */
+@media (max-width: 520px) {
+  .ep__list, .isel__pop, .m2m__pop, .led__mcpop {
+    left: var(--space-3) !important;
+    right: var(--space-3) !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
 }
 
 /* === Menu azioni (kebab/gear) ============================== */
