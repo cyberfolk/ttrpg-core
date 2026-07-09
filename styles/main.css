@@ -1137,14 +1137,19 @@ input.rep-tx__delta { font-variant-numeric: tabular-nums; font-weight: 700; text
     mask-image: linear-gradient(to right, transparent, #000 1.6rem);
   }
 
-  /* Chevron: › a destra / ‹ a sinistra, solo se c'è altro da scorrere di là. */
+  /* Chevron: › a destra / ‹ a sinistra, solo se c'è altro da scorrere di là.
+     Il chevron NON galleggia sopra la striscia: il tab che le scorre sotto ci
+     finirebbe in mezzo (una voce lunga come «MEMBRI» veniva trafitta dal glifo).
+     Si riserva una gronda con il padding del contenitore, e lì dentro sta da solo. */
+  .sc-more-right { padding-right: 1.1rem; }
+  .sc-more-left { padding-left: 1.1rem; }
   .sc-more-right::after, .sc-more-left::before {
     position: absolute; top: 50%; transform: translateY(-50%); pointer-events: none;
     font-family: var(--font-sans); font-size: 1.3rem; font-weight: 700;
     line-height: 1; color: var(--gold-600);
   }
-  .sc-more-right::after { content: '\203A'; right: .1rem; }
-  .sc-more-left::before { content: '\2039'; left: .1rem; }
+  .sc-more-right::after { content: '\203A'; right: .2rem; }
+  .sc-more-left::before { content: '\2039'; left: .2rem; }
 }
 .rep-profile__orn  { margin-top: var(--space-6); }
 

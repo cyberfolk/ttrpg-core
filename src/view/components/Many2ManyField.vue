@@ -214,9 +214,12 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
 /* Body in due blocchi affiancati (nowrap): la lista dei chip (che wrappa al suo
    interno) e il «+». Tenere il «+» FUORI dal wrap dei chip fa sì che non vada mai
    a capo da solo: con un chip largo su mobile resta inline in coda, non salta sotto. */
-.m2m__body { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: nowrap; align-items: flex-end; gap: .4rem; }
-/* I chip wrappano tra loro qui dentro; min-width:0 così il blocco cede spazio al «+». */
-.m2m__tags { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; list-style: none; margin: 0; padding: 0; }
+/* Chip e «+» vivono nello stesso contesto di wrapping: la <ul> è `display: contents`,
+   così i badge sono figli diretti del body insieme al bottone. Il «+» resta perciò
+   in coda all'ultimo badge su qualunque riga finisca, invece di essere spinto al
+   bordo destro del campo (che con l'ultima riga corta lo lasciava lontanissimo). */
+.m2m__body { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.m2m__tags { display: contents; list-style: none; margin: 0; padding: 0; }
 .m2m__tags > li { display: contents; }
 
 /* Badge: pill oro. Con navigable è cliccabile (→ naviga); altrimenti solo etichetta. */
@@ -257,8 +260,8 @@ onUnmounted(() => document.removeEventListener('m2m:open', onOtherOpen));
 
 /* Riga "aggiungi": affordance discreta che emerge all'hover dell'area. */
 .m2m__addline {
-  /* flex-end: con i chip su più righe il «+» siede in fondo, in coda all'ultimo. */
-  align-self: flex-end; display: inline-flex; align-items: center; gap: .3rem;
+  /* Nello stesso flusso dei chip: si allinea al badge che lo precede. */
+  align-self: center; display: inline-flex; align-items: center; gap: .3rem;
   padding: .22rem .4rem; cursor: pointer;
   font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-muted);
   background: none; border: 1px dashed transparent; border-radius: var(--radius-sm);
