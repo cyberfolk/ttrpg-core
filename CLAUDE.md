@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 @~/.claude/shared/git-commit-tags-list.md  
-@~/.claude/shared/todo-conventions.md
+@~/.claude/shared/backlog-conventions.md
 
 ---
 
